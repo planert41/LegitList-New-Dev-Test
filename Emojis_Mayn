@@ -1,0 +1,558 @@
+var EmojiDictionary: [String:String] =
+
+[
+    "😍":"love",
+    "😋":"tasty",
+    "🤤":"amazing",
+    "👍":"great",
+    "😀":"good",
+    "😝":"lol",
+    "😂":"funny",
+    "😎":"cool",
+    "😮":"surprised",
+    "🤔":"curious",
+    "🤑":"expensive",
+    "😴":"slow",
+    "😢":"sad",
+    "😭":"sob",
+    "🤥":"lied",
+    "😑":"meh",
+    "😡":"furious",
+    "😤":"angry",
+    "🤒":"sick",
+    "💩":"crap",
+    "😩":"terrible",
+    "👌":"legit",
+    
+    "🍩":"donut",
+    "🥐":"pastry",
+    "🥞":"pancake",
+    "🥓":"bacon",
+    "🍕":"pizza",
+    "🍔":"burger",
+    "🌭":"hotdog",
+    "🍟":"fries",
+    "🍲":"soup",
+    "🥗":"salad",
+    "🍝":"pasta",
+    "🍖":"bbq",
+    "🍣":"sushi",
+    "🍜":"ramen",
+    "🍚":"rice",
+    "🍛":"curry",
+    "🌮":"taco",
+    "🌯":"burrito",
+    "🥙":"pita",
+    "🍗":"wings",
+    "☕️":"coffee",
+    "🍺":"beer",
+    "🍷":"wine",
+    "🍸":"cocktail",
+    "🍦":"icecream",
+    "🍰":"cake",
+    "🍢":"skewer",
+    "🍪":"cookie",
+    "🍧":"shavedice",
+    "🍭":"candy",
+
+    "🍳":"breakfast",
+    "🍱":"lunch",
+    "🍽":"dinner",
+    "🍮":"dessert",
+    
+    "🚗":"delivery",
+    "🏠":"restaurant",
+    "🚌":"truck",
+    "🏪":"24hour",
+    "🎂":"birthday",
+    "💑":"date",
+    "💼":"business",
+    "📆":"meeting",
+    "👔":"formal",
+    "👖":"informal",
+    "💵":"cash",
+    "💸":"expensive",
+    "🔕":"quiet",
+    "🅿️":"parking",
+    "🆕":"new",
+    "👶":"kid",
+    "👨‍👩‍👧‍👦":"family",
+    
+    "🐮":"beef",
+    "🐷":"pork",
+    "🐔":"chicken",
+    "🦆":"duck",
+    "🐟":"fish",
+    "🦐":"shrimp",
+    "🦀":"crab",
+    "🐙":"squid",
+    
+    "🌱":"vegetarian",
+    "🍤":"seafood",
+    "🐚":"shellfish",
+    "🥚":"egg",
+
+    "🍼":"milk",
+    "⛪️":"christian",
+    "🕍":"kosher",
+    "🕌":"halal",
+    "☸️":"buddhist",
+    
+    "🍯":"sweet",
+    "🍋":"sour",
+    "🌶":"spicy",
+    "🔥":"hot",
+    "🍵":"greentea",
+    "🍫":"chocolate",
+
+    "🧀":"cheese",
+    
+    "🌾":"wheat",
+    "🥜":"peanut",
+    "🌽":"corn",
+    "🥑":"guacamole",
+    "🍎":"apple",
+    "🍊":"orange",
+    "🍑":"peach",
+    "🍐":"pear",
+    "🍌":"banana",
+    "🍄":"mushroom",
+    "🥕":"carrot",
+    "🍅":"tomato",
+    "🍓":"strawberry",
+    "🍇":"grape",
+    "🥝":"kiwi",
+    "🌹":"rose",
+    "🍈":"melon",
+    "🍉":"watermelon",
+    "🍒":"cheery",
+    "🍍":"pineapple",
+    
+    "🇺🇸":"american",
+    "🇲🇽":"mexican",
+    "🇬🇷":"greek",
+    "🇹🇷":"turkish",
+    "🇫🇷":"french",
+    "🇮🇹":"italian",
+    "🇩🇪":"german",
+    "🇪🇸":"spanish",
+    "🇨🇳":"chinese",
+    "🇯🇵":"japanese",
+    "🇰🇷":"korean",
+    "🇮🇳":"indian",
+    "🇻🇳":"vietnamese",
+    "🇵🇭":"filipino",
+    "🇹🇭":"thai",
+    "🇲🇾":"malaysian",
+    "🇵🇹":"portugese",
+    "🇨🇦":"canadian",
+    "🇬🇧":"british",
+    "🇮🇷":"persian",
+    "🇮🇪":"irish",
+    "🇸🇪":"swedish",
+    "🇦🇷":"argentinian",
+    "🇧🇷":"brazilian",
+    "🇵🇪":"peruvian",
+    "🇨🇴":"colombian",
+    "🇨🇺":"cuban",
+    "🇪🇹":"bolivian",
+    "🇯🇲":"jamaican",
+    "🇳🇱":"dutch",
+    "🇸🇳":"senagalese",
+    "🇷🇺":"russian",
+
+    "❌🍖": "vegetarian",
+    "❌🌽": "gluten free",
+    "❌🥜":"peanut free",
+    "❌🥛":"non dairy",
+    "🇹🇭🍝":"pad thai" ,
+    "🍖🍡":"meatball",
+    
+    "🎃👻": "halloween",
+    "🐔🍗": "chicken wing",
+    "🐔🍚":"chicken rice",
+    "🐔🍛": "chicken curry",
+    "🐷🍛":"pork curry",
+    "🐟🍛":"fish curry"
+    
+    
+]
+
+var ReverseEmojiDictionary: [String:String] =
+
+
+[
+    
+// MANY TO ONE MAPPING
+    
+// NEW - Start Adding Emojis here to keep track of dup keys
+    "vegetable": "🥒",
+    "vegetables": "🥒",
+    "fruit":"🍎",
+    "fruits":"🍎",
+    "berry":"🍇",
+    "melon": "🍈",
+    "cracker":"🍘",
+    "biscuit":"🍘",
+    
+    
+// Existing
+    "tasty": "😋",
+    "lied": "🤥",
+    "meh": "😑",
+    "curious": "🤔",
+    "surprised": "😮",
+    "slow": "😴",
+    "terrible": "😩",
+    "sick": "🤒",
+    "funny": "😂",
+    "pricey": "🤑",
+    "cool": "😎",
+    "angry": "😤",
+    "sad": "😢",
+    "cry": "😭",
+    "drool":"🤤",
+    "amazing": "⭐️",
+    "good": "😀",
+    "lol": "😝",
+    "furious": "😡",
+    "crap": "💩",
+    "great": "👍",
+    "hot": "🔥",
+    "cold":"❄️",
+    "sizzling":"♨️",
+    "best":"🏆",
+    "award":"🏅",
+    "100":"💯",
+    "love":"❤️",
+    
+    "indian": "🇮🇳",
+    "cuban": "🇨🇺",
+    "thai": "🇹🇭",
+    "colombian": "🇨🇴",
+    "bolivian": "🇪🇹",
+    "swedish": "🇸🇪",
+    "greek": "🇬🇷",
+    "russian": "🇷🇺",
+    "japanese": "🇯🇵",
+    "jamaican": "🇯🇲",
+    "brazilian": "🇧🇷",
+    "german": "🇩🇪",
+    "korean": "🇰🇷",
+    "malaysian": "🇲🇾",
+    "italian": "🇮🇹",
+    "american": "🇺🇸",
+    "senagalese": "🇸🇳",
+    "dutch": "🇳🇱",
+    "argentinian": "🇦🇷",
+    "turkish": "🇹🇷",
+    "spanish": "🇪🇸",
+    "chinese": "🇨🇳",
+    "portugese": "🇵🇹",
+    "peruvian": "🇵🇪",
+    "persian": "🇮🇷",
+    "french": "🇫🇷",
+    "mexican": "🇲🇽",
+    "canadian": "🇨🇦",
+    "vietnamese": "🇻🇳",
+    "british": "🇬🇧",
+    "irish": "🇮🇪",
+    "filipino": "🇵🇭",
+    "laos": "🇱🇦",
+    
+    "bbq":"♨️",
+    "grill":"♨️",
+    "steam":"🌫",
+    
+    
+    "taco": "🌮",
+    "burrito": "🌯",
+    "cake": "🍰",
+    "cakes": "🍰",
+    "birthday": "🎂",
+    "noodles": "🍜",
+    "noodle": "🍜",
+    "mee": "🍜",
+    "ramen": "🍜",
+    "cookie": "🍪",
+    "pasta": "🍝",
+    "sushi": "🍣",
+    "sashimi":"🍣",
+    "curry": "🍛",
+    "hotdog": "🌭",
+    "pizza": "🍕",
+    "ice cream": "🍦",
+
+    "beer": "🍺",
+    "croissant": "🥐",
+    "pastry":"🥐",
+    "omelette":"🍳",
+    "pancake": "🥞",
+    "rice": "🍚",
+    "steak":"🍖",
+    "chocolate": "🍫",
+    "vanilla":"🍨",
+    "shaved ice": "🍧",
+    "soup": "🍲",
+    "donut": "🍩",
+    "burger": "🍔",
+    "cheeseburger": "🍔",
+    "salad": "🥗",
+    "bacon": "🥓",
+    "wine": "🍷",
+    "cocktail": "🍸",
+    "pita": "🥙",
+    "sandwich":"🥙",
+    "tea":"🍵",
+    "green tea": "🍵",
+    "matcha":"🍵",
+    "sweet": "🍯",
+    "cheese": "🧀",
+    "candy": "🍭",
+    "fries": "🍟",
+    "rose": "🌹",
+    "skewer": "🍢",
+    "sake":"🍶",
+    "ball":"🍡",
+    
+    "turkey":"🦃",
+    "chicken": "🐓",
+    "duck": "🦆",
+    "watermelon": "🍉",
+    "sour": "🍋",
+    "pear": "🍐",
+    "banana": "🍌",
+    "grape": "🍇",
+    "guacamole": "🥑",
+    "peanut": "🥜",
+    "nut": "🌰",
+    "orange": "🍊",
+    "seafood": "🍤",
+    "milkshake": "🥛",
+    "shake":"🥛",
+    "milk":"🍼",
+    "mushroom": "🍄",
+    "carrot": "🥕",
+    "fish": "🐟",
+    "wheat": "🌾",
+    "kiwi": "🥝",
+    "cherry": "🍒",
+    "vegetarian": "🍀",
+    "octopus": "🐙",
+    "squid":"🦑",
+    "corn": "🌽",
+    "potato":"🥔",
+    "sweet potato":"🍠",
+    "apple": "🍏",
+    "pork": "🐷",
+    "crab": "🦀",
+    "shrimp": "🦐",
+    "beef": "🐮",
+    "lamb":"🐑",
+    "peach": "🍑",
+    "shellfish": "🐚",
+    "spicy": "🌶",
+    "tomato": "🍅",
+    "strawberry": "🍓",
+    "blueberry":"🍇",
+
+    "egg": "🥚",
+    "pineapple": "🍍",
+
+    
+    
+    "chicken curry": "🐔🍛",
+    "chicken rice": "🐔🍚",
+    "fish curry": "🐟🍛",
+    "pork curry": "🐷🍛",
+    "halloween": "🎃👻",
+    "non dairy": "❌🥛",
+    "chicken wing": "🐔🍗",
+    "pad thai": "🇹🇭🍝",
+    "gluten free": "❌🌽",
+    "peanut free": "❌🥜",
+    "meatball": "🍖🍡",
+    "fish and chips":"🐟🍟",
+    
+    "24hour": "🏪",
+    "buddhist": "☸️",
+    "truck": "🚌",
+    "informal": "👖",
+    "business": "💼",
+    "restaurant": "🏠",
+    "new": "🆕",
+    "halal": "🕌",
+    "family": "👨‍👩‍👧‍👦",
+    "date": "💑",
+    "expensive": "💸",
+    "meeting": "📆",
+    "cash": "💵",
+    "parking": "🅿️",
+    "kosher": "🕍",
+    "delivery": "🚗",
+    "christian": "⛪️",
+    "formal": "👔",
+    "quiet": "🔕",
+    
+    "breakfast":"🍳",
+    "brunch":"🥞",
+    "lunch":"🍱",
+    "dinner":"🍽",
+    "dessert":"🍮",
+    "coffee": "☕️",
+    "drinks":"🍻",
+    "latenight":"🌙"
+
+]
+
+
+DEFAULT SELECTION EMOJIS
+
+
+// Default Food Emojis
+var breakfastFoodEmojis: [String] =
+    ["🥞","🥓","🍳","🧀","🥚","🍞","🥖"]
+var lunchFoodEmojis:[String] =
+    ["🍱","🥗","🍲","🥙","🌮","🥪","🌯","🍔","🍕","🌭","🍟","🍗","🍤","🍢"]
+var dinnerFoodEmojis:[String] =
+    ["🍽","🍝","🥩","🍛","🍜","🍣","🍚","🥘","🥟","🥧","🥠"]
+var allFoodEmojis:[String] = []
+
+// Default Snack Drink Emojis
+var snackEmojis:[String] =
+    ["☕️","🍵","🥐","🍩","🍪","🍫","🍯","🥨","🍮","🍰","🍦","🍨","🍿","🍭","🍙"]
+var drinkEmojis:[String] =
+    ["🍺","🍷","🥃","🍸","🍶","🥤","🥛"]
+var allDrinkEmojis:[String] = []
+
+
+// Default Ingredient Emojis
+var meatIngredientEmojis: [String] =
+    ["🐮","🐷","🐔","🦆","🐟","🦐","🦀","🐙","🐌"]
+var vegIngredientEmojis: [String] =
+    ["🌱","🌿","🌶","🌾","🥜","🌰","🌽","🍅","🥑","🍄","🥕","🍆","🥦","🥒","🥔","🍠"]
+var fruitsIngredientEmojis: [String] =
+    ["🍎","🍋","🍊","🍑","🥥","🍐","🍌","🍓","🍇","🥝","🌹","🍈","🍉","🍒","🍍"]
+var allIngredientEmojis:[String] = []
+
+var allDefaultEmojis: [String] = []
+
+
+
+// Default Smiley Emojis
+
+var smileyEmojis: [String] = ["😍","😋","🤤","👍","😀","😝","😂","😎","😮","🤔","🤑","😴","😢","😭","🤥","😑","😡","😤","🤒","💩","😩"]
+
+//var extraRatingEmojis: [String] = ["💯", "👑", "🥇", "🔥","👌", "💪", "👺", "💩","☠️"]
+var extraRatingEmojis: [String] = ["💩","😡","🤔","👌","🔥","💯", "🥇"]
+
+var extraRatingEmojisDic: [String: String] =
+    ["💩":"poop", "😡":"angry", "🤔":"iffy", "👌":"legit","🔥":"fire", "💯":"100%", "🥇":"best"]
+
+
+//"💩😡😍😋🤩😭😤😥😓🤤😵🤑💪👍✌️👌💯❤️🔥❤️  🏆🤯 😭😤😢🤤😵🤮😋"
+
+// 💯👑🥇🔥👌💪👺💩☠️
+
+// DEFAULT OTHER
+
+var otherEmojis: [String] =
+    ["🚗","🏠","🚌","🏪","🎂","💑","💼","📆","👔","👖","💵","💸","🔕","🅿️","🆕","👶","👨‍👩‍👧‍👦"]
+
+var mealEmojis:[Emoji] = []
+var cuisineEmojis:[Emoji] = []
+var dietEmojis:[Emoji] = []
+
+var mealEmojisSelect:[String] = ["🍳","🥞","🍱","🍽","🍮","☕️","🍺","🌙","📍"]
+var mealEmojiDictionary:[String:String] = [
+    "🍳":"breakfast",
+    "🥞":"brunch",
+    "🍱":"lunch",
+    "🍽":"dinner",
+    "🍮":"dessert",
+    "☕️":"coffee",
+    "🍺":"drinks",
+    "🌙":"latenight",
+    "📍":"poi"
+]
+
+var cuisineEmojiSelect:[String] = [
+    "🇺🇸","🇲🇽","🇬🇷","🇹🇷","🇫🇷","🇮🇹","🇩🇪","🇪🇸","🇨🇳","🇯🇵","🇰🇷","🇮🇳","🇻🇳","🇵🇭",
+    "🇹🇭","🇲🇾","🇵🇹","🇨🇦","🇬🇧","🇮🇷","🇮🇪","🇸🇪","🇦🇷","🇧🇷","🇵🇪","🇨🇴","🇨🇺","🇪🇹",
+    "🇯🇲","🇳🇱","🇸🇳","🇷🇺"
+]
+
+var cuisineEmojiDictionary:[String:String] = [
+    "🇺🇸":"american",
+    "🇲🇽":"mexican",
+    "🇬🇷":"greek",
+    "🇹🇷":"turkish",
+    "🇫🇷":"french",
+    "🇮🇹":"italian",
+    "🇩🇪":"german",
+    "🇪🇸":"spanish",
+    "🇨🇳":"chinese",
+    "🇯🇵":"japanese",
+    "🇰🇷":"korean",
+    "🇮🇳":"indian",
+    "🇻🇳":"vietnamese",
+    "🇵🇭":"filipino",
+    "🇹🇭":"thai",
+    "🇲🇾":"malaysian",
+    "🇵🇹":"portugese",
+    "🇨🇦":"canadian",
+    "🇬🇧":"british",
+    "🇮🇷":"persian",
+    "🇮🇪":"irish",
+    "🇸🇪":"swedish",
+    "🇦🇷":"argentinian",
+    "🇧🇷":"brazilian",
+    "🇵🇪":"peruvian",
+    "🇨🇴":"colombian",
+    "🇨🇺":"cuban",
+    "🇪🇹":"bolivian",
+    "🇯🇲":"jamaican",
+    "🇳🇱":"dutch",
+    "🇸🇳":"senagalese",
+    "🇷🇺":"russian"
+]
+var dietEmojiSelect:[String] = [
+   "❌🍖","❌🌽","❌🥜","❌🥛","⛪️","🕍","🕌", "☸️"
+]
+var dietEmojiDictionary:[String:String] = [
+    "⛪️":"christian",
+    "🕍":"kosher",
+    "🕌":"halal",
+    "☸️":"buddhist",
+    "❌🍖": "vegetarian",
+    "❌🌽": "gluten free",
+    "❌🥜":"peanut free",
+    "❌🥛":"non dairy"
+]
+
+var allAutoTagDictionary = [mealEmojiDictionary, cuisineEmojiDictionary,dietEmojiDictionary]
+
+
+
+
+
+var eatsEmojis: [String] =
+    ["🍕","🍔","🌭","🍟","🍲","🥗","🍝","🍖","🍣","🍜","🍚","🍛","🌮","🌯","🥙","🍗"]
+var drinksEmojis: [String] =
+    ["☕️","🍺","🍷","🍵"]
+var snacksEmojis: [String] =
+    ["🍩","🥐","🍦","🍰","🍫","🍪","🍧","🍭"]
+var meatEmojis: [String] =
+    ["🥓","🥚","🐮","🐷","🐔","🦆","🐟","🦐","🦀","🐙"]
+var vegEmojis: [String] =
+    ["🌾","🥜","🌽","🥑","🍎","🍊","🍑","🍐","🍌","🍄","🥕","🍅","🍓","🍇","🥝","🌹","🍈","🍉","🍒","🍍"]
+
+var SET_VegEmojis: [String] = ["🍏","🍎","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🍈","🍒","🍑","🍍","🥥","🥝","🍅","🍆","🥑","🥦","🥒","🌶","🌽","🥕","🥔","🍠","🌰","🥜","🍄","🌾","🌹"]
+var SET_FoodEmojis: [String] = ["🥐","🍞","🥖","🥨","🧀","🥚","🍳","🥞","🥓","🍗","🍖","🌭","🍔","🍟","🍕","🥪","🥙","🌮","🌯","🥗","🥫","🍝","🍜","🍲","🍛","🍣","🍱","🥟","🍤","🍚","🥧"]
+var SET_SnackEmojis: [String] = ["🍙","🍘","🍥","🥠","🍢","🍡","🍧","🍨","🍦","🥧","🍰","🎂","🍮","🍭","🍬","🍫","🍿","🍩","🍪"]
+var SET_DrinkEmojis: [String] = ["🥛","☕️","🍵","🍯","🥤","🍶","🍺","🍻","🥂","🍷","🥃","🍸","🍹","🍾"]
+var SET_FlagEmojis: [String] = [ "🇺🇸","🇲🇽","🇬🇷","🇹🇷","🇫🇷","🇮🇹","🇩🇪","🇪🇸","🇨🇳","🇯🇵","🇰🇷","🇮🇳","🇻🇳","🇵🇭",
+                                    "🇹🇭","🇲🇾","🇵🇹","🇨🇦","🇬🇧","🇮🇷","🇮🇪","🇸🇪","🇦🇷","🇧🇷","🇵🇪","🇨🇴","🇨🇺","🇪🇹",
+                                    "🇯🇲","🇳🇱","🇸🇳","🇷🇺"]
+var SET_SmileyEmojis: [String] = ["😍","😋","🤤","👍","😀","😝","😂","😎","😮","🤔","🤑","😴","😢","😭","🤥","😑","😡","😤","🤒","💩","😩"]
+var SET_RawEmojis: [String] = ["🥚","🥩","🐮","🐷","🐓","🦆","🐗","🐴","🐌","🐚","🐙","🦑","🦐","🦀","🐟","🐰","🐸","🐑","🐐","🦌","🦃","🐇"]
