@@ -80,7 +80,7 @@ class SingleListViewController: UIViewController {
 
     // MARK: - FILTERS
 
-    let searchViewController = LegitSearchViewController()
+    let searchViewController = LegitSearchViewControllerNew()
 
     var viewFilter: Filter = Filter.init(defaultSort: defaultRankSort) {
         didSet {

@@ -402,6 +402,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 
         view.addSubview(navMapButton)
         navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+//        navMapButton.anchor(top: nil, left: sortSegmentControl.leftAnchor, bottom: sortSegmentControl.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+
         navMapButton.layer.cornerRadius = 30/2
         navMapButton.layer.masksToBounds = true
         navMapButton.clipsToBounds = true

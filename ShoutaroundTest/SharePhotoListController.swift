@@ -81,6 +81,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     
     var isBookmarkingPost: Bool = false {
         didSet {
+            self.viewListMode = false
             self.setupNavigationItems()
         }
     }
@@ -197,14 +198,15 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     var viewListMode = false {
         didSet {
             self.setAddListButtonWidth()
-            self.nextButton.isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
+            self.setupNextButton()
+//            self.nextButton.isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
 //                .isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
             self.setupNavigationItems()
         }
     }
     
     func setAddListButtonWidth() {
-        self.addListButtonWidth?.constant = (viewListMode || self.uploadUser?.uid != CurrentUser.uid) ? 0 : 120
+        self.addListButtonWidth?.constant = (viewListMode || (self.uploadUser != nil && self.uploadUser?.uid != CurrentUser.uid)) ? 0 : 120
         self.addListButtonWidth?.isActive = true
     }
     
@@ -447,10 +449,12 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         self.navigationController?.navigationBar.tintColor = UIColor.ianLegitColor()
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.layoutIfNeeded()
 
-        let navTextColor = self.viewListMode ? UIColor.white : UIColor.ianLegitColor()
-        
+//        let navTextColor = self.viewListMode ? UIColor.white : UIColor.ianLegitColor()
+        let navTextColor = UIColor.white
+
         navigationController?.view.backgroundColor = UIColor.ianLegitColor()
         navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.font.rawValue: UIFont(name: "Poppins-Bold", size: 18), NSAttributedString.Key.foregroundColor.rawValue: navTextColor])
         navigationItem.title = "Tag List"
@@ -686,7 +690,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         self.nextButton.sizeToFit()
         self.nextButton.layer.borderColor = nextButton.tintColor.cgColor
         
-        self.nextButton.isHidden = (viewListMode || self.uploadUser?.uid != CurrentUser.uid)
+        self.nextButton.isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
 
     }
     
