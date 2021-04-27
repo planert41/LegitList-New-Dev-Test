@@ -111,5 +111,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Bluetooth functionality is used in one of the packages we used but never activated. But we should never ask you access for it. This is for Apple IOS security purposes</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Bluetooth functionality is used in one of the packages we used but never activated. But we should never ask you access for it. This is for Apple IOS security purposes</string>
 </dict>
 </plist>

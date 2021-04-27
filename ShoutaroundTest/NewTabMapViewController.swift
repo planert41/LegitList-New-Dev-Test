@@ -2100,7 +2100,7 @@ extension NewTabMapViewController: UserListSearchViewDelegate {
     func didTapSearchButton() {
         print("Tap Search | \(self.currentPostsFilterTagCounts.count) Tags | \(self.mapFilter.searchTerms)")
         search.delegate = self
-        search.viewFilter = self.mapFilter
+        search.inputViewFilter = self.mapFilter
 //        search.noCaptionFilterTagCounts = self.noCaptionFilterTagCounts
 //        search.currentPostsFilterTagCounts = self.currentPostsFilterTagCounts
         search.noFilterTagCounts = self.noFilterTagCounts

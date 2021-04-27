@@ -56,13 +56,20 @@ class LegitSearchViewControllerNew: UIViewController {
     
     
     
+    var inputViewFilter: Filter? {
+        didSet {
+            guard let inputViewFilter = inputViewFilter else {return}
+            print("\(inputViewFilter.searchTerms) : Input View Filter for SearchController")
+            self.searchViewFilter = inputViewFilter.copy() as! Filter
+        }
+    }
     
-    var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort) {
+    var searchViewFilter: Filter = Filter.init(defaultSort: defaultRecentSort) {
         didSet {
 //            self.selectedPlace = self.viewFilter.filterLocationName
 //            self.selectedCity = self.viewFilter.filterLocationSummaryID
 //            self.searchText = self.viewFilter.filterCaption
-            self.searchTerms = self.viewFilter.searchTerms
+            self.searchTerms = self.searchViewFilter.searchTerms
             self.refreshSearchTerm()
         }
     }
@@ -110,19 +117,22 @@ class LegitSearchViewControllerNew: UIViewController {
 
     var singleSearch: Bool = true {
         didSet {
+            setupSingleSearchButton()
             refreshSearchTerm()
         }
     }
     
     let singleSearchButton: UIButton = {
         let button = UIButton()
-        button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 12)
+        button.titleLabel?.adjustsFontSizeToFitWidth = true
+        button.titleLabel?.numberOfLines = 2
+        button.titleLabel?.font = UIFont(name: "Poppins-Regular", size: 10)
 //        button.setImage(#imageLiteral(resourceName: "info").withRenderingMode(.alwaysOriginal), for: .normal)
-        button.setTitle("", for: .normal)
+        button.setTitle("Mult\nFilter", for: .normal)
         button.addTarget(self, action: #selector(toggleSingleSearch), for: .touchUpInside)
 //        button.setTitleColor(UIColor.darkGray, for: .normal)
-//        button.layer.backgroundColor = UIColor.ianWhiteColor().cgColor
-        button.layer.backgroundColor = UIColor.ianBlackColor().cgColor
+        button.layer.backgroundColor = UIColor.ianWhiteColor().cgColor
+//        button.layer.backgroundColor = UIColor.ianBlackColor().cgColor
         button.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
 
 //        button.layer.backgroundColor = UIColor.white.withAlphaComponent(0.75).cgColor
@@ -130,7 +140,7 @@ class LegitSearchViewControllerNew: UIViewController {
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 10/2
         button.translatesAutoresizingMaskIntoConstraints = true
-        button.contentEdgeInsets = UIEdgeInsets(top: 3, left: 10, bottom: 3, right: 10)
+        button.contentEdgeInsets = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         return button
     }()
     
@@ -143,8 +153,12 @@ class LegitSearchViewControllerNew: UIViewController {
     }
     
     func setupSingleSearchButton(){
-        let title = self.singleSearch ? "1 Tap" : "Many"
-        singleSearchButton.setTitle(title, for: .normal)
+//        let title = self.singleSearch ? "Select Mult" : "Many"
+//        singleSearchButton.setTitle(title, for: .normal)
+        singleSearchButton.layer.backgroundColor = self.singleSearch ? UIColor.backgroundGrayColor().cgColor : UIColor.mainBlue().cgColor
+        singleSearchButton.setTitleColor(self.singleSearch ? UIColor.gray : UIColor.white, for: .normal)
+        singleSearchButton.layer.borderColor = singleSearchButton.titleColor(for: .normal)?.cgColor
+        singleSearchButton.titleLabel?.font = self.singleSearch ? UIFont.systemFont(ofSize: 9) : UIFont.boldSystemFont(ofSize: 10)
         singleSearchButton.sizeToFit()
     }
     
@@ -189,10 +203,11 @@ class LegitSearchViewControllerNew: UIViewController {
     let navRefreshButton: UIButton = {
         let button = UIButton()
         button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 15)
-        button.setImage(#imageLiteral(resourceName: "refresh_gray").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "refresh_gray").withRenderingMode(.alwaysTemplate), for: .normal)
 //        button.setTitle("Search", for: .normal)
         button.addTarget(self, action: #selector(didTapNavRefresh), for: .touchUpInside)
         button.setTitleColor(UIColor.darkGray, for: .normal)
+        button.setTitleColor(UIColor.mainBlue(), for: .normal)
         button.layer.backgroundColor = UIColor.clear.cgColor
 //        button.layer.backgroundColor = UIColor.white.withAlphaComponent(0.75).cgColor
         button.layer.borderColor = button.titleColor(for: .normal)?.cgColor
@@ -222,6 +237,33 @@ class LegitSearchViewControllerNew: UIViewController {
         button.layer.masksToBounds = true
         return button
     }()
+    
+//    let multSelectButton: UIButton = {
+//        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+//        button.setImage(#imageLiteral(resourceName: "cancel_shadow").withRenderingMode(.alwaysOriginal), for: .normal)
+//        button.addTarget(self, action: #selector(didTapMultSelect), for: .touchUpInside)
+//        button.layer.backgroundColor = UIColor.ianWhiteColor().cgColor
+//        button.setTitle("Select\nMult", for: .normal)
+//        button.titleLabel?.font = UIFont.systemFont(ofSize: 8)
+//        button.setTitleColor(UIColor.darkGray, for: .normal)
+////        button.layer.backgroundColor = UIColor.white.withAlphaComponent(0.75).cgColor
+//        button.layer.borderColor = UIColor.red.cgColor
+//        button.layer.borderWidth = 0
+//        button.layer.cornerRadius = 10
+//        button.translatesAutoresizingMaskIntoConstraints = true
+//        button.layer.masksToBounds = true
+//        return button
+//    }()
+//
+//    func didTapMultSelect() {
+//        self.singleSearch = !self.singleSearch
+//    }
+//
+//    func setupMultSelect() {
+//        self.multSelectButton.backgroundColor = self.singleSearch ? UIColor.lightBackgroundGrayColor() : UIColor.mainBlue()
+//        var fontColor = self.singleSearch ? UIColor.darkGray : UIColor.white
+//    }
+    
     
     
     // SEARCH SELECTIONS
@@ -304,7 +346,7 @@ class LegitSearchViewControllerNew: UIViewController {
     }
 
     @objc func keyboardWillHide(notification: Notification) {
-        print("Notification: Keyboard will hide")
+//        print("Notification: Keyboard will hide")
         tableView.setBottomInset(to: 0.0)
     }
     
@@ -313,8 +355,8 @@ class LegitSearchViewControllerNew: UIViewController {
 //        self.viewFilter.filterLocationName = self.selectedPlace
 //        self.viewFilter.filterLocationSummaryID = self.selectedCity
 //        self.viewFilter.filterCaption = self.searchText
-        self.searchTerms = self.viewFilter.searchTerms
-        self.searchTermsType = self.viewFilter.searchTermsType
+        self.searchTerms = self.searchViewFilter.searchTerms
+        self.searchTermsType = self.searchViewFilter.searchTermsType
 
         let searchTitle = (self.searchTerms.count > 0 ? (" " + String(self.searchTerms.count)) : "")
         self.navRefreshButton.setTitle(searchTitle, for: .normal)
@@ -387,9 +429,14 @@ class LegitSearchViewControllerNew: UIViewController {
         searchView.addSubview(searchBarView)
         searchBarView.anchor(top: searchTermView.bottomAnchor, left: searchView.leftAnchor, bottom: nil, right: searchView.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
 
+        searchBarView.addSubview(singleSearchButton)
+        singleSearchButton.anchor(top: nil, left: searchBarView.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 60, height: 35)
+        setupSingleSearchButton()
+        
         setupSearch()
         searchBarView.addSubview(searchBar)
-        searchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: searchBarView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
+        searchBar.anchor(top: searchBarView.topAnchor, left: singleSearchButton.rightAnchor, bottom: searchBarView.bottomAnchor, right: searchBarView.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
+        singleSearchButton.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor).isActive = true
 
         
         let searchSegmentView = UIView()
@@ -494,7 +541,6 @@ class LegitSearchViewControllerNew: UIViewController {
     }
     
     @objc func didTapCancel() {
-        print("Did Tap Cancel | Exit Search")
         dismissView()
     }
     
@@ -623,9 +669,9 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
             }
             var displayFilter = "\(searchType) \n \(searchTypeText)"
 
-            if index == 2 && self.viewFilter.filterLocationName != nil {
+            if index == 2 && self.searchViewFilter.filterLocationName != nil {
                 displayFilter = displayFilter + "❗️"
-            } else if index == 3 && self.viewFilter.filterLocationSummaryID != nil {
+            } else if index == 3 && self.searchViewFilter.filterLocationSummaryID != nil {
                 displayFilter = displayFilter + "❗️"
             }
             searchSegment.setTitle(displayFilter, forSegmentAt: index)
@@ -646,7 +692,7 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
         print("Search Tapped | \(searchBar.text)")
         if !(searchBar.text?.isEmptyOrWhitespace())! {
             if let text = searchBar.text {
-                self.viewFilter.filterCaptionArray.append(text)
+                self.searchViewFilter.filterCaptionArray.append(text)
             }
         }
 //        self.searchText = searchBar.text
@@ -654,7 +700,10 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        print("Cancel Tapped | Dismiss Search View")
+        if let filter = self.inputViewFilter {
+            self.searchViewFilter = self.inputViewFilter!
+        }
+        print("Cancel Tapped | Dismiss Search View| \(self.searchViewFilter.searchTerms), \(self.inputViewFilter?.searchTerms)")
         dismissView()
     }
     
@@ -769,6 +818,7 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
     }
     
     func restoreDefaultSearch() {
+        self.searchBar.text = ""
         self.filteredEmojis = self.displayEmojis
         self.filteredCuisines = self.displayCuisines
         self.filteredPlaces = self.displayPlaces
@@ -891,23 +941,23 @@ extension LegitSearchViewControllerNew: UICollectionViewDelegate, UICollectionVi
 //        }
 //        self.refreshSearchTerm()
 
-        print("didRemoveTag | Remove Search | \(tag) | Caption | \(self.viewFilter.filterCaption)")
+        print("didRemoveTag | Remove Search | \(tag) | Caption | \(self.searchViewFilter.filterCaption) | LegitSearchViewController")
     }
     
     func didRemoveLocationFilter(location: String) {
-        if self.viewFilter.filterLocationName?.lowercased() == location.lowercased() {
-            self.viewFilter.filterLocationName = nil
-        } else if self.viewFilter.filterLocationSummaryID?.lowercased() == location.lowercased() {
-            self.viewFilter.filterLocationSummaryID = nil
+        if self.searchViewFilter.filterLocationName?.lowercased() == location.lowercased() {
+            self.searchViewFilter.filterLocationName = nil
+        } else if self.searchViewFilter.filterLocationSummaryID?.lowercased() == location.lowercased() {
+            self.searchViewFilter.filterLocationSummaryID = nil
         }
         self.refreshSearchTerm()
     }
     
     func didRemoveRatingFilter(rating: String) {
         if extraRatingEmojis.contains(rating) {
-            self.viewFilter.filterRatingEmoji = nil
+            self.searchViewFilter.filterRatingEmoji = nil
         } else if rating.contains("⭐️") {
-            self.viewFilter.filterMinRating = 0
+            self.searchViewFilter.filterMinRating = 0
         }
         self.refreshSearchTerm()
     }
@@ -939,7 +989,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
         Database.sortEmojisWithCounts(inputEmojis: allEmojis, emojiCounts: curEmojiCounts, defaultCounts: defaultCounts, dictionaryMatch: false, sort: true) { (foodEmojis) in
             var tempEmojis = foodEmojis
             
-            for x in self.viewFilter.searchTerms {
+            for x in self.searchViewFilter.searchTerms {
                 if let index = tempEmojis.firstIndex(where: { (emoji) -> Bool in
                     return (emoji.emoji == x) || (emoji.name == x)
                 }) {
@@ -968,7 +1018,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             
             var sortedEmojis = userEmojis
                         
-            for x in self.viewFilter.searchTerms {
+            for x in self.searchViewFilter.searchTerms {
                 if let index = sortedEmojis.firstIndex(where: { (emoji) -> Bool in
                     return (emoji.emoji == x) || (emoji.name == x)
                 }) {
@@ -977,7 +1027,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 }
             }
             
-            if !self.viewFilter.isFiltering {
+            if !self.searchViewFilter.isFiltering {
                 // RANK FOR MEAL EMOJIS FIRST
                 for x in mealEmojisSelect.reversed() {
                     if (curEmojiCounts[x] ?? 0) > 0 {
@@ -1002,7 +1052,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             
             var sortedEmojis = ratingEmojis
                         
-            for x in self.viewFilter.searchTerms {
+            for x in self.searchViewFilter.searchTerms {
                 if let index = sortedEmojis.firstIndex(where: { (emoji) -> Bool in
                     return (emoji.emoji == x) || (emoji.name == x)
                 }) {
@@ -1024,7 +1074,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             tempPlace.append(y)
         }
         
-        for x in self.viewFilter.searchTerms {
+        for x in self.searchViewFilter.searchTerms {
             if let index = tempPlace.firstIndex(of: x) {
                 let temp = tempPlace.remove(at: index)
                 tempPlace.insert(temp, at: 0)
@@ -1049,7 +1099,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             tempLocation.append(y)
         }
         
-        for x in self.viewFilter.searchTerms {
+        for x in self.searchViewFilter.searchTerms {
             if let index = tempLocation.firstIndex(of: x) {
                 let temp = tempLocation.remove(at: index)
                 tempLocation.insert(temp, at: 0)
@@ -1162,7 +1212,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
 
             cell.postCount = termCount
             cell.defaultPostCount = termCountDefault
-            cell.isSelected = self.viewFilter.searchTerms.contains(termString)
+            cell.isSelected = self.searchViewFilter.searchTerms.contains(termString)
         } else {
             
             let selectedSegment = LegitSearchBarOptions[self.selectedSearchSegmentIndex!]
@@ -1173,7 +1223,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 cell.postCount = self.currentPostTagCounts.allCounts[displayTerm.emoji] ?? 0 + (self.currentPostTagCounts.allCounts[displayTerm.name!] ?? 0)
                 cell.defaultPostCount = self.noFilterTagCounts.allCounts[displayTerm.emoji] ?? 0 + (self.noFilterTagCounts.allCounts[displayTerm.name!] ?? 0)
     //            cell.isSelected = (self.searchText?.contains(displayTerm.emoji) ?? false) || (self.searchText?.contains(displayTerm.name ?? "     ") ?? false)
-                cell.isSelected = self.viewFilter.searchTerms.contains(displayTerm.emoji) || self.viewFilter.searchTerms.contains(displayTerm.name!)
+                cell.isSelected = self.searchViewFilter.searchTerms.contains(displayTerm.emoji) || self.searchViewFilter.searchTerms.contains(displayTerm.name!)
     //            cell.tempView.backgroundColor = cell.isSelected ? UIColor.mainBlue().withAlphaComponent(0.2) : UIColor.white
 
             }
@@ -1184,7 +1234,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 cell.postCount = self.currentPostTagCounts.allCounts[displayTerm.emoji] ?? 0 + (self.currentPostTagCounts.allCounts[displayTerm.name!] ?? 0)
                 cell.defaultPostCount = self.noFilterTagCounts.allCounts[displayTerm.emoji] ?? 0 + (self.noFilterTagCounts.allCounts[displayTerm.name!] ?? 0)
                 
-                cell.isSelected = self.viewFilter.searchTerms.contains(displayTerm.emoji) || self.viewFilter.searchTerms.contains(displayTerm.name!)
+                cell.isSelected = self.searchViewFilter.searchTerms.contains(displayTerm.emoji) || self.searchViewFilter.searchTerms.contains(displayTerm.name!)
                 cell.tempView.backgroundColor = UploadPostTypeEmojis.contains(displayTerm.emoji) ? UIColor.gray : UIColor.ianLightGrayColor()
                 print(UploadPostTypeEmojis.contains(displayTerm.emoji), displayTerm)
 
@@ -1198,7 +1248,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 cell.locationName = curLabel
                 cell.postCount = self.currentPostTagCounts.allCounts[curLabel] ?? 0
                 cell.defaultPostCount = self.noFilterTagCounts.allCounts[curLabel] ?? 0
-                cell.isSelected = (curLabel == self.viewFilter.filterLocationName)
+                cell.isSelected = (curLabel == self.searchViewFilter.filterLocationName)
 
     //            cell.isSelected = (curLabel == self.viewFilter.filterLocationName)
     //            cell.tempView.backgroundColor = cell.isSelected ? UIColor.mainBlue().withAlphaComponent(0.2) : UIColor.white
@@ -1210,7 +1260,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 cell.locationName = curLabel
                 cell.postCount = self.currentPostTagCounts.allCounts[curLabel] ?? 0
                 cell.defaultPostCount = self.noFilterTagCounts.allCounts[curLabel] ?? 0
-                cell.isSelected = (curLabel == self.viewFilter.filterLocationSummaryID)
+                cell.isSelected = (curLabel == self.searchViewFilter.filterLocationSummaryID)
 
     //            cell.isSelected = (curLabel == self.viewFilter.filterLocationSummaryID)
     //            cell.tempView.backgroundColor = cell.isSelected ? UIColor.mainBlue().withAlphaComponent(0.2) : UIColor.white
@@ -1225,7 +1275,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                     cell.emoji = displayTerm
                     cell.postCount = self.currentPostTagCounts.allCounts[displayTerm.emoji] ?? 0 + (self.currentPostTagCounts.allCounts[displayTerm.name!] ?? 0)
                     cell.defaultPostCount = self.noFilterTagCounts.allCounts[displayTerm.emoji] ?? 0 + (self.noFilterTagCounts.allCounts[displayTerm.name!] ?? 0)
-                    cell.isSelected = self.viewFilter.searchTerms.contains(displayTerm.emoji) || self.viewFilter.searchTerms.contains(displayTerm.name!)
+                    cell.isSelected = self.searchViewFilter.searchTerms.contains(displayTerm.emoji) || self.searchViewFilter.searchTerms.contains(displayTerm.name!)
                     return cell
                 }
                 
@@ -1236,7 +1286,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                     var currentStarRating = self.currentStarRatingSequence[curIndex]
                     cell.selectPostStarRating = currentStarRating
                     cell.postCount = self.currentRatingCounts[self.currentStarRatingSequence[curIndex]] ?? 0
-                    cell.isSelected = self.viewFilter.searchTerms.contains("\(currentStarRating) ⭐️")
+                    cell.isSelected = self.searchViewFilter.searchTerms.contains("\(currentStarRating) ⭐️")
                     return cell
                 }
             }
@@ -1268,14 +1318,14 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                     self.addEmojiToSearchTerm(inputEmoji: tempEmoji)
                 }
             } else if searchType == SearchPlace {
-                self.viewFilter.filterLocationName = searchTerm
+                self.searchViewFilter.filterLocationName = searchTerm
                 self.refreshSearchTerm()
 
                 if self.singleSearch {
                     self.handleFilter()
                 }
             } else if searchType == SearchCity {
-                self.viewFilter.filterLocationSummaryID = searchTerm
+                self.searchViewFilter.filterLocationSummaryID = searchTerm
                 self.refreshSearchTerm()
 
                 if self.singleSearch {
@@ -1310,7 +1360,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 
             else if searchType == SearchRestaurantImage {
                 let curLabel = isFiltering ? filteredPlaces[indexPath.row] : displayPlaces[indexPath.row]
-                self.viewFilter.filterLocationName = curLabel
+                self.searchViewFilter.filterLocationName = curLabel
                 self.refreshSearchTerm()
 
                 if self.singleSearch {
@@ -1321,7 +1371,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 
             else if searchType == SearchCityImage {
                 let curLabel = isFiltering ? filteredCity[indexPath.row] : displayCity[indexPath.row]
-                self.viewFilter.filterLocationSummaryID = curLabel
+                self.searchViewFilter.filterLocationSummaryID = curLabel
                 self.refreshSearchTerm()
                 if self.singleSearch {
                     self.handleFilter()
@@ -1336,12 +1386,12 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                     let displayTerm = self.displayRatingEmojis[indexPath.row]
                     let typeName = displayTerm.name ?? ""
                     let typeEmoji = displayTerm.emoji ?? ""
-                    self.viewFilter.filterRatingEmoji = typeEmoji
+                    self.searchViewFilter.filterRatingEmoji = typeEmoji
                     self.handleFilter()
                 } else if indexPath.row < self.displayRatingEmojis.count + self.currentRatingCounts.count {
                     let curIndex = indexPath.row - self.displayRatingEmojis.count
                     let selectedRating = self.currentStarRatingSequence[curIndex]
-                    self.viewFilter.filterMinRating = Double(selectedRating)
+                    self.searchViewFilter.filterMinRating = Double(selectedRating)
                     self.handleFilter()
                 }
     //            if self.singleSearch {
@@ -1381,7 +1431,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             return
         }
         
-        var tempArray = self.viewFilter.filterTypeArray
+        var tempArray = self.searchViewFilter.filterTypeArray
         
         if tempArray.count == 0 {
             tempArray.append(term)
@@ -1398,11 +1448,11 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
         }
     
     // CLEAN UP
-        self.viewFilter.filterTypeArray = tempArray
+        self.searchViewFilter.filterTypeArray = tempArray
         self.searchBar.text = ""
         self.restoreDefaultSearch()
         self.refreshSearchTerm()
-        print("addToSearchType \(term) | \(self.searchTerms) | NOW: \(self.viewFilter.filterTypeArray)")
+        print("addToSearchType \(term) | \(self.searchTerms) | NOW: \(self.searchViewFilter.filterTypeArray)")
     
     }
     
@@ -1411,23 +1461,23 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             return
         }
         
-        if self.viewFilter.filterRatingEmoji == term {
-            self.viewFilter.filterRatingEmoji = nil
+        if self.searchViewFilter.filterRatingEmoji == term {
+            self.searchViewFilter.filterRatingEmoji = nil
         } else {
-            self.viewFilter.filterRatingEmoji = term
+            self.searchViewFilter.filterRatingEmoji = term
         }
     
     // CLEAN UP
         self.searchBar.text = ""
         self.restoreDefaultSearch()
         self.refreshSearchTerm()
-        print("addToSearchType \(term) | \(self.searchTerms) | NOW: \(self.viewFilter.filterTypeArray)")
+        print("addToSearchType \(term) | \(self.searchTerms) | NOW: \(self.searchViewFilter.filterTypeArray)")
     
     }
     
     func singleSearchEmojiTerm(inputEmoji: Emoji?) {
         guard let emoji = inputEmoji?.emoji else {return}
-        var tempArray = self.viewFilter.filterCaptionArray
+        var tempArray = self.searchViewFilter.filterCaptionArray
         
         if tempArray.contains(emoji) {
             tempArray.removeAll { (text) -> Bool in
@@ -1437,14 +1487,14 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             tempArray = [emoji]
         }
 
-        self.viewFilter.filterCaptionArray = tempArray
+        self.searchViewFilter.filterCaptionArray = tempArray
         self.handleFilter()
         print("singleSearchEmojiTerm \(emoji)")
     }
     
     func addEmojiToSearchTerm(inputEmoji: Emoji?) {
         guard let emoji = inputEmoji?.emoji else {return}
-        var oldSearch = self.viewFilter.filterCaptionArray
+        var oldSearch = self.searchViewFilter.filterCaptionArray
         /*
         guard let oriSearch = self.searchText else {
             self.searchText = emoji
@@ -1467,7 +1517,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
         }
         */
         
-        var tempArray = self.viewFilter.filterCaptionArray
+        var tempArray = self.searchViewFilter.filterCaptionArray
         
         if tempArray.count == 0 {
             tempArray.append(emoji)
@@ -1485,8 +1535,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 
     
     // CLEAN UP
-        self.viewFilter.filterCaptionArray = tempArray
-        self.searchBar.text = ""
+        self.searchViewFilter.filterCaptionArray = tempArray
         self.restoreDefaultSearch()
         self.refreshSearchTerm()
         print("addEmojiToSearchTerm \(emoji) | NEW: \(self.searchTerms) | OLD: \(oldSearch)")
@@ -1510,8 +1559,8 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
 //        }
 //
 //        self.viewFilter.filterLocationSummaryID = self.selectedCity
-        print("Filtering For \(self.viewFilter.searchTerms)")
-        self.delegate?.filterControllerSelected(filter: self.viewFilter)
+        print("Filtering For \(self.searchViewFilter.searchTerms)")
+        self.delegate?.filterControllerSelected(filter: self.searchViewFilter)
         dismissView()
     }
     
@@ -1526,7 +1575,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
 //        self.selectedCity = nil
         self.searchText = nil
         self.searchTerms = []
-        self.viewFilter.clearFilter()
+        self.searchViewFilter.clearFilter()
         self.refreshSearchTerm()
     }
 
@@ -1540,7 +1589,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             var font: UIFont?
             var textColor: UIColor?
             
-            if viewFilter.isFiltering {
+            if searchViewFilter.isFiltering {
                 text = "Couldn't Find Anything Legit"
             } else {
                 text = ""
@@ -1571,7 +1620,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             font = UIFont(name: "Poppins-Regular", size: 15)
             textColor = UIColor.ianBlackColor()
             
-            if viewFilter.isFiltering {
+            if searchViewFilter.isFiltering {
                 text = "Nothing Legit Here! 😭"
             } else {
                 text = ""
@@ -1598,7 +1647,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             var font: UIFont?
             var textColor: UIColor?
             
-            if viewFilter.isFiltering {
+            if searchViewFilter.isFiltering {
                 text = "Search For Something Else"
             } else {
                 text = "Click to Discover New Things"
@@ -1634,7 +1683,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
         }
         
         func emptyDataSet(_ scrollView: UIScrollView, didTapButton button: UIButton) {
-            if viewFilter.isFiltering {
+            if searchViewFilter.isFiltering {
 //                self.openFilter()
             } else {
                 // Returns To Home Tab

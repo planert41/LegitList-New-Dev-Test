@@ -278,7 +278,7 @@ class LegitSearchViewController: UIViewController {
     }
 
     @objc func keyboardWillHide(notification: Notification) {
-        print("Notification: Keyboard will hide")
+//        print("Notification: Keyboard will hide")
         tableView.setBottomInset(to: 0.0)
     }
     

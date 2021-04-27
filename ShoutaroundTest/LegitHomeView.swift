@@ -90,7 +90,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     // SORT SEARCH
     let searchViewController = LegitSearchViewControllerNew()
-    var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort)
+    var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort) {
+        didSet {
+            print("Home viewFilter Check: ", viewFilter.searchTerms)
+        }
+    }
     
     
     static let finishFetchingPostIdsNotificationName = NSNotification.Name(rawValue: "HomeFinishFetchingPostIds")
@@ -401,8 +405,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
 
         view.addSubview(navMapButton)
-        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
-//        navMapButton.anchor(top: nil, left: sortSegmentControl.leftAnchor, bottom: sortSegmentControl.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+//        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+        navMapButton.anchor(top: nil, left: newPostButton.leftAnchor, bottom: newPostButton.topAnchor, right: newPostButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 40)
 
         navMapButton.layer.cornerRadius = 30/2
         navMapButton.layer.masksToBounds = true
@@ -962,7 +966,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     
     func setupSearchView() {
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.searchViewFilter = self.viewFilter
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts
         searchViewController.currentRatingCounts = self.currentPostRatingCounts
@@ -972,13 +976,15 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     
     func didTapSearchButton() {
         print("Tap Search | \(self.currentPostsFilterTagCounts.count) Tags | \(self.viewFilter.searchTerms)")
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
+//        searchViewController.searchViewFilter = self.viewFilter
 //        search.noCaptionFilterTagCounts = self.noCaptionFilterTagCounts
 //        search.currentPostsFilterTagCounts = self.currentPostsFilterTagCounts
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts
         searchViewController.currentRatingCounts = self.currentPostRatingCounts
         searchViewController.searchBar.text = ""
+        searchViewController.singleSearch = !(self.viewFilter.searchTerms.count > 1)
         searchViewController.viewWillAppear(true)
 //        let testNav = UINavigationController(rootViewController: search)
 //
@@ -1108,7 +1114,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
         } else if tag == self.viewFilter.filterLocationName {
             self.viewFilter.filterLocationName = nil
             self.viewFilter.filterGoogleLocationID = nil
-            print("Remove Search | \(tag) | Location | \(self.viewFilter.filterLocationName)")
+            print("Remove Search | \(tag) | Location | \(self.viewFilter.filterLocationName) | LegitHomeView")
 
         } else if self.viewFilter.filterCaptionArray.count > 0 {
             

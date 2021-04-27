@@ -196,7 +196,7 @@ class NewLocationController: UICollectionViewController, UICollectionViewDelegat
     
     func setupSearchView() {
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts
         searchViewController.currentRatingCounts = self.currentPostRatingCounts
@@ -769,7 +769,7 @@ extension NewLocationController: EmptyCellDelegate, TestGridPhotoCellDelegate, F
     func didTapSearchButton() {
         print("Tap Search | \(self.displayedPosts.count) Tags | \(self.viewFilter.searchTerms)")
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
 
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts

@@ -952,8 +952,22 @@ extension Database{
         }
     }
     
-    static func fetchUserWithUsername( username: String, completion: @escaping (User?, Error?) -> ()) {
+    static func fetchUserWithUsername(username: String, completion: @escaping (User?, Error?) -> ()) {
+        var tempUserName = "@"
+        tempUserName += username.replacingOccurrences(of: "@", with: "").capitalizingFirstLetter()
         
+        
+        
+        var cacheUserFound = userCache.first { (uid, user) -> Bool in
+            return user.username == username
+        }?.value
+        
+        if let cacheUser = cacheUserFound {
+            print("Found Cache User For \(username) : \(cacheUser.uid) - \(cacheUser.username) | fetchUserWithUsername")
+            completion(cacheUser, nil)
+            return
+        }
+
         let myGroup = DispatchGroup()
         var query = Database.database().reference().child("users").queryOrdered(byChild: "username").queryEqual(toValue: username)
         var user: User?
@@ -973,6 +987,7 @@ extension Database{
                 myGroup.leave()
             })
             myGroup.notify(queue: .main) {
+                print("Found User For \(username) : \(user!.uid) | fetchUserWithUsername")
                 completion(user!, nil)
             }
         }) { (err) in

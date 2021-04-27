@@ -230,7 +230,7 @@ class SingleUserProfileViewController: UIViewController {
         return button
     }()
     
-    func didTapNavShare(){
+    @objc func didTapNavShare(){
         let messageController = MessageController()
         guard let user = self.displayUser else {return}
         messageController.respondUser = [user]
@@ -479,7 +479,7 @@ class SingleUserProfileViewController: UIViewController {
 
     func setupSearchView() {
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts
         searchViewController.currentRatingCounts = self.currentPostRatingCounts
@@ -1310,7 +1310,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     func didTapSearchButton() {
         print("Tap Search | \(self.displayedPosts.count) Tags | \(self.viewFilter.searchTerms)")
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
 
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts

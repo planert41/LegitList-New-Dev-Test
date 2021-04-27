@@ -967,7 +967,7 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
     
     func setupSearchView() {
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts
         searchViewController.currentRatingCounts = self.currentPostRatingCounts
@@ -978,7 +978,7 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
     func didTapSearchButton() {
         print("Tap Search | \(self.currentPostsFilterTagCounts.count) Tags | \(self.viewFilter.searchTerms)")
         searchViewController.delegate = self
-        searchViewController.viewFilter = self.viewFilter
+        searchViewController.inputViewFilter = self.viewFilter
         searchViewController.noFilterTagCounts = self.noFilterTagCounts
         searchViewController.currentPostTagCounts = self.currentPostTagCounts
         searchViewController.searchBar.text = ""

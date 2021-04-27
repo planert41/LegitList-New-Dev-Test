@@ -824,7 +824,7 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
             print("Searching for: \(tempText)")
             
             tempText = tempText.removingWhitespaces()
-            tempText = tempText.lowercased()
+//            tempText = tempText.lowercased()
             
             // Check is blank
             if tempText.isEmptyOrWhitespace(){
@@ -843,7 +843,6 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
             } else {
                 // Check if is a user
                 Database.fetchUserWithUsername(username: tempText, completion: { (fetchedUser, error) in
-                   
                     var user: User?
                     var userId: String!
                     
