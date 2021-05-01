@@ -621,6 +621,7 @@ class SingleListViewHeader: UICollectionViewCell {
         navMapButton.layer.masksToBounds = true
         navMapButton.addTarget(self, action: #selector(didTapMapButton), for: .touchUpInside)
         navMapButton.alpha = 0.8
+        navMapButton.isHidden = true
             
         
     // ACTION BAR

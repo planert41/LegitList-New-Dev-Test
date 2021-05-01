@@ -556,7 +556,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
         navMapButton.layer.cornerRadius = 30/2
         navMapButton.layer.masksToBounds = true
         navMapButton.addTarget(self, action: #selector(didTapMapButton), for: .touchUpInside)
-        
+        navMapButton.isHidden = true
         
         
 //        postCountHeaderView.addSubview(navMapButton)

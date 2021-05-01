@@ -25,6 +25,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     var fetchedPostIds: [PostId] = []
     var displayedPosts: [Post] = []
     var tempSearchBarText: String? = nil
+    var isFetchingPosts = false
+    var setListener = false
 
     
     var fetchTypeInd: String = HomeFetchDefault {
@@ -282,6 +284,9 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: LegitHomeView.searchRefreshNotificationName, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(didTapHomeButton), name: MainTabBarController.tapHomeTabBarButtonNotificationName, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
+
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
 //
@@ -422,6 +427,39 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         setupSearchView()
 
 
+    }
+    
+    @objc func newUserPost(_ notification: NSNotification) {
+        
+        let tpostId = notification.userInfo?["postId"] as? String
+        let tuserId = notification.userInfo?["uid"] as? String
+        print("New User Post Notification ", tuserId, tpostId)
+        
+        
+        if self.isFetchingPosts {return}
+        if self.fetchTypeInd == HomeFetchOptions[0] {
+            if let postId = notification.userInfo?["postId"] as? String {
+                if !self.fetchedPostIds.contains(where: { (curPostId) -> Bool in
+                    return curPostId.id == postId
+                }) {
+                    self.refreshPostsForSearch()
+                    print("NEW FOLLOWING POST, REFRESHING ", postId )
+                }
+            }
+        } else if self.fetchTypeInd == HomeFetchOptions[2] {
+            if let userId = notification.userInfo?["uid"] as? String {
+                if self.fetchUser?.uid == userId {
+                    if let postId = notification.userInfo?["postId"] as? String {
+                        if !self.fetchedPostIds.contains(where: { (curPostId) -> Bool in
+                            return curPostId.id == postId
+                        }) {
+                            self.refreshPostsForSearch()
+                            print("NEW USER POST, REFRESHING ", userId )
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func setupSegmentControl() {
@@ -1680,7 +1718,12 @@ extension LegitHomeView {
     // CALLING FUNCTIONS
 
     func fetchPostIds(){
-        
+        if self.isFetchingPosts {
+            print("Is Fetching Post")
+            return
+        } else {
+            self.isFetchingPosts = true
+        }
         self.showFetchProgressDetail()
         
     // FETCHING FRIENDS
@@ -1856,6 +1899,15 @@ extension LegitHomeView {
             self.fetchedPostIds = postIds
             NotificationCenter.default.post(name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
             
+            // SET LISTENER ONCE AFTER FETCHING POSTS
+            if !self.setListener {
+                if CurrentUser.followingUids.count > 0 {
+                    Database.setupUserFollowingListener(uids: CurrentUser.followingUids)
+                    print(" 3 | FETCH_CURRENT_USER | Setup Listeners for \(CurrentUser.followingUids.count) Following Users")
+                    self.setListener = true
+                }
+            }
+            
         }
     }
     
@@ -2002,6 +2054,7 @@ extension LegitHomeView {
 
     @objc func fetchSortFilterPosts(){
         Database.fetchAllPosts(fetchedPostIds: self.fetchedPostIds, completion: { (firebaseFetchedPosts) in
+            self.isFetchingPosts = false
             self.displayedPosts = firebaseFetchedPosts
             self.filterSortFetchedPosts()
         })

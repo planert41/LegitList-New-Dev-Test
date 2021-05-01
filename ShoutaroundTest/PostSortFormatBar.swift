@@ -51,13 +51,16 @@ class PostSortFormatBar: UIView{
         button.setImage(icon, for: .normal)
         button.layer.borderColor = UIColor.ianLegitColor().cgColor
         button.layer.borderWidth = 1
+        button.layer.cornerRadius = 30/2
+        button.layer.masksToBounds = true
         button.clipsToBounds = true
         button.contentHorizontalAlignment = .center
         button.backgroundColor = UIColor.ianWhiteColor()
+        button.backgroundColor = UIColor.lightBackgroundGrayColor()
 //        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         button.tintColor = UIColor.ianLegitColor()
-        button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 13)
-        button.setTitleColor(UIColor.gray, for: .normal)
+        button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 14)
+        button.setTitleColor(UIColor.ianLegitColor(), for: .normal)
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
         button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
         button.imageView?.contentMode = .scaleAspectFit
@@ -97,20 +100,9 @@ class PostSortFormatBar: UIView{
         navMapButtonWidth = navMapButton.widthAnchor.constraint(equalToConstant: 90)
         navMapButtonWidth?.isActive = true
         navMapButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
-        //        navMapButton.leftAnchor.constraint(lessThanOrEqualTo: sortSegmentControl.rightAnchor, constant: 15).isActive = true
-        //        navMapButton.layer.cornerRadius = 50/2
-        navMapButton.layer.cornerRadius = 20/2
-        navMapButton.layer.masksToBounds = true
 //        navMapButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
 //        navMapButton.isHidden = true
-        navMapButton.backgroundColor = UIColor.lightBackgroundGrayColor()
-        navMapButton.setTitle(" Map It", for: .normal)
-        navMapButton.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 13)
         //        navMapButton.alpha = 0.8
-        navMapButton.tintColor = UIColor.gray
-        navMapButton.titleLabel?.textColor = UIColor.gray
-        navMapButton.layer.borderColor = navMapButton.tintColor.cgColor
-        navMapButton.layer.borderWidth = 1
         //        navMapButton.rightAnchor.constraint(lessThanOrEqualTo: barView.rightAnchor, constant: 20).isActive = true
 
 

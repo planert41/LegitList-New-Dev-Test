@@ -129,15 +129,23 @@ class SingleUserProfileViewController: UIViewController {
     var showNewPostButton = false {
         didSet {
             self.toggleNewPostButton()
-            self.navMapButton.isHidden = true
         }
     }
     
     func toggleNewPostButton() {
         if self.showNewPostButton && displayUser?.uid == Auth.auth().currentUser?.uid {
             self.newPostButton.isHidden = false
+            self.navMapButtonPosition?.constant = 50
+//            self.navMapButtonWithNewPostPosition?.isActive = true
+            
+
+//            self.navMapButtonPosition = self.navMapButton.bottomAnchor.constraint(equalTo: self.newPostButton.topAnchor, constant: 10)
         } else {
             self.newPostButton.isHidden = true
+            self.navMapButtonPosition?.constant = 0
+//            self.navMapButtonPosition?.isActive = true
+//            self.navMapButtonWithNewPostPosition?.isActive = false
+//            self.navMapButtonPosition = self.navMapButton.bottomAnchor.constraint(equalTo: bottomLayoutGuide.topAnchor, constant: 10)
         }
     }
     
@@ -231,11 +239,25 @@ class SingleUserProfileViewController: UIViewController {
     }()
     
     @objc func didTapNavShare(){
-        let messageController = MessageController()
         guard let user = self.displayUser else {return}
-        messageController.respondUser = [user]
-        if let m = self.navigationController {
-            self.navigationController?.pushViewController(messageController, animated: true)
+
+        
+        // LOOK FOR CURRENT INBOX THREAD
+        var userThread = CurrentUser.inboxThreads.first { (thread) -> Bool in
+            return thread.threadUserUids.contains(user.uid)
+        }
+        
+        if let tempThread = userThread {
+            print("Found Current Inbox Thread with \(user.username): \(tempThread.threadID) : \(tempThread.threadUserUids)")
+            self.extOpenMessage(message: tempThread, reload: true)
+            return
+        } else {
+            print("Start New Inbox Thread withb \(user.username)")
+            let messageController = MessageController()
+            messageController.respondUser = [user]
+            if let m = self.navigationController {
+                self.navigationController?.pushViewController(messageController, animated: true)
+            }
         }
     }
     
@@ -291,7 +313,7 @@ class SingleUserProfileViewController: UIViewController {
         button.backgroundColor = UIColor.ianWhiteColor()
 //        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         button.tintColor = UIColor.ianLegitColor()
-        button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 10)
+        button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 14)
         button.setTitleColor(UIColor.ianLegitColor(), for: .normal)
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
         button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
@@ -300,21 +322,42 @@ class SingleUserProfileViewController: UIViewController {
         return button
     }()
     
+    var navMapButtonPosition: NSLayoutConstraint?
+    var navMapButtonWithNewPostPosition: NSLayoutConstraint?
+
     
     // MARK: - VIEWDIDLOAD
 
     override func viewWillAppear(_ animated: Bool) {
         setupNavigationItems()
+        toggleNewPostButton()
         
         // KEYBOARD TAPS TO EXIT INPUT
         self.keyboardTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: MainTabBarController.newUserPost, object: nil)
+    }
+    
+    @objc func newUserPost(_ notification: NSNotification) {
+        if let userId = notification.userInfo?["uid"] as? String {
+            if self.displayUserId == userId || self.displayUser?.uid == userId {
+                if let postId = notification.userInfo?["postId"] as? String {
+                    if !self.fetchedPosts.contains(where: { (post) -> Bool in
+                        return post.id == postId
+                    }) {
+                        self.fetchPostsForUser()
+                        print("NEW USER POST REFRESING ", userId , postId, "ProfileView")
+                    }
+                }
+            }
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -380,16 +423,22 @@ class SingleUserProfileViewController: UIViewController {
         let headerTitle = NSAttributedString(string: "📷  New Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
 
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
-        toggleNewPostButton()
+//        toggleNewPostButton()
 
  
         
         view.addSubview(navMapButton)
-        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 10, width: 120, height: 40)
+        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 10, width: 120, height: 40)
         navMapButton.layer.cornerRadius = 30/2
         navMapButton.layer.masksToBounds = true
         navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
-        navMapButton.isHidden = true
+//        navMapButton.isHidden = true
+        navMapButtonPosition = navMapButton.bottomAnchor.constraint(equalTo: sortSegmentControl.bottomAnchor, constant: 0)
+//        navMapButtonWithNewPostPosition = navMapButton.bottomAnchor.constraint(equalTo: sortSegmentControl.bottomAnchor, constant: 60)
+//        toggleNewPostButton()
+        navMapButtonPosition?.isActive = true
+
+
         
         self.view.addSubview(searchViewController.view)
         searchViewController.view.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

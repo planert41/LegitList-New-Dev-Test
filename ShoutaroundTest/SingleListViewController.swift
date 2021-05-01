@@ -166,6 +166,30 @@ class SingleListViewController: UIViewController {
     
     
     
+    lazy var navMapButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+//        let icon = #imageLiteral(resourceName: "google_color").withRenderingMode(.alwaysOriginal)
+//        let icon = #imageLiteral(resourceName: "location_color").withRenderingMode(.alwaysOriginal)
+        let icon = #imageLiteral(resourceName: "map").withRenderingMode(.alwaysTemplate)
+
+        button.setTitle(" Map Posts", for: .normal)
+        button.setImage(icon, for: .normal)
+        button.layer.borderColor = UIColor.ianLegitColor().cgColor
+        button.layer.borderWidth = 1
+        button.clipsToBounds = true
+        button.contentHorizontalAlignment = .center
+        button.backgroundColor = UIColor.lightBackgroundGrayColor()
+//        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+        button.tintColor = UIColor.ianLegitColor()
+        button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 14)
+        button.setTitleColor(UIColor.ianLegitColor(), for: .normal)
+        button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
+        button.imageView?.contentMode = .scaleAspectFit
+
+        return button
+    }()
+    
 //    lazy var navBackButton: UIButton = {
 //        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
 //        let icon = #imageLiteral(resourceName: "back_icon").withRenderingMode(.alwaysTemplate)
@@ -287,11 +311,18 @@ class SingleListViewController: UIViewController {
         self.view.addSubview(postSortFormatBar)
         postSortFormatBar.anchor(top: nil, left: view.leftAnchor, bottom: imageCollectionView.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 40)
 //        postSortFormatBar.navGridToggleButton.isHidden = true
-        postSortFormatBar.navMapButton.isHidden = true
+        postSortFormatBar.navMapButton.isHidden = false
         postSortFormatBar.navMapButton.setTitle(" Map List", for: .normal)
         postSortFormatBar.navMapButtonWidth?.constant = 120
-
-
+        
+//        self.view.addSubview(navMapButton)
+//        navMapButton.anchor(top: nil, left: postSortFormatBar.rightAnchor, bottom: imageCollectionView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+//
+//        navMapButton.layer.cornerRadius = 30/2
+//        navMapButton.layer.masksToBounds = true
+//        navMapButton.clipsToBounds = true
+//        navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
+//        navMapButton.isHidden = true
         
         navBackButton.addTarget(self, action: #selector(handleBackPressNav), for: .touchUpInside)
         self.view.addSubview(navBackButton)

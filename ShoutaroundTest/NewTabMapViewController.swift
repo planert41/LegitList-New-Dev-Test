@@ -94,6 +94,11 @@ class NewTabMapViewController: UIViewController {
 
     let topSearchBar = UserSearchBar()
     
+    var plainViewTap = UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost))
+    var rightCallOutViewTap = UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost))
+    var leftCallOutViewTap = UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost))
+    var mainCallOutViewTap = UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost))
+
     
     func checkAppDelegateFilter(){
 
@@ -1724,6 +1729,13 @@ extension NewTabMapViewController : MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         if let markerView = view as? MapPinMarkerView {
             markerView.markerTintColor = markerView.defaultPinColor
+            
+            markerView.markerTintColor = UIColor.ianLegitColor()
+            markerView.detailCalloutAccessoryView?.removeGestureRecognizer(mainCallOutViewTap)
+            markerView.rightCalloutAccessoryView?.removeGestureRecognizer(rightCallOutViewTap)
+            markerView.leftCalloutAccessoryView?.removeGestureRecognizer(leftCallOutViewTap)
+            markerView.plainView.removeGestureRecognizer(plainViewTap)
+            print("DESELCT Markerview", markerView.glyphText, "| MarkerView | \(markerView.isSelected)")
         }
     }
     
@@ -1750,13 +1762,13 @@ extension NewTabMapViewController : MKMapViewDelegate {
         
         // ADDITIONAL TINT COLOR FOR SELECTED MAP PIN
         if let markerView = view as? MapPinMarkerView {
-            
+                
             markerView.markerTintColor = UIColor.ianLegitColor()
-            markerView.detailCalloutAccessoryView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost)))
-            markerView.rightCalloutAccessoryView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost)))
-            markerView.leftCalloutAccessoryView?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost)))
+            markerView.detailCalloutAccessoryView?.addGestureRecognizer(mainCallOutViewTap)
+            markerView.rightCalloutAccessoryView?.addGestureRecognizer(rightCallOutViewTap)
+            markerView.leftCalloutAccessoryView?.addGestureRecognizer(leftCallOutViewTap)
 //            markerView.plainView.backgroundColor = UIColor.yellow
-            markerView.plainView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost)))
+            markerView.plainView.addGestureRecognizer(plainViewTap)
             markerView.markerTintColor = UIColor.ianLegitColor()
             print(markerView.glyphText, "| MarkerView | \(markerView.isSelected)")
             //            markerView.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(passToSelectedPost)))

@@ -30,7 +30,7 @@ class ListSummaryCell: UICollectionViewCell {
     let listHeaderImageView: CustomImageView = {
         let iv = CustomImageView()
         iv.backgroundColor = .white
-        let img = #imageLiteral(resourceName: "camera_default").withRenderingMode(.alwaysTemplate)
+        let img = #imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate)
         iv.backgroundImage.image = img
         iv.backgroundImage.isHidden = false
         iv.tintColor = UIColor.gray
@@ -94,6 +94,7 @@ class ListSummaryCell: UICollectionViewCell {
             self.listHeaderImageView.backgroundImage.image = img
             self.listHeaderImageView.backgroundImage.isHidden = false
             self.listHeaderImageView.backgroundColor = UIColor.backgroundGrayColor()
+//            self.listHeaderImageView.image = img
 //            self.listHeaderImageView.isListBackground = true
         }
         

@@ -430,12 +430,12 @@ class LegitSearchViewControllerNew: UIViewController {
         searchBarView.anchor(top: searchTermView.bottomAnchor, left: searchView.leftAnchor, bottom: nil, right: searchView.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
 
         searchBarView.addSubview(singleSearchButton)
-        singleSearchButton.anchor(top: nil, left: searchBarView.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 60, height: 35)
+        singleSearchButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 60, height: 35)
         setupSingleSearchButton()
         
         setupSearch()
         searchBarView.addSubview(searchBar)
-        searchBar.anchor(top: searchBarView.topAnchor, left: singleSearchButton.rightAnchor, bottom: searchBarView.bottomAnchor, right: searchBarView.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
+        searchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: singleSearchButton.leftAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
         singleSearchButton.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor).isActive = true
 
         

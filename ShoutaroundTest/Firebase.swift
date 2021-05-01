@@ -136,14 +136,19 @@ extension Database{
             
     // 3. FIND FOLLOWING USERS UIDS
             
-            Database.fetchFollowingUserUids(uid: uid) { (fetchedFollowingUsers) in
-                CurrentUser.followingUids = fetchedFollowingUsers
-                print(" 3 | FETCH_CURRENT_USER |Fetch User Following | \(CurrentUser.user?.username) | \(CurrentUser.followingUids.count) Following Users")
-            }
+//            Database.fetchFollowingUserUids(uid: uid) { (fetchedFollowingUsers) in
+//                CurrentUser.followingUids = fetchedFollowingUsers
+//                print(" 3 | FETCH_CURRENT_USER |Fetch User Following | \(CurrentUser.user?.username) | \(CurrentUser.followingUids.count) Following Users")
+//            }
             
             Database.fetchFollowingUsers(uid: uid) { (followingUsers) in
                 CurrentUser.followingUsers = followingUsers
                 print(" 3 | FETCH_CURRENT_USER |Loaded Users Following | \(CurrentUser.user?.username) | \(CurrentUser.followingUids.count) Following Users")
+                
+//                if CurrentUser.followingUids.count > 0 {
+//                    self.setupUserFollowingListener(uids: CurrentUser.followingUids)
+//                    print(" 3 | FETCH_CURRENT_USER | Setup Listeners for \(CurrentUser.followingUids.count) Following Users")
+//                }
 
             }
             
@@ -175,6 +180,12 @@ extension Database{
                 completion()
 
             }
+            
+    //5. FETCH INBOX
+            Database.fetchMessageThreadsForUID(userUID: uid) { (messageThreads) in
+                CurrentUser.inboxThreads = messageThreads
+            }
+            
         }
             
 //            Database.fetchUserFollowingListEventForUID(uid: uid) { (events) in
@@ -876,6 +887,10 @@ extension Database{
         let myGroup = DispatchGroup()
         myGroup.enter()
         self.fetchFollowingUserUids(uid: uid) { (followingIds) in
+            if uid == CurrentUser.uid {
+                print("Set Following UIDS for Current User :", uid , "fetchFollowingUsers")
+                CurrentUser.followingUids = followingIds
+            }
             if followingIds.count == 0 {
                 completion([])
             } else {
@@ -6466,6 +6481,27 @@ extension Database{
             }
         }
         
+    }
+    
+    static func setupUserFollowingListener(uids: [String]?) {
+        guard let uids = uids else {return}
+        guard let curUid = Auth.auth().currentUser?.uid else {return}
+        var tempUids = uids
+        
+        if !tempUids.contains(curUid) {
+            tempUids.append(curUid)
+        }
+        
+        for uid in tempUids {
+            let userPostEventRef = Database.database().reference().child("userposts").child(uid)
+//            userPostEventRef.queryLimited(toLast: 1)
+            userPostEventRef.queryLimited(toLast: 1).observe(DataEventType.childAdded) { (data) in
+                guard let dictionary = data.value as? [String: Any] else {
+                    return}
+                let userDataDict:[String: String] = ["uid": uid, "postId": data.key]
+                NotificationCenter.default.post(name: MainTabBarController.newUserPost, object: nil, userInfo: userDataDict)
+            }
+        }
     }
     
     static func setupUserFollowedListListener(listIds: [ListId]?){

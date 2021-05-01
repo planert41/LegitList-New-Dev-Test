@@ -47,6 +47,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     static let showLoginScreen = NSNotification.Name(rawValue: "showLoginScreen")
     static let showOnboarding = NSNotification.Name(rawValue: "showOnboarding")
     static let newLocationUpdate = NSNotification.Name(rawValue: "locationUpdate")
+    static let newUserPost = NSNotification.Name(rawValue: "newUserPost")
 
     
     var imagePicker = UIImagePickerController()
