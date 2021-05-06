@@ -49,11 +49,17 @@ class SingleUserProfileViewController: UIViewController {
         }
     }
     
+    var displaySubscription: Bool = false {
+        didSet{
+            setupNavigationItems()
+        }
+    }
     var navNotificationButton: UIButton = TemplateObjects.NavNotificationButton()
     let navBackButton = navBackButtonTemplate.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
     let navMapBarButton = NavBarMapButton.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
     var navInboxButton: UIButton = TemplateObjects.NavInboxButton()
     let addPhotoButton = UIButton()
+    var navSubscriptionButton: UIButton = TemplateObjects.NavSubscriptionButton()
 
     
     let navInboxLabel: UILabel = {
@@ -631,17 +637,22 @@ class SingleUserProfileViewController: UIViewController {
         navInboxButton.addTarget(self, action: #selector(openInbox), for: .touchUpInside)
         let inboxButton = UIBarButtonItem.init(customView: navInboxButton)
         
+        navSubscriptionButton.addTarget(self, action: #selector(openSubscriptions), for: .touchUpInside)
+        let subscribeButton = UIBarButtonItem.init(customView: navSubscriptionButton)
+        
         let userNameButton = UIBarButtonItem.init(customView: usernameNavHeader)
 
         if displayBack {
             self.navigationItem.leftBarButtonItem = backButton
 //            self.navigationItem.leftBarButtonItems = [backButton, userNameButton]
-        } else if self.displayUser?.uid == Auth.auth().currentUser?.uid {
-//            self.navigationItem.leftBarButtonItem = userNameButton
+        } else if self.displayUser?.uid == Auth.auth().currentUser?.uid && self.displaySubscription{
+            self.navigationItem.leftBarButtonItem = subscribeButton
             //self.navigationItem.leftBarButtonItem = inboxButton
         } else {
             self.navigationItem.leftBarButtonItem = UIBarButtonItem()
         }
+        
+        
 
 
 //// RIGHT BAR BUTTON
@@ -680,6 +691,19 @@ class SingleUserProfileViewController: UIViewController {
     
     @objc func didTapAddPhoto() {
         self.extCreateNewPhoto()
+    }
+    
+    @objc func openSubscriptions() {
+        let note = SubscriptionViewController()
+        if self.displayUser?.uid != Auth.auth().currentUser?.uid {
+            self.alert(title: "ERROR", message: "You can't access subscriptions for \(self.displayUser?.username).")
+            return
+        }
+        note.displayUser = self.displayUser
+        note.isPremiumSub = true
+        self.present(note, animated: true) {
+            print("Show Subscription")
+        }
     }
     
     var keyboardTap = UITapGestureRecognizer()

@@ -36,4 +36,5 @@ pod 'FacebookLogin'
 pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
 pod 'Smile'
 pod 'Kingfisher', '~> 5.0'
+pod 'Purchases'
 end

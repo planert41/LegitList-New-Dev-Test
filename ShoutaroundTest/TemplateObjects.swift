@@ -345,6 +345,33 @@ class TemplateObjects {
         }
     }
     
+    class NavSubscriptionButton: UIButton {
+        
+        override init(frame: CGRect) {
+            super.init(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
+//            let iconImage = #imageLiteral(resourceName: "mailbox").withRenderingMode(.alwaysOriginal)
+            let iconImage = #imageLiteral(resourceName: "bookmark_selected").withRenderingMode(.alwaysTemplate)
+            self.setImage(iconImage, for: .normal)
+            self.imageView?.contentMode = .scaleAspectFit
+            
+            self.tintColor = UIColor.darkGray
+            
+            self.setTitleColor(UIColor.darkLegitColor(), for: .normal)
+            self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+            self.setTitle("", for: .normal)
+            self.contentHorizontalAlignment = .center
+            self.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+            
+            self.layer.borderColor = UIColor.ianBlackColor().cgColor
+            self.layer.borderWidth = 0
+            self.layer.cornerRadius = 1
+            self.clipsToBounds = true
+        }
+        
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
     
     
     class StarRating: CosmosView {

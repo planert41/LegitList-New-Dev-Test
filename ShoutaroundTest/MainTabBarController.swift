@@ -488,6 +488,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         let newUserProfile = SingleUserProfileViewController()
         newUserProfile.displayUserId =  Auth.auth().currentUser?.uid
         newUserProfile.showNewPostButton = true
+        newUserProfile.displaySubscription = true
         let userProfileNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "profile_tab_unfilled").withRenderingMode(.alwaysTemplate), selectedImage: #imageLiteral(resourceName: "profile_tab_filled"), title: "Profile", rootViewController: newUserProfile)
 
         

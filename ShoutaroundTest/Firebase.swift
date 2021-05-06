@@ -10240,6 +10240,291 @@ extension Database{
     }
     
     
+// SUBSCRIPTIONS
+    static func createSubscription(transactionId:String?, buyerId: String?, sellerId: String?, price: Double? = 0.0, subPeriod: SubPeriod?, isPremium: Bool = false, completion: @escaping (Subscription?) -> ()){
+        guard let transactionId = transactionId else {self.alert(title: "Purchase ERROR", message: "No Transaction ID")
+            return}
+        guard let buyerId = buyerId else {self.alert(title: "Purchase ERROR", message: "No purchaserId")
+            return}
+        guard let subPeriod = subPeriod else {self.alert(title: "Purchase ERROR", message: "No SubPeriod")
+            return}
+
+        let subRef = Database.database().reference().child("transactions").child(transactionId)
+        
+        var uploadValues:[String:Any] = [:]
+        uploadValues["buyerUID"] = buyerId
+        uploadValues["price"] = price
+
+    // DATES
+        let buyDate = Date().timeIntervalSince1970
+        var dateComponent = DateComponents()
+        if subPeriod == .annual {
+            dateComponent.year = 1
+            uploadValues["subPeriod"] = "annual"
+        } else if subPeriod == .monthly{
+            dateComponent.month = 1
+            uploadValues["subPeriod"] = "monthly"
+        }
+        
+        let expDate = Calendar.current.date(byAdding: dateComponent, to: Date())
+        uploadValues["purchaseDate"] = buyDate
+        uploadValues["expiryDate"] = expDate?.timeIntervalSince1970
+
+
+        if isPremium {
+            // Legit Premium Subscription
+            uploadValues["premiumSub"] = true
+            uploadValues["isRenewable"] = expDate
+        } else if sellerId != nil {
+            // Content Creator Subscription
+            uploadValues["sellerId"] = sellerId
+        }
+        
+        // SAVE EDITED POST IN POST DATABASE
+        subRef.updateChildValues(uploadValues) { (err, ref) in
+            if let err = err {
+                print("Transaction: ERROR: \(transactionId)", err)
+                return}
+            
+            print("Transaction SUCCESS: \(transactionId) \(price) \(isPremium) Buyer: \(buyerId) Seller:  \(sellerId) \(price) \(Date()) \(expDate)")
+            
+            let tempSub = Subscription.init(transactionId: transactionId, dictionary: uploadValues)
+            completion(tempSub)
+        }
+        
+    }
+    
+    // SUBSCRIPTIONS
+    static func updateSeller(subscription: Subscription){
+        guard let sellerId = subscription.sellerUID else {self.alert(title: "updateSubscribed ERROR", message: "No subscribedId")
+            return}
+        guard let buyerId = subscription.buyerUID else {self.alert(title: "updateSubscribed ERROR", message: "No purchaserUID")
+            return}
+        
+//        SELLERS
+//            > TOTAL REV
+//            > TOTAL SUBS
+//            > SUBS
+//                > ISACTIVE
+//                > EXPIRY
+//                > TRANSACTIONS
+
+        let subRef = Database.database().reference().child("subscription_sellers").child(sellerId)
+            
+            subRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+                var user = currentData.value as? [String : AnyObject] ?? [:]
+                let subDate = subscription.purchaseDate.timeIntervalSince1970
+                let subExpiry = subscription.expiryDate.timeIntervalSince1970
+                let subPrice = subscription.price
+                var newTransaction = false
+            // USER SUBS
+                var subs = user["subs"] as? [String : AnyObject] ?? [:]
+                var userDetails = [:] as [String : AnyObject]
+
+                // TRANSACTIONS
+                    var transactions = user["transactions"] as? [String: Double] ?? [:]
+                    if transactions[subscription.id] == nil {
+                        transactions[subscription.id] = subDate
+                        user["transactions"] = transactions as AnyObject
+                    }
+                
+                
+                if subs[buyerId] == nil {
+                    var transactions: [String: Double] = [:]
+                    transactions[subscription.id] = subDate
+                    userDetails["transactions"] = transactions as AnyObject
+                    userDetails["expiryDate"] = subExpiry as AnyObject
+                    userDetails["isActive"] = (subExpiry > Date().timeIntervalSince1970) as AnyObject
+                    newTransaction = true
+                } else {
+                    userDetails = subs[buyerId] as? [String : AnyObject] ?? [:]
+                    var transactions = userDetails["transactions"] as? [String: Double] ?? [:]
+                    if transactions[subscription.id] == nil {
+                        transactions[subscription.id] = subDate
+                        userDetails["transactions"] = transactions as AnyObject
+                        newTransaction = true
+                    }
+                    
+                    var exp = userDetails["expiryDate"] as? Double ?? 0
+                    if subExpiry > exp {
+                        userDetails["expiryDate"] = subExpiry as AnyObject
+                    }
+                    userDetails["isActive"] = (subExpiry > Date().timeIntervalSince1970) as AnyObject
+                }
+                subs[buyerId] = userDetails as AnyObject
+                user["subs"]  = subs as AnyObject
+                
+                var activeCount = 0
+                for sub in subs {
+                    let tempSub = sub as? [String : AnyObject] ?? [:]
+                    let isActive = tempSub["isActive"] as? Bool ?? false
+                    activeCount += isActive ? 1 : 0
+                }
+                user["activeCount"] = activeCount as AnyObject
+                    
+                var totalRev = user["totalRev"] as? Double ?? 0.0
+                totalRev += newTransaction ? subPrice : 0
+                user["totalRev"] = totalRev as AnyObject
+
+                // Set value and report transaction success
+                currentData.value = user
+                print("Successfully Update Seller \(sellerId) | \(subscription.id)) | \(activeCount) Active Subs | \(totalRev) Total Rev")
+                return TransactionResult.success(withValue: currentData)
+                
+            }) { (error, committed, snapshot) in
+                if let error = error {
+                    print("FAILURE Update Seller \(sellerId) | \(subscription.id))")
+                    print(error.localizedDescription)
+                }
+            }
+        
+        }
+    
+    // SUBSCRIPTIONS
+    static func updateBuyerUser(subscription: Subscription?){
+            guard let subscription = subscription else {self.alert(title: "updateSubscriber ERROR", message: "No subscription")
+                return}
+            guard let buyerId = subscription.buyerUID else {self.alert(title: "updateSubscribed ERROR", message: "No purchaserUID")
+                return}
+            guard let sellerId = subscription.sellerUID else {self.alert(title: "updateSubscribed ERROR", message: "No purchaserUID")
+                return}
+
+//        BUYERS
+//            > SUB SELLER
+//                > ISACTIVE
+//                > EXPIRY
+//                > TRANSACTIONS
+        
+        
+            let subRef = Database.database().reference().child("subscription_buyers").child(buyerId).child(sellerId)
+            subRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+                var user = currentData.value as? [String : AnyObject] ?? [:]
+                var subDate = subscription.expiryDate.timeIntervalSince1970
+
+            // TRANSACTIONS
+                var transactions = user["transactions"] as? [String: Double] ?? [:]
+                if transactions[subscription.id] == nil {
+                    transactions[subscription.id] = subDate
+                    user["transactions"] = transactions as AnyObject
+                }
+                
+            // EXPIRY
+                var expiry = user["expiryDate"] as? Double ?? 0
+                if subDate > expiry {
+                    expiry = subDate
+                }
+                user["expiryDate"] = expiry as AnyObject
+
+            // IS ACTIVE
+                var isActive = user["isActive"] as? Bool ?? false
+                isActive = expiry > Date().timeIntervalSince1970
+                user["isActive"] = isActive as AnyObject
+                
+                // Set value and report transaction success
+                currentData.value = user
+                print("Successfully Update Buyer \(buyerId) | Seller: \(sellerId) | \(subscription.id)) | Active: \(isActive) | Expire \(Date(timeIntervalSince1970: expiry))")
+                return TransactionResult.success(withValue: currentData)
+                
+            }) { (error, committed, snapshot) in
+                if let error = error {
+                    print("updateBuyerUser FAIL | Buyer: \(buyerId) | Seller: \(sellerId) | Sub: \(subscription.id)")
+                    print(error.localizedDescription)
+                }
+            }
+        
+        }
+    
+    // SUBSCRIPTIONS
+    static func premiumUserSignUp(subscription: Subscription?){
+        guard let subscription = subscription else {self.alert(title: "updateSubscriber ERROR", message: "No subscription")
+            return}
+        guard let buyerId = subscription.buyerUID else {self.alert(title: "updateSubscribed ERROR", message: "No purchaserUID")
+            return}
+
+    
+        if !subscription.premiumSub {
+            print("ERROR -  Not Premium Sub ", subscription.id, buyerId, subscription.premiumSub)
+            return
+        }
+
+//        BUYERS
+//            > SUB SELLER
+//                > ISACTIVE
+//                > EXPIRY
+//                > TRANSACTIONS
+    
+    
+        let subRef = Database.database().reference().child("premium").child(buyerId)
+        subRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+            var user = currentData.value as? [String : AnyObject] ?? [:]
+            let subBuyDate = subscription.purchaseDate.timeIntervalSince1970
+
+        // TRANSACTIONS
+            var transactions = user["transactions"] as? [String: Double] ?? [:]
+            if transactions[subscription.id] == nil {
+                transactions[subscription.id] = subBuyDate
+                user["transactions"] = transactions as AnyObject
+            }
+            
+            user["purchaseDate"] = subBuyDate as AnyObject
+            
+            var firstPurchaseDate = user["firstPurchaseDate"] as? Double ?? 0
+            if firstPurchaseDate == 0 {
+                user["firstPurchaseDate"] = subBuyDate as AnyObject
+            }
+            
+        // EXPIRY
+            var expiry = user["expiryDate"] as? Double ?? 0
+            var subDate = subscription.expiryDate.timeIntervalSince1970
+            if subDate > expiry {
+                expiry = subDate
+            }
+            user["expiryDate"] = expiry as AnyObject
+
+        // IS ACTIVE
+            var isActive = user["isActive"] as? Bool ?? false
+            isActive = expiry > Date().timeIntervalSince1970
+            user["isActive"] = isActive as AnyObject
+            
+            // Set value and report transaction success
+            currentData.value = user
+            print("Successfully Update Premium Buy for \(buyerId) | \(subscription.id)) | Active: \(isActive) | Expire \(Date(timeIntervalSince1970: expiry))")
+            return TransactionResult.success(withValue: currentData)
+            
+        }) { (error, committed, snapshot) in
+            if let error = error {
+                print("FAIL Premium Buy for \(buyerId) | \(subscription.id))")
+                print(error.localizedDescription)
+            }
+        }
+    
+    }
+    
+    // SUBSCRIPTIONS
+    static func fetchPremiumUser(uid: String?, completion: @escaping (Subscription) -> ()){
+        guard let uid = uid else {self.alert(title: "fetchPremiumUser ERROR", message: "No UID")
+            return}
+        
+        
+//        PREMIUM
+//            > UID
+//                > ISACTIVE
+//                > FIRSTPURCHASEDATE
+//                > PURCHASEDATE
+//                > EXPIRY
+//                > TRANSACTIONS
+    
+    
+        let subRef = Database.database().reference().child("premium").child(uid)
+        subRef.observeSingleEvent(of: .value, with: {(snapshot) in
+            var user = snapshot.value as? [String : AnyObject] ?? [:]
+            var sub = Subscription.init(transactionId: nil, dictionary: user)
+            print("fetchPremiumUser SUCCESS: \(uid) , Active: \(sub.isActive) , \(sub.id)")
+            completion(sub)
+        })
+    }
+
+    
 //    static func printImageSizes(image: UIImage){
 ////            var fullimg: NSData = NSData(data: UIImageJPEGRepresentation(image, 1)!)
 //        

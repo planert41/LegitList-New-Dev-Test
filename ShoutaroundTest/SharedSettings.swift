@@ -129,6 +129,16 @@ var HomeFetchDetails:[String] = ["Posts From People & Lists You Follow", "Posts 
 
 let HomeFetchDefault:String = HomeFetchOptions[0]
 
+// SUBSCRIPTION
+let annualSubProductID = "legit_premium_annual"
+let monthlySubProductID = "legit_premium_monthly"
+let indSubProductID = "creator_sub_credit"
+let indSub1_ID = "creator_sub_1"
+let indSub2_ID = "creator_sub_2"
+let indSub5_ID = "creator_sub_5"
+let indSub10_ID = "creator_sub_10"
+
+
 // Home Search Bar Sort
 var SearchBarOptions:[String] = [SearchAll, SearchEmojis, SearchPlace,SearchCity]
 

@@ -431,8 +431,15 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     @objc func newUserPost(_ notification: NSNotification) {
         
-        let tpostId = notification.userInfo?["postId"] as? String
-        let tuserId = notification.userInfo?["uid"] as? String
+        let postId = (notification.userInfo?["postId"] ?? "")! as! String
+        let userId = (notification.userInfo?["uid"] ?? "")! as! String
+        
+        var tuserId: String! = userId
+        var tpostId: String! = postId
+        
+//        tuserId = userId ?? ""
+//        tpostId = postId ?? ""
+        
         print("New User Post Notification ", tuserId, tpostId)
         
         

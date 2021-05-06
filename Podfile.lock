@@ -177,6 +177,9 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - PromisesObjC (1.2.12)
+  - Purchases (3.11.0):
+    - PurchasesCoreSwift (= 3.11.0)
+  - PurchasesCoreSwift (3.11.0)
   - SKPhotoBrowser (6.0.0)
   - Smile (2.0.0)
   - SVProgressHUD (2.2.6):
@@ -215,6 +218,7 @@ DEPENDENCIES:
   - IQKeyboardManagerSwift
   - Kingfisher (~> 5.0)
   - mailgun (~> 1.0.3)
+  - Purchases
   - SKPhotoBrowser (~> 6.0.0)
   - Smile
   - SVProgressHUD (from `https://github.com/SVProgressHUD/SVProgressHUD.git`)
@@ -263,6 +267,8 @@ SPEC REPOS:
     - mailgun
     - nanopb
     - PromisesObjC
+    - Purchases
+    - PurchasesCoreSwift
     - SKPhotoBrowser
     - Smile
     - SwiftLocation
@@ -324,6 +330,8 @@ SPEC CHECKSUMS:
   mailgun: 17290deea4db24050dd03ca59cd7385d508904b3
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  Purchases: 4ea4c742e6c3d41de457dc482972dd6346ca5654
+  PurchasesCoreSwift: cae29de1aeda5d13caf68d69c847ddb01e224ab1
   SKPhotoBrowser: 76eb862685761707b5745fde7762757966565e07
   Smile: 21ff6c48e06ecfcee605cca32aedd74d5810e34a
   SVProgressHUD: de812b4f0e1d65358f0064416473174ae619843f
@@ -332,6 +340,6 @@ SPEC CHECKSUMS:
   TLPhotoPicker: 2c4a20d62952bd368edbf44d18476f663a718ada
   UIFontComplete: 843cb7b58fd6503b3918447918ea6daaeaceccff
 
-PODFILE CHECKSUM: 1a3503a076af8966cbe6f235396049d658357974
+PODFILE CHECKSUM: 1d30cc3cf204c216c061a16518ebf5fd6dede721
 
 COCOAPODS: 1.10.1

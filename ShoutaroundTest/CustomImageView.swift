@@ -20,6 +20,14 @@ class CustomImageView: UIImageView {
         }
     }
     
+    var clearBackground = false {
+        didSet {
+            if clearBackground {
+                self.backgroundColor = UIColor.clear
+            }
+        }
+    }
+    
 //    func loadImage(urlString: String) {
 //        guard let url = URL(string: urlString) else {return}
 //        var urlRequest = URLRequest(url: url)

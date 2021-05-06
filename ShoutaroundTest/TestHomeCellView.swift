@@ -627,9 +627,13 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         
         
         // IMAGE COUNT
+//        addSubview(pageControl)
+//        pageControl.anchor(top: nil, left: nil, bottom: infoView.topAnchor, right: nil, paddingTop: 10, paddingLeft: 10, paddingBottom: 5, paddingRight: 10, width: 0, height: 10)
+//        pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
+//
+//
         addSubview(pageControl)
-        pageControl.anchor(top: nil, left: nil, bottom: infoView.topAnchor, right: nil, paddingTop: 10, paddingLeft: 10, paddingBottom: 5, paddingRight: 10, width: 0, height: 10)
-        pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
+        pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
         pageControl.isHidden = false
         
         
@@ -675,7 +679,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         
                 
         addSubview(locationDistanceLabel)
-        locationDistanceLabel.anchor(top: topAnchor, left: leftAnchor, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 20)
+        locationDistanceLabel.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 20)
 //        locationDistanceLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.8)
         locationDistanceLabel.layer.cornerRadius = 5
         locationDistanceLabel.layer.masksToBounds = true
