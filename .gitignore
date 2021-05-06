@@ -66,3 +66,7 @@ node_modules/
 .env
 ./Pods/GoogleMaps/Maps/Frameworks/GoogleMapsCore.framework/GoogleMapsCore
 ./.git/objects/pack/pack-37e0bee8a83273350d930da4f40d7e12fa2fbba0.pack
+./Pods
+*.xcworkspace
+*.xcuserstate // <--- Here
+*/xcuserdata/*
