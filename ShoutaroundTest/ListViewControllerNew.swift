@@ -128,7 +128,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         return button
     }()
     
-    func didTapCreateNewList() {
+    @objc func didTapCreateNewList() {
         print("Did Tap Create New List | User Profile")
         self.extCreateNewList()
     }
@@ -437,6 +437,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         createNewListButton.layer.cornerRadius = 5
         createNewListButton.layer.masksToBounds = true
         createNewListButton.sizeToFit()
+        createNewListButton.addTarget(self, action: #selector(didTapCreateNewList), for: .touchUpInside)
         let addNavButton = UIBarButtonItem.init(customView: createNewListButton)
         
         if (fetchType == ListYours) {

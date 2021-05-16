@@ -284,9 +284,9 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
 
     
     func resetViews(){
+        collectionView.reloadData()
         if userLists.count > 0 {
             collectionView.scrollToItem(at: IndexPath(row: 0, section: 0), at: .left, animated: false)
-            collectionView.reloadData()
         }
     }
     
