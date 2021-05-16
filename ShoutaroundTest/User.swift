@@ -42,6 +42,15 @@ struct User {
     var userGPS: CLLocation?
     var userDistance: Double? = nil
     
+    
+    var premiumStart: Date?
+    var premiumExpiry: Date?
+    var premiumCancel: Date?
+    var premiumPeriod: SubPeriod?
+    var isPremium: Bool = false
+    
+    
+    
     init(uid: String, dictionary: [String:Any]) {
         self.username = dictionary["username"] as? String ?? ""
         self.profileImageUrl = dictionary["profileImageUrl"] as? String ?? ""
@@ -97,6 +106,39 @@ struct User {
             
         }
         
+    // PREMIUM
+        self.isPremium = dictionary["isPremium"] as? Bool ?? false
+        
+        let premCancel = dictionary["premiumCancel"] as? Double ?? 0
+        if premCancel > 0 {
+            self.premiumCancel = Date(timeIntervalSince1970: premCancel)
+        }
+        
+        var tempLength = dictionary["premiumPeriod"] as? String ?? ""
+        if tempLength == "annual" {
+            self.premiumPeriod = SubPeriod.annual
+        } else if tempLength == "monthly" {
+            self.premiumPeriod = SubPeriod.monthly
+        } else {
+            self.premiumPeriod = nil
+        }
+        
+        let premStart = dictionary["premiumStart"] as? Double ?? 0
+        if premStart > 0 {
+            self.premiumStart = Date(timeIntervalSince1970: premStart)
+        }
+        
+        let premExp = dictionary["premiumExpiry"] as? Double ?? 0
+        if premExp > 0 {
+            self.premiumExpiry = Date(timeIntervalSince1970: premExp)
+            if Date() > self.premiumExpiry! && self.isPremium{
+                self.isPremium = false
+                if uid == Auth.auth().currentUser?.uid {
+                    print("PREMIUM USER EXPIRED")
+                    Database.updatePremiumUserDatabase(uid: uid, cancel: false, activate: false, expiryDate: nil, premSub: nil, force: true)
+                }
+            }
+        }
     }
     
 }
@@ -109,6 +151,12 @@ struct CurrentUser {
     static var uid : String?
     static var status: String?
     static var isGuest: Bool = false
+    static var premiumStart: Date?
+    static var premiumExpiry: Date?
+    static var premiumCancel: Date?
+    static var premiumPeriod: SubPeriod?
+    static var isPremium: Bool = false
+
 
     static var distanceFormatter: MeasurementFormatter {
         let format = MeasurementFormatter()
@@ -220,11 +268,21 @@ struct CurrentUser {
                 self.uid = user?.uid
                 self.profileImageUrl = user?.profileImageUrl
                 self.listIds = (user?.listIds)!
+                self.isPremium = (user?.isPremium ?? false)
+                self.premiumExpiry = user?.premiumExpiry
+                self.premiumStart = user?.premiumStart
+                self.premiumCancel = user?.premiumCancel
+                self.premiumPeriod = user?.premiumPeriod
             } else {
                 self.username = nil
                 self.uid = nil
                 self.profileImageUrl = nil
                 self.listIds = []
+                self.isPremium = false
+                self.premiumExpiry = nil
+                self.premiumStart = nil
+                self.premiumCancel = nil
+                self.premiumPeriod = nil
             }
         }
     }

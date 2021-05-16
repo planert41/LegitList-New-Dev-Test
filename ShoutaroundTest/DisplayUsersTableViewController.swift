@@ -31,6 +31,14 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     let ListCellId = "ListCellId"
     
     
+    var inputPost: Post? {
+        didSet {
+            self.fetchAllLikeUsersForPost()
+            setupNavigationItems()
+            setScopeBarOptions()
+        }
+    }
+    
     var inputUser: User? {
         didSet {
             fetchUserInfo()
@@ -38,11 +46,17 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
         }
     }
     
+    var specificUids:[String] = [] {
+        didSet {
+            fetchSpecificUsers()
+        }
+    }
+    
 //    var inputList: List? = nil
     
-    var displayFollowersByUsers: Bool = true {
+    var displayListOfUsers: Bool = true {
         didSet {
-            if displayFollowersByUsers {
+            if displayListOfUsers {
                 displayListsByUser = false
             }
         }
@@ -54,7 +68,7 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     var displayListsByUser: Bool = false  {
        didSet {
            if displayListsByUser {
-               displayFollowersByUsers = false
+               displayListOfUsers = false
            }
        }
    }
@@ -99,7 +113,7 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
         setupNavigationItems()
         setScopeBarOptions()
 //        self.fetchAllListsForUser()
-        if displayFollowersByUsers {
+        if displayListOfUsers {
             self.fetchAllUsers()
         } else if displayListsByUser {
             self.fetchListsByUser()
@@ -108,7 +122,7 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     
     
     func setScopeBarOptions() {
-        if displayFollowersByUsers
+        if displayListOfUsers
         {
             self.scopeBarOptions = FriendSortOptions
             let followingText = "🙋‍♂️ " + FriendSortOptions[0] +  " \(self.followingUsers.count)"
@@ -200,6 +214,87 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
 
         }
         
+    }
+    
+    func fetchSpecificUsers() {
+        self.otherUsers.removeAll()
+        self.followingUsers.removeAll()
+        let myGroup = DispatchGroup()
+
+        for vote in (self.specificUids) {
+            myGroup.enter()
+            Database.fetchUserWithUID(uid: vote) { (user) in
+                self.followingUsers.append(user!)
+                self.otherUsers.append(user!)
+                myGroup.leave()
+            }
+        }
+        myGroup.notify(queue: .main) {
+            print("Following \(self.followingUsers.count) | Fetched \(self.otherUsers.count) Users ")
+            self.searchBar.scopeButtonTitles = ["Following (\(self.followingUsers.count))", "Other (\(self.otherUsers.count))"]
+            self.searchBar.showsScopeBar = false
+//            self.otherUsers = self.otherUsers.sorted(by: { (u1, u2) -> Bool in
+//                u1.followersCount > u2.followersCount
+//            })
+//
+//            self.followingUsers = self.followingUsers.sorted(by: { (u1, u2) -> Bool in
+//                u1.followersCount > u2.followersCount
+//            })
+            
+//            self.otherUsers = self.otherUsers.sorted(by: { (u1, u2) -> Bool in
+//                u1.posts_created > u2.posts_created
+//            })
+//
+//            self.followingUsers = self.followingUsers.sorted(by: { (u1, u2) -> Bool in
+//                u1.posts_created > u2.posts_created
+//            })
+            
+            self.setScopeBarOptions()
+            self.tableView.reloadData()
+
+        }
+    }
+    
+    
+    func fetchAllLikeUsersForPost(){
+        self.otherUsers.removeAll()
+        self.followingUsers.removeAll()
+        let myGroup = DispatchGroup()
+
+        for vote in (self.inputPost?.allVote)! {
+            myGroup.enter()
+            Database.fetchUserWithUID(uid: vote) { (user) in
+                if (user?.isFollowing)!{
+                    self.followingUsers.append(user!)
+                } else {
+                    self.otherUsers.append(user!)
+                }
+                myGroup.leave()
+            }
+        }
+        myGroup.notify(queue: .main) {
+            print("Following \(self.followingUsers.count) | Fetched \(self.otherUsers.count) Users ")
+            self.searchBar.scopeButtonTitles = ["Following (\(self.followingUsers.count))", "Other (\(self.otherUsers.count))"]
+//            self.otherUsers = self.otherUsers.sorted(by: { (u1, u2) -> Bool in
+//                u1.followersCount > u2.followersCount
+//            })
+//
+//            self.followingUsers = self.followingUsers.sorted(by: { (u1, u2) -> Bool in
+//                u1.followersCount > u2.followersCount
+//            })
+            
+            self.otherUsers = self.otherUsers.sorted(by: { (u1, u2) -> Bool in
+                u1.posts_created > u2.posts_created
+            })
+            
+            self.followingUsers = self.followingUsers.sorted(by: { (u1, u2) -> Bool in
+                u1.posts_created > u2.posts_created
+            })
+            
+            self.setScopeBarOptions()
+            self.tableView.reloadData()
+
+        }
     }
     
     
@@ -350,6 +445,10 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
         //        navigationController?.navigationBar.barTintColor = UIColor.legitColor()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        self.setupNavigationItems()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         //      Show Searchbar scope during transition
         self.setupNavigationItems()
@@ -418,7 +517,7 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
 
         
 //        self.navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.ianLegitColor(), NSAttributedString.Key.font.rawValue: UIFont(name: "Poppins-Bold", size: 18)])
-        var titleString = displayFollowersByUsers ? "Users" : (displayListsByUser ? "Lists" : "" )
+        var titleString = displayListOfUsers ? "Users" : (displayListsByUser ? "Lists" : "" )
 
         let navLabel = UILabel()
         let customFont = UIFont(name: "Poppins-Bold", size: 18)
@@ -431,9 +530,12 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
         let navColor = UIColor.ianLegitColor()
         
         self.navigationController?.navigationBar.barTintColor = navColor
+        let tempImage = UIImage.init(color: UIColor.ianLegitColor())
+        navigationController?.navigationBar.setBackgroundImage(tempImage, for: .default)
         self.navigationController?.navigationBar.tintColor = UIColor.ianLegitColor()
         self.navigationController?.view.backgroundColor = UIColor.ianLegitColor()
         self.navigationController?.navigationBar.backgroundColor = navColor
+        self.navigationController?.navigationBar.layer.shadowColor = navColor.cgColor
         self.navigationController?.navigationBar.layoutIfNeeded()
 
 
@@ -643,7 +745,7 @@ extension DisplayOnlyUsersSearchView {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        if displayFollowersByUsers
+        if displayListOfUsers
         {
             return isFiltering ? filteredUsers.count : (self.selectedScope == 0 ? followingUsers.count : otherUsers.count)
         }
@@ -665,7 +767,7 @@ extension DisplayOnlyUsersSearchView {
         
 
         let cell = tableView.dequeueReusableCell(withIdentifier: UserCellId, for: indexPath) as! UserAndListCell
-        if displayFollowersByUsers {
+        if displayListOfUsers {
             var user = self.isFiltering ? filteredUsers[indexPath.row] : (self.selectedScope == 0 ? followingUsers[indexPath.row] : otherUsers[indexPath.row])
             cell.user = user
         } else if displayListsByUser {
@@ -678,7 +780,7 @@ extension DisplayOnlyUsersSearchView {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
                 
-        if displayFollowersByUsers {
+        if displayListOfUsers {
             var user = self.isFiltering ? filteredUsers[indexPath.row] : (self.selectedScope == 0 ? followingUsers[indexPath.row] : otherUsers[indexPath.row])
             self.userSelected(user: user)
         } else if displayListsByUser {

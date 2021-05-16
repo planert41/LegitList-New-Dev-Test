@@ -86,6 +86,11 @@ var listCreated = "My Lists"
 var listLegit = "Legit Lists"
 let legitListIds = ["A9A639A3-2C72-4003-B6D8-C3753E82D1AE"]
 
+var UID_wei = "2G76XbYQS8Z7bojJRrImqpuJ7pz2"
+var UID_mayn = "srHzEjoRYKcKGqAgiyG4E660amQ2"
+var UID_ernie = "VeG6VZOAvmcJ08AnBRTtO8JkSP12"
+var UID_magnus = "B6div2WhzSObg7XGJRFkKBFEQiC3"
+
 //var listTypeOptions:[String] = [listAll, listCreated, listFollowed]
 //var listTypeDefault = listAll
 var listTypeOptions:[String] = [listCreated, listFollowed, listLegit]
@@ -137,6 +142,9 @@ let indSub1_ID = "creator_sub_1"
 let indSub2_ID = "creator_sub_2"
 let indSub5_ID = "creator_sub_5"
 let indSub10_ID = "creator_sub_10"
+
+let premiumPostLimit = 50
+let premiumListLimit = 5
 
 
 // Home Search Bar Sort

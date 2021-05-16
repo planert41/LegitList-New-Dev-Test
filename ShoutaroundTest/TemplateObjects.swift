@@ -350,7 +350,7 @@ class TemplateObjects {
         override init(frame: CGRect) {
             super.init(frame: CGRect(x: 0, y: 0, width: 40, height: 30))
 //            let iconImage = #imageLiteral(resourceName: "mailbox").withRenderingMode(.alwaysOriginal)
-            let iconImage = #imageLiteral(resourceName: "bookmark_selected").withRenderingMode(.alwaysTemplate)
+            let iconImage = #imageLiteral(resourceName: "payment").withRenderingMode(.alwaysOriginal)
             self.setImage(iconImage, for: .normal)
             self.imageView?.contentMode = .scaleAspectFit
             

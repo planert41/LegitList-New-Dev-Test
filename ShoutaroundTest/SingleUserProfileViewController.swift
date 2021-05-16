@@ -694,16 +694,17 @@ class SingleUserProfileViewController: UIViewController {
     }
     
     @objc func openSubscriptions() {
-        let note = SubscriptionViewController()
         if self.displayUser?.uid != Auth.auth().currentUser?.uid {
             self.alert(title: "ERROR", message: "You can't access subscriptions for \(self.displayUser?.username).")
             return
         }
-        note.displayUser = self.displayUser
-        note.isPremiumSub = true
-        self.present(note, animated: true) {
-            print("Show Subscription")
-        }
+        self.extOpenSubscriptions()
+////        note.displayUser = self.displayUser
+////        note.isPremiumSub = true
+////        note.displayUser = CurrentUser.user
+//        self.present(note, animated: true) {
+//            print("Show Subscription")
+//        }
     }
     
     var keyboardTap = UITapGestureRecognizer()

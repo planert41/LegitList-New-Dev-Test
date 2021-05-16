@@ -287,8 +287,18 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             print("Handle Cancel Logic here")
         }))
         
+        let subAlert = UIAlertController(title: "New List Limit", message: "Please Subscribe to Legit Premium to create more than \(premiumListLimit) lists.", preferredStyle: UIAlertController.Style.alert)
+        subAlert.addAction(UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
+            self.extOpenSubscriptions()
+        }))
+        subAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        
         // 4. Present the alert.
-        self.present(alert, animated: true, completion: nil)
+        if !CurrentUser.isPremium && CurrentUser.listIds.count >= premiumListLimit {
+            self.present(subAlert, animated: true, completion: nil)
+        } else {
+            self.present(alert, animated: true, completion: nil)
+        }
     
     
 //        let optionsAlert = UIAlertController(title: "Create New List", message: "", preferredStyle: UIAlertController.Style.alert)
@@ -1019,6 +1029,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil)
 //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
             
         }

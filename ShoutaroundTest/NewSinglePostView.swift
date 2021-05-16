@@ -26,6 +26,9 @@ import SwiftyJSON
 class NewSinglePostView: UIViewController {
     var delegate: SinglePostViewDelegate?
 
+    static let editSinglePostNotification = NSNotification.Name(rawValue: "editSinglePostNotification")
+
+    
     var post: Post? {
         didSet {
             var creatorName = ""
@@ -57,6 +60,14 @@ class NewSinglePostView: UIViewController {
             self.view.layoutIfNeeded()
             print("***\(post?.id) POST | New Single Picture Controller ")
 //            print("ScrollView Size | Content \(self.scrollview.contentSize) | Intrinsic \(scrollview.intrinsicContentSize)")
+        }
+    }
+    
+    @objc func updateEditedSinglePost() {
+        guard let postId = post?.id else {return}
+        if let cachePost = postCache[postId] {
+            print("Update SinglePostView from Cache \(postId) updateEditedSinglePost")
+            self.post = cachePost
         }
     }
     
@@ -462,8 +473,8 @@ class NewSinglePostView: UIViewController {
         
         
         // Setup Navigation Look
+        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost), name: NewSinglePostView.editSinglePostNotification, object: nil)
 
-        
         
         // USER PROFILE
             headerView.addSubview(userProfileImageView)

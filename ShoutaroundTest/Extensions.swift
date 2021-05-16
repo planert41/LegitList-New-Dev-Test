@@ -616,6 +616,16 @@ extension UIViewController {
             (self.navigationController?.navigationBar.frame.height ?? 0.0)
     }
     
+    func extOpenSubscriptions() {
+        let note = SubscriptionViewController()
+//        note.displayUser = self.displayUser
+//        note.isPremiumSub = true
+//        note.displayUser = CurrentUser.user
+        self.present(note, animated: true) {
+            print("Show Subscription")
+        }
+    }
+    
     func extCreateNewPhoto(){
         if Auth.auth().currentUser?.isAnonymous ?? true {
             let alert = UIAlertController(title: "Guest Profile", message: "Please Sign Up To Upload Photo", preferredStyle: UIAlertController.Style.alert)
@@ -625,7 +635,16 @@ extension UIViewController {
             }))
             self.present(alert, animated: true, completion: nil)
         } else {
-            NotificationCenter.default.post(name: MainTabBarController.OpenAddNewPhoto, object: nil)
+            if !CurrentUser.isPremium && CurrentUser.postIds.count >= premiumPostLimit {
+                let alert = UIAlertController(title: "New Post Limit", message: "Please Subscribe to Legit Premium to upload more than \(premiumPostLimit) posts.", preferredStyle: UIAlertController.Style.alert)
+                alert.addAction(UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
+                    self.extOpenSubscriptions()
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                NotificationCenter.default.post(name: MainTabBarController.OpenAddNewPhoto, object: nil)
+            }
         }
     }
     
@@ -681,15 +700,24 @@ extension UIViewController {
     
     
     func extCreateNewList() {
-        let createNewListView = CreateNewListCardController()
-        let navController = UINavigationController(rootViewController: createNewListView)
-          let transition:CATransition = CATransition()
-            transition.duration = 0.5
-//        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-//        transition.type = CATransitionType.push
-        transition.subtype = CATransitionSubtype.fromBottom
-            self.navigationController!.view.layer.add(transition, forKey: kCATransition)
-        self.present(navController, animated: true, completion: nil)
+        if !CurrentUser.isPremium && CurrentUser.listIds.count >= premiumListLimit {
+            let alert = UIAlertController(title: "New List Limit", message: "Please Subscribe to Legit Premium to create more than \(premiumListLimit) lists.", preferredStyle: UIAlertController.Style.alert)
+            alert.addAction(UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
+                self.extOpenSubscriptions()
+            }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        } else {
+            let createNewListView = CreateNewListCardController()
+            let navController = UINavigationController(rootViewController: createNewListView)
+              let transition:CATransition = CATransition()
+                transition.duration = 0.5
+    //        transition.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+    //        transition.type = CATransitionType.push
+            transition.subtype = CATransitionSubtype.fromBottom
+                self.navigationController!.view.layer.add(transition, forKey: kCATransition)
+            self.present(navController, animated: true, completion: nil)
+        }
     }
 
     func extTapUser(post: Post) {
@@ -728,10 +756,16 @@ extension UIViewController {
     
     func extShowUsersForPost(post: Post, following: Bool) {
         print("Display Vote Users| Following: ",following)
-        let postSocialController = PostSocialDisplayTableViewController()
-        postSocialController.displayUser = true
-        postSocialController.displayUserFollowing = following
+//        let postSocialController = PostSocialDisplayTableViewController()
+//        postSocialController.displayUser = true
+//        postSocialController.displayUserFollowing = following
+//        postSocialController.inputPost = post
+//        navigationController?.pushViewController(postSocialController, animated: true)
+        
+        let postSocialController = DisplayOnlyUsersSearchView()
+        postSocialController.displayListOfUsers = true
         postSocialController.inputPost = post
+        postSocialController.selectedScope = (post.followingVote.count > 0) ? 0 : 1
         navigationController?.pushViewController(postSocialController, animated: true)
     }
     
@@ -1138,7 +1172,7 @@ extension UIViewController {
 //        postSocialController.scopeBarOptions = FollowingSortOptions
         
         let postSocialController = DisplayOnlyUsersSearchView()
-        postSocialController.displayFollowersByUsers = true
+        postSocialController.displayListOfUsers = true
         postSocialController.inputUser = inputUser
         postSocialController.selectedScope = 1
         navigationController?.pushViewController(postSocialController, animated: true)
@@ -1155,7 +1189,7 @@ extension UIViewController {
 //        postSocialController.scopeBarOptions = FollowingSortOptions
         
         let postSocialController = DisplayOnlyUsersSearchView()
-        postSocialController.displayFollowersByUsers = true
+        postSocialController.displayListOfUsers = true
         postSocialController.inputUser = inputUser
         postSocialController.selectedScope = 0
         navigationController?.pushViewController(postSocialController, animated: true)

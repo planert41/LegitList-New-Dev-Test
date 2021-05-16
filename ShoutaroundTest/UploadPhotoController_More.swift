@@ -2358,30 +2358,50 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         }
         
         print("EDIT POST | \(uploadPostDictionary)")
+        
+        
+        
+        
         Database.editPostToDatabase(imageUrls: imageUrls, postId: postId, uploadDictionary: uploadPostDictionary, uploadLocation: uploadPostLocation, prevPost: preEditPost) {
             
-            // Update Post Cache
-            var tempPost = self.uploadPost
-            tempPost?.selectedListId = listIds
-            tempPost?.creatorListId = listIds
             
-            if (tempPost?.selectedListId?.count)! > 0 {
-                tempPost?.hasPinned = true
-            }
-            
-            postCache[(self.uploadPost?.id)!] = tempPost
-            SVProgressHUD.dismiss()
-            
-            self.navigationController?.popToRootViewController(animated: true)
-            self.navigationItem.rightBarButtonItem?.isEnabled = true
-            self.delegate?.refreshPost(post: tempPost!)
-            
-            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-            //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-            
+//            self.dismiss(animated: true, completion: {
+//                self.navigationItem.rightBarButtonItem?.isEnabled = true
+//                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil)
+//                //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//            })
         }
+        
+        
+        // Update Post Cache
+        var tempPost = self.uploadPost
+        tempPost?.selectedListId = listIds
+        tempPost?.creatorListId = listIds
+        
+        if (tempPost?.selectedListId?.count)! > 0 {
+            tempPost?.hasPinned = true
+        }
+        
+        postCache[(self.uploadPost?.id)!] = tempPost
+        self.delegate?.refreshPost(post: tempPost!)
+        SVProgressHUD.dismiss()
+        self.navigationItem.rightBarButtonItem?.isEnabled = true
+        self.delegate?.refreshPost(post: tempPost!)
+        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+        NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil)
+        //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+        
+        self.dismiss(animated: true, completion: {
+
+        })
+        
+        
+        
     }
     
     @objc func handleAddPostToList(){

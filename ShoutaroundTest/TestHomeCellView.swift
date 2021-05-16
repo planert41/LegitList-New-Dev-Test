@@ -570,7 +570,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         
         
         addSubview(ratingEmojiLabel)
-        ratingEmojiLabel.anchor(top: nil, left: infoView.leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 8, paddingRight: 5, width: 0, height: 25)
+        ratingEmojiLabel.anchor(top: nil, left: nil, bottom: nil, right: infoView.rightAnchor, paddingTop: 8, paddingLeft: 8, paddingBottom: 8, paddingRight: 5, width: 0, height: 25)
         ratingEmojiLabel.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
         ratingEmojiLabel.layer.cornerRadius = 25/2
         ratingEmojiLabel.layer.masksToBounds = true
@@ -586,7 +586,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         
         
         addSubview(userProfileImageView)
-        userProfileImageView.anchor(top: nil, left: nil, bottom: nil, right: infoView.rightAnchor, paddingTop: 5, paddingLeft: 8, paddingBottom: 8, paddingRight: 5, width: 0, height: userProfileImageWidth)
+        userProfileImageView.anchor(top: nil, left: infoView.leftAnchor, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 8, paddingBottom: 8, paddingRight: 5, width: 0, height: userProfileImageWidth)
         userProfileImageView.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
 
         showUserProfileWidth = userProfileImageView.widthAnchor.constraint(equalToConstant: userProfileImageWidth)
@@ -611,7 +611,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         emojiArray.alpha = 0.7
         addSubview(emojiArray)
         //        emojiArray.anchor(top: nil, left: nil, bottom: nil, right: userProfileView.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 25)
-        emojiArray.anchor(top: nil, left: nil, bottom: nil, right: userProfileImageView.leftAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: emojiFontSize + 5)
+        emojiArray.anchor(top: nil, left: nil, bottom: nil, right: ratingEmojiLabel.leftAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: emojiFontSize + 5)
         emojiArray.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
 //        emojiArrayWidth = emojiArray.widthAnchor.constraint(equalToConstant: 0)
         emojiArrayWidth = emojiArray.widthAnchor.constraint(lessThanOrEqualToConstant: 0)

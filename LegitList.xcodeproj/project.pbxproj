@@ -231,6 +231,7 @@
 		A5AF933E2023948900D7B910 /* RankViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AF933D2023948900D7B910 /* RankViewHeader.swift */; };
 		A5AF93402023949000D7B910 /* SortFilterHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5AF933F2023949000D7B910 /* SortFilterHeader.swift */; };
 		A5AF93432023950100D7B910 /* InstagramFirebase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A5AF93412023950100D7B910 /* InstagramFirebase.xcdatamodeld */; };
+		A5B20D07264E543B00326259 /* LegitTeam.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B20D06264E543B00326259 /* LegitTeam.swift */; };
 		A5B3D39625791FFC00CC76E0 /* NewLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B3D39525791FFC00CC76E0 /* NewLocationController.swift */; };
 		A5B49A462289A2F600C9BF99 /* ListDisplayFlowLayoutCopy.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5B49A452289A2F600C9BF99 /* ListDisplayFlowLayoutCopy.swift */; };
 		A5BA175E248DC997000D355E /* PostSortFormatBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BA175D248DC997000D355E /* PostSortFormatBar.swift */; };
@@ -239,6 +240,7 @@
 		A5BBD28C1FB26F4B004367E7 /* Notes2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BBD28B1FB26F4B004367E7 /* Notes2.swift */; };
 		A5BC59491FAA112200BEAD1C /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5BC59481FAA112200BEAD1C /* GoogleMaps.framework */; };
 		A5BCEEB424A391B400267665 /* MessageThreadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BCEEB324A391B400267665 /* MessageThreadCell.swift */; };
+		A5BFD41D2648D48300AAFE65 /* PremiumSubscriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5BFD41C2648D48300AAFE65 /* PremiumSubscriptionCell.swift */; };
 		A5C0097D20D05C8700EDEBE3 /* AutoTagDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C0097C20D05C8600EDEBE3 /* AutoTagDetailCell.swift */; };
 		A5C0097F20D0634300EDEBE3 /* AutoTagDetailFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C0097E20D0634300EDEBE3 /* AutoTagDetailFlowLayout.swift */; };
 		A5C1C692261A8DAB0052D104 /* InboxThreadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C1C691261A8DAB0052D104 /* InboxThreadCell.swift */; };
@@ -587,6 +589,7 @@
 		A5AF933D2023948900D7B910 /* RankViewHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RankViewHeader.swift; sourceTree = "<group>"; };
 		A5AF933F2023949000D7B910 /* SortFilterHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortFilterHeader.swift; sourceTree = "<group>"; };
 		A5AF93422023950100D7B910 /* InstagramFirebase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = InstagramFirebase.xcdatamodel; sourceTree = "<group>"; };
+		A5B20D06264E543B00326259 /* LegitTeam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegitTeam.swift; sourceTree = "<group>"; };
 		A5B3D39525791FFC00CC76E0 /* NewLocationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewLocationController.swift; sourceTree = "<group>"; };
 		A5B49A452289A2F600C9BF99 /* ListDisplayFlowLayoutCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDisplayFlowLayoutCopy.swift; sourceTree = "<group>"; };
 		A5BA175D248DC997000D355E /* PostSortFormatBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSortFormatBar.swift; sourceTree = "<group>"; };
@@ -597,6 +600,7 @@
 		A5BC59481FAA112200BEAD1C /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMaps.framework; path = Pods/GoogleMaps/Maps/Frameworks/GoogleMaps.framework; sourceTree = "<group>"; };
 		A5BCEEB324A391B400267665 /* MessageThreadCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageThreadCell.swift; sourceTree = "<group>"; };
 		A5BFBB651F6F647100F36AF8 /* ShoutaroundTest-CBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ShoutaroundTest-CBridgingHeader.h"; sourceTree = "<group>"; };
+		A5BFD41C2648D48300AAFE65 /* PremiumSubscriptionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumSubscriptionCell.swift; sourceTree = "<group>"; };
 		A5C0097C20D05C8600EDEBE3 /* AutoTagDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTagDetailCell.swift; sourceTree = "<group>"; };
 		A5C0097E20D0634300EDEBE3 /* AutoTagDetailFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTagDetailFlowLayout.swift; sourceTree = "<group>"; };
 		A5C1C691261A8DAB0052D104 /* InboxThreadCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxThreadCell.swift; sourceTree = "<group>"; };
@@ -854,10 +858,12 @@
 				A5177ACD263DF65300BE2445 /* SubscriptionViewControllerSample.swift */,
 				A5177B43263E5DEA00BE2445 /* PurchaseService.swift */,
 				A53859FC263FB4F500E7866B /* SubscriptionCell.swift */,
+				A5BFD41C2648D48300AAFE65 /* PremiumSubscriptionCell.swift */,
 				A5BA28C6263FCB9700993622 /* Subscriptions.swift */,
 				A5F6FE992642455000DDE113 /* PremiumSubViewController.swift */,
 				A5F6FE8E264218D700DDE113 /* StoreKitConfiguration.storekit */,
 				A5F6FE95264219F100DDE113 /* StoreKitTestCertificate.cer */,
+				A5B20D06264E543B00326259 /* LegitTeam.swift */,
 			);
 			path = Subscriptions;
 			sourceTree = "<group>";
@@ -1675,6 +1681,7 @@
 				A5F7697F24A02CA10040341E /* InboxMessagesViewController.swift in Sources */,
 				A5FB25D5232FBB4000E1BE13 /* LegitNavHeader.swift in Sources */,
 				A5B49A462289A2F600C9BF99 /* ListDisplayFlowLayoutCopy.swift in Sources */,
+				A5B20D07264E543B00326259 /* LegitTeam.swift in Sources */,
 				A5F3622421AE10EF007402F1 /* EmojiSearchTableViewController.swift in Sources */,
 				A5DF50A7214E9D520018F330 /* MapPin.swift in Sources */,
 				A5641891203680D6002AE860 /* PhotoCaptureDelegate.swift in Sources */,
@@ -1785,6 +1792,7 @@
 				A547E67623C192690061B01F /* ListSummaryView.swift in Sources */,
 				A59ED0AC22AE891100F1413D /* UploadPhotoListController.swift in Sources */,
 				A5DF50A9214EB68E0018F330 /* MapPinMarkerView.swift in Sources */,
+				A5BFD41D2648D48300AAFE65 /* PremiumSubscriptionCell.swift in Sources */,
 				A5BCEEB424A391B400267665 /* MessageThreadCell.swift in Sources */,
 				A5F9FE221FED6A7700AF9542 /* ReselectableSegmentControl.swift in Sources */,
 				A5EBE21B229E025600846AE1 /* TabListHeader.swift in Sources */,
@@ -2077,7 +2085,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2109,7 +2117,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 24;
+				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				ENABLE_ONLY_ACTIVE_RESOURCES = NO;
 				FRAMEWORK_SEARCH_PATHS = (

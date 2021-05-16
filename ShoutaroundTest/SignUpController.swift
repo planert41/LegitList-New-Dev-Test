@@ -1340,6 +1340,8 @@ fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Ke
 //                    print(" New User Follow | Success Following Zian Mei")})
 //                Database.handleFollowing(userUid: "srHzEjoRYKcKGqAgiyG4E660amQ2", completion: {
 //                    print(" New User Follow | Success Following Maynard")})
+//                Database.handleFollowing(userUid: "VeG6VZOAvmcJ08AnBRTtO8JkSP12", completion: {
+//                    print(" New User Follow | Success Following Ernie")})
 ////                Database.handleFollowing(userUid: "KUtV2mzGYDY2hPkXFiU2YC8KDoL2", completion: {
 ////                    print(" New User Follow | Success Following Maria")})
 //                Database.handleFollowing(userUid: "B6div2WhzSObg7XGJRFkKBFEQiC3", completion: {
