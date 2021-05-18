@@ -11,7 +11,7 @@ import UIKit
 
 class AutoTagCell: UITableViewCell {
     
-    var emoji: Emoji? {
+    var emoji: EmojiBasic? {
         didSet{
             emojiLabel.text = emoji?.emoji
             if ((emoji?.emoji ?? "") != "" && ((emoji?.name ?? "").isEmptyOrWhitespace())) {

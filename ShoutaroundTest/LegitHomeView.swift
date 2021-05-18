@@ -144,8 +144,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     var defaultCityCounts:[String:Int] = [:]
 
 // SEARCH TEMPS
-    var displayEmojis:[Emoji] = []
-    var filteredEmojis:[Emoji] = []
+    var displayEmojis:[EmojiBasic] = []
+    var filteredEmojis:[EmojiBasic] = []
     
     var displayPlaces: [String] = []
     var filteredPlaces: [String] = []
@@ -286,6 +286,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(didTapHomeButton), name: MainTabBarController.tapHomeTabBarButtonNotificationName, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
 
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -427,6 +428,15 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         setupSearchView()
 
 
+    }
+    
+    @objc func postEdited(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        Database.fetchPostWithPostID(postId: postId) { (post, error) in
+            if let post = post {
+                self.refreshPost(post: post)
+            }
+        }
     }
     
     @objc func newUserPost(_ notification: NSNotification) {
@@ -1390,8 +1400,8 @@ extension LegitHomeView: FullPictureCellDelegate, TestGridPhotoCellDelegate, Sha
         }
         
         // Update Cache
-        let postId = post.id
-        postCache[postId!] = post
+//        let postId = post.id
+//        postCache[postId!] = post
         
 
     }
@@ -2375,7 +2385,7 @@ extension LegitHomeView: UITableViewDelegate, UITableViewDataSource, LegitSearch
             
             
             // Output should not include the meal types
-            var tempNonCuisineEmojis: [Emoji] = userEmojis.filter { (emoji) -> Bool in
+            var tempNonCuisineEmojis: [EmojiBasic] = userEmojis.filter { (emoji) -> Bool in
                 return !cuisineEmojiSelect.contains(emoji.emoji)
             }
             
@@ -2818,7 +2828,7 @@ extension LegitHomeView: UITableViewDelegate, UITableViewDataSource, LegitSearch
     }
     
     
-    func addEmojiToSearchTerm(inputEmoji: Emoji?) {
+    func addEmojiToSearchTerm(inputEmoji: EmojiBasic?) {
         self.searchText = inputEmoji?.emoji
     }
     

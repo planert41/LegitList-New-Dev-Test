@@ -1147,7 +1147,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("SharePhotoListController \(displayList.count + 1) List Cells")
+//        print("SharePhotoListController \(displayList.count + 1) List Cells")
         return displayList.count + 1
     }
 

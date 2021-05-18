@@ -48,7 +48,7 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
 
     
     
-    var selectedMealTagEmojis: [Emoji] = [] {
+    var selectedMealTagEmojis: [EmojiBasic] = [] {
         didSet {
             selectedMealTypeAutoTag = []
             for emoji in selectedMealTagEmojis {
@@ -58,7 +58,7 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
         }
     }
     
-    var selectedCuisineTagEmojis: [Emoji] = [] {
+    var selectedCuisineTagEmojis: [EmojiBasic] = [] {
         didSet {
             selectedCuisineAutoTag = []
             for emoji in selectedCuisineTagEmojis {
@@ -69,7 +69,7 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
         }
     }
     
-    var selectedDietTagEmojis: [Emoji] = []{
+    var selectedDietTagEmojis: [EmojiBasic] = []{
         didSet {
             selectedDietAutoTag = []
             for emoji in selectedDietTagEmojis {
@@ -80,7 +80,7 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
         }
     }
     
-    var selectedEmoji: [Emoji] = []{
+    var selectedEmoji: [EmojiBasic] = []{
         didSet {
             // Move Emoji to Top
             if selectedEmoji.count > 0 {
@@ -127,13 +127,13 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
     // Auto-Tag Emojis
     var autoTagFields: [String] = ["Meal","Cuisine","Diets","Emojis"]
     
-    var filteredMealTypeEmojis: [Emoji] = []
+    var filteredMealTypeEmojis: [EmojiBasic] = []
     
-    var filteredCuisineEmojis: [Emoji] = []
+    var filteredCuisineEmojis: [EmojiBasic] = []
 
-    var filteredFoodRestrictEmojis: [Emoji] = []
+    var filteredFoodRestrictEmojis: [EmojiBasic] = []
     
-    var filteredEmojiDictionary: [Emoji] = []
+    var filteredEmojiDictionary: [EmojiBasic] = []
 
     
     override func viewDidLoad() {
@@ -301,25 +301,25 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
         
         switch self.selectedScope {
         case 0:
-            filteredMealTypeEmojis = mealEmojis.filter({( emoji : Emoji) -> Bool in
+            filteredMealTypeEmojis = mealEmojis.filter({( emoji : EmojiBasic) -> Bool in
                 return emoji.emoji.lowercased().contains(searchText.lowercased()) || (emoji.name?.contains(searchText.lowercased()))! })
             filteredMealTypeEmojis.sort { (p1, p2) -> Bool in
                 ((p1.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1) < ((p2.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1)
             }
         case 1:
-            filteredCuisineEmojis = cuisineEmojis.filter({( emoji : Emoji) -> Bool in
+            filteredCuisineEmojis = cuisineEmojis.filter({( emoji : EmojiBasic) -> Bool in
                 return emoji.emoji.lowercased().contains(searchText.lowercased()) || (emoji.name?.contains(searchText.lowercased()))! })
             filteredCuisineEmojis.sort { (p1, p2) -> Bool in
                 ((p1.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1) < ((p2.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1)
             }
         case 2:
-            filteredFoodRestrictEmojis = dietEmojis.filter({( emoji : Emoji) -> Bool in
+            filteredFoodRestrictEmojis = dietEmojis.filter({( emoji : EmojiBasic) -> Bool in
                 return emoji.emoji.lowercased().contains(searchText.lowercased()) || (emoji.name?.contains(searchText.lowercased()))! })
             filteredFoodRestrictEmojis.sort { (p1, p2) -> Bool in
                 ((p1.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1) < ((p2.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1)
             }
         case 3:
-            filteredEmojiDictionary = EmojiDictionaryEmojis.filter({( emoji : Emoji) -> Bool in
+            filteredEmojiDictionary = EmojiDictionaryEmojis.filter({( emoji : EmojiBasic) -> Bool in
                 return emoji.emoji.lowercased().contains(searchText.lowercased()) || (emoji.name?.contains(searchText.lowercased()))! })
             filteredEmojiDictionary.sort { (p1, p2) -> Bool in
                 ((p1.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1) < ((p2.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1)

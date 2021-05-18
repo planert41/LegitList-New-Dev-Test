@@ -306,6 +306,7 @@ class SingleListViewController: UIViewController {
         
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
 
         postSortFormatBar.delegate = self
         self.view.addSubview(postSortFormatBar)
@@ -1436,6 +1437,15 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
         }))
         present(deleteAlert, animated: true, completion: nil)
         
+    }
+    
+    @objc func postEdited(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        Database.fetchPostWithPostID(postId: postId) { (post, error) in
+            if let post = post {
+                self.refreshPost(post: post)
+            }
+        }
     }
     
     

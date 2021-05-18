@@ -104,7 +104,7 @@ class UserSearchBar: UIView, UISearchBarDelegate {
     var isDisplayingTopEmojis: Bool = false
     var displayedEmojis: [String] = [] {
         didSet {
-            print("UserSearchBar | Displayed Emojis: \(self.displayedEmojis.count)")
+//            print("UserSearchBar | Displayed Emojis: \(self.displayedEmojis.count)")
             self.refreshEmojiCollectionView()
             self.updateEmojiButton()
         }

@@ -20,10 +20,6 @@ import FirebaseAuth
 import FirebaseStorage
 import AudioToolbox
 
-protocol SinglePostViewDelegate {
-//    func listSelected(list: List?)
-    func refreshPost(post: Post)
-}
 
 class SinglePostView: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, FullPostCellDelegate, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, EmojiButtonArrayDelegate, SharePhotoListControllerDelegate, MFMessageComposeViewControllerDelegate, CommentsControllerDelegate, DiscoverListViewDelegate, LocationControllerViewDelegate, UploadPhotoListControllerDelegate{
     

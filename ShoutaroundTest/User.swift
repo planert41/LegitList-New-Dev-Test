@@ -48,7 +48,8 @@ struct User {
     var premiumCancel: Date?
     var premiumPeriod: SubPeriod?
     var isPremium: Bool = false
-    
+    var isPremiumFree: Bool = false
+
     
     
     init(uid: String, dictionary: [String:Any]) {
@@ -108,6 +109,11 @@ struct User {
         
     // PREMIUM
         self.isPremium = dictionary["isPremium"] as? Bool ?? false
+        self.isPremiumFree = dictionary["isPremiumFree"] as? Bool ?? false
+        
+        if UID_team.contains(uid) {
+            self.isPremiumFree = true
+        }
         
         let premCancel = dictionary["premiumCancel"] as? Double ?? 0
         if premCancel > 0 {
@@ -156,6 +162,7 @@ struct CurrentUser {
     static var premiumCancel: Date?
     static var premiumPeriod: SubPeriod?
     static var isPremium: Bool = false
+    static var isPremiumFree: Bool = false
 
 
     static var distanceFormatter: MeasurementFormatter {
@@ -269,6 +276,7 @@ struct CurrentUser {
                 self.profileImageUrl = user?.profileImageUrl
                 self.listIds = (user?.listIds)!
                 self.isPremium = (user?.isPremium ?? false)
+                self.isPremiumFree = (user?.isPremiumFree ?? false)
                 self.premiumExpiry = user?.premiumExpiry
                 self.premiumStart = user?.premiumStart
                 self.premiumCancel = user?.premiumCancel
@@ -279,6 +287,7 @@ struct CurrentUser {
                 self.profileImageUrl = nil
                 self.listIds = []
                 self.isPremium = false
+                self.isPremiumFree = false
                 self.premiumExpiry = nil
                 self.premiumStart = nil
                 self.premiumCancel = nil

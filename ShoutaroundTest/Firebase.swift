@@ -1266,7 +1266,7 @@ extension Database{
     
     
     
-    static func sortEmojisWithCounts(inputEmojis: [Emoji]?, emojiCounts: [String:Int]?, defaultCounts: [String:Int]? = [:], dictionaryMatch: Bool = false, sort: Bool = true, fillMissing: Bool = false, completion: ([Emoji]) -> ()) {
+    static func sortEmojisWithCounts(inputEmojis: [EmojiBasic]?, emojiCounts: [String:Int]?, defaultCounts: [String:Int]? = [:], dictionaryMatch: Bool = false, sort: Bool = true, fillMissing: Bool = false, completion: ([EmojiBasic]) -> ()) {
         
         // Food Emojis are tagged as Emojis but Auto-Tags are tagged as the dictionary string.
         // Dictionary Match allows the string to also add counts for the representative emojis, ie: flags, countries, cuisine
@@ -1647,6 +1647,9 @@ extension Database{
                 //Update Cache
                 postCache.removeValue(forKey: postId)
                 postCache[postId] = newPost
+                
+                let postDict:[String: String] = ["updatedPostId": postId]
+                NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
                 
                 guard let newPost = newPost else {
                     completion()
@@ -2524,6 +2527,10 @@ extension Database{
         tempPost.id = postId
         postCache[postId] = tempPost
         
+        let postDict:[String: String] = ["updatedPostId": postId]
+        NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
+
+
         // Update New Post Cache
         newPost = tempPost
         newPost?.id = postId
@@ -6082,7 +6089,9 @@ extension Database{
         }
         // Replace Post Cache
         postCache[postId] = tempPost
-
+        let postDict:[String: String] = ["updatedPostId": postId]
+        NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
+        
         completion(tempPost)
         
     }
@@ -9820,7 +9829,7 @@ extension Database{
         completion(finalOutput)
     }
     
-    static func guessPostMeal(googleLocationType: [String]?, currentTime: Date, completion: @escaping (Emoji?) -> ()){
+    static func guessPostMeal(googleLocationType: [String]?, currentTime: Date, completion: @escaping (EmojiBasic?) -> ()){
         
         let calendar = Calendar.current // or e.g. Calendar(identifier: .persian)
         let hour = calendar.component(.hour, from: currentTime)
@@ -9871,7 +9880,7 @@ extension Database{
         }
         
         if tempPostType != nil, let emoji = mealEmojiDictionary.key(forValue: tempPostType!.lowercased()) {
-            let mealTagEmoji = Emoji(emoji: emoji, name: tempPostType, count: 0)
+            let mealTagEmoji = EmojiBasic(emoji: emoji, name: tempPostType, count: 0)
                 completion(mealTagEmoji)
         } else {
             print("guessPostMeal | ERROR | No Emoji | \(googleLocationType) | \(currentTime) | \(tempPostType)")
@@ -10644,7 +10653,7 @@ extension Database{
         }
     }
     
-    static func updatePremiumUserDatabase(uid: String?, cancel: Bool? = false, activate: Bool? = false, expiryDate: Date? = nil, premSub: SubPeriod? = nil, force: Bool = false){
+    static func updatePremiumUserDatabase(uid: String?, cancel: Bool? = false, activate: Bool? = false, expiryDate: Date? = nil, premSub: SubPeriod? = nil, premFree: Bool? = false, force: Bool = false){
         guard let uid = uid else {
             print("Cancel Premium User Fail - No UID")
             return}
@@ -10660,15 +10669,15 @@ extension Database{
         subRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
             var user = currentData.value as? [String : AnyObject] ?? [:]
 
+            var expiry = user["premiumExpiry"] as? Double ?? 0
+            var subDate = Date.init(timeIntervalSince1970: expiry)
             if expiryDate != nil {
-                var expiry = user["premiumExpiry"] as? Double ?? 0
-                var subDate = Date.init(timeIntervalSince1970: expiry)
                 user["premiumExpiry"] = expiryDate?.timeIntervalSince1970 as AnyObject
                 print("Force Update Expiry Date \(expiryDate) from \(subDate)")
             }
             
+            var subPeriod = user["premiumPeriod"] as? String ?? ""
             if premSub != nil {
-                var subPeriod = user["premiumPeriod"] as? String ?? ""
                 print("Force Update Prem Period \(premSub) from \(subPeriod)")
 
                 if premSub == SubPeriod.monthly {
@@ -10689,6 +10698,10 @@ extension Database{
             else if activate ?? false {
                 user["isPremium"] = true as AnyObject
                 user["premiumActivate"] = Date().timeIntervalSince1970 as AnyObject
+                if premFree ?? false {
+                    user["premiumPeriod"] = "annual" as AnyObject
+                    user["premiumExpiry"] = 0 as AnyObject
+                }
                 print("Force Activate Premium \(uid)")
             }
             else {
@@ -10743,16 +10756,15 @@ extension Database{
         premRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
             var user = currentData.value as? [String : AnyObject] ?? [:]
             
-            
+            var expiry = user["expiryDate"] as? Double ?? 0
+            var subDate = Date.init(timeIntervalSince1970: expiry)
             if expiryDate != nil {
-                var expiry = user["expiryDate"] as? Double ?? 0
-                var subDate = Date.init(timeIntervalSince1970: expiry)
                 user["expiryDate"] = expiryDate?.timeIntervalSince1970 as AnyObject
                 print("Force Update Expiry Date \(expiryDate) from \(subDate)")
             }
             
+            var subPeriod = user["subPeriod"] as? String ?? ""
             if premSub != nil {
-                var subPeriod = user["subPeriod"] as? String ?? ""
                 if premSub == SubPeriod.monthly {
                     subPeriod = "monthly"
                 } else if premSub == SubPeriod.annual {
@@ -10772,6 +10784,10 @@ extension Database{
                 user["isActive"] = true as AnyObject
                 user["activateDate"] = Date().timeIntervalSince1970 as AnyObject
                 print("Force Activate Premium \(uid)")
+                if premFree ?? false {
+                    user["subPeriod"] = "annual" as AnyObject
+                    user["expiryDate"] = 0 as AnyObject
+                }
             }
             else {
                 // CHECK IF STILL ACTIVE
@@ -10832,13 +10848,19 @@ extension Database{
         guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
+        
+        if CurrentUser.isPremiumFree && CurrentUser.isPremium {
+            print("Free Premium User \(CurrentUser.username) | checkPremiumStatus")
+            return
+        }
         Purchases.shared.purchaserInfo { (info, error) in
         // Check for current Premium Status
             var activate = false
             var cancel = false
             var expiryDate: Date? = nil
             var premSub: SubPeriod? = nil
-            
+            var premFree = false
+
             var isPremActive = info?.entitlements["premium"]?.isActive
             var expDate = info?.entitlements["premium"]?.expirationDate
             var subType = info?.entitlements["premium"]?.productIdentifier
@@ -10846,7 +10868,14 @@ extension Database{
             print("RevenueCat | isPremActive \(isPremActive) | subType \(subType) | expDate \(expDate)")
             
             if isPremActive != CurrentUser.isPremium {
-                if isPremActive == nil && CurrentUser.isPremium == true {
+                if CurrentUser.isPremiumFree && CurrentUser.isPremium {
+                    print("Free Premium User \(CurrentUser.username) | checkPremiumStatus")
+                } else if CurrentUser.isPremiumFree && !CurrentUser.isPremium {
+                    activate = true
+                    premFree = true
+                    print("ACTIVATE Free Premium User \(CurrentUser.username) | checkPremiumStatus")
+                }
+                else if isPremActive == nil && CurrentUser.isPremium == true {
                     cancel = true
                     print("USER MISSING PREMIUM REV CAT = \(uid) | RevCat \(isPremActive) | Database \(CurrentUser.isPremium)")
                 }
@@ -10877,7 +10906,7 @@ extension Database{
             
             if cancel || activate || expiryDate != nil || premSub != nil {
                 print("checkPremiumStatus | \(CurrentUser.username)) Need Update | Cancel \(cancel) | Activate \(activate) | expiryDate \(expiryDate) | premSub \(premSub)")
-                updatePremiumUserDatabase(uid: uid, cancel: cancel, activate: activate, expiryDate: expiryDate, premSub: premSub)
+                updatePremiumUserDatabase(uid: uid, cancel: cancel, activate: activate, expiryDate: expiryDate, premSub: premSub, premFree: premFree)
             } else {
                 print("checkPremiumStatus \(CurrentUser.username)| OK")
             }

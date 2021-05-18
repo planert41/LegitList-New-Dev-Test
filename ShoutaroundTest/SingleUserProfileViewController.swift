@@ -468,6 +468,7 @@ class SingleUserProfileViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshInboxNotifications), name: InboxController.newMsgNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
 
         print("  END |  NewListCollectionView | ViewdidLoad")
 
@@ -1257,6 +1258,15 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
             list.clearAllNotifications()
         }
         self.extTapList(list: list)
+    }
+    
+    @objc func postEdited(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        Database.fetchPostWithPostID(postId: postId) { (post, error) in
+            if let post = post {
+                self.refreshPost(post: post)
+            }
+        }
     }
     
     func refreshPost(post: Post) {

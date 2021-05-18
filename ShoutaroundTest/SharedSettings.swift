@@ -90,6 +90,9 @@ var UID_wei = "2G76XbYQS8Z7bojJRrImqpuJ7pz2"
 var UID_mayn = "srHzEjoRYKcKGqAgiyG4E660amQ2"
 var UID_ernie = "VeG6VZOAvmcJ08AnBRTtO8JkSP12"
 var UID_magnus = "B6div2WhzSObg7XGJRFkKBFEQiC3"
+let UID_zm = "nWc6VAl9fUdIx0Yf05yQFdwGd5y2"
+
+var UID_team = [UID_wei, UID_mayn, UID_ernie, UID_magnus, UID_zm]
 
 //var listTypeOptions:[String] = [listAll, listCreated, listFollowed]
 //var listTypeDefault = listAll

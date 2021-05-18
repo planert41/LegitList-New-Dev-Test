@@ -111,8 +111,8 @@ class SearchBarTableViewController: UITableViewController, UISearchBarDelegate, 
 //            self.setSelections()
         }
     }
-    var displayEmojis:[Emoji] = []
-    var filteredEmojis:[Emoji] = []
+    var displayEmojis:[EmojiBasic] = []
+    var filteredEmojis:[EmojiBasic] = []
     
     
     var defaultLocationCounts:[String:Int] = [:] {
@@ -458,7 +458,7 @@ class SearchBarTableViewController: UITableViewController, UISearchBarDelegate, 
                 self.tableView.reloadData()
                 return
             } else {
-                filteredEmojis = displayEmojis.filter({( emoji : Emoji) -> Bool in
+                filteredEmojis = displayEmojis.filter({( emoji : EmojiBasic) -> Bool in
                     return searchCaptionArray.contains(emoji.name!) || searchCaptionEmojis.contains(emoji.emoji) || (emoji.name?.contains(lastWord))!})
             }
             
@@ -473,7 +473,7 @@ class SearchBarTableViewController: UITableViewController, UISearchBarDelegate, 
             }
             
             // REMOVE DUPS
-            var tempResults: [Emoji] = []
+            var tempResults: [EmojiBasic] = []
             
             for x in filteredEmojis {
                 if !tempResults.contains(where: { (emoji) -> Bool in
@@ -878,7 +878,7 @@ class SearchBarTableViewController: UITableViewController, UISearchBarDelegate, 
         
     }
     
-    func addEmojiToSearchTerm(inputEmoji: Emoji?) {
+    func addEmojiToSearchTerm(inputEmoji: EmojiBasic?) {
         guard let inputEmoji = inputEmoji else {return}
         guard let searchBarText = self.searchBar.text else {return}
         print("addEmojiToSearchTerm | \(inputEmoji)")

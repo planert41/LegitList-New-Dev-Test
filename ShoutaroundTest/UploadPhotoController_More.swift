@@ -1060,7 +1060,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         }
     }
     
-    var mealTagEmojis: [Emoji] = [] {
+    var mealTagEmojis: [EmojiBasic] = [] {
         didSet{
             self.filterEmojiSelections()
         }

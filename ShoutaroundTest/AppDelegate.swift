@@ -55,6 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let RefreshAllName = NSNotification.Name(rawValue: "RefreshAll")
     static let NewEmojiDic = NSNotification.Name(rawValue: "NewEmojiDic")
     static let ShowCityNotificationName = NSNotification.Name(rawValue: "ShowCity")
+    static let refreshPostNotificationName = NSNotification.Name(rawValue: "Refresh Post")
 
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -612,26 +613,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         // Check ReverseEmojiDictionary
         
         for emoji in defaultEmojiSelection {
-            let tempEmoji = Emoji(emoji: emoji, name: EmojiDictionary[emoji], count: 0)
+            let tempEmoji = EmojiBasic(emoji: emoji, name: EmojiDictionary[emoji], count: 0)
             defaultEmojis.append(tempEmoji)
         }
         
         let autotagEmojiSet = [mealEmojiDictionary, cuisineEmojiDictionary, dietEmojiDictionary]
         
         for (x) in mealEmojisSelect {
-            mealEmojis.append(Emoji(emoji: x, name: mealEmojiDictionary[x], count: 0))
+            mealEmojis.append(EmojiBasic(emoji: x, name: mealEmojiDictionary[x], count: 0))
         }
         
         for (x) in cuisineEmojiSelect {
-            cuisineEmojis.append(Emoji(emoji: x, name: cuisineEmojiDictionary[x], count: 0))
+            cuisineEmojis.append(EmojiBasic(emoji: x, name: cuisineEmojiDictionary[x], count: 0))
         }
         
         for (x) in dietEmojiSelect {
-            dietEmojis.append(Emoji(emoji: x, name: dietEmojiDictionary[x], count: 0))
+            dietEmojis.append(EmojiBasic(emoji: x, name: dietEmojiDictionary[x], count: 0))
         }
         
         for (x, y) in extraRatingEmojisDic {
-             allRatingEmojis.append(Emoji(emoji: x, name: y, count: 0))
+             allRatingEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
          }
         
         allFoodEmojis = breakfastFoodEmojis +  lunchFoodEmojis + dinnerFoodEmojis + snackEmojis
@@ -672,11 +673,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         
         // Create All Emoji Dictionary Emojis
         for (x, y) in EmojiDictionary {
-            EmojiDictionaryEmojis.append(Emoji(emoji: x, name: y, count: 0))
+            EmojiDictionaryEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
         }
         
         for (name,emoji) in ReverseEmojiDictionary {
-            let tempEmoji = Emoji(emoji: emoji, name: name, count: 0)
+            let tempEmoji = EmojiBasic(emoji: emoji, name: name, count: 0)
 
             if !EmojiDictionaryEmojis.contains(where: { (emoji_lookup) -> Bool in
                 return emoji_lookup.emoji == tempEmoji.emoji

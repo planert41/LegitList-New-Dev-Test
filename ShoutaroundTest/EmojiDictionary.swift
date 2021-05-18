@@ -66,12 +66,12 @@
 
 import Foundation
 
-var defaultEmojis:[Emoji] = []
-var allEmojis:[Emoji] = []
-var allNonCuisineEmojis:[Emoji] = []
+var defaultEmojis:[EmojiBasic] = []
+var allEmojis:[EmojiBasic] = []
+var allNonCuisineEmojis:[EmojiBasic] = []
 
 
-struct Emoji: Hashable, Equatable {
+struct EmojiBasic: Hashable, Equatable {
     let emoji : String
     let name : String?
     var count: Int = 0
@@ -80,7 +80,7 @@ struct Emoji: Hashable, Equatable {
 //    var count : Int?
 }
 
-func ==(left:Emoji, right:Emoji) -> Bool {
+func ==(left:EmojiBasic, right:EmojiBasic) -> Bool {
     return (left.emoji == right.emoji) && (left.name == right.name)
 }
 
@@ -257,7 +257,7 @@ var defaultEmojiSelection: [String] = [
 
 ]
 
-var EmojiDictionaryEmojis: [Emoji] = []
+var EmojiDictionaryEmojis: [EmojiBasic] = []
 
 var userEmojiDictionary: [String:String] = [:]
 

@@ -220,13 +220,13 @@ class LegitSearchViewController: UIViewController {
 //        var defaultCityCounts:[String:Int] = [:]
 
     // SEARCH TEMPS
-        var displayEmojis:[Emoji] = []
-        var filteredEmojis:[Emoji] = []
+        var displayEmojis:[EmojiBasic] = []
+        var filteredEmojis:[EmojiBasic] = []
         
-        var displayCuisines:[Emoji] = []
-        var filteredCuisines:[Emoji] = []
+        var displayCuisines:[EmojiBasic] = []
+        var filteredCuisines:[EmojiBasic] = []
     
-        var displayRatingEmojis:[Emoji] = []
+        var displayRatingEmojis:[EmojiBasic] = []
     
         var displayPlaces: [String] = []
         var filteredPlaces: [String] = []
@@ -682,7 +682,7 @@ extension LegitSearchViewController: UISearchBarDelegate {
         
         if selectedSegment == SearchFoodImage
         {
-            filteredEmojis = displayEmojis.filter({( emoji : Emoji) -> Bool in
+            filteredEmojis = displayEmojis.filter({( emoji : EmojiBasic) -> Bool in
                 return searchCaptionArray.contains(emoji.name!) || searchCaptionEmojis.contains(emoji.emoji) || (emoji.name?.contains(lastWord))!})
             filteredEmojis = Array(Set(filteredEmojis))
             filteredEmojis.sort { (p1, p2) -> Bool in
@@ -698,7 +698,7 @@ extension LegitSearchViewController: UISearchBarDelegate {
         }
         else if selectedSegment == SearchCuisineImage
         {
-            filteredCuisines = displayCuisines.filter({( emoji : Emoji) -> Bool in
+            filteredCuisines = displayCuisines.filter({( emoji : EmojiBasic) -> Bool in
                 return searchCaptionArray.contains(emoji.name!) || searchCaptionEmojis.contains(emoji.emoji) || (emoji.name?.contains(lastWord))!})
             filteredCuisines = Array(Set(filteredCuisines))
             filteredCuisines.sort { (p1, p2) -> Bool in
@@ -844,7 +844,7 @@ extension LegitSearchViewController: UICollectionViewDelegate, UICollectionViewD
     
     func didRemoveTag(tag: String) {
         if tag.containsOnlyEmoji {
-            let tempEmoji = Emoji(emoji: tag, name: "")
+            let tempEmoji = EmojiBasic(emoji: tag, name: "")
             self.addEmojiToSearchTerm(inputEmoji: tempEmoji)
         } else if let deleteIndex = self.searchTerms.firstIndex(of: tag) {
             self.searchTerms.remove(at: deleteIndex)
@@ -1323,7 +1323,7 @@ extension LegitSearchViewController: UITableViewDataSource, UITableViewDelegate,
     
     }
     
-    func singleSearchEmojiTerm(inputEmoji: Emoji?) {
+    func singleSearchEmojiTerm(inputEmoji: EmojiBasic?) {
         guard let emoji = inputEmoji?.emoji else {return}
         var tempArray = self.viewFilter.filterCaptionArray
         
@@ -1340,7 +1340,7 @@ extension LegitSearchViewController: UITableViewDataSource, UITableViewDelegate,
         print("singleSearchEmojiTerm \(emoji)")
     }
     
-    func addEmojiToSearchTerm(inputEmoji: Emoji?) {
+    func addEmojiToSearchTerm(inputEmoji: EmojiBasic?) {
         guard let emoji = inputEmoji?.emoji else {return}
         var oldSearch = self.viewFilter.filterCaptionArray
         /*

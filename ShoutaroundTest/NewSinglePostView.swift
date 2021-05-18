@@ -21,6 +21,11 @@ import FirebaseStorage
 import AudioToolbox
 import SwiftyJSON
 
+protocol SinglePostViewDelegate {
+//    func listSelected(list: List?)
+    func refreshPost(post: Post)
+}
+
 
 
 class NewSinglePostView: UIViewController {
@@ -37,7 +42,7 @@ class NewSinglePostView: UIViewController {
             } else {
                 creatorName = post?.creatorUID ?? ""
             }
-            print(" ~~~ NewSinglePostView | LOAD POST | ID: \((post?.id)!) | LOC: \((post?.locationName)!) | USER: \(creatorName)")
+            print(" ~~~ NewSinglePostView | LOAD POST | ID: \((post?.id)!) | LOC: \((post?.locationName)!) | USER: \(creatorName) | Lists \(post?.allList.count)")
 
             guard let imageUrls = post?.imageUrls else {
                 print("Read Post, No Image URLs Error")
@@ -856,15 +861,17 @@ class NewSinglePostView: UIViewController {
     
     func setupTaggedList() {
         taggedListView.refreshAll()
-        taggedListView.post = self.post
         taggedListView.delegate = self
         taggedListView.sortListByDate = true
         taggedListView.listHeaderLabel.font = UIFont(name: "Poppins-Bold", size: 20)
         taggedListView.listHeaderLabel.font = UIFont(name: "Poppins-Regular", size: 20)
         taggedListView.listHeaderLabel.font = UIFont(font: .avenirNextBold, size: 18)
-        taggedListHeightConstraint?.isActive = (post?.allList.count == 0)
-        taggedListContainer.isHidden = (post?.creatorListId?.count == 0)
-        taggedListTopDiv.isHidden = (post?.creatorListId?.count == 0)
+        var currentListCount = (post?.creatorListId?.count ?? 0) + (post?.selectedListId?.count ?? 0)
+        taggedListHeightConstraint?.isActive = (currentListCount == 0)
+        taggedListContainer.isHidden = (currentListCount == 0)
+        taggedListTopDiv.isHidden = (currentListCount == 0)
+        taggedListView.post = self.post
+        print("setupTaggedList | Creator List \(taggedListView.post?.creatorListId?.count) | User Tag Lists \(taggedListView.post?.selectedListId?.count)")
     }
     
         
@@ -1314,10 +1321,11 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
     
 
     func refreshPost(post: Post) {
-        print("   -refreshPost | NewSinglePostView")
+        print("   -refreshPost | NewSinglePostView | Lists \(post.allList.count) | \(post.id)")
         self.post = post
         postCache.removeValue(forKey: post.id!)
         postCache[post.id!] = post
+        self.delegate?.refreshPost(post: post)
     }
     
 

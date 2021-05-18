@@ -71,10 +71,14 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
             if postId != post.id {
                 postId = post.id
             }
+            
+            print("ListSummaryView: \(post.id) | All \(post.allList.count) | Created \(post.creatorListId?.count) | Selected \(post.selectedListId?.count)")
             self.fetchListForPost()
             self.refreshHeaderLabels()
         }
     }
+    
+    
     
     // LISTS
     var postCreatorListIds: [String] = []
@@ -352,6 +356,12 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     func fetchListForPost(){
+        
+        postCreatorListIds = []
+        postCreatorListNames = []
+        postCurrentUserListIds = []
+        postCurrentUserListNames = []
+        
         // CREATOR TAGGED LISTS
         if self.post?.creatorListId != nil {
             for (key,value) in (self.post?.creatorListId)! {
@@ -374,7 +384,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
 
             
         Database.fetchListForMultListIds(listUid: allListIds) { (lists) in
-            print("ListSummaryView | \(lists) List Fetched For | \(self.post?.id)")
+            print("ListSummaryView | \(lists.count) List Fetched For | \(self.post?.id) | \(allListIds)")
             self.userLists = lists
             self.refreshHeaderLabels()
             self.collectionView.reloadData()

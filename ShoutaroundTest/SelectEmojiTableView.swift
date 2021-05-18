@@ -61,8 +61,8 @@ class SelectEmojiTableView : UITableViewController, UISearchResultsUpdating, UIS
     var selectedUser: User?
     var selectedList: List?
     
-    var allEmojis = [Emoji]()
-    var filteredEmojis = [Emoji]()
+    var allEmojis = [EmojiBasic]()
+    var filteredEmojis = [EmojiBasic]()
 
     
     let searchController = UISearchController(searchResultsController: nil)
@@ -110,7 +110,7 @@ class SelectEmojiTableView : UITableViewController, UISearchResultsUpdating, UIS
         
         for choice in emojiChoices {
             var text = EmojiDictionary[choice] ?? ""
-            var temp = Emoji(emoji: choice, name: text)
+            var temp = EmojiBasic(emoji: choice, name: text)
             self.allEmojis.append(temp)
         }
         
@@ -448,7 +448,7 @@ extension SelectEmojiTableView {
         
     }
     
-    func emojiSelected(emoji: Emoji?) {
+    func emojiSelected(emoji: EmojiBasic?) {
 //        guard let emoji = emoji else {return}navi
         self.navigationController?.popViewController(animated: true)
         self.delegate?.statusEmojiSelected(emoji: emoji?.emoji)

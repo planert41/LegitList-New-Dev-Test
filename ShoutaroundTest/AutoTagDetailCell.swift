@@ -11,7 +11,7 @@ import UIKit
 
 class AutoTagDetailCell: UICollectionViewCell {
     
-    var emoji: Emoji? {
+    var emoji: EmojiBasic? {
         didSet{
             emojiLabel.text = emoji?.emoji
             emojiLabel.sizeToFit()

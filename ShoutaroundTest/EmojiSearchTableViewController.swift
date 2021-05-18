@@ -57,9 +57,9 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
 //    var searchEmojiScope = ["All" , "Ing", "Feel", "Flags", "More" ]
     var searchEmojiScope = ["All" , "🐮 Ingr", "🇺🇸 Flags", "😋 Feels", "🏠 Other" ]
 
-    var displayedEmojis: [Emoji] = []
-    var filteredEmojis: [Emoji] = []
-    var searchCaptionEmojis: [Emoji] = []
+    var displayedEmojis: [EmojiBasic] = []
+    var filteredEmojis: [EmojiBasic] = []
+    var searchCaptionEmojis: [EmojiBasic] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -297,7 +297,7 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
                 var searchCaptionEmojiText = Array(Set(searchText.emojis))
                 self.searchCaptionEmojis = []
                 for emoji in searchCaptionEmojiText {
-                    self.searchCaptionEmojis.append(Emoji(emoji: emoji, name: EmojiDictionary[emoji] ?? ""))
+                    self.searchCaptionEmojis.append(EmojiBasic(emoji: emoji, name: EmojiDictionary[emoji] ?? ""))
                 }
                 print("Detected \(self.searchCaptionEmojis.count) Emojis in SearchBox | \(searchCaptionEmojiText)")
             }
@@ -322,7 +322,7 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
         }
 
         var searchCaptionEmojiText = searchText.emojis
-        filteredEmojis = tempEmojis.filter({( emoji : Emoji) -> Bool in
+        filteredEmojis = tempEmojis.filter({( emoji : EmojiBasic) -> Bool in
                                             return emoji.emoji.lowercased().contains(searchText.lowercased()) || (emoji.name?.contains(searchText.lowercased()))! || searchCaptionEmojiText.contains(emoji.emoji) })
         filteredEmojis.sort { (p1, p2) -> Bool in
             ((p1.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1) < ((p2.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1)
@@ -358,7 +358,7 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: EmojiCellId, for: indexPath) as! AutoTagCell
-        var cellEmoji: Emoji? = nil
+        var cellEmoji: EmojiBasic? = nil
         
         if isFiltering{
             cellEmoji = filteredEmojis[indexPath.row]

@@ -159,7 +159,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
     
     let EmojiCellId = "EmojiCellId"
     
-    func countEmojiNumbers(inputEmojis: [Emoji]?, emojiCount: [String:Int], matchDictionary: Bool = false) -> Int {
+    func countEmojiNumbers(inputEmojis: [EmojiBasic]?, emojiCount: [String:Int], matchDictionary: Bool = false) -> Int {
         guard let inputEmojis = inputEmojis else {
             print("countSelectedEmojis ERROR | No Emojis")
             return 0}
@@ -186,7 +186,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
         
     }
     
-    func countSelectedEmojis(inputEmojis: [Emoji]?) -> Int {
+    func countSelectedEmojis(inputEmojis: [EmojiBasic]?) -> Int {
         guard let inputEmojis = inputEmojis else {
             print("countSelectedEmojis ERROR | No Emojis")
             return 0}
@@ -223,8 +223,8 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
     }
     
     // FOOD
-    var sortedFoodEmojis:[Emoji] = defaultEmojis
-    var filteredFoodEmojis:[Emoji] = []
+    var sortedFoodEmojis:[EmojiBasic] = defaultEmojis
+    var filteredFoodEmojis:[EmojiBasic] = []
     var historicalFoodEmojiCounts: Int = 0 {
         didSet{
             self.updateScopeBarCount()
@@ -232,8 +232,8 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
     }
     
     // Cuisine
-    var sortedCuisineEmojis:[Emoji] = cuisineEmojis
-    var filteredCuisines:[Emoji] = []
+    var sortedCuisineEmojis:[EmojiBasic] = cuisineEmojis
+    var filteredCuisines:[EmojiBasic] = []
     var historicalCuisineEmojiCounts: Int = 0 {
         didSet{
             self.updateScopeBarCount()
@@ -241,8 +241,8 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
     }
     
     // Meal
-    var sortedMealEmojis:[Emoji] = mealEmojis + dietEmojis
-    var filteredMeals:[Emoji] = []
+    var sortedMealEmojis:[EmojiBasic] = mealEmojis + dietEmojis
+    var filteredMeals:[EmojiBasic] = []
     var historicalMealEmojiCounts: Int = 0 {
         didSet{
             self.updateScopeBarCount()
@@ -719,7 +719,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
     //        }
     //    }
     
-    func addEmojiToSearchTerm(inputEmoji: Emoji?) {
+    func addEmojiToSearchTerm(inputEmoji: EmojiBasic?) {
         guard let inputEmoji = inputEmoji else {return}
         guard let searchBarText = self.searchBar.text else {return}
         var tempSearchBarText = searchBarText.components(separatedBy: " ")
@@ -772,19 +772,19 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
         
         // Emoji Selected
         if self.selectedScope == 0 {
-            var emojiSelected: Emoji?
+            var emojiSelected: EmojiBasic?
             emojiSelected = isFiltering ? filteredFoodEmojis[indexPath.row] : sortedFoodEmojis[indexPath.row]
             self.addEmojiToSearchTerm(inputEmoji: emojiSelected)
         }
             
         else if self.selectedScope == 1 {
-            var emojiSelected: Emoji?
+            var emojiSelected: EmojiBasic?
             emojiSelected = isFiltering ? filteredCuisines[indexPath.row] : sortedCuisineEmojis[indexPath.row]
             self.addEmojiToSearchTerm(inputEmoji: emojiSelected)
         }
             
         else if self.selectedScope == 2 {
-            var emojiSelected: Emoji?
+            var emojiSelected: EmojiBasic?
             emojiSelected = isFiltering ? filteredMeals[indexPath.row] : sortedMealEmojis[indexPath.row]
             self.addEmojiToSearchTerm(inputEmoji: emojiSelected)
         }
@@ -875,7 +875,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
                 filteredFoodEmojis = sortedFoodEmojis
             } else {
                 // If contains text, filter emojis for remaining word
-                filteredFoodEmojis = sortedFoodEmojis.filter({( emoji : Emoji) -> Bool in
+                filteredFoodEmojis = sortedFoodEmojis.filter({( emoji : EmojiBasic) -> Bool in
                     return searchCaptionArray.contains(emoji.name!) || (emoji.name?.contains(lastWord))!})
             }
             
@@ -892,7 +892,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
                 filteredCuisines = sortedCuisineEmojis
             } else {
                 // If contains text, filter emojis for remaining word
-                filteredCuisines = sortedCuisineEmojis.filter({( emoji : Emoji) -> Bool in
+                filteredCuisines = sortedCuisineEmojis.filter({( emoji : EmojiBasic) -> Bool in
                     return searchCaptionArray.contains(emoji.name!) || (emoji.name?.contains(lastWord))!})
             }
             
@@ -909,7 +909,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
                 filteredMeals = sortedMealEmojis
             } else {
                 // If contains text, filter emojis for remaining word
-                filteredMeals = sortedMealEmojis.filter({( emoji : Emoji) -> Bool in
+                filteredMeals = sortedMealEmojis.filter({( emoji : EmojiBasic) -> Bool in
                     return searchCaptionArray.contains(emoji.name!) || (emoji.name?.contains(lastWord))!})
             }
             

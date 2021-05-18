@@ -266,7 +266,7 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
     
     let EmojiCellId = "EmojiCellId"
     
-    func countEmojiNumbers(inputEmojis: [Emoji]?, emojiCount: [String:Int], matchDictionary: Bool = false) -> Int {
+    func countEmojiNumbers(inputEmojis: [EmojiBasic]?, emojiCount: [String:Int], matchDictionary: Bool = false) -> Int {
         guard let inputEmojis = inputEmojis else {
             print("countSelectedEmojis ERROR | No Emojis")
             return 0}
@@ -293,7 +293,7 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
         
     }
     
-    func countSelectedEmojis(inputEmojis: [Emoji]?) -> Int {
+    func countSelectedEmojis(inputEmojis: [EmojiBasic]?) -> Int {
         guard let inputEmojis = inputEmojis else {
             print("countSelectedEmojis ERROR | No Emojis")
             return 0}
@@ -344,22 +344,22 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
     
     
     // ALL FOOD
-    var userDefaultEmojis:[Emoji] = []
-    var searchFilteredFoodEmojis:[Emoji] = []
+    var userDefaultEmojis:[EmojiBasic] = []
+    var searchFilteredFoodEmojis:[EmojiBasic] = []
     
     // FOOD
-    var sortedFoodEmojis:[Emoji] = defaultEmojis
-    var filteredFoodEmojis:[Emoji] = []
+    var sortedFoodEmojis:[EmojiBasic] = defaultEmojis
+    var filteredFoodEmojis:[EmojiBasic] = []
     var historicalFoodEmojiCounts: Int = 0
     
     // Cuisine
-    var sortedCuisineEmojis:[Emoji] = cuisineEmojis
-    var filteredCuisines:[Emoji] = []
+    var sortedCuisineEmojis:[EmojiBasic] = cuisineEmojis
+    var filteredCuisines:[EmojiBasic] = []
     var historicalCuisineEmojiCounts: Int = 0
     
     // Meal
-    var sortedMealEmojis:[Emoji] = mealEmojis + dietEmojis
-    var filteredMeals:[Emoji] = []
+    var sortedMealEmojis:[EmojiBasic] = mealEmojis + dietEmojis
+    var filteredMeals:[EmojiBasic] = []
     var historicalMealEmojiCounts: Int = 0
     
     // Users
@@ -870,7 +870,7 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
     }
     
     
-    func addEmojiToSearchTerm(inputEmoji: Emoji?) {
+    func addEmojiToSearchTerm(inputEmoji: EmojiBasic?) {
         guard let inputEmoji = inputEmoji else {return}
         guard let searchBarText = self.searchBar.text else {return}
         print("addEmojiToSearchTerm | \(inputEmoji)")
@@ -927,7 +927,7 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
         
         // Emoji Selected
         if self.selectedScope == 0 {
-            var emojiSelected: Emoji?
+            var emojiSelected: EmojiBasic?
             emojiSelected = isFiltering ? searchFilteredFoodEmojis[indexPath.section] : userDefaultEmojis[indexPath.section]
             
             if multiSelect {

@@ -14,7 +14,7 @@ class SearchResultsCell: UITableViewCell {
 // INPUTS
     
     
-    var emoji: Emoji? {
+    var emoji: EmojiBasic? {
         didSet{
             self.refreshCell()
             emojiLabel.text = emoji?.emoji ?? ""

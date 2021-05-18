@@ -64,13 +64,13 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    var mealTag:[Emoji] = mealEmojis
-    var cuisineTag:[Emoji] = cuisineEmojis
-    var dietTag:[Emoji] = dietEmojis
-    var allTag:[Emoji] = mealEmojis + cuisineEmojis + dietEmojis
+    var mealTag:[EmojiBasic] = mealEmojis
+    var cuisineTag:[EmojiBasic] = cuisineEmojis
+    var dietTag:[EmojiBasic] = dietEmojis
+    var allTag:[EmojiBasic] = mealEmojis + cuisineEmojis + dietEmojis
 
     
-    var filteredTag:[Emoji] = []
+    var filteredTag:[EmojiBasic] = []
     
     func initTags(){
         mealTag = mealEmojis
@@ -429,7 +429,7 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         // Emojis
-        var displayEmoji: Emoji?
+        var displayEmoji: EmojiBasic?
         if self.selectedScope == 0 {
             displayEmoji = isFiltering ? filteredTag[indexPath.section] : allTag[indexPath.section]
         } else if self.selectedScope == 1 {
@@ -471,7 +471,7 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var displayEmoji: Emoji?
+        var displayEmoji: EmojiBasic?
         if self.selectedScope == 0 {
             displayEmoji = isFiltering ? filteredTag[indexPath.section] : allTag[indexPath.section]
         } else if self.selectedScope == 1 {
@@ -510,8 +510,8 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     
     func filterContentForSearchText(_ searchText: String) {
         
-        var tempEmoji: [Emoji] = []
-        var refEmoji: [Emoji] = []
+        var tempEmoji: [EmojiBasic] = []
+        var refEmoji: [EmojiBasic] = []
         
         if self.selectedScope == 0 {
             refEmoji = self.allTag
@@ -538,7 +538,7 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
                 tempEmoji = refEmoji
             } else {
                 // If contains text, filter emojis for remaining word
-                tempEmoji = refEmoji.filter({( emoji : Emoji) -> Bool in
+                tempEmoji = refEmoji.filter({( emoji : EmojiBasic) -> Bool in
                     return searchCaptionArray.contains(emoji.name!) || (emoji.name?.contains(lastWord))!})
             }
         

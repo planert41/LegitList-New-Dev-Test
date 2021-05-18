@@ -630,7 +630,7 @@ class NewLegitHomeHeader: UICollectionViewCell {
     var displayedEmojis: [String] = [] {
         didSet {
             updateCounting()
-            print("UserSearchBar | Displayed Emojis: \(self.displayedEmojis.count)")
+//            print("UserSearchBar | Displayed Emojis: \(self.displayedEmojis.count)")
 //            self.scheduledTimerWithTimeInterval()
 
 //            self.refreshEmojiCollectionView()

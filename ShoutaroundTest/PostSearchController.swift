@@ -55,7 +55,7 @@ class PostSearchController : UITableViewController, UISearchResultsUpdating, UIS
     
     // Emojis - Pulls in Default Emojis and Emojis filtered by searchText
     let EmojiCellId = "EmojiCellId"
-    var filteredEmojis:[Emoji] = []
+    var filteredEmojis:[EmojiBasic] = []
     
     // Users
     let UserCellId = "UserCellId"
@@ -302,7 +302,7 @@ class PostSearchController : UITableViewController, UISearchResultsUpdating, UIS
         
         // Emoji Selected
         if selectedScope == 0 {
-            var emojiSelected: Emoji?
+            var emojiSelected: EmojiBasic?
             if isFiltering {
                 emojiSelected = filteredEmojis[indexPath.row]
             } else {
@@ -336,7 +336,7 @@ class PostSearchController : UITableViewController, UISearchResultsUpdating, UIS
         
         // Emojis
         if self.selectedScope == 0 {
-            filteredEmojis = allEmojis.filter({( emoji : Emoji) -> Bool in
+            filteredEmojis = allEmojis.filter({( emoji : EmojiBasic) -> Bool in
                 return emoji.emoji.lowercased().contains(searchText.lowercased()) || (emoji.name?.contains(searchText.lowercased()))! })
             filteredEmojis.sort { (p1, p2) -> Bool in
                 ((p1.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1) < ((p2.name?.hasPrefix(searchText.lowercased()))! ? 0 : 1)

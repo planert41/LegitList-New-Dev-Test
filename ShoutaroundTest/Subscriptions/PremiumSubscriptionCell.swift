@@ -84,13 +84,18 @@ class PremiumSubscriptionCell: UITableViewCell {
             self.subHeaderLabel.text = ""
         } else {
             guard let expiryDate = expiryDate else {return}
-            let formatter = DateFormatter()
-            let calendar = NSCalendar.current
-            formatter.dateFormat = "MMM dd yyyy"
-            let dateDisplay = formatter.string(from: expiryDate)
             
-            subHeaderLabel.text = "Expires: \(dateDisplay)"
-            subHeaderLabel.sizeToFit()
+            if expiryDate == Date(timeIntervalSince1970: 0) {
+                subHeaderLabel.text = "No Expiry"
+            } else {
+                let formatter = DateFormatter()
+                let calendar = NSCalendar.current
+                formatter.dateFormat = "MMM dd yyyy"
+                let dateDisplay = formatter.string(from: expiryDate)
+                
+                subHeaderLabel.text = "Expires: \(dateDisplay)"
+                subHeaderLabel.sizeToFit()
+            }
         }
     }
     

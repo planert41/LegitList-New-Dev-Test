@@ -9,9 +9,9 @@
 import Foundation
 
 // Emoji Search Categories
-var allRatingEmojis:[Emoji] = []
-var allSearchEmojis:[Emoji] = []
-var allMealTypeEmojis:[Emoji] = []
+var allRatingEmojis:[EmojiBasic] = []
+var allSearchEmojis:[EmojiBasic] = []
+var allMealTypeEmojis:[EmojiBasic] = []
 var allMealTypeOptions:[String] = []
 
 // Default Food Emojis
@@ -67,9 +67,9 @@ var UserStatusEmojis: [String] = "😍😋🤤🤩😭😤😥😓💩😡😵�
 var otherEmojis: [String] =
     ["🚗","🏠","🚌","🏪","🎂","💑","💼","📆","👔","👖","💵","💸","🔕","🅿️","🆕","👶","👨‍👩‍👧‍👦"]
 
-var mealEmojis:[Emoji] = []
-var cuisineEmojis:[Emoji] = []
-var dietEmojis:[Emoji] = []
+var mealEmojis:[EmojiBasic] = []
+var cuisineEmojis:[EmojiBasic] = []
+var dietEmojis:[EmojiBasic] = []
 
 var mealEmojisSelect:[String] = ["🍳","🥞","🍱","🍽","🍮","☕️","🍺","🌙","📍"]
 var mealEmojiDictionary:[String:String] = [

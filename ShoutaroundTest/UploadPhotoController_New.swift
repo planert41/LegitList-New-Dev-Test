@@ -192,15 +192,15 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
                 
                 for tag in (editPost?.autoTagEmoji)! {
                     if mealEmojisSelect.contains(tag) {
-                        self.mealTagEmojis.append(Emoji(emoji: tag, name: mealEmojiDictionary[tag], count: 0))
+                        self.mealTagEmojis.append(EmojiBasic(emoji: tag, name: mealEmojiDictionary[tag], count: 0))
                     }
                         
                     else if cuisineEmojiSelect.contains(tag) {
-                        self.cuisineTagEmojis.append(Emoji(emoji: tag, name: cuisineEmojiDictionary[tag], count: 0))
+                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: cuisineEmojiDictionary[tag], count: 0))
                     }
                         
                     else if dietEmojiSelect.contains(tag) {
-                        self.dietTagEmojis.append(Emoji(emoji: tag, name: dietEmojiDictionary[tag], count: 0))
+                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: dietEmojiDictionary[tag], count: 0))
                     }
                 }
                 
@@ -798,10 +798,10 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     //    let autoTagSelectColor = UIColor.init(hexColor: "cc701a")
     let autoTagSelectColor = UIColor.legitColor()
     
-    var allAutoTagEmojis: [Emoji] = []
+    var allAutoTagEmojis: [EmojiBasic] = []
     
     
-    func updateAddTags(emojiArray: [Emoji]) {
+    func updateAddTags(emojiArray: [EmojiBasic]) {
         for emoji in emojiArray {
             if !self.selectedAddTags.contains(emoji.emoji) {
                 self.selectedAddTags.append(emoji.emoji)
@@ -812,7 +812,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
         self.reloadAddTag()
     }
     
-    func removeAddTags(emojiArray: [Emoji]) {
+    func removeAddTags(emojiArray: [EmojiBasic]) {
         for emoji in emojiArray {
             if let index = self.selectedAddTagsDic.firstIndex(of: emoji.name!){
                 self.selectedAddTags.remove(at: index)
@@ -1008,7 +1008,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     
     // Meals (Breakfast, Lunch, Dinner)
     
-    var mealTagEmojis: [Emoji] = [] {
+    var mealTagEmojis: [EmojiBasic] = [] {
         didSet{
             self.updateAddTags(emojiArray: mealTagEmojis)
 //            self.updateAllAutoTags()
@@ -1044,7 +1044,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     
     // Cuisine (American, Chinese, Japanese)
     
-    var cuisineTagEmojis: [Emoji] = [] {
+    var cuisineTagEmojis: [EmojiBasic] = [] {
         didSet{
             print("cuisineTagEmojis | ",cuisineTagEmojis)
             self.updateAddTags(emojiArray: cuisineTagEmojis)
@@ -1081,7 +1081,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     
     // Diet Restrictions (Halal, Vegetarian)
     
-    var dietTagEmojis: [Emoji] = [] {
+    var dietTagEmojis: [EmojiBasic] = [] {
         didSet{
             self.updateAddTags(emojiArray: dietTagEmojis)
 
@@ -1162,7 +1162,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         autoTag.selectedCuisineTagEmojis = self.cuisineTagEmojis
         autoTag.selectedDietTagEmojis = self.dietTagEmojis
         if self.nonRatingEmojiTags.count > 0 {
-            autoTag.selectedEmoji = [Emoji(emoji: self.nonRatingEmojiTags[0], name: self.nonRatingEmojiTagsDict[0], count: 0)]
+            autoTag.selectedEmoji = [EmojiBasic(emoji: self.nonRatingEmojiTags[0], name: self.nonRatingEmojiTagsDict[0], count: 0)]
         }
         
         self.navigationController?.pushViewController(autoTag, animated: true)
@@ -2905,7 +2905,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     // EmojiAutoComplete
     var emojiAutoComplete: UITableView!
     let EmojiAutoCompleteCellId = "EmojiAutoCompleteCellId"
-    var filteredEmojis:[Emoji] = []
+    var filteredEmojis:[EmojiBasic] = []
     var isAutocomplete: Bool = false
     
     func setupEmojiAutoComplete() {
@@ -3210,7 +3210,7 @@ Rating Emojis help you describe your experience beyond just star ratings
             // Find Auto Tags
             for (index, dic) in allAutoTagDictionary.enumerated() {
                 if let matchEmoji = dic.key(forValue: word) {
-                    let tempEmoji = Emoji(emoji: matchEmoji, name: word, count: 0)
+                    let tempEmoji = EmojiBasic(emoji: matchEmoji, name: word, count: 0)
                     if !allAutoTagEmojis.contains(where: { (emoji) -> Bool in
                         emoji.name == tempEmoji.name
                     }){
@@ -3233,7 +3233,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     
     
     func filterContentForSearchText(inputString: String) {
-        filteredEmojis = allEmojis.filter({( emoji : Emoji) -> Bool in
+        filteredEmojis = allEmojis.filter({( emoji : EmojiBasic) -> Bool in
             return emoji.emoji.lowercased().contains(inputString.lowercased()) || (emoji.name?.contains(inputString.lowercased()))!
         })
         
@@ -4404,10 +4404,10 @@ Rating Emojis help you describe your experience beyond just star ratings
         
         cuisineCounts.sorted(by: { $0.value > $1.value })
         
-        var tempCuisineTagEmojis: [Emoji] = []
+        var tempCuisineTagEmojis: [EmojiBasic] = []
         for (key,value) in cuisineCounts {
             if let emoji = EmojiDictionary.key(forValue: key) {
-                let guessCuisineEmoji = Emoji(emoji: emoji, name: key, count: 0)
+                let guessCuisineEmoji = EmojiBasic(emoji: emoji, name: key, count: 0)
                 
                 // Tag Up to Top 2 Cuisines
                 if tempCuisineTagEmojis.count < 2 {
