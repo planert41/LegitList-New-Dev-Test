@@ -3079,8 +3079,12 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             SVProgressHUD.dismiss(withDelay: 1)
         }))
         
-        alert.addAction(UIAlertAction(title: "No, Tag Anyway", style: .cancel, handler: { (action: UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: "No, Tag Anyway", style: .default, handler: { (action: UIAlertAction!) in
             self.addRemoveEmojiTags(emojiInput: emoji, emojiInputTag: "")
+            print("No, Tag Anyway")
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         

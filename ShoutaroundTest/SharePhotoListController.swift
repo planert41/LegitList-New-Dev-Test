@@ -1370,11 +1370,14 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
 //    }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if displayList[indexPath.row].name == legitListName {
-            self.confirmLegitListSelection()
-        } else {
-            displayList[indexPath.row].isSelected = false
-        }
+//        if displayList[indexPath.row].name == legitListName {
+//            self.confirmLegitListSelection()
+//        } else {
+//            displayList[indexPath.row].isSelected = false
+//        }
+        displayList[indexPath.row].isSelected = false
+
+        
 //        tableView.cellForRow(at: indexPath)?.accessoryType = UITableViewCellAccessoryType.none
 //        self.tableView.reloadRows(at: [indexPath], with: .none)
         
