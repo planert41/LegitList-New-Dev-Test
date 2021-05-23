@@ -90,6 +90,17 @@ extension Database{
         }
     }
     
+    static func fetchPremiumActivate(){
+        let userRef = Database.database().reference().child("activatePremium")
+        
+        userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            let activate = snapshot.value as? Bool
+            premiumActivated = activate ?? false
+        }) {(err) in
+            print("Failed to fetchPremiumActivate:",err)
+        }
+    }
 
     
     
@@ -131,7 +142,12 @@ extension Database{
         } else {
             CurrentUser.user = inputUser
             print(" 2 | FETCH_CURRENT_USER | Loaded User Object | \((CurrentUser.user?.username)!) | \((inputUser?.uid)!) | \(CurrentUser.user?.isPremium) Premium | \(CurrentUser.user?.premiumStart) Start | \(CurrentUser.user?.premiumExpiry) Expire")
-            checkPremiumStatus()
+            if premiumActivated{
+                checkPremiumStatus()
+            } else {
+                print("!!! PREMIUM NOT ACTIVATED YET | LOAD CURRENT USER")
+            }
+            
             NotificationCenter.default.post(name: HomeController.refreshNavigationNotificationName, object: nil)
             fetchedUser.leave()
         }
@@ -4996,7 +5012,9 @@ extension Database{
                     Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
                 }
                 
-                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
+                let newListId:[String: String] = ["newListID": listId]
+
+                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil, userInfo: newListId)
                 completion()
             }
             
@@ -5038,6 +5056,10 @@ extension Database{
         
         Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: -1)
 
+        let deleteListId:[String: String] = ["deleteListId": listId]
+
+        NotificationCenter.default.post(name: MainTabBarController.deleteList, object: nil, userInfo: deleteListId)
+        
         NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
 
     }
@@ -5658,6 +5680,11 @@ extension Database{
     static func fetchCreatedListsForUser(userUid: String?, completion: @escaping ([List]) -> ()){
         guard let userUid = userUid else {
 //            print("fetchCreatedListsForUser ERROR | No User Uid")
+            return
+        }
+        
+        if userUid == CurrentUser.uid && CurrentUser.lists.count > 0 {
+            completion(CurrentUser.lists)
             return
         }
         

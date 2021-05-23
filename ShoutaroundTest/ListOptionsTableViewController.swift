@@ -11,7 +11,7 @@ import UIKit
 import FirebaseStorage
 import FirebaseDatabase
 import FirebaseAuth
-
+import SVProgressHUD
 
 protocol ListOptionsTableViewControllerDelegate {
     func didDeleteList(listId: String?)
@@ -242,10 +242,13 @@ class ListOptionsTableViewController: UITableViewController {
             // Delete List in Database
             guard let list = self.inputList else {return}
             // Delete List in Database
+            SVProgressHUD.show(withStatus: "Deleting \(self.inputList?.name) List")
             Database.deleteList(uploadList: list)
             self.delegate?.didDeleteList(listId: list.id)
 //            self.navigationController?.popToRootViewController(animated: true)
-            self.dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true) {
+                SVProgressHUD.dismiss()
+            }
             
         }))
         

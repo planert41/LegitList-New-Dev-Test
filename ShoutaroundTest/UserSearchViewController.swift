@@ -10,6 +10,7 @@ import UIKit
 import FirebaseStorage
 import FirebaseDatabase
 import FirebaseAuth
+import Firebase
 
 
 protocol UserSearchViewControllerDelegate: class {
@@ -134,30 +135,30 @@ extension UserSearchViewController: UITableViewDataSource, UITableViewDelegate {
     
     func fetchAllUsers(){
         // Load Users
-        Database.fetchALLUsers(includeSelf: true) { (fetchedUsers) in
-            self.allUsers = fetchedUsers
-            var tempResults: [User] = []
-
-            // REMOVE DUPS
-            for x in fetchedUsers {
-                if !tempResults.contains(where: { (user) -> Bool in
-                    return user.uid == x.uid
-                }){
-                    if x.posts_created > 0 {
-                        tempResults.append(x)
-                    }
-                }
-            }
-            
-            
-            self.allUsers = tempResults.sorted(by: { (p1, p2) -> Bool in
-                p1.posts_created > p2.posts_created
-            })
-            
-            self.filteredUsers = self.allUsers
-            print("UserSearchView | Fetched All Users | \(self.allUsers.count) All Users | \(self.filteredUsers.count) Filtered Users")
-            self.searchTableView.reloadData()
-        }
+//        Database.fetchALLUsers(includeSelf: true) { (fetchedUsers) in
+//            self.allUsers = fetchedUsers
+//            var tempResults: [User] = []
+//
+//            // REMOVE DUPS
+//            for x in fetchedUsers {
+//                if !tempResults.contains(where: { (user) -> Bool in
+//                    return user.uid == x.uid
+//                }){
+//                    if x.posts_created > 0 {
+//                        tempResults.append(x)
+//                    }
+//                }
+//            }
+//            
+//            
+//            self.allUsers = tempResults.sorted(by: { (p1, p2) -> Bool in
+//                p1.posts_created > p2.posts_created
+//            })
+//            
+//            self.filteredUsers = self.allUsers
+//            print("UserSearchView | Fetched All Users | \(self.allUsers.count) All Users | \(self.filteredUsers.count) Filtered Users")
+//            self.searchTableView.reloadData()
+//        }
     }
     
     

@@ -68,12 +68,22 @@ class NewSinglePostView: UIViewController {
         }
     }
     
-    @objc func updateEditedSinglePost() {
+    @objc func updateEditedSinglePost(_ notification: NSNotification)  {
         guard let postId = post?.id else {return}
-        if let cachePost = postCache[postId] {
-            print("Update SinglePostView from Cache \(postId) updateEditedSinglePost")
-            self.post = cachePost
+        if let editedPostId = notification.userInfo?["editPostId"] as? String {
+           if self.post?.id == editedPostId {
+               print("Edited Post in SinglePostView \(editedPostId) | Refresh Post")
+            Database.fetchPostWithPostID(postId: postId) { (post, error) in
+                self.post = post
+            }
+           }
         }
+        
+        
+//        if let cachePost = postCache[postId] {
+//            print("Update SinglePostView from Cache \(postId) updateEditedSinglePost")
+//            self.post = cachePost
+//        }
     }
     
     var currentImage = 1
@@ -478,9 +488,8 @@ class NewSinglePostView: UIViewController {
         
         
         // Setup Navigation Look
-        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost), name: NewSinglePostView.editSinglePostNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost(_:)), name: NewSinglePostView.editSinglePostNotification, object: nil)
 
-        
         // USER PROFILE
             headerView.addSubview(userProfileImageView)
         userProfileImageView.anchor(top: headerView.topAnchor, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 3, paddingBottom: 0, paddingRight: 10, width: profileImageSize, height: profileImageSize)

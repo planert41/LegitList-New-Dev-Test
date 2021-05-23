@@ -1396,7 +1396,10 @@ extension LegitHomeView: FullPictureCellDelegate, TestGridPhotoCellDelegate, Sha
         }){
             displayedPosts[index] = post
             let indexPath = IndexPath(row: index, section: 0)
-            self.collectionView.reloadItems(at: [indexPath])
+            print("Refresh Post Legit Home View : \(post.id) | \(index) Index | \(self.collectionView.visibleCells.count) Visible Cells")
+            if index < self.collectionView.visibleCells.count {
+                self.collectionView.reloadItems(at: [indexPath])
+            }
         }
         
         // Update Cache

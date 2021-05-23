@@ -257,48 +257,68 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
 //        }
 //    }
     
-    @objc func initAddList(){
-        //1. Create the alert controller.
-        let alert = UIAlertController(title: "Create A New List", message: "Enter New List Name", preferredStyle: .alert)
-        
-        //2. Add the text field. You can configure it however you need.
-        alert.addTextField { (textField) in
-            textField.text = ""
-        }
-        
-        // 3. Grab the value from the text field, and print it when the user clicks OK.
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            print("New List Name: \(textField?.text)")
-            guard let newListName = textField?.text else {return}
-            
-            let listId = NSUUID().uuidString
-            guard let uid = Auth.auth().currentUser?.uid else {return}
-            self.checkListName(listName: newListName) { (listName) in
-                
-                self.addListTextField.resignFirstResponder()
-                let newList = List.init(id: listId, name: listName, publicList: 1)
-                self.createList(newList: newList)
-                
+    
+    
+    func newlistCreated(_ notification: NSNotification) {
+
+         if let listId = notification.userInfo?["newListID"] as? String {
+            var tempList = CurrentUser.lists.first { (list) -> Bool in
+                return list.id == listId
             }
-        }))
+            guard let newList = tempList else {return}
+            self.fetchedList.insert(newList, at: 0)
+    //        self.fetchedList.insert(newList, at: 1)
+            self.setupLists()
+    //        self.displayList.insert(newList, at: 1)
+
+            self.tableView.reloadData()
+         }
+    }
+    
+    @objc func initAddList(){
+        self.extCreateNewListSimple()
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
-        
-        let subAlert = UIAlertController(title: "New List Limit", message: "Please Subscribe to Legit Premium to create more than \(premiumListLimit) lists.", preferredStyle: UIAlertController.Style.alert)
-        subAlert.addAction(UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
-            self.extOpenSubscriptions()
-        }))
-        subAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-        
-        // 4. Present the alert.
-        if !CurrentUser.isPremium && CurrentUser.listIds.count >= premiumListLimit {
-            self.present(subAlert, animated: true, completion: nil)
-        } else {
-            self.present(alert, animated: true, completion: nil)
-        }
+//        //1. Create the alert controller.
+//        let alert = UIAlertController(title: "Create A New List", message: "Enter New List Name", preferredStyle: .alert)
+//
+//        //2. Add the text field. You can configure it however you need.
+//        alert.addTextField { (textField) in
+//            textField.text = ""
+//        }
+//
+//        // 3. Grab the value from the text field, and print it when the user clicks OK.
+//        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+//            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+//            print("New List Name: \(textField?.text)")
+//            guard let newListName = textField?.text else {return}
+//
+//            let listId = NSUUID().uuidString
+//            guard let uid = Auth.auth().currentUser?.uid else {return}
+//            self.checkListName(listName: newListName) { (listName) in
+//
+//                self.addListTextField.resignFirstResponder()
+//                let newList = List.init(id: listId, name: listName, publicList: 1)
+//                self.createList(newList: newList)
+//
+//            }
+//        }))
+//
+//        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+//            print("Handle Cancel Logic here")
+//        }))
+//
+//        let subAlert = UIAlertController(title: "New List Limit", message: "Please Subscribe to Legit Premium to create more than \(premiumListLimit) lists.", preferredStyle: UIAlertController.Style.alert)
+//        subAlert.addAction(UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
+//            self.extOpenSubscriptions()
+//        }))
+//        subAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+//
+//        // 4. Present the alert.
+//        if !CurrentUser.isPremium && CurrentUser.listIds.count >= premiumListLimit {
+//            self.present(subAlert, animated: true, completion: nil)
+//        } else {
+//            self.present(alert, animated: true, completion: nil)
+//        }
     
     
 //        let optionsAlert = UIAlertController(title: "Create New List", message: "", preferredStyle: UIAlertController.Style.alert)
@@ -534,7 +554,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             var listChange = newSelectedListCount - previousListCount
             
             if listChange > 0 {
-                displayString += "Tag \(listChange) Lists"
+                displayString += "Tag \(listChange) New Lists"
             } else if listChange < 0 {
                 displayString += "Untag \(-listChange) Lists"
             } else {
@@ -589,7 +609,8 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newlistCreated(_:)), name: TabListViewController.refreshListNotificationName, object: nil)
+
         // Set for the Post up top
         self.automaticallyAdjustsScrollViewInsets = false
 
@@ -1029,7 +1050,8 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil)
+            let editPostId:[String: String] = ["editPostId": postId]
+            NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
 //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
             
         }

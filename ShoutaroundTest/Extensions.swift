@@ -698,6 +698,74 @@ extension UIViewController {
         }
     }
     
+    func extCreateNewListSimple() {
+        //1. Create the alert controller.
+        let alert = UIAlertController(title: "Create A New List", message: "Enter New List Name", preferredStyle: .alert)
+
+        //2. Add the text field. You can configure it however you need.
+        alert.addTextField { (textField) in
+            textField.text = ""
+        }
+
+        // 3. Grab the value from the text field, and print it when the user clicks OK.
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            print("New List Name: \(textField?.text)")
+            guard let newListName = textField?.text else {return}
+
+            let listId = NSUUID().uuidString
+            guard let uid = Auth.auth().currentUser?.uid else {return}
+            Database.checkListName(listName: newListName) { (listName) in
+
+                let newList = List.init(id: listId, name: listName, publicList: 1)
+                if !(Auth.auth().currentUser?.isAnonymous)! {
+                    Database.createList(uploadList: newList){}
+
+                } else {
+                    // Update New List in Current User Cache
+                    print("Guest User Creating List")
+                    CurrentUser.addList(list: newList)
+                }
+            }
+        }))
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+
+        
+        // 3. Grab the value from the text field, and print it when the user clicks OK.
+        alert.addAction(UIAlertAction(title: "Advanced", style: .default, handler: { [weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            print("New List Name: \(textField?.text)")
+            guard let newListName = textField?.text else {return}
+            guard let uid = Auth.auth().currentUser?.uid else {return}
+            Database.checkListName(listName: newListName) { (listName) in
+                let next = NewListDescCardController()
+                next.comingFromAlert = true
+                var curList = List.init(id: NSUUID().uuidString, name: listName, publicList: 1)
+                next.curList = curList
+                let navController = UINavigationController(rootViewController: next)
+                  let transition:CATransition = CATransition()
+                    transition.duration = 0.5
+                transition.subtype = CATransitionSubtype.fromBottom
+                self.navigationController!.view.layer.add(transition, forKey: kCATransition)
+                self.present(navController, animated: true, completion: nil)            }
+        }))
+        
+        let subAlert = UIAlertController(title: "New List Limit", message: "Please Subscribe to Legit Premium to create more than \(premiumListLimit) lists.", preferredStyle: UIAlertController.Style.alert)
+        subAlert.addAction(UIAlertAction(title: "Subscribe", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
+            self.extOpenSubscriptions()
+        }))
+        subAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+
+        // 4. Present the alert.
+        if !CurrentUser.isPremium && CurrentUser.listIds.count >= premiumListLimit {
+            self.present(subAlert, animated: true, completion: nil)
+        } else {
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
     
     func extCreateNewList() {
         if !CurrentUser.isPremium && CurrentUser.listIds.count >= premiumListLimit {

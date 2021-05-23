@@ -31,7 +31,10 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     var fetchTypeOptions: [String] = ListOptions
     var fetchType: String = ListDefault {
         didSet {
-            self.sortDisplayLists()
+            if self.fetchType == ListAll {
+                self.fetchAllLists()
+            }
+//            self.sortDisplayLists()
         }
     }
     
@@ -45,6 +48,11 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         didSet{
             self.sortDisplayLists()
             setupSortButton()
+            if let index = sortOptions.index(of: self.selectedSort) {
+                if sortSegmentControl.selectedSegmentIndex != index {
+                    sortSegmentControl.selectedSegmentIndex = index
+                }
+            }
         }
     }
     
@@ -140,13 +148,30 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     func didCreateNewList() {
         print("New Lists Created | Discover Controller")
         self.selectedSort = sortNew
-        self.fetchAllLists()
+        self.fetchLists()
     }
     
     var sortSegmentControl: UISegmentedControl = UISegmentedControl(items: ItemSortOptions)
     var segmentWidth_selected: CGFloat = 110.0
     var segmentWidth_unselected: CGFloat = 80.0
     
+    
+    func deletedList(_ notification: NSNotification) {
+
+         if let listId = notification.userInfo?["deleteListId"] as? String {
+            print("Deleted List \(listId) Notification ListViewControllerNew")
+            
+            self.fetchedList.removeAll { (list) -> Bool in
+                list.id == listId
+            }
+            
+            self.filteredDisplayList.removeAll { (list) -> Bool in
+                list.id == listId
+            }
+            
+            self.tableView.reloadData()
+         }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -159,6 +184,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         
         NotificationCenter.default.addObserver(self, selector: #selector(didCreateNewList), name:TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(sortLists), name:TabListViewController.newFollowedListNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(deletedList), name:MainTabBarController.deleteList, object: nil)
 
         
         setupNavigationItems()
@@ -166,7 +192,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         setupSortButton()
         setupDropDown()
         setupTableView()
-        fetchAllLists()
+        fetchLists()
         
         view.addSubview(actionView)
         actionView.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
@@ -233,11 +259,27 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
 
+    func fetchLists() {
+        if self.fetchType != ListAll {
+            Database.fetchAllListsForUser(userUid: CurrentUser.uid) { (userLists) in
+                self.yourLists = userLists.filter({ (list) -> Bool in
+                    CurrentUser.listIds.contains(list.id!)
+                })
+                self.followingLists = userLists.filter({ (list) -> Bool in
+                    CurrentUser.followedListIds.contains(list.id!)
+                })
+                self.updateSegmentListCount()
+                self.sortDisplayLists()
+            }
+        } else {
+            self.fetchAllLists()
+        }
+    }
+    
     func fetchAllLists() {
         Database.fetchALLLists { (allLists) in
             self.allLists = allLists
             self.sortLists()
-
         }
     }
     
@@ -289,6 +331,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         let legitImageString = NSAttributedString(attachment: legitImage)
         attributedTitle.append(legitImageString)
         self.sortButton.setAttributedTitle(attributedTitle, for: .normal)
+        
 //        self.sortButton.attributedTitle(for: .normal) = attributedTitle
 
 //        self.sortButton.setTitle(self.selectedSort, for: .normal)
@@ -542,7 +585,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @objc func refreshItems(){
-        self.fetchAllLists()
+        self.fetchLists()
         self.showHideAddListButton()
 
     }
@@ -557,7 +600,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     override func viewWillAppear(_ animated: Bool) {
         self.setupNavigationItems()
         if self.allLists.count == 0 {
-            self.fetchAllLists()
+            self.fetchLists()
         }
         self.view.layoutIfNeeded()
         //        self.setupLists()

@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 
+var premiumActivated = false
+
 // Location Name to Google Location ID
 var locationGoogleIdDictionary:[String:String] = [:]
 

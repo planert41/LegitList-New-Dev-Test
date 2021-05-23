@@ -1913,23 +1913,25 @@ Rating Emojis help you describe your experience beyond just star ratings
         imageScrollView.addSubview(imageView)
         imageView.tag = 0
         imageScrollView.isScrollEnabled = true
-        
-        for i in 1 ..< (self.selectedImages?.count)! {
-            
-            let addImageView = CustomImageView()
-            addImageView.image = self.selectedImages?[i]
-            addImageView.backgroundColor = .white
-            addImageView.contentMode = .scaleAspectFill
-            addImageView.clipsToBounds = true
-            addImageView.isUserInteractionEnabled = true
-            
-            let xPosition = self.imageScrollView.frame.width * CGFloat(i)
-            addImageView.frame = CGRect(x: xPosition, y: 0, width: imageScrollView.frame.width, height: imageScrollView.frame.height)
-            
-            imageScrollView.addSubview(addImageView)
-            print("Scroll Photos |",i, addImageView.frame)
-            
+        if (self.selectedImages?.count ?? 0) >= 1 {
+            for i in 1 ..< (self.selectedImages?.count)! {
+                
+                let addImageView = CustomImageView()
+                addImageView.image = self.selectedImages?[i]
+                addImageView.backgroundColor = .white
+                addImageView.contentMode = .scaleAspectFill
+                addImageView.clipsToBounds = true
+                addImageView.isUserInteractionEnabled = true
+                
+                let xPosition = self.imageScrollView.frame.width * CGFloat(i)
+                addImageView.frame = CGRect(x: xPosition, y: 0, width: imageScrollView.frame.width, height: imageScrollView.frame.height)
+                
+                imageScrollView.addSubview(addImageView)
+                print("Scroll Photos |",i, addImageView.frame)
+                
+            }
         }
+
         //        photoImageScrollView.reloadInputViews()
     }
     

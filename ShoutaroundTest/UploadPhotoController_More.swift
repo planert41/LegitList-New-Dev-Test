@@ -22,7 +22,8 @@ protocol UploadPhotoListControllerMoreDelegate {
 }
 
 
-class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, ListPhotoCellDelegate, SKPhotoBrowserDelegate, NewListPhotoCellDelegate, UISearchBarDelegate, UITextViewDelegate, UploadPhotoFooterDelegate, AutoTagTableViewControllerDelegate, AddTagSearchControllerDelegate, SharePhotoListControllerDelegate, UIGestureRecognizerDelegate, UploadEmojiCellDelegate, EmojiSearchTableViewControllerDelegate {
+class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource, ListPhotoCellDelegate, SKPhotoBrowserDelegate, NewListPhotoCellDelegate, UISearchBarDelegate, UITextViewDelegate, UploadPhotoFooterDelegate, AutoTagTableViewControllerDelegate, AddTagSearchControllerDelegate, SharePhotoListControllerDelegate, UIGestureRecognizerDelegate, UploadEmojiCellDelegate, EmojiSearchTableViewControllerDelegate, ListSummaryDelegate {
+
     
 
     // 3 Modes: Add Post, Edit Post, Bookmarking Post (Not creator UID)
@@ -92,8 +93,9 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 //            setupAdditionalTags()
             
             self.selectedListIds = []
-            for (list, date) in self.uploadPost?.selectedListId ?? [:] {
+            for (list, name) in self.uploadPost?.selectedListId ?? [:] {
                 self.selectedListIds.append(list)
+                self.selectedListIdTimes[list] = Date()
             }
             
             // Refreshes Current User Lists
@@ -169,18 +171,26 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         // SELECTED LIST
         var listIds: [String:String]? = [:]
         
-        let taggedLists = bookmarkView.fetchedList.filter { return $0.isSelected }
-
-        if taggedLists != nil {
-            // Add list id to post dictionary for display
-            for list in taggedLists {
-                listIds![list.id!] = list.name
+//        let taggedLists = bookmarkView.fetchedList.filter { return $0.isSelected }
+//        if taggedLists != nil {
+//            // Add list id to post dictionary for display
+//            for list in taggedLists {
+//                listIds![list.id!] = list.name
+//            }
+//        }
+        
+        if self.selectedListIds.count > 0 {
+            for id in self.selectedListIds {
+                let name = CurrentUser.lists.first { (list) -> Bool in
+                    return list.id == id
+                }?.name
+                listIds![id] = name
             }
         }
-        print("Tagged Lists \(taggedLists.count)")
-        for (index, list) in taggedLists.enumerated() {
-            print(index, list.name)
-        }
+        
+        print("Tagged \(self.selectedListIds.count) Lists To Post")
+        listIds?.forEach { print("\($0): \($1)") }
+        
         let imageURLS = uploadPost?.imageUrls ?? []
         let smallImageURLS = uploadPost?.smallImageUrl ?? nil
 
@@ -218,7 +228,14 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         return fetchedList.filter { return $0.isSelected }
     }*/
     
-    var selectedListIds: [String] = []
+    var selectedListIds: [String] = [] {
+        didSet {
+            self.refreshTagListButton()
+        }
+    }
+    
+    var selectedListIdTimes: [String: Date] = [:]
+    
     var noLocationInd: Bool = true
     
     let postCellId = "PostCellId"
@@ -266,6 +283,14 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         return ul
     }()
     
+    lazy var expandListLabel: UILabel = {
+        let ul = UILabel()
+        ul.text = "See All Lists"
+        ul.font = UIFont(name: "Poppins-Regular", size: 12)
+        ul.textColor = UIColor.gray
+        return ul
+    }()
+    
     
     var tagListCollectionView: UICollectionView = {
         let uploadLocationTagList = UploadLocationTagList()
@@ -285,9 +310,13 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         button.layer.masksToBounds = true
         button.addTarget(self, action: #selector(didTapTagList), for: .touchUpInside)
         button.tintColor = UIColor.ianWhiteColor()
-        button.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.8)
+//        button.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.8)
+        button.backgroundColor = UIColor.ianLegitColor().withAlphaComponent(0.8)
         return button
     } ()
+    
+    var taggedListView = ListSummaryView()
+
     
     @objc func didTapTagList() {
         let sharePhotoListController = SharePhotoListController()
@@ -295,6 +324,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         sharePhotoListController.isBookmarkingPost = true
         sharePhotoListController.delegate = self
         sharePhotoListController.uploadPost = uploadPost
+        sharePhotoListController.selectedListIds = self.selectedListIds
         navigationController?.pushViewController(sharePhotoListController, animated: true)
     }
     
@@ -399,38 +429,61 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     var listFullScreen: NSLayoutConstraint?
     
     
+    let addNewListButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        button.setImage(#imageLiteral(resourceName: "add_list").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setTitle(" New List", for: .normal)
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 12)
+        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 8, bottom: 5, right: 8)
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 5
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(initAddList), for: .touchUpInside)
+        button.tintColor = UIColor.ianWhiteColor()
+        button.backgroundColor = UIColor.mainBlue()
+        
+        button.tintColor = UIColor.mainBlue()
+        button.layer.borderColor = UIColor.mainBlue().cgColor
+        button.layer.borderWidth = 1
+        button.setTitleColor(UIColor.mainBlue(), for: .normal)
+        button.backgroundColor = UIColor.ianWhiteColor()
+        return button
+    }()
+    
     @objc func initAddList(){
-        //1. Create the alert controller.
-        let alert = UIAlertController(title: "Create A New List", message: "Enter New List Name", preferredStyle: .alert)
+        self.extCreateNewListSimple()
         
-        //2. Add the text field. You can configure it however you need.
-        alert.addTextField { (textField) in
-            textField.text = ""
-        }
-        
-        // 3. Grab the value from the text field, and print it when the user clicks OK.
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-            print("New List Name: \(textField?.text)")
-            guard let newListName = textField?.text else {return}
-            
-            let listId = NSUUID().uuidString
-            guard let uid = Auth.auth().currentUser?.uid else {return}
-            self.checkListName(listName: newListName) { (listName) in
-                
-                self.addListTextField.resignFirstResponder()
-                let newList = List.init(id: listId, name: listName, publicList: 1)
-                self.createList(newList: newList)
-                
-            }
-        }))
-        
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
-        
-        // 4. Present the alert.
-        self.present(alert, animated: true, completion: nil)
+//        //1. Create the alert controller.
+//        let alert = UIAlertController(title: "Create A New List", message: "Enter New List Name", preferredStyle: .alert)
+//
+//        //2. Add the text field. You can configure it however you need.
+//        alert.addTextField { (textField) in
+//            textField.text = ""
+//        }
+//
+//        // 3. Grab the value from the text field, and print it when the user clicks OK.
+//        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+//            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+//            print("New List Name: \(textField?.text)")
+//            guard let newListName = textField?.text else {return}
+//
+//            let listId = NSUUID().uuidString
+//            guard let uid = Auth.auth().currentUser?.uid else {return}
+//            self.checkListName(listName: newListName) { (listName) in
+//
+//                self.addListTextField.resignFirstResponder()
+//                let newList = List.init(id: listId, name: listName, publicList: 1)
+//                self.createList(newList: newList)
+//
+//            }
+//        }))
+//
+//        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+//            print("Handle Cancel Logic here")
+//        }))
+//
+//        // 4. Present the alert.
+//        self.present(alert, animated: true, completion: nil)
         
         
     }
@@ -1166,8 +1219,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.lightBackgroundGrayColor()
-
-        
+//        NotificationCenter.default.addObserver(self, selector: #selector(updateSelectedLists), name: TabListViewController.refreshListNotificationName, object: nil)
         
         // Set for the Post up top
         self.automaticallyAdjustsScrollViewInsets = false
@@ -1220,7 +1272,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         emojiStackView.centerYAnchor.constraint(equalTo: emojiHeaderView.centerYAnchor).isActive = true
         
 //        view.addSubview(emojiInfoButton)
-//        emojiInfoButton.anchor(top: nil, left: emojiStackView.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 15, height: 15)
+//        emojiInfoButton.anchor(top: nil, left: emojiStackView.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 15, height: 15
 //        emojiInfoButton.centerYAnchor.constraint(equalTo: emojiHeaderView.centerYAnchor).isActive = true
 //        emojiInfoButton.layer.cornerRadius = 15 / 2
 //        emojiInfoButton.layer.masksToBounds = true
@@ -1350,33 +1402,51 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         
 // TAG LIST
         
-        view.addSubview(tagListHeader)
-        tagListHeader.anchor(top: postPriceSegment.bottomAnchor, left: postPriceSegment.leftAnchor, bottom: nil, right: nil, paddingTop: 30, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 0)
-        tagListHeader.sizeToFit()
-        tagListHeader.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTagList)))
-        tagListHeader.isUserInteractionEnabled = true
-        tagListHeader.isHidden = true
+//        view.addSubview(tagListHeader)
+//        tagListHeader.anchor(top: postPriceSegment.bottomAnchor, left: postPriceSegment.leftAnchor, bottom: nil, right: nil, paddingTop: 30, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 0)
+//        tagListHeader.sizeToFit()
+//        tagListHeader.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTagList)))
+//        tagListHeader.isUserInteractionEnabled = true
+//        tagListHeader.isHidden = true
+//
+//        view.addSubview(tagListButton)
+//        tagListButton.anchor(top: postPriceSegment.bottomAnchor, left: postPriceSegment.leftAnchor, bottom: nil, right: nil, paddingTop: 30, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
+//        tagListButton.centerYAnchor.constraint(equalTo: (tagListHeader).centerYAnchor).isActive = true
+//
+//        tagListButton.layer.cornerRadius = 5
+//        tagListButton.layer.masksToBounds = true
+//        tagListButton.sizeToFit()
+
+        
+//        setupTagListCollectionView()
+//        view.addSubview(tagListCollectionView)
+//        tagListCollectionView.anchor(top: tagListHeader.bottomAnchor, left: tagListHeader.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 4, paddingLeft: 0, paddingBottom: 0, paddingRight: 15, width: 0, height: 35)
+////        tagListCollectionView.centerYAnchor.constraint(equalTo: (tagListHeader).centerYAnchor).isActive = true
+//        tagListCollectionView.isHidden = true
+
+        
+        setupTaggedList()
+        view.addSubview(taggedListView)
+        taggedListView.anchor(top: postPriceSegment.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 25, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        taggedListView.backgroundColor = UIColor.clear
+        taggedListView.listHeaderLabel.isHidden = true
         
         view.addSubview(tagListButton)
-//        tagListButton.anchor(top: additionalTagCollectionView.bottomAnchor, left: additionalTagCollectionView.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 20, paddingRight: 15, width: 0, height: 30)
-        tagListButton.anchor(top: postPriceSegment.bottomAnchor, left: postPriceSegment.leftAnchor, bottom: nil, right: nil, paddingTop: 30, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
-//        tagListButton.anchor(top: nil, left: tagListHeader.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
-        tagListButton.centerYAnchor.constraint(equalTo: (tagListHeader).centerYAnchor).isActive = true
-
+        tagListButton.anchor(top: taggedListView.topAnchor, left: taggedListView.leftAnchor, bottom: nil, right: nil, paddingTop: -5, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
         tagListButton.layer.cornerRadius = 5
         tagListButton.layer.masksToBounds = true
         tagListButton.sizeToFit()
+        
+        view.addSubview(addNewListButton)
+        addNewListButton.anchor(top: taggedListView.bottomAnchor, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 30, paddingBottom: 0, paddingRight: 10, width: 0, height: 30)
+//        addNewListButton.centerYAnchor.constraint(equalTo: tagListButton.centerYAnchor).isActive = true
 
         
-        setupTagListCollectionView()
-        view.addSubview(tagListCollectionView)
-        tagListCollectionView.anchor(top: tagListHeader.bottomAnchor, left: tagListHeader.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 4, paddingLeft: 0, paddingBottom: 0, paddingRight: 15, width: 0, height: 35)
-//        tagListCollectionView.centerYAnchor.constraint(equalTo: (tagListHeader).centerYAnchor).isActive = true
-        tagListCollectionView.isHidden = true
-
-        
-
-
+        view.addSubview(expandListLabel)
+        expandListLabel.anchor(top: taggedListView.bottomAnchor, left: tagListButton.leftAnchor, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 10, width: 0, height: 30)
+//        expandListLabel.centerYAnchor.constraint(equalTo: addNewListButton.centerYAnchor).isActive = true
+        expandListLabel.isUserInteractionEnabled = true
+        expandListLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapTagList)))
         //        view.addSubview(bookmarkHeader)
         //        bookmarkHeader.anchor(top: additionalTagCollectionView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 0, height: 0)
         //        refreshBookmarkHeader()
@@ -1389,6 +1459,23 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 //        bookmarkView.view.anchor(top: bookmarkHeader.bottomAnchor, left: view.leftAnchor, bottom: footerView.topAnchor, right: view.rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 10, paddingRight: 5, width: 0, height: 0)
 //        refreshBookmarkHeader()
 
+    }
+    
+    func setupTaggedList() {
+        taggedListView.refreshAll()
+        taggedListView.delegate = self
+        taggedListView.sortListByDate = false
+        taggedListView.enableSelection = true
+        taggedListView.sortSelectedListFirst = true
+        taggedListView.listHeaderLabel.font = UIFont(name: "Poppins-Bold", size: 20)
+        taggedListView.listHeaderLabel.font = UIFont(name: "Poppins-Regular", size: 20)
+        taggedListView.listHeaderLabel.font = UIFont(font: .avenirNextBold, size: 18)
+        taggedListView.userId = CurrentUser.uid
+        taggedListView.selectedListIds = self.selectedListIds
+        taggedListView.selectedListIdTimes = self.selectedListIdTimes
+        taggedListView.showAddListButton = false
+        taggedListView.fetchUserLists()
+        print("setupTaggedList | Creator List \(taggedListView.post?.creatorListId?.count) | User Tag Lists \(taggedListView.post?.selectedListId?.count)")
     }
     
     func reloadAddTag(){
@@ -2342,6 +2429,14 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     func handleEditPost(){
         print("Selected List: \(self.selectedList)")
         var listIds: [String:String]? = [:]
+        if self.selectedListIds.count > 0 {
+            for id in self.selectedListIds {
+                let name = CurrentUser.lists.first { (list) -> Bool in
+                    return list.id == id
+                }?.name
+                listIds![id] = name
+            }
+        }
         
         navigationItem.rightBarButtonItem?.isEnabled = false
         SVProgressHUD.show(withStatus: "Editing Post")
@@ -2393,7 +2488,8 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
         NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
 //            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-        NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil)
+        let editPostId:[String: String] = ["editPostId": postId]
+        NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
         //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
         
         self.dismiss(animated: true, completion: {
@@ -2943,12 +3039,12 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 
         // REFRESH FROM TAGGING LIST
         if (post.selectedListId?.count ?? 0) > 0 {
-            self.tagListButton.setTitle(" Tagged \(post.selectedListId?.count ?? 0) List", for: .normal)
-            self.tagListHeader.text = "Tagged \(post.selectedListId?.count ?? 0) List"
+            self.tagListButton.setTitle(" Tagging \(post.selectedListId?.count ?? 0) List", for: .normal)
+            self.tagListHeader.text = "Tagging \(post.selectedListId?.count ?? 0) List"
             self.uploadPost?.selectedListId = post.selectedListId ?? [:]
         } else {
             self.tagListButton.setTitle(" Tag Post To List", for: .normal)
-            self.tagListHeader.text = "Tagged \(post.selectedListId?.count ?? 0) List"
+            self.tagListHeader.text = "Tagging \(post.selectedListId?.count ?? 0) List"
             self.uploadPost?.selectedListId = [:]
         }
         self.updateSelectedLists()
@@ -2956,21 +3052,35 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 //        refreshBookmarkHeader()
     }
     
+    func refreshTagListButton() {
+        if self.selectedListIds.count > 0 {
+            self.tagListButton.setTitle(" Tagged \(self.selectedListIds.count ?? 0) List", for: .normal)
+        } else {
+            self.tagListButton.setTitle(" Tag Post To List", for: .normal)
+        }
+    }
+    
     func updateSelectedLists() {
         self.selectedList = []
+        self.selectedListIds = []
         for (id, date) in (self.uploadPost?.selectedListId ?? [:]) {
             let templist = CurrentUser.lists.filter { (list) -> Bool in
                 return list.id == id
             }
             if templist.count > 0 {
-                self.selectedList.append(templist[0])
+                var curList = templist[0]
+                self.selectedList.append(curList)
+                self.selectedListIds.append(curList.id ?? "")
             }
         }
+        self.taggedListView.selectedListIds = self.selectedListIds
+        self.taggedListView.selectedListIdTimes = self.selectedListIdTimes
+        self.taggedListView.fetchUserLists()
         
-        self.tagListCollectionView.isHidden = self.selectedList.count == 0
-        self.tagListHeader.isHidden = self.tagListCollectionView.isHidden
-        self.tagListButton.isHidden = !self.tagListCollectionView.isHidden
-        self.tagListCollectionView.reloadData()
+//        self.tagListCollectionView.isHidden = self.selectedList.count == 0
+//        self.tagListHeader.isHidden = self.tagListCollectionView.isHidden
+//        self.tagListButton.isHidden = !self.tagListCollectionView.isHidden
+//        self.tagListCollectionView.reloadData()
         
 //        if self.selectedList.count == 0 {
 //            self.tagListButton.setTitle(" Tag To List", for: .normal)
@@ -3205,6 +3315,41 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     
     func didTapBookmark(post: Post) {
         // Disable Bookmark from here
+    }
+    
+    
+    func didTapList(list: List?) {
+        guard let list = list else {return}
+        guard let listId = list.id else {return}
+        if !self.selectedListIds.contains(listId) {
+            self.selectedListIds.append(listId)
+            self.selectedList.append(list)
+            self.selectedListIdTimes[listId] = Date()
+        } else {
+            self.selectedListIds.removeAll { $0 == listId }
+            self.selectedList.removeAll { (list) -> Bool in
+                return list.id == listId
+            }
+            self.selectedListIdTimes.removeValue(forKey: listId)
+        }
+        self.taggedListView.selectedListIds = self.selectedListIds
+        self.taggedListView.selectedListIdTimes = self.selectedListIdTimes
+        self.taggedListView.fetchUserLists()
+    }
+    
+    func didTapUser(user: User?) {
+    }
+    
+    func didTapAddList() {
+        self.extCreateNewList()
+    }
+    
+    func doShowListView() {
+        
+    }
+    
+    func doHideListView() {
+        
     }
     
     

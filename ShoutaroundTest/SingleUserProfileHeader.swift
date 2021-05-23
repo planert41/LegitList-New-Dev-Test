@@ -853,6 +853,7 @@ extension SingleUserProfileHeader: UITextViewDelegate, UITextFieldDelegate {
 extension SingleUserProfileHeader: UISearchBarDelegate, ListSummaryDelegate, EmojiSummaryCVDelegate, UserSearchBarDelegate {
     func didTapAddList() {
         print("didTapAddList")
+        self.delegate?.didTapCreateNewList()
     }
     
     

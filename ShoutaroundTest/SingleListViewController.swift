@@ -271,12 +271,23 @@ class SingleListViewController: UIViewController {
     let postSortFormatBar = PostSortFormatBar()
     
     
+    func listDeleted(_ notification: NSNotification) {
+
+         if let listId = notification.userInfo?["deleteListId"] as? String {
+            if self.currentDisplayList?.id == listId {
+                print("ListDeleted \(listId) \(self.currentDisplayList?.name)| Exiting Single List View")
+                self.handleBackPressNav()
+            }
+         }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
         }
         print("  START |  NewListCollectionView | ViewdidLoad")
+        NotificationCenter.default.addObserver(self, selector: #selector(self.listDeleted(_:)), name: MainTabBarController.deleteList, object: nil)
         
         self.setupNavigationItems()
 //        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name:UIResponder.keyboardWillShowNotification, object: nil)

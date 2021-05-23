@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Firebase
+import SVProgressHUD
 
 var tempListCreated: List?
 
@@ -68,6 +70,37 @@ class CreateNewListCardController: UIViewController {
         }
     }
     
+    let justCreateListLabel: UILabel = {
+        let label = UILabel()
+        label.layer.borderColor = UIColor.clear.cgColor
+        label.textAlignment = .left
+        label.font = UIFont(font: .avenirNextMedium, size: 16)
+//        label.font = UIFont(name: "Poppins-Bold", size: 15)
+        label.textColor = .mainBlue()
+        label.text = "Create New List. Skip The Rest"
+        return label
+    }()
+    
+    
+    @objc func skipAllCreeateNewList(){
+        let listName = listNameTextField.text ?? ""
+        
+        if listName.isEmptyOrWhitespace() {
+            self.alert(title: "Create New List Error", message: "New List Needs a Name! 🤦‍♂️")
+        } else {
+            self.curList.name = ((listName.isEmptyOrWhitespace()) ? nil : listNameTextField.text)!
+            SVProgressHUD.show(withStatus: "Creating \(self.curList.name) List")
+            Database.createList(uploadList: self.curList) {
+                self.dismiss(animated: true) {
+                    print("CREATE NEW LIST COMPLETE | LIST VIEW DISMISSED")
+                    tempListCreated =  nil
+                    SVProgressHUD.dismiss()
+                }
+            }
+        }
+        
+
+    }
     
     
     
@@ -160,10 +193,19 @@ class CreateNewListCardController: UIViewController {
         listNameTextFieldUnderline.anchor(top: listNameTextField.bottomAnchor, left: listNameTextField.leftAnchor, bottom: nil, right: listNameTextField.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 8)
         
         cardContainer.addSubview(nextButton)
-        nextButton.anchor(top: listNameTextFieldUnderline.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 24, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 60, height: 55)
+        nextButton.anchor(top: listNameTextFieldUnderline.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 24, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0/*60*/, height: 55)
         nextButton.centerXAnchor.constraint(equalTo: listNameTextField.centerXAnchor).isActive = true
         nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+        nextButton.setTitle("  List Description", for: .normal)
+        nextButton.sizeToFit()
         // Do any additional setup after loading the view.
+        
+        cardContainer.addSubview(justCreateListLabel)
+        justCreateListLabel.anchor(top: nextButton.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 25, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        justCreateListLabel.centerXAnchor.constraint(equalTo: listNameTextField.centerXAnchor).isActive = true
+        justCreateListLabel.isUserInteractionEnabled = true 
+        justCreateListLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(skipAllCreeateNewList)))
+                
     }
     
 

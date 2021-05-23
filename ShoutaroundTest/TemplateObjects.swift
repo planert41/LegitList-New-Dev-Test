@@ -230,12 +230,17 @@ class TemplateObjects {
 //        }
 
         override init(frame: CGRect) {
-            super.init(frame: CGRect(x: 0, y: 0, width: 60, height: 55))
+//            super.init(frame: CGRect(x: 0, y: 0, width: 60, height: 55))
+            super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 55))
+
             let iconImage = #imageLiteral(resourceName: "nextButton").withRenderingMode(.alwaysOriginal)
             self.setImage(iconImage, for: .normal)
             let sel_iconImage = #imageLiteral(resourceName: "nextButton_Selected").withRenderingMode(.alwaysOriginal)
             self.setImage(sel_iconImage, for: .selected)
+            self.setTitleColor(.lightGray, for: .normal)
+            self.setTitleColor(.ianLegitColor(), for: .selected)
 
+            self.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 16)
             self.imageView?.contentMode = .scaleAspectFit
             
             self.contentHorizontalAlignment = .center

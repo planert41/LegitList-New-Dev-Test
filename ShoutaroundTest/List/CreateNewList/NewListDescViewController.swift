@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Firebase
+import SVProgressHUD
 
 class NewListDescCardController: UIViewController {
 
@@ -24,6 +26,8 @@ class NewListDescCardController: UIViewController {
             }
         }
     }
+    
+    var comingFromAlert = false
     
     let topMargin: CGFloat = 24
     let topMarginBackgroundColor = UIColor.clear
@@ -107,6 +111,39 @@ class NewListDescCardController: UIViewController {
     }
     
     // MARK: - VIEWDIDLOAD
+    
+    
+    let justCreateListLabel: UILabel = {
+        let label = UILabel()
+        label.layer.borderColor = UIColor.clear.cgColor
+        label.textAlignment = .left
+//        label.font = UIFont(name: "Poppins-Bold", size: 15)
+        label.font = UIFont(font: .avenirNextDemiBold, size: 16)
+
+        label.textColor = .mainBlue()
+        label.text = "Create New List. Skip The Rest"
+        return label
+    }()
+    
+    
+    @objc func skipAllCreeateNewList(){
+        guard let list = self.curList else {return}
+        let listDesc = listDescTextView.text ?? ""
+
+        if listDesc.isEmptyOrWhitespace() || listDescTextView.attributedText == textViewPlaceholder {
+            list.listDescription = nil
+        } else {
+            list.listDescription = ((listDesc.isEmptyOrWhitespace()) ? nil : listDesc)!
+        }
+        SVProgressHUD.show(withStatus: "Creating \(list.name) List")
+        Database.createList(uploadList: list) {
+            self.dismiss(animated: true) {
+                print("CREATE NEW LIST COMPLETE | LIST VIEW DISMISSED")
+                tempListCreated =  nil
+                SVProgressHUD.dismiss()
+            }
+        }
+    }
 
     
     override func viewDidLoad() {
@@ -146,10 +183,18 @@ class NewListDescCardController: UIViewController {
         listNameTextFieldUnderline.anchor(top: listDescTextView.bottomAnchor, left: listDescTextView.leftAnchor, bottom: nil, right: listDescTextView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 8)
         
         cardContainer.addSubview(nextButton)
-        nextButton.anchor(top: listNameTextFieldUnderline.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 24, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 60, height: 55)
+        nextButton.anchor(top: listNameTextFieldUnderline.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 24, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 55) //60
         nextButton.centerXAnchor.constraint(equalTo: listDescTextView.centerXAnchor).isActive = true
         nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
         nextButton.isSelected = true
+        nextButton.setTitle("  Cover Image", for: .normal)
+        
+        
+        cardContainer.addSubview(justCreateListLabel)
+        justCreateListLabel.anchor(top: nextButton.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 25, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        justCreateListLabel.centerXAnchor.constraint(equalTo: listDescTextView.centerXAnchor).isActive = true
+        justCreateListLabel.isUserInteractionEnabled = true
+        justCreateListLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(skipAllCreeateNewList)))
         
         
         cardContainer.addSubview(backButton)
@@ -169,8 +214,13 @@ class NewListDescCardController: UIViewController {
 //        if let list = self.curList {
 //            createNewListView.curList = list
 //        }
+        
+        if comingFromAlert {
+            self.dismiss(animated: true, completion: nil)
+        } else {
+            self.navigationController?.popViewController(animated: true)
+        }
 
-        self.navigationController?.popViewController(animated: true)
 
         
 //          let transition:CATransition = CATransition()

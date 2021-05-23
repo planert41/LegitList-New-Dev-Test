@@ -466,6 +466,7 @@ class SingleUserProfileViewController: UIViewController {
 //        imageCollectionView.bottomAnchor.constraint(lessThanOrEqualTo: bottomSearchBar.topAnchor).isActive = true
 //        imageCollectionView.bottomAnchor.constraint(lessThanOrEqualTo: bottomEmojiBar.topAnchor).isActive = true
 
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshInboxNotifications), name: InboxController.newMsgNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
@@ -791,7 +792,10 @@ extension SingleUserProfileViewController {
             isFetchingPost = true
         }
         
-        SVProgressHUD.show(withStatus: "Loading Posts")
+        if self.isViewLoaded && self.view.window != nil {
+            SVProgressHUD.show(withStatus: "Loading Posts")
+        }
+        
         Database.fetchAllPostWithUID(creatoruid: uid) { (posts) in
             print("Fetched Posts | \(posts.count) | SingleUserProfileViewController")
             

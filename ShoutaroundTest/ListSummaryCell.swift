@@ -10,6 +10,7 @@ import UIKit
 
 protocol ListSummaryCellDelegate {
     func didTapList(list: List?)
+    func didTapAddNewList()
 }
 
 
@@ -83,7 +84,7 @@ class ListSummaryCell: UICollectionViewCell {
                     self.listHeaderImageView.loadImage(urlString: imgUrl)
                     self.listHeaderImageView.backgroundImage.isHidden = true
                     self.listHeaderImageView.backgroundColor = UIColor.white
-                    print("\(list.name) | No Header Image | Using listImageURL | \(x) | \(imgUrl)")
+//                    print("\(list.name) | No Header Image | Using listImageURL | \(x) | \(imgUrl)")
                     break
                 }
             }
@@ -150,6 +151,8 @@ class ListSummaryCell: UICollectionViewCell {
     
     override var isSelected: Bool {
         didSet {
+            self.cellView.backgroundColor = self.isSelected ? UIColor.ianLegitColor().withAlphaComponent(0.6) : UIColor.clear
+            self.layer.borderColor = self.isSelected ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
 //            self.listNameLabel.textColor = self.isSelected ? UIColor.white : UIColor.ianBlackColor()
 //            self.listDetailLabel.textColor = self.isSelected ? UIColor.white : UIColor.darkGray
 //            self.cellView.backgroundColor = self.isSelected ? UIColor.ianLegitColor() : UIColor.clear
@@ -157,6 +160,13 @@ class ListSummaryCell: UICollectionViewCell {
 
         }
     }
+    
+//    var listSelected: Bool = false {
+//        didSet {
+//            self.cellView.backgroundColor = self.listSelected ? UIColor.ianLegitColor().withAlphaComponent(0.6) : UIColor.clear
+//            self.layer.borderColor = self.listSelected ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
+//        }
+//    }
     
     let cellView = UIView()
     
@@ -170,7 +180,7 @@ class ListSummaryCell: UICollectionViewCell {
         label.numberOfLines = 2
         label.lineBreakMode = .byWordWrapping
         label.textAlignment = NSTextAlignment.center
-        label.textColor = UIColor.ianLegitColor()
+        label.textColor = UIColor.white
         label.numberOfLines = 2
         return label
     }()
@@ -197,6 +207,9 @@ class ListSummaryCell: UICollectionViewCell {
     
     func setupAddNewListView() {
         addNewListView.isHidden = !addNewListViewShow
+        if addNewListViewShow{
+            listHeaderImageView.image = UIImage()
+        }
     }
     
     override init(frame: CGRect) {
@@ -241,17 +254,23 @@ class ListSummaryCell: UICollectionViewCell {
         
         addSubview(addNewListView)
         addNewListView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        addNewListView.backgroundColor = UIColor.white
+        addNewListView.backgroundColor = UIColor.mainBlue()
+        addNewListView.isUserInteractionEnabled = true
+        addNewListView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapAddNewList)))
         
         addNewListView.addSubview(addNewListLabel)
-        addNewListLabel.anchor(top: nil, left: leftAnchor, bottom: listHeaderImageView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        addNewListLabel.anchor(top: nil, left: leftAnchor, bottom: addNewListView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 0)
         
         addNewListView.addSubview(addNewListImageButton)
-        addNewListImageButton.anchor(top: nil, left: nil, bottom: addNewListLabel.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 50, height: 50)
+        addNewListImageButton.anchor(top: topAnchor, left: nil, bottom: addNewListLabel.topAnchor, right: nil, paddingTop: 15, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 50, height: 50)
         addNewListImageButton.centerXAnchor.constraint(equalTo: addNewListView.centerXAnchor).isActive = true
         addNewListView.isHidden = true
         
         
+    }
+    
+    @objc func tapAddNewList() {
+        self.delegate?.didTapAddNewList()
     }
     
     
@@ -270,6 +289,7 @@ class ListSummaryCell: UICollectionViewCell {
         self.listNameLabel.text = ""
         self.listDetailLabel.text = ""
         addNewListViewShow = false
+        self.isSelected = false
     }
     
     

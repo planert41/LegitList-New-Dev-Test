@@ -110,9 +110,14 @@ struct User {
     // PREMIUM
         self.isPremium = dictionary["isPremium"] as? Bool ?? false
         self.isPremiumFree = dictionary["isPremiumFree"] as? Bool ?? false
+        if !premiumActivated {
+            self.isPremiumFree = true
+            self.isPremium = true
+        }
         
         if UID_team.contains(uid) {
             self.isPremiumFree = true
+            self.isPremium = true
         }
         
         let premCancel = dictionary["premiumCancel"] as? Double ?? 0
@@ -137,7 +142,7 @@ struct User {
         let premExp = dictionary["premiumExpiry"] as? Double ?? 0
         if premExp > 0 {
             self.premiumExpiry = Date(timeIntervalSince1970: premExp)
-            if Date() > self.premiumExpiry! && self.isPremium{
+            if Date() > self.premiumExpiry! && self.isPremium && !self.isPremiumFree{
                 self.isPremium = false
                 if uid == Auth.auth().currentUser?.uid {
                     print("PREMIUM USER EXPIRED")

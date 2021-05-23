@@ -89,9 +89,13 @@ class ListSummaryCollectionViewController: UIViewController, UICollectionViewDel
 //        print("SCROLL TO TOP")
     }
 
+    @objc func newListCreated() {
+        self.sortListByPostCount = false
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(newListCreated), name: TabListViewController.refreshListNotificationName, object: nil)
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -195,6 +199,9 @@ class ListSummaryCollectionViewController: UIViewController, UICollectionViewDel
         self.delegate?.didTapList(list: list)
     }
     
+    func didTapAddNewList() {
+        self.delegate?.didTapAddList()
+    }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         // #warning Incomplete implementation, return the number of sections

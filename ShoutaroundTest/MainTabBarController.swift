@@ -48,6 +48,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     static let showOnboarding = NSNotification.Name(rawValue: "showOnboarding")
     static let newLocationUpdate = NSNotification.Name(rawValue: "locationUpdate")
     static let newUserPost = NSNotification.Name(rawValue: "newUserPost")
+    static let deleteList = NSNotification.Name(rawValue: "deleteList")
 
     
     var imagePicker = UIImagePickerController()
@@ -288,7 +289,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         self.view.backgroundColor = UIColor.white
         self.delegate = self
         self.tabBar.barTintColor = UIColor.white
-
+//        self.togglePremiumActivate()
         
         let tabWidth = tabBar.frame.size.width
         let tabHeight = tabBar.frame.size.height
@@ -489,6 +490,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         newUserProfile.displayUserId =  Auth.auth().currentUser?.uid
         newUserProfile.showNewPostButton = true
         newUserProfile.displaySubscription = true
+        newUserProfile.imageCollectionView.reloadData()
         let userProfileNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "profile_tab_unfilled").withRenderingMode(.alwaysTemplate), selectedImage: #imageLiteral(resourceName: "profile_tab_filled"), title: "Profile", rootViewController: newUserProfile)
 
         
@@ -502,7 +504,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //        let userNotificationsNavController = templateNavController(unselectedImage: notificationIcon, selectedImage: notificationIcon, title: "Activity", rootViewController: userNotifications)
         
         let listViewNew = ListViewControllerNew()
-        listViewNew.fetchAllLists()
+        listViewNew.fetchLists()
 //        listViewNew.fetchallItems()
 //        let discoverIconNew = #imageLiteral(resourceName: "listsHash").withRenderingMode(.alwaysTemplate)
 
@@ -914,6 +916,20 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
                 Database.database().reference().child("users").child(userId).removeValue()
                 print("User Deleted Success | ", userId)
             }
+        }
+    }
+    
+    func togglePremiumActivate() {
+        let subRef = Database.database().reference()
+        var uploadValues:[String:Any] = [:]
+        uploadValues["activatePremium"] = false
+        
+        subRef.updateChildValues(uploadValues) { (err, ref) in
+            if let err = err {
+                print("togglePremiumActivate: ERROR: ", err)
+                return}
+            print("togglePremiumActivate")
+            
         }
     }
     

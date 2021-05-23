@@ -78,7 +78,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         }
     }
     
-    
+    var showAddListButton = false
     
     // LISTS
     var postCreatorListIds: [String] = []
@@ -99,8 +99,24 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
            }
        }
     
+    
+    var enableSelection = false
+    var selectedListIds:[String] = [] {
+        didSet {
+            self.sortLists()
+//            self.collectionView.reloadData()
+        }
+    }
+    var selectedListIdTimes:[String: Date] = [:] {
+        didSet {
+            self.sortLists()
+        }
+    }
+    var preExistingListIds:[String] = []
+    var newListIds:[String] = []
+
 // SORT LIST BY POST COUNT OR DATE
-    var sortListByDate = true {
+    var sortListByDate = false {
         didSet {
             self.fetchUserLists()
             self.refreshHeaderLabels()
@@ -212,10 +228,33 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         self.displayFollowedList = false
     }
     
+//    @objc func newListCreated() {
+//        self.sortListByDate = true
+//        self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .left, animated: true)
+//    }
+    
+    func newlistCreated(_ notification: NSNotification) {
+
+         if let listId = notification.userInfo?["newListID"] as? String {
+            var tempList = CurrentUser.lists.first { (list) -> Bool in
+                return list.id == listId
+            }
+            self.newListIds.append(listId)
+            guard let newList = tempList else {return}
+            self.userLists.insert(newList, at: 0)
+            self.collectionView.reloadData()
+            self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .left, animated: true)
+
+    //        self.fetchedList.insert(newList, at: 1)
+    //        self.displayList.insert(newList, at: 1)
+
+         }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(newlistCreated(_:)), name: TabListViewController.refreshListNotificationName, object: nil)
+
         let cell = UIView()
         addSubview(cell)
         cell.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: cellImageHeight + cellDetailsHeight + headerHeight + 5)
@@ -300,6 +339,68 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         self.delegate?.didTapList(list: list)
     }
     
+    func didTapAddNewList() {
+        self.delegate?.didTapAddList()
+    }
+    
+    var sortSelectedListFirst = false
+    
+    func sortLists() {
+        var tempLists: [List] = self.userLists
+        
+        if !self.sortListByDate {
+            // SORT BY POST COUNT
+            tempLists = tempLists.sorted { (l1, l2) -> Bool in
+                return (l1.postIds?.count ?? 0) > (l2.postIds?.count ?? 0)
+            }
+        } else {
+            // SORT BY DATE
+            tempLists = tempLists.sorted { (l1, l2) -> Bool in
+                return l1.latestNotificationTime > l2.latestNotificationTime
+            }
+        }
+        
+        if self.sortSelectedListFirst {
+            // SORT SelectedListTime First
+            var sortedTemp: [List] = []
+            var tempSelectedListTime = self.selectedListIdTimes.sorted { $0.1 < $1.1 }
+            print("tempSelectedListTime | ", tempSelectedListTime)
+            for (id, time) in tempSelectedListTime {
+                if let temp = tempLists.first(where: { (list) -> Bool in
+                    return list.id == id
+                }) {
+                    sortedTemp.insert(temp, at: 0)
+                }
+                
+                
+            }
+            
+            for list in tempLists {
+                if !sortedTemp.contains(where: { (curlist) -> Bool in
+                    curlist.id == list.id
+                }) {
+                    sortedTemp.append(list)
+                }
+            }
+            tempLists = sortedTemp
+        }
+        
+        if self.newListIds.count > 0 {
+            for id in self.newListIds {
+                if let index = tempLists.firstIndex(where: { (list) -> Bool in
+                    return list.id == id
+                }){
+                    var newList = tempLists.remove(at: index)
+                    tempLists.insert(newList, at: 0)
+                }
+            }
+        }
+
+        self.userLists = tempLists
+        print("Sort List | Fetched \(tempLists.count) Lists")
+        self.refreshHeaderLabels()
+        self.collectionView.reloadData()
+    }
 
     func fetchUserLists(){
         // Load Lists
@@ -307,50 +408,99 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         
         if !displayFollowedList {
             Database.fetchCreatedListsForUser(userUid: uid) { (lists) in
-                print(" ListSummaryCollectionViewController | \(lists.count) Lists | Created | \(self.user?.username) | \(uid) |")
-
-                var tempLists: [List] = []
-
-                if !self.sortListByDate {
-                    // SORT BY POST COUNT
-                    tempLists = lists.sorted { (l1, l2) -> Bool in
-                        return (l1.postIds?.count ?? 0) > (l2.postIds?.count ?? 0)
-                    }
-                } else {
-                    // SORT BY DATE
-                    tempLists = lists.sorted { (l1, l2) -> Bool in
-                        return l1.latestNotificationTime > l2.latestNotificationTime
-                    }
-                }
-
-                self.userLists = tempLists
-                print("fetchUserLists | Fetched \(tempLists.count) Lists")
-                self.refreshHeaderLabels()
-                self.collectionView.reloadData()
+                print(" ListSummaryCollectionViewController | \(lists.count) Lists | Created | \(self.user?.username) | \(uid) | SortListByDate \(self.sortListByDate) | SortSelectedFirst \(self.sortSelectedListFirst)")
+                self.userLists = lists
+                self.sortLists()
+//
+//                var tempLists: [List] = []
+//
+//                if !self.sortListByDate {
+//                    // SORT BY POST COUNT
+//                    tempLists = lists.sorted { (l1, l2) -> Bool in
+//                        return (l1.postIds?.count ?? 0) > (l2.postIds?.count ?? 0)
+//                    }
+//                } else {
+//                    // SORT BY DATE
+//                    tempLists = lists.sorted { (l1, l2) -> Bool in
+//                        return l1.latestNotificationTime > l2.latestNotificationTime
+//                    }
+//                }
+//
+//                if self.sortSelectedListFirst {
+//                    // SORT SelectedListTime First
+//                    var sortedTemp: [List] = []
+//                    var tempSelectedListTime = self.selectedListIdTimes.sorted { $0.1 < $1.1 }
+//
+//                    for (id, time) in tempSelectedListTime {
+//                        if let temp = tempLists.first(where: { (list) -> Bool in
+//                            return list.id == id
+//                        }) {
+//                            sortedTemp.insert(temp, at: 0)
+//                        }
+//
+//
+//                    }
+//
+//                    for list in tempLists {
+//                        if !sortedTemp.contains(where: { (curlist) -> Bool in
+//                            curlist.id == list.id
+//                        }) {
+//                            sortedTemp.append(list)
+//                        }
+//                    }
+//
+////                    for list in tempLists {
+////                        if self.selectedListIds.contains(list.id ?? "") {
+////                            sortedTemp.insert(list, at: 0)
+////                        } else {
+////                            sortedTemp.append(list)
+////                        }
+////                    }
+//                    tempLists = sortedTemp
+//                }
+//
+//                self.userLists = tempLists
+//                print("fetchUserLists | Fetched \(tempLists.count) Lists")
+//                self.refreshHeaderLabels()
+//                self.collectionView.reloadData()
             }
 
         } else {
             Database.fetchFollowedListsForUser(userUid: uid) { (lists) in
                 print("ListSummaryCollectionViewController | \(lists.count) Lists | Followed | \(self.user?.username) | \(uid) ")
-
-                var tempLists: [List] = []
-
-                if !self.sortListByDate {
-                    // SORT BY POST COUNT
-                    tempLists = lists.sorted { (l1, l2) -> Bool in
-                        return (l1.postIds?.count ?? 0) > (l2.postIds?.count ?? 0)
-                    }
-                } else {
-                    // SORT BY DATE
-                    tempLists = lists.sorted { (l1, l2) -> Bool in
-                        return l1.latestNotificationTime > l2.latestNotificationTime
-                    }
-                }
-
-                self.userLists = tempLists
-                self.refreshHeaderLabels()
-                print("fetchFollowedLists | Fetched \(tempLists.count) Followed Lists")
-                self.collectionView.reloadData()
+                self.userLists = lists
+                self.sortLists()
+                
+//                var tempLists: [List] = []
+//
+//                if !self.sortListByDate {
+//                    // SORT BY POST COUNT
+//                    tempLists = lists.sorted { (l1, l2) -> Bool in
+//                        return (l1.postIds?.count ?? 0) > (l2.postIds?.count ?? 0)
+//                    }
+//                } else {
+//                    // SORT BY DATE
+//                    tempLists = lists.sorted { (l1, l2) -> Bool in
+//                        return l1.latestNotificationTime > l2.latestNotificationTime
+//                    }
+//                }
+//
+//                if self.sortSelectedListFirst {
+//                    var sortedTemp: [List] = []
+//                    for list in tempLists {
+//                        if self.selectedListIds.contains(list.id ?? "") {
+//                            sortedTemp.insert(list, at: 0)
+//                        } else {
+//                            sortedTemp.append(list)
+//                        }
+//                    }
+//                    tempLists = sortedTemp
+//                }
+//
+//                self.userLists = tempLists
+//                self.refreshHeaderLabels()
+//                print("fetchFollowedLists | Fetched \(tempLists.count) Followed Lists")
+//                self.collectionView.reloadData()
             }
         }
     }
@@ -411,14 +561,28 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
         print("Displaying \(userLists.count) Lists | ListSummaryView")
-        return userLists.count
+        return userLists.count + (showAddListButton ? 1 : 0)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! ListSummaryCell
-        cell.list = self.userLists[indexPath.item]
+        
+        if indexPath.row == 0 && showAddListButton {
+            cell.delegate = self
+            cell.addNewListViewShow = true
+            return cell
+        }
+        
+        if indexPath.item > self.userLists.count {
+            return cell
+        }
+        
+        let tempList = showAddListButton ? self.userLists[indexPath.item - 1] : self.userLists[indexPath.item]
+        cell.list = tempList
         cell.isSelected = false
         cell.delegate = self
+        
+        var listSelected = (selectedListIds.contains(tempList.id ?? "")) && enableSelection
         
 //        cell.layer.borderColor = CurrentUser.listIds.contains(self.userLists[indexPath.item].id ?? "") ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
         cell.layer.borderColor = UIColor.darkGray.cgColor
@@ -436,12 +600,18 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         cell.layer.cornerRadius = 10
         cell.layer.masksToBounds = true
         
+        cell.isSelected = listSelected
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let list = self.userLists[indexPath.item]
-        self.didTapList(list: list)
+        if indexPath.item == 0 && showAddListButton {
+            self.delegate?.didTapAddList()
+        } else {
+            let tempList = showAddListButton ? self.userLists[indexPath.item - 1] : self.userLists[indexPath.item]
+            self.didTapList(list: tempList)
+        }
     }
     
     
