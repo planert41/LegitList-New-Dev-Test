@@ -149,7 +149,7 @@ class RankViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UIPicke
     }()
 
     
-    func changeView(){
+    @objc func changeView(){
         if isListView{
             self.isListView = false
             delegate?.didChangeToGridView()
@@ -208,7 +208,7 @@ class RankViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UIPicke
         self.selectRank(sender: self.rankSegmentControl)
         
     }
-    
+    @objc
     func selectRank(sender: UISegmentedControl) {
         self.selectedRank = rankSortOptions[sender.selectedSegmentIndex]
         print("Rank Header Selection: \(self.selectedRank)")
@@ -283,13 +283,13 @@ class RankViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UIPicke
     }
     
     // UIPicker Delegate Functions
-    
+    @objc  
     func activateRange() {
         let rangeIndex = selectedRangeOptions.firstIndex(of: self.selectedRange!)
         pickerView.selectRow(rangeIndex!, inComponent: 0, animated: false)
         dummyTextView.perform(#selector(becomeFirstResponder), with: nil, afterDelay: 0.1)
     }
-    
+    @objc  
     func activateLocation(){
         delegate?.locationSelected()
     }

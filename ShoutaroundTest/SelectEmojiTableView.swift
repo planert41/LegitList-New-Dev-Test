@@ -222,7 +222,7 @@ class SelectEmojiTableView : UITableViewController, UISearchResultsUpdating, UIS
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
@@ -455,7 +455,7 @@ extension SelectEmojiTableView {
         print("emojiSelected | emoji: \(emoji?.emoji)")
 
     }
-    func handleDismiss() {
+    @objc func handleDismiss() {
         print("emojiSelected | Dismiss")
         self.navigationController?.popViewController(animated: true)
     }

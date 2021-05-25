@@ -128,7 +128,7 @@ class LocationSearchController: UIViewController, UITextFieldDelegate, GMSMapVie
         return button
     }()
     
-    func findCurrentLocation() {
+    @objc func findCurrentLocation() {
         LocationSingleton.sharedInstance.determineCurrentLocation()
 
         let when = DispatchTime.now() + defaultGeoWaitTime // change 2 to desired number of seconds
@@ -228,7 +228,7 @@ class LocationSearchController: UIViewController, UITextFieldDelegate, GMSMapVie
         return true
     }
     
-    func selectLocation(){
+    @objc func selectLocation(){
         
         self.delegate?.didUpdate(lat: Double(latInput.text!), long: Double(longInput.text!), locationAdress: locationAdress.text, locationName: locationName.text, locationGooglePlaceID: selectedGooglePlaceID)
 
@@ -239,7 +239,7 @@ class LocationSearchController: UIViewController, UITextFieldDelegate, GMSMapVie
        // self.dismiss(animated: true, completion: nil)
     }
     
-    func tapSearchBar() {
+    @objc func tapSearchBar() {
         print("Search Bar Tapped")
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = self
@@ -298,7 +298,7 @@ class LocationSearchController: UIViewController, UITextFieldDelegate, GMSMapVie
         return false
     }
     
-    func textFieldDidChange(_ textField: UITextField) {
+    @objc func textFieldDidChange(_ textField: UITextField) {
         
         
     }

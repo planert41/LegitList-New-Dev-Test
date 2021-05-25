@@ -374,8 +374,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1753"
             endingLineNumber = "1753"
-            landmarkName = "mapView(_:didSelect:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -390,8 +390,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1755"
             endingLineNumber = "1755"
-            landmarkName = "mapView(_:didSelect:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -406,8 +406,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1754"
             endingLineNumber = "1754"
-            landmarkName = "mapView(_:didSelect:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -422,8 +422,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1174"
             endingLineNumber = "1174"
-            landmarkName = "showSelectedPost()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
             <Locations>
                <Location
                   uuid = "52B4339B-5D6D-4D99-B353-386414AE7850 - 85915f72b13421a7"
@@ -470,8 +470,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1173"
             endingLineNumber = "1173"
-            landmarkName = "showSelectedPost()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -486,8 +486,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1195"
             endingLineNumber = "1195"
-            landmarkName = "showSelectedPost()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -502,8 +502,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1759"
             endingLineNumber = "1759"
-            landmarkName = "mapView(_:didSelect:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -518,8 +518,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1758"
             endingLineNumber = "1758"
-            landmarkName = "mapView(_:didSelect:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -534,8 +534,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1746"
             endingLineNumber = "1746"
-            landmarkName = "mapView(_:didSelect:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -550,8 +550,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1889"
             endingLineNumber = "1889"
-            landmarkName = "didTapPost(post:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -566,8 +566,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1614"
             endingLineNumber = "1614"
-            landmarkName = "mapView(_:annotationView:calloutAccessoryControlTapped:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -582,8 +582,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1192"
             endingLineNumber = "1192"
-            landmarkName = "showSelectedPost()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -886,8 +886,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1196"
             endingLineNumber = "1196"
-            landmarkName = "showSelectedPost()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -902,8 +902,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "770"
             endingLineNumber = "770"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "didTapSearchButton()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1798,8 +1798,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "638"
             endingLineNumber = "638"
-            landmarkName = "extCreateNewPhoto()"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2042,7 +2042,7 @@
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "447B6CF8-87D7-48C7-A852-CC8B1CB9064F - 24f837755b555878"
+                  uuid = "447B6CF8-87D7-48C7-A852-CC8B1CB9064F - 24f837755b555acb"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -2052,12 +2052,12 @@
                   urlString = "file:///Users/planert41/Desktop/LegitList%20New%20Dev%20New/ShoutaroundTest/UploadPhotoController_More.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2397"
-                  endingLineNumber = "2397"
-                  offsetFromSymbolStart = "2580">
+                  startingLineNumber = "2410"
+                  endingLineNumber = "2410"
+                  offsetFromSymbolStart = "2685">
                </Location>
                <Location
-                  uuid = "447B6CF8-87D7-48C7-A852-CC8B1CB9064F - 30c7d0aa1ca3b2e6"
+                  uuid = "447B6CF8-87D7-48C7-A852-CC8B1CB9064F - 30c7d0aa1ca3b351"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -2067,8 +2067,8 @@
                   urlString = "file:///Users/planert41/Desktop/LegitList%20New%20Dev%20New/ShoutaroundTest/UploadPhotoController_More.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2399"
-                  endingLineNumber = "2399"
+                  startingLineNumber = "2412"
+                  endingLineNumber = "2412"
                   offsetFromSymbolStart = "78">
                </Location>
             </Locations>
@@ -2374,8 +2374,24 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "118"
             endingLineNumber = "118"
-            landmarkName = "init(uid:dictionary:)"
-            landmarkType = "7">
+            landmarkName = "unknown"
+            landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "52E2B951-BED3-4219-B443-642A274CFA65"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/NewListViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1310"
+            endingLineNumber = "1310"
+            landmarkName = "listShareButton"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

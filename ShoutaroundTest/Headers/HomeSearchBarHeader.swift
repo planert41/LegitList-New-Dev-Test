@@ -108,7 +108,7 @@ class HomeSearchBarHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerVi
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
 //        self.delegate?.openFilter()
     }
     
@@ -186,7 +186,7 @@ class HomeSearchBarHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerVi
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
 //        if isGridView{
 //            self.isGridView = false
 //            delegate?.didChangeToPostView()
@@ -441,7 +441,7 @@ class HomeSearchBarHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerVi
     
     // UIPicker Delegate Functions
     
-    func activateSort() {
+    @objc func activateSort() {
         let rangeIndex = sortOptions.firstIndex(of: self.selectedSort)
         pickerView.selectRow(rangeIndex!, inComponent: 0, animated: false)
         dummyTextView.perform(#selector(becomeFirstResponder), with: nil, afterDelay: 0.1)

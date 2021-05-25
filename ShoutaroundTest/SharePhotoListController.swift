@@ -259,7 +259,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     
     
     
-    func newlistCreated(_ notification: NSNotification) {
+    @objc func newlistCreated(_ notification: NSNotification) {
 
          if let listId = notification.userInfo?["newListID"] as? String {
             var tempList = CurrentUser.lists.first { (list) -> Bool in

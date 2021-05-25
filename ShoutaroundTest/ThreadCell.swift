@@ -188,7 +188,7 @@ class ThreadCell: UICollectionViewCell {
         
     }()
     
-    func handleBookmark() {
+    @objc func handleBookmark() {
         
         //    delegate?.didBookmark(for: self)
         
@@ -514,7 +514,7 @@ class MessageThreadTableViewCell: UITableViewCell {
             
         }()
         
-        func handleBookmark() {
+    @objc func handleBookmark() {
             
             //    delegate?.didBookmark(for: self)
             

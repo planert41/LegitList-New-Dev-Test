@@ -231,7 +231,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
 
     }
     
-    func handleLegit(){
+    @objc func handleLegit(){
         self.searchFilter?.filterLegit = !(self.searchFilter?.filterLegit)!
         
         filterLegitButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
@@ -273,7 +273,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
         return segment
     }()
     
-    func handleSelectRange(sender: UISegmentedControl) {
+    @objc func handleSelectRange(sender: UISegmentedControl) {
         if (geoFilterRangeDefault[sender.selectedSegmentIndex] == self.searchFilter?.filterRange) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.searchFilter?.filterRange = nil
@@ -292,7 +292,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
         return segment
     }()
     
-    func handleSelectType(sender: UISegmentedControl) {
+    @objc func handleSelectType(sender: UISegmentedControl) {
         if (UploadPostTypeDefault[sender.selectedSegmentIndex] == self.searchFilter?.filterType) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.searchFilter?.filterType = nil
@@ -312,7 +312,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
         return segment
     }()
     
-    func handleSelectPrice(sender: UISegmentedControl) {
+    @objc func handleSelectPrice(sender: UISegmentedControl) {
         if (UploadPostPriceDefault[sender.selectedSegmentIndex] == self.searchFilter?.filterMaxPrice) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.searchFilter?.filterMaxPrice = nil
@@ -331,12 +331,12 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
         return segment
     }()
     
-    func handleSelectSort(sender: UISegmentedControl) {
+    @objc func handleSelectSort(sender: UISegmentedControl) {
         self.searchFilter?.filterSort = filterSortOptions[sender.selectedSegmentIndex]
         print("Selected Sort | ",self.searchFilter?.filterSort)
     }
     
-    func findCurrentLocation() {
+    @objc func findCurrentLocation() {
         
         self.searchFilter?.filterGoogleLocationID = nil
         self.searchFilter?.filterLocation = nil
@@ -553,7 +553,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
         }
     }
     
-    func filterSelected(){
+    @objc func filterSelected(){
         
         delegate?.filterControllerSelected(filter: self.searchFilter)
         
@@ -566,7 +566,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
         
     }
     
-    func refreshFilter(){
+    @objc func refreshFilter(){
         self.searchFilter?.clearFilter()
 //        self.distanceSegment.selectedSegmentIndex = UISegmentedControlNoSegment
 //        self.selectedRange = nil
@@ -625,7 +625,7 @@ class SearchFilterController: UIViewController, GMSAutocompleteViewControllerDel
     // Google Search Location Delegates
     
     
-    func tapSearchBar() {
+    @objc func tapSearchBar() {
         print("Search Bar Tapped")
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = self

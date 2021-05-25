@@ -567,12 +567,12 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     }
     
     
-    func usernameTap() {
+    @objc func usernameTap() {
         guard let post = self.post else {return}
         self.delegate?.didTapUser(post: post)
     }
     
-    func locationTap() {
+    @objc func locationTap() {
         guard let post = self.post else {return}
         self.delegate?.didTapUser(post: post)
     }

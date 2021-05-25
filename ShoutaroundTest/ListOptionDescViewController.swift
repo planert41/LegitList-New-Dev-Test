@@ -41,7 +41,7 @@ class ListOptionDescViewController: UIViewController {
         
     }()
     
-    func didTapClear(){
+    @objc func didTapClear(){
         self.descInput.text = ""
     }
     
@@ -123,12 +123,12 @@ class ListOptionDescViewController: UIViewController {
         
     }
     
-    func handleBackPressNav(){
+    @objc func handleBackPressNav(){
 //        self.saveListDesc()
         self.handleBack()
     }
     
-    func didTapClose(){
+    @objc func didTapClose(){
         self.saveListDesc()
         self.handleBack()
     }

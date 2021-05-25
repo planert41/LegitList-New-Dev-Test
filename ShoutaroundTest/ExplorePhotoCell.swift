@@ -176,7 +176,7 @@ class ExplorePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScr
         return label
     }()
     
-    func tapLocation(){
+    @objc func tapLocation(){
         self.delegate?.didTapLocation(post: self.post!)
     }
     
@@ -526,13 +526,13 @@ class ExplorePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScr
     }
     
     
-    func handlePictureTap() {
+    @objc func handlePictureTap() {
         guard let post = post else {return}
         print("Tap Picture")
         delegate?.didTapPicture(post: post)
     }
     
-    func handleLongPress(_ gestureReconizer: UILongPressGestureRecognizer) {
+    @objc func handleLongPress(_ gestureReconizer: UILongPressGestureRecognizer) {
         
         let animationDuration = 0.25
         

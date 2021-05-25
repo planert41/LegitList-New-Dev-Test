@@ -272,7 +272,7 @@ class InboxMessageViewController: UICollectionViewController, UICollectionViewDe
     }
 
     
-    func handleRefresh() {
+    @objc func handleRefresh() {
         guard let threadId = self.messageThread?.threadID else {return}
         print("Refresh Thread : \(threadId)")
         Database.fetchMessageThread(threadId: threadId) { (thread) in
@@ -611,7 +611,7 @@ extension InboxMessageViewController: UITextViewDelegate, MessageCellDelegate, P
     }
     
 
-    func handleSubmit() {
+    @objc func handleSubmit() {
         print("submit Message:", messageTextField.text ?? "")
         
         if messageTextField.text == "" {
@@ -640,11 +640,11 @@ extension InboxMessageViewController: UITextViewDelegate, MessageCellDelegate, P
     }
     
 
-    func handleClear(){
+    @objc func handleClear(){
         self.messageTextField.text = nil
     }
     
-    func handleCancel(){
+    @objc func handleCancel(){
         self.messageTextField.resignFirstResponder()
     }
     

@@ -405,13 +405,13 @@ class NewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UIPickerView
     
     // UIPicker Delegate Functions
     
-    func activateRange() {
+    @objc func activateRange() {
         let rangeIndex = selectedRangeOptions.firstIndex(of: self.selectedRange!)
         pickerView.selectRow(rangeIndex!, inComponent: 0, animated: false)
         dummyTextView.perform(#selector(becomeFirstResponder), with: nil, afterDelay: 0.1)
     }
     
-    func activateLocation(){
+    @objc func activateLocation(){
 //        delegate?.locationSelected()
     }
     

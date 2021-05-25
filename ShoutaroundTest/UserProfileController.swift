@@ -151,7 +151,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         return button
     }()
     
-    func didTapCancel(){
+    @objc func didTapCancel(){
         self.refreshAll()
     }
     
@@ -646,7 +646,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.clearAllPosts()
     }
     
-    func newUserEvent(){
+    @objc func newUserEvent(){
         self.fetchUser()
     }
     
@@ -688,7 +688,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.scrolltoFirst = true
     }
     
-    func handleUpdateFeed() {
+    @objc func handleUpdateFeed() {
         
         // Check for new post that was edited or uploaded
         if newPost != nil && newPostId != nil {

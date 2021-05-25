@@ -401,7 +401,7 @@ class ListViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return button
     }()
     
-    func userOptionList(){
+    @objc func userOptionList(){
         
         let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
         
@@ -513,7 +513,7 @@ class ListViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return button
     }()
     
-    func updateListInd(){
+    @objc func updateListInd(){
         if self.currentDisplayList?.name == legitListName || self.currentDisplayList?.name == bookmarkListName {
             print("Modify LegitList or Bookmark List. Return")
             return
@@ -1130,7 +1130,7 @@ class ListViewController: UIViewController, UICollectionViewDelegate, UICollecti
         return button
     }()
     
-    func didTapCancel(){
+    @objc func didTapCancel(){
         self.refreshAll()
     }
     

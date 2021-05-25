@@ -77,7 +77,7 @@ class SortFilterHeader: UICollectionViewCell, UISearchBarDelegate {
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     
@@ -148,7 +148,7 @@ class SortFilterHeader: UICollectionViewCell, UISearchBarDelegate {
         }
     }
     
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         
         self.selectedSort = sortOptions[sender.selectedSegmentIndex]
         delegate?.headerSortSelected(sort: self.selectedSort)

@@ -456,7 +456,7 @@ class EmojiBarTitleCell: UICollectionViewCell {
         hideSearchButton?.isActive = true
     }
     
-    func didTapCell() {
+    @objc func didTapCell() {
         self.delegate?.didTapEmojiBarTitleCell()
     }
     

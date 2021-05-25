@@ -215,7 +215,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
     
     
     
-    func filterLegitPosts(){
+    @objc func filterLegitPosts(){
         self.mapFilter?.filterLegit = !(self.mapFilter?.filterLegit)!
         self.setupButtons()
         self.refreshPostsForFilter()
@@ -587,7 +587,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         return true
     }
     
-    func dismissPicker(){
+    @objc func dismissPicker(){
         self.tapCancelView?.isHidden = true
         self.dummyTextView.resignFirstResponder()
     }
@@ -630,7 +630,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         return label
     }()
     
-    func toggleMainView(){
+    @objc func toggleMainView(){
         if (self.fullListViewConstraint?.isActive)! {
             self.showFullMap()
         } else {
@@ -638,7 +638,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         }
     }
     
-    func openUsers(){
+    @objc func openUsers(){
         let transition = CATransition()
         transition.duration = 0.5
         transition.type = CATransitionType.push
@@ -706,7 +706,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         return label
     }()
     
-    func openLists(){
+    @objc func openLists(){
         let transition = CATransition()
         transition.duration = 0.5
         transition.type = CATransitionType.push
@@ -833,7 +833,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         self.isListView = !self.isListView
         self.postCollectionView.reloadData()
         self.setupNavigationItems()
@@ -1213,7 +1213,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         dummyTextView.resignFirstResponder()
     }
     
-    func activateSortPicker() {
+    @objc func activateSortPicker() {
         if let rangeIndex = FilterTimeDefault.firstIndex(of: (self.timeFilterButton.text)!) {
             pickerView.selectRow(rangeIndex, inComponent: 0, animated: false)
         } else {
@@ -1985,7 +1985,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         self.mapFilter?.clearFilter()
     }
     
-    func clearList(){
+    @objc func clearList(){
         self.mapFilter?.filterList = nil
         self.refreshPostsForFilter()
     }
@@ -2024,7 +2024,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
     }
     
     
-    func handleUpdateFeed() {
+    @objc func handleUpdateFeed() {
         
         // Check for new post that was edited or uploaded
         if newPost != nil && newPostId != nil {#imageLiteral(resourceName: "icons8-hash-30.png")
@@ -2043,12 +2043,12 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         }
     }
     
-    func refreshWithoutMovingMap(){
+    @objc func refreshWithoutMovingMap(){
         self.refreshAll()
         self.postCollectionView.refreshControl?.endRefreshing()
     }
     
-    func handleRefresh() {
+    @objc func handleRefresh() {
         self.refreshAll()
         self.postCollectionView.refreshControl?.endRefreshing()
         print("Refresh Home Feed. FetchPostIds: ", self.fetchedPostIds.count, "FetchedPostCount: ", self.fetchedPosts.count, " DisplayedPost: ", self.paginatePostsCount)
@@ -2072,7 +2072,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
     }
     
     
-    func passToSelectedPost(){
+    @objc func passToSelectedPost(){
         
         let pictureController = SinglePostView()
         pictureController.post = self.selectedMapPost
@@ -3231,7 +3231,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
         
     }
     
-    func openFilter() {
+    @objc func openFilter() {
         let filterController = SearchFilterController()
         filterController.delegate = self
         filterController.searchFilter = self.mapFilter

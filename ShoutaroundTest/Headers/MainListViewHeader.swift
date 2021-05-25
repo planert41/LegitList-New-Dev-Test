@@ -75,7 +75,7 @@ class MainListViewViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate 
         return button
     }()
 
-    func changeView(){
+    @objc func changeView(){
         self.delegate?.changeView()
     }
     
@@ -118,7 +118,7 @@ class MainListViewViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate 
         }
     }
     
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         self.selectedSort = sortOptions[sender.selectedSegmentIndex]
         delegate?.headerSortSelected(sort: self.selectedSort)
         print("Selected Sort is ",self.selectedSort)

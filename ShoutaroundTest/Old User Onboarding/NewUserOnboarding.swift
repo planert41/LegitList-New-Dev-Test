@@ -619,7 +619,7 @@ class NewUserOnboardingView: UIViewController, UICollectionViewDelegate, UIColle
     } ()
     
     
-    func addList(){
+    @objc func addList(){
 //        let listView = UserWelcome2View()
         let listView = NewUserOnboardingView2()
         self.navigationController?.pushViewController(listView, animated: true)

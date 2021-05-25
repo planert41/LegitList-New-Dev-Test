@@ -384,7 +384,7 @@ class MultSharePhotoController: UIViewController, UICollectionViewDelegateFlowLa
         return btn
     }()
     
-    func showExtraRating(){
+    @objc func showExtraRating(){
         
         if self.extraRatingEmojiCollectionView.isHidden {
             // Fade in the view
@@ -408,7 +408,7 @@ class MultSharePhotoController: UIViewController, UICollectionViewDelegateFlowLa
 
     }
     
-    func clearExtraRating(){
+    @objc func clearExtraRating(){
         self.ratingEmojiTag = ""
     }
     
@@ -774,7 +774,7 @@ class MultSharePhotoController: UIViewController, UICollectionViewDelegateFlowLa
     }
     
     
-    func clearAutoTagEmojis(){
+    @objc func clearAutoTagEmojis(){
         mealTagEmojis = []
         cuisineTagEmojis = []
         dietTagEmojis = []
@@ -827,7 +827,7 @@ class MultSharePhotoController: UIViewController, UICollectionViewDelegateFlowLa
         return segment
     }()
     
-    func handleSelectPostPrice(sender: UISegmentedControl) {
+    @objc func handleSelectPostPrice(sender: UISegmentedControl) {
         if (sender.selectedSegmentIndex == self.selectedPostPriceIndex) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.selectPostPrice = nil
@@ -945,7 +945,7 @@ class MultSharePhotoController: UIViewController, UICollectionViewDelegateFlowLa
     }()
 
 
-    func openInfo(sender : UIButton){
+    @objc func openInfo(sender : UIButton){
         print("Open Info | \(sender.tag)")
         if sender.tag == 0 {
             // Emoji Info
@@ -980,7 +980,7 @@ Choose to tag one of the following to describe the location
         }
     }
     
-    func openAutoTag(sender : UIButton){
+    @objc func openAutoTag(sender : UIButton){
         let autoTag = AutoTagTableViewController()
         autoTag.delegate = self
         autoTag.selectedScope = sender.tag
@@ -995,7 +995,7 @@ Choose to tag one of the following to describe the location
         self.navigationController?.pushViewController(autoTag, animated: true)
     }
     
-    func cancelAutoTag(sender : UIButton){
+    @objc func cancelAutoTag(sender : UIButton){
         if sender.tag == 0 {
             self.mealTagEmojis.removeAll()
         } else if sender.tag == 1 {
@@ -1116,7 +1116,7 @@ Choose to tag one of the following to describe the location
     
     
     
-    func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         captionTextView.resignFirstResponder()
     }
     
@@ -1179,7 +1179,7 @@ Choose to tag one of the following to describe the location
 //        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
     }
     
-    func handleBackNav(){
+    @objc func handleBackNav(){
         self.dismiss(animated: true) {
         }
     }
@@ -1349,7 +1349,7 @@ Choose to tag one of the following to describe the location
         
     }
     
-    func clearRating(){
+    @objc func clearRating(){
         self.selectPostStarRating = 0
     }
     
@@ -1423,7 +1423,7 @@ Choose to tag one of the following to describe the location
     var browser = SKPhotoBrowser()
 
     
-    func expandImage(){
+    @objc func expandImage(){
         var images = [SKPhoto]()
         
         guard let selectedImages = selectedImages else {return}
@@ -1536,7 +1536,7 @@ Choose to tag one of the following to describe the location
         return button
     }()
     
-    func clearEmojiFilter(){
+    @objc func clearEmojiFilter(){
         self.selectedEmojiFilter = nil
     }
     
@@ -2074,7 +2074,7 @@ Choose to tag one of the following to describe the location
     var locationAdressLabelHeightConstraint:NSLayoutConstraint?
 
 
-    func showLocationOptions(){
+    @objc func showLocationOptions(){
         let optionsAlert = UIAlertController(title: "Location Tag", message: "", preferredStyle: UIAlertController.Style.alert)
         
         
@@ -2104,7 +2104,7 @@ Choose to tag one of the following to describe the location
     }
     
     
-    func tapSearchBar() {
+    @objc func tapSearchBar() {
         print("Search Bar Tapped")
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = self
@@ -2149,7 +2149,7 @@ Choose to tag one of the following to describe the location
         return button
     } ()
     
-    func cancelLocation(){
+    @objc func cancelLocation(){
         // If Google Location Selected, Unselect and change to default image location
         if self.selectedPostLocationItem?.locationGoogleID != nil {
             self.selectedPostLocationItem = self.selectedImageLocationItem
@@ -2224,7 +2224,7 @@ Choose to tag one of the following to describe the location
     } ()
     
     
-    func openEmojiSearch(){
+    @objc func openEmojiSearch(){
         let emojiSearch = EmojiSearchTableViewController()
         emojiSearch.delegate = self
         emojiSearch.selectedEmojis = self.nonRatingEmojiTags
@@ -2541,7 +2541,7 @@ Choose to tag one of the following to describe the location
     
     
     
-    func showUserMostUsedEmojis(){
+    @objc func showUserMostUsedEmojis(){
         self.showUserMostUsedEmojiInd = !self.showUserMostUsedEmojiInd
         userMostUsedEmojiButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         UIView.animate(withDuration: 1.0,
@@ -2560,7 +2560,7 @@ Choose to tag one of the following to describe the location
         self.refreshEmojiTagSelections()
     }
     
-    func showLocationSuggestedEmojis(){
+    @objc func showLocationSuggestedEmojis(){
         self.showlocationMostUsedEmojiInd = !self.showlocationMostUsedEmojiInd
         locationMostUsedEmojiButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         UIView.animate(withDuration: 1.0,
@@ -3062,14 +3062,14 @@ Choose to tag one of the following to describe the location
             //                print(cell.uploadEmojis.text)
             
             self.addRemoveEmojiTags(emojiInput: selectedEmoji, emojiInputTag: EmojiDictionary[selectedEmoji] ?? "")
-            // do stuff with your cell, for example print the indexPath
+            // do stuff with your cell, for example print th@objc e indexPath
             
         } else {
             print("Could not find index path")
         }
     }
     
-    func handleLongPress(_ gestureReconizer: UILongPressGestureRecognizer) {
+    @objc func handleLongPress(_ gestureReconizer: UILongPressGestureRecognizer) {
         
         let p = gestureReconizer.location(in: self.view)
         let subViews = self.view.subviews
@@ -3455,7 +3455,7 @@ Choose to tag one of the following to describe the location
         // Deselect Doesn't work for emojis since scells are constantly being reloaded and hence selection is restarted
     }
     
-    func handleNext(){
+    @objc func handleNext(){
         
         guard let postImages = selectedImages else {
             self.alert(title: "Upload Post Requirement", message: "Please Insert Picture")
@@ -3626,7 +3626,7 @@ Choose to tag one of the following to describe the location
 
 //    // LOCATION MANAGER DELEGATE METHODS
 
-    func determineCurrentLocation(){
+    @objc func determineCurrentLocation(){
 
         LocationSingleton.sharedInstance.determineCurrentLocation()
         refreshGoogleResults()
@@ -3739,7 +3739,7 @@ Choose to tag one of the following to describe the location
     }
     
     // ADD LOCATION
-    func openAddLocationNameInput(){
+    @objc func openAddLocationNameInput(){
         //1. Create the alert controller.
         let alert = UIAlertController(title: "Add Location", message: "Enter New Location Name", preferredStyle: .alert)
         

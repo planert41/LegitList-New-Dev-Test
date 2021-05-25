@@ -210,7 +210,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
         return button
     }()
 
-    func didTapUserStatusButton(){
+    @objc func didTapUserStatusButton(){
         self.delegate?.didTapUserEmojiStatus()
     }
     
@@ -284,7 +284,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
 //        self.navGridToggleButton.setTitle(isGridView ? "Grid " : "List ", for: .normal)
     }
 
-    func toggleView(){
+    @objc func toggleView(){
         // 0 = Grid
         // 1 = List
         
@@ -898,7 +898,7 @@ extension SingleUserProfileHeader: UISearchBarDelegate, ListSummaryDelegate, Emo
         self.delegate?.didTapCell(tag: tag)
     }
     
-    func handleRefresh() {
+    @objc func handleRefresh() {
         self.delegate?.handleRefresh()
     }
     
@@ -982,19 +982,19 @@ extension SingleUserProfileHeader: UISearchBarDelegate, ListSummaryDelegate, Emo
 //        return numberOfLines <= 2;
 //    }
     
-    func cancelUserStatus(){
+    @objc func cancelUserStatus(){
         print("cancelUserStatus | \(userStatusTextView.text)")
         self.userStatusTextView.resignFirstResponder()
         setupUserStatus()
     }
     
-    func doneUserStatus(){
+    @objc func doneUserStatus(){
         print("doneUserStatus | \(userStatusTextView.text)")
         self.updateUserStatus(newStatus: userStatusTextView.text)
         self.userStatusTextView.resignFirstResponder()
     }
     
-    func didTapUserStatus(){
+    @objc func didTapUserStatus(){
         self.delegate?.didTapUserStatus()
 //        userStatusTextView.becomeFirstResponder()
     }
@@ -1189,7 +1189,7 @@ extension SingleUserProfileHeader {
     }
 
 
-    func didTapUserImage(){
+    @objc func didTapUserImage(){
         self.delegate?.tapProfileImage(image: profileImageView.image)
     }
 

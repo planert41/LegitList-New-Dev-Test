@@ -624,7 +624,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
 
     }
 
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         self.selectedSort = sortOptions[sender.selectedSegmentIndex]
         let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
@@ -654,7 +654,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
         return button
     }()
     
-    func toggleView(){
+    @objc func toggleView(){
         // 0 = Grid
         // 1 = List
         
@@ -818,7 +818,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
         return button
     }()
     
-    func didTapCancel(){
+    @objc func didTapCancel(){
         self.refreshAll()
     }
     
@@ -964,7 +964,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
         return button
     }()
     
-    func listShareButtonPressed(){
+    @objc func listShareButtonPressed(){
         
     }
     
@@ -985,7 +985,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
         return button
     }()
     
-    func listEditButtonPressed(){
+    @objc func listEditButtonPressed(){
         if listFollowEditButton.tag == 0 {
             // EDIT LIST
             self.delegate?.didTapEditList()
@@ -1254,11 +1254,11 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
     
     
     
-    func toggleMapFunction(){
+    @objc func toggleMapFunction(){
         self.delegate?.toggleMapFunction()
     }
     
-    func tapDescLabel(){
+    @objc func tapDescLabel(){
         if currentDisplayList?.creatorUID == Auth.auth().currentUser?.uid {
             self.listSettingButtonPressed()
         } else {
@@ -1266,12 +1266,12 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
         }
     }
     
-    func didTapUserImage(){
+    @objc func didTapUserImage(){
         guard let user = self.displayUser else {return}
         self.delegate?.didTapUser(user: user)
     }
     
-    func didTapFollowerCount(){
+    @objc func didTapFollowerCount(){
         guard let list = self.currentDisplayList else {return}
         self.delegate?.displayListFollowingUsers(list: list, following: true)
     }
@@ -1518,7 +1518,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
     
     
     // List Header Delegate
-    func didChangeToListView(){
+    @objc func didChangeToListView(){
         print("ListViewController | Change to List View")
         self.delegate?.didChangeToListView()
         self.postFormatInd = 1
@@ -1528,7 +1528,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
         //        collectionView.reloadData()
     }
     
-    func didChangeToGridView() {
+    @objc func didChangeToGridView() {
         print("ListViewController | Change to Grid View")
         self.delegate?.didChangeToGridView()
         self.postFormatInd = 0
@@ -1550,7 +1550,7 @@ class NewListViewControllerHeader: UICollectionViewCell, EmojiButtonArrayDelegat
     
     
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
 //        let filterController = SearchFilterController()
 //        filterController.delegate = self

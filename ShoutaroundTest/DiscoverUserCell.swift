@@ -298,7 +298,7 @@ class DiscoverUserCell: UITableViewCell, UICollectionViewDelegate, UICollectionV
 //        }
     }
     
-    func handleFollow(){
+    @objc func handleFollow(){
         
         guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else {return}
         guard let userId = user?.uid else {return}

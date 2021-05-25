@@ -96,7 +96,7 @@ class SearchBarSortHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerVi
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     

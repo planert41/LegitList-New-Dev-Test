@@ -225,7 +225,7 @@ extension LegitTeamView {
 //        }
     }
 
-    func handleDismiss() {
+    @objc func handleDismiss() {
         print("UserListSearchView | Dismiss")
         self.dismiss(animated: true) {
             print("Team View Dismiss")

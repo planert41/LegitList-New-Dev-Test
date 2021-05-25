@@ -198,7 +198,7 @@ class DiscoverController: UIViewController, UITableViewDelegate, UITableViewData
         return button
     }()
     
-    func didTapCreateNewList() {
+    @objc func didTapCreateNewList() {
         print("Did Tap Create New List | User Profile")
         self.extCreateNewList()
     }

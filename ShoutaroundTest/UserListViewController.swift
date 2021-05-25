@@ -268,7 +268,7 @@ class UserListViewController: UIViewController, UITableViewDataSource, UITableVi
         userTableView.keyboardDismissMode = .onDrag
     }
     
-    func refreshList(){
+    @objc func refreshList(){
         self.fetchAllUsers()
     }
     

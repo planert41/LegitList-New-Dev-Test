@@ -271,7 +271,7 @@ class SingleListViewController: UIViewController {
     let postSortFormatBar = PostSortFormatBar()
     
     
-    func listDeleted(_ notification: NSNotification) {
+    @objc func listDeleted(_ notification: NSNotification) {
 
          if let listId = notification.userInfo?["deleteListId"] as? String {
             if self.currentDisplayList?.id == listId {

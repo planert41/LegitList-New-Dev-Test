@@ -151,7 +151,7 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
 
     }
     
-    func newMessgae() {
+    @objc func newMessgae() {
         let controller = SelectUserMessageController()
         controller.displayUserId = Auth.auth().currentUser?.uid
         controller.sendingPost = nil

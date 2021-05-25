@@ -178,7 +178,7 @@ class NewLocationController: UICollectionViewController, UICollectionViewDelegat
         // Do any additional setup after loading the view.
     }
     
-    func newLocationUpdate() {
+    @objc func newLocationUpdate() {
         print("New Location Update")
         guard let id = location?.locationGoogleID else {
             print("ERROR - No ID : newLocationUpdate")
@@ -255,7 +255,7 @@ class NewLocationController: UICollectionViewController, UICollectionViewDelegat
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .onDrag
     }
-    
+    @objc  
     func handleRefresh() {
         self.clearAllPosts()
         self.fetchPostForPostLocation()

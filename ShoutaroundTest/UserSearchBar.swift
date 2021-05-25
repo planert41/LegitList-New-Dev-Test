@@ -314,7 +314,7 @@ class UserSearchBar: UIView, UISearchBarDelegate {
         navEmojiButton.setImage(UIImage(), for: .normal)
     }
     
-    func didTapEmojiBackButton(){
+    @objc func didTapEmojiBackButton(){
         self.delegate?.didTapEmojiBackButton()
         self.hideEmojiBar()
     }
@@ -648,7 +648,7 @@ extension UserSearchBar: RefreshFilterBarCellDelegate, SelectedFilterBarCellDele
     }
 
     
-    func handleRefresh() {
+    @objc func handleRefresh() {
         self.delegate?.handleRefresh()
 //        self.delegate.handlere
     }

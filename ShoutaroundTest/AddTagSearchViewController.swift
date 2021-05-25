@@ -284,11 +284,11 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
-    func decreaseScope(){
+    @objc func decreaseScope(){
         self.changeScope(change: -1)
     }
     

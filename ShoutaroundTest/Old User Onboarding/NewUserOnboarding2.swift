@@ -628,7 +628,7 @@ class NewUserOnboardingView2: UIViewController, UICollectionViewDelegate, UIColl
     } ()
     
     
-    func addList(){
+    @objc func addList(){
 //        let listView = UserWelcome2View()
         let listView = NewUserWelcomeFollowViewController()
         

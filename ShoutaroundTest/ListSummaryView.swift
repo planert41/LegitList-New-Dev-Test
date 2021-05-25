@@ -233,7 +233,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
 //        self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .left, animated: true)
 //    }
     
-    func newlistCreated(_ notification: NSNotification) {
+    @objc func newlistCreated(_ notification: NSNotification) {
 
          if let listId = notification.userInfo?["newListID"] as? String {
             var tempList = CurrentUser.lists.first { (list) -> Bool in
@@ -546,7 +546,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     
-    func didTapProfilePic() {
+    @objc func didTapProfilePic() {
         guard let user = self.user else {return}
         self.delegate?.didTapUser(user: user)
     }

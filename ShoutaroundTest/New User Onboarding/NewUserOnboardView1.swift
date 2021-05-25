@@ -204,7 +204,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
     } ()
     
     
-    func handleBackButton(){
+    @objc func handleBackButton(){
 
         let transition = CATransition()
         transition.duration = 0.5

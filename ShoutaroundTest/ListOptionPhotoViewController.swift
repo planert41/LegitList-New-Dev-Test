@@ -139,7 +139,7 @@ class ListOptionsPhotoTableViewController: UIViewController, UITableViewDataSour
         
     }
     
-    func didTapClose(){
+    @objc func didTapClose(){
         self.dismiss(animated: true, completion: nil)
     }
     

@@ -158,7 +158,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         return button
     }()
     
-    func didTapCreateNewList() {
+    @objc func didTapCreateNewList() {
         print("Did Tap Create New List | User Profile")
         self.extCreateNewList()
     }
@@ -166,7 +166,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
     func showHideAddListButton() {
         self.createNewListButton.isHidden = !(searchType == ListYours)
     }
-    
+    @objc  
     func didCreateNewList() {
         print("New Lists Created | Discover Controller")
         self.selectedSort = sortNew

@@ -1609,7 +1609,7 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         print("test")
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         SharedFunctions.openGoogleMaps(lat: self.post?.locationGPS?.coordinate.latitude, long: self.post?.locationGPS?.coordinate.longitude)
     }
     
@@ -1763,11 +1763,11 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 //        return label
 //    }()
     
-    func displayFollowLists(){
+    @objc func displayFollowLists(){
         self.delegate?.displayPostSocialLists(post: self.post!, following: true)
     }
     
-    func displayFollowingVotes(){
+    @objc func displayFollowingVotes(){
         self.delegate?.displayPostSocialUsers(post: self.post!, following: true)
     }
     

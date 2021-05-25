@@ -581,7 +581,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     
     var popView = UIView()
     
-    func handleLike() {
+    @objc func handleLike() {
         //      delegate?.didLike(for: self)
         
         guard let postId = self.post?.id else {return}
@@ -644,7 +644,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     }()
     
     
-    func handleBookmark() {
+    @objc func handleBookmark() {
         guard let post = self.post else {return}
         self.delegate?.didTapBookmark(post: post)
         
@@ -697,7 +697,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     
         }()
     
-        func handleComment() {
+    @objc func handleComment() {
             guard let post = post else {return}
             delegate?.didTapComment(post: post)
         }
@@ -712,7 +712,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         
     }()
     
-    func handleMessage(){
+    @objc func handleMessage(){
         guard let post = post else {return}
         delegate?.didTapMessage(post: post)
         
@@ -812,7 +812,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     lazy var extraTagLabel3 = UIButton()
     lazy var extraTagLabel4 = UIButton()
     
-    func extraTagselected(_ sender: UIButton){
+    @objc func extraTagselected(_ sender: UIButton){
         guard let post = post else {return}
         let listTag = sender.tag
         
@@ -1259,7 +1259,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     var pan: UIPanGestureRecognizer!
     
     
-    func onPan(_ pan: UIPanGestureRecognizer){
+    @objc func onPan(_ pan: UIPanGestureRecognizer){
         if pan.state == UIGestureRecognizer.State.began {
             
         } else if pan.state == UIGestureRecognizer.State.changed {

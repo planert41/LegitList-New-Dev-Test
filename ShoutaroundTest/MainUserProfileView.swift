@@ -226,7 +226,7 @@ class MainUserProfileView: UIView, EmojiButtonArrayDelegate {
         }
     }
     
-    func handleFollow(){
+    @objc func handleFollow(){
         
         guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else {return}
         guard let userId = user?.uid else {return}
@@ -240,7 +240,7 @@ class MainUserProfileView: UIView, EmojiButtonArrayDelegate {
     }
     
     
-    func tapUserView(){
+    @objc func tapUserView(){
         self.delegate?.didTapUserView()
     }
     
@@ -299,7 +299,7 @@ class MainUserProfileView: UIView, EmojiButtonArrayDelegate {
         // Do any additional setup after loading the view.
     }
     
-    func usernameTap(){
+    @objc func usernameTap(){
         guard let uid = user?.uid else {return}
         self.delegate?.didTapUserUid(uid: uid)
     }

@@ -730,18 +730,18 @@ extension LegitMapPostCollectionViewCell: UIScrollViewDelegate, EmojiButtonArray
         self.listCollectionView.reloadData()
     }
     
-    func handlePictureTap(){
+    @objc func handlePictureTap(){
         guard let post = self.post else {return}
         self.delegate?.didTapPicture(post:post)
     }
     
-    func handleCaptionTap(){
+    @objc func handleCaptionTap(){
         guard let post = self.post else {return}
         self.delegate?.didTapPicture(post:post)
     }
     
     
-    func handleUserTap(){
+    @objc func handleUserTap(){
         guard let post = self.post else {return}
         self.delegate?.didTapUser(post:post)
     }
@@ -751,7 +751,7 @@ extension LegitMapPostCollectionViewCell: UIScrollViewDelegate, EmojiButtonArray
         self.delegate?.didTapLocation(post: post)
     }
     
-    func togglePost() {
+    @objc func togglePost() {
         self.delegate?.togglePost()
         self.layoutIfNeeded()
         self.updateConstraints()

@@ -1079,12 +1079,12 @@ extension UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func alertClose(gesture: UITapGestureRecognizer) {
+    @objc func alertClose(gesture: UITapGestureRecognizer) {
         self.dismiss(animated: true, completion: nil)
     }
     
     
-    func handleBack(){
+    @objc func handleBack(){
         if let m = self.navigationController {
             self.navigationController?.popViewController(animated: true)
         } else if let m = self.presentingViewController {

@@ -398,7 +398,7 @@ class SinglePostView: UIViewController, UICollectionViewDelegate, UICollectionVi
         
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         if let location = self.post?.locationGPS {
             SharedFunctions.openGoogleMaps(lat: location.coordinate.latitude, long: location.coordinate.longitude)
         } else {
@@ -1498,7 +1498,7 @@ class SinglePostView: UIViewController, UICollectionViewDelegate, UICollectionVi
         return label
     }()
     
-    func displayExtraRatingInfo(){
+    @objc func displayExtraRatingInfo(){
         extraRatingEmojiLabel.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         
         UIView.animate(withDuration: 1.0,
@@ -2168,11 +2168,11 @@ Rating Emojis help you describe your experience beyond just star ratings
         return label
     }()
     
-    func displayFollowLists(){
+    @objc func displayFollowLists(){
         self.displayPostSocialLists(post: self.post!, following: true)
     }
     
-    func displayFollowingVotes(){
+    @objc func displayFollowingVotes(){
         self.displayPostSocialUsers(post: self.post!, following: true)
     }
     
@@ -2252,11 +2252,11 @@ Rating Emojis help you describe your experience beyond just star ratings
 //        }
 //        var sizeThatFits = super.sizeThatFits(size)
 //        sizeThatFits.height = window.safeAreaInsets.bottom + 40
-//        return sizeThatFits
+    //        return sizeT@objc hatFits
 //    }
     
     
-    func handleLike() {
+    @objc func handleLike() {
         //      delegate?.didLike(for: self)
         
         guard let postId = self.post?.id else {return}
@@ -2908,7 +2908,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     //    }
     
     
-    func photoDoubleTapped(){
+    @objc func photoDoubleTapped(){
         print("Double Tap")
         self.handleLike()
         

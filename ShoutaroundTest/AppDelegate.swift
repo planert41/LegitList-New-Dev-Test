@@ -310,7 +310,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         }
     }
     
-    func loadUserForListView(){
+    @objc func loadUserForListView(){
         print("Load User For List View")
         let tabBarController = MainTabBarController()
         window = UIWindow()
@@ -607,7 +607,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         }
     }*/
     
-    func compileEmojis(){
+    @objc func compileEmojis(){
         
 
         // Check ReverseEmojiDictionary

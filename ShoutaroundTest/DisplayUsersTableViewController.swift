@@ -548,7 +548,7 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
@@ -813,7 +813,7 @@ extension DisplayOnlyUsersSearchView {
         }
     }
     
-    func handleDismiss() {
+    @objc func handleDismiss() {
         print("UserListSearchView | Dismiss")
         self.navigationController?.popViewController(animated: true)
     }

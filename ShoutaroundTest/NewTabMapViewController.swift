@@ -180,7 +180,7 @@ class NewTabMapViewController: UIViewController {
     }()
     
     
-    func tapCancelButton() {
+    @objc func tapCancelButton() {
         self.handleRefresh()
     }
 
@@ -327,7 +327,7 @@ class NewTabMapViewController: UIViewController {
         return button
     }()
 
-    func expandList(){
+    @objc func expandList(){
         print("Expand List")
     }
     
@@ -1375,7 +1375,7 @@ class NewTabMapViewController: UIViewController {
     }
 
     
-    func handleUpdateFeed() {
+    @objc func handleUpdateFeed() {
         
         // Check for new post that was edited or uploaded
         if newPost != nil && newPostId != nil {#imageLiteral(resourceName: "icons8-hash-30.png")
@@ -1785,7 +1785,7 @@ extension NewTabMapViewController : MKMapViewDelegate {
     }
     
     
-    func passToSelectedPost(){
+    @objc func passToSelectedPost(){
         print("passToSelectedPost")
         guard let post = self.selectedMapPost else {return}
         self.extTapPicture(post: post)
@@ -2133,7 +2133,7 @@ extension NewTabMapViewController: UserListSearchViewDelegate {
         }
     }
     
-    func openUserListFilter() {
+    @objc func openUserListFilter() {
         userListSearchView.selectedUser = self.filteredUser
         userListSearchView.selectedList = self.filteredList
         userListSearchView.delegate = self
@@ -2158,7 +2158,7 @@ extension NewTabMapViewController: UserListSearchViewDelegate {
         }
     }
     
-    func openListFilter() {
+    @objc func openListFilter() {
         let temp = UserListSearchView()
         temp.inputUser = CurrentUser.user
         temp.selectedUser = nil
@@ -2204,7 +2204,7 @@ extension NewTabMapViewController: UserListSearchViewDelegate {
     }
     
     
-    func filterSuggestedEmoji1() {
+    @objc func filterSuggestedEmoji1() {
         if self.mapFilter.searchTerms.contains(self.suggestedEmoji) {
             self.mapFilter.filterCaptionArray.removeAll { (string) -> Bool in
                 return string == self.suggestedEmoji
@@ -2216,7 +2216,7 @@ extension NewTabMapViewController: UserListSearchViewDelegate {
         updateFilterSuggestedButtons()
     }
 
-    func filterSuggestedEmoji2() {
+    @objc func filterSuggestedEmoji2() {
         if self.mapFilter.searchTerms.contains(self.suggestedEmoji2) {
             self.mapFilter.filterCaptionArray.removeAll { (string) -> Bool in
                 return string == self.suggestedEmoji2

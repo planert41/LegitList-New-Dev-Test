@@ -139,7 +139,7 @@ class ListOptionTextboxInputViewController: UIViewController {
         self.handleBack()
     }
     
-    func didTapClose(){
+    @objc func didTapClose(){
         if self.listNameInput.text == nil || (self.listNameInput.text?.isEmptyOrWhitespace() ?? true) {
             if inputType == .listName {
                 self.alert(title: "List Name Error", message: "Please Insert A List Name")

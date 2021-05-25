@@ -722,7 +722,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         self.view.removeGestureRecognizer(self.keyboardTap)
     }
     
-    func dismissKeyboard (_ sender: UITapGestureRecognizer) {
+    @objc func dismissKeyboard (_ sender: UITapGestureRecognizer) {
         searchBar.resignFirstResponder()
     }
     

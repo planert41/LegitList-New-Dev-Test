@@ -75,7 +75,7 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
         return button
     }()
     
-    func toggleMultiSelect(){
+    @objc func toggleMultiSelect(){
         self.multiSelect = !self.multiSelect
         self.setupNavigationItems()
     }
@@ -617,11 +617,11 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
-    func decreaseScope(){
+    @objc func decreaseScope(){
         self.changeScope(change: -1)
     }
     
@@ -831,7 +831,7 @@ class MainSearchController : UIViewController, UITableViewDelegate, UITableViewD
         self.handleFilter()
     }
     
-    func handleFilter(){
+    @objc func handleFilter(){
         if let addFilter = self.moreFilterView.searchFilter {
             // Location Filters always get transferred to advanced tab if exists since one click on location is filtered right away
             // Does not stay on filter once a location is selected

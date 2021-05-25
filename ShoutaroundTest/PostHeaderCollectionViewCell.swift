@@ -659,12 +659,12 @@ extension PostHeaderCollectionViewCell: UIScrollViewDelegate, EmojiButtonArrayDe
         self.listCollectionView.reloadData()
     }
     
-    func handlePictureTap(){
+    @objc func handlePictureTap(){
         guard let post = self.post else {return}
         self.delegate?.didTapPicture(post:post)
     }
     
-    func handleCaptionTap(){
+    @objc func handleCaptionTap(){
         guard let post = self.post else {return}
         self.delegate?.didTapPicture(post:post)
     }
@@ -675,13 +675,13 @@ extension PostHeaderCollectionViewCell: UIScrollViewDelegate, EmojiButtonArrayDe
         self.delegate?.didTapUser(post:post)
     }
     
-    func handleLocationTap(){
+    @objc func handleLocationTap(){
         self.handlePictureTap()
 //        guard let post = self.post else {return}
 //        self.delegate?.didTapLocation(post: post)
     }
     
-    func togglePost() {
+    @objc func togglePost() {
 //        self.delegate?.togglePost()
         self.layoutIfNeeded()
         self.updateConstraints()

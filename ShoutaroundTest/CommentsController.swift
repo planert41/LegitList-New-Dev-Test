@@ -302,11 +302,11 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         
     }()
     
-    func handleClear(){
+    @objc func handleClear(){
         self.commentTextField.text = nil
     }
     
-    func handleCancel(){
+    @objc func handleCancel(){
         self.commentTextField.resignFirstResponder()
     }
     

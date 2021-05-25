@@ -60,7 +60,7 @@ class ListOptionsTableViewController: UITableViewController {
         
     }
     
-    func refreshList(){
+    @objc func refreshList(){
         guard let listId = inputList?.id else {return}
         Database.fetchListforSingleListId(listId: listId) { (list) in
             guard let list = list else {

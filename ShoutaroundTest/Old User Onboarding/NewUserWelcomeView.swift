@@ -149,7 +149,7 @@ class NewUserWelcomeView: UIViewController, UICollectionViewDelegate, UICollecti
     } ()
     
     
-    func addList(){
+    @objc func addList(){
         let listView = UserWelcome2View()
         self.navigationController?.pushViewController(listView, animated: true)
 //        self.navigationController?.present(listView, animated: true, completion: nil)

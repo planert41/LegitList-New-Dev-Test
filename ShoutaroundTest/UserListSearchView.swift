@@ -342,7 +342,7 @@ class UserListSearchView : UITableViewController, UISearchResultsUpdating, UISea
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
@@ -654,7 +654,7 @@ extension UserListSearchView {
         }
     }
     
-    func handleDismiss() {
+    @objc func handleDismiss() {
         print("UserListSearchView | Dismiss")
         self.dismiss(animated: true, completion: nil)
     }

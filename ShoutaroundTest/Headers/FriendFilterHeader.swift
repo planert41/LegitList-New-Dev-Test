@@ -77,7 +77,7 @@ class FriendFilterHeader: UICollectionViewCell, UISearchBarDelegate {
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     
@@ -162,7 +162,7 @@ class FriendFilterHeader: UICollectionViewCell, UISearchBarDelegate {
         }
     }
     
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         
         self.selectedSort = sortOptions[sender.selectedSegmentIndex]
 //        delegate?.friendSortSelected(sort: self.selectedSort)

@@ -263,7 +263,7 @@ class ListOptionPhotoPicker: UIViewController, UICollectionViewDelegate, UIColle
         
     }
     
-    func didTapSelect(){
+    @objc func didTapSelect(){
         guard let image = self.selectedUrl else {return}
         guard let listId = self.currentDisplayList?.id else {return}
         var tempList = self.currentDisplayList

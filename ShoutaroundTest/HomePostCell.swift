@@ -323,7 +323,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     var legitIconWidth: NSLayoutConstraint?
     
     
-    func openLegitList(){
+    @objc func openLegitList(){
         print("Open Legit List")
         if let legitIndex = self.extraTagsNameArray.firstIndex(of: legitListName){
             var selectedListName = self.extraTagsNameArray[legitIndex]
@@ -373,7 +373,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     }
     
     
-    func nonRatingEmojiSelected(_ sender: UIGestureRecognizer){
+    @objc func nonRatingEmojiSelected(_ sender: UIGestureRecognizer){
         print("Non Rating Emoji Selected")
         
         guard let post = post else {return}
@@ -510,7 +510,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         return tv
     }()
     
-    func HandleTap(sender: UITapGestureRecognizer) {
+    @objc func HandleTap(sender: UITapGestureRecognizer) {
         
         let myTextView = sender.view as! UITextView //sender is TextView
         let layoutManager = myTextView.layoutManager //Set layout manager
@@ -599,7 +599,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     
     
     
-    func handleOptions() {
+    @objc func handleOptions() {
         guard let post = post else {return}
         print("Options Button Pressed")
         delegate?.userOptionPost(post: post)
@@ -633,7 +633,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     lazy var extraTagLabel6 = UIButton()
     
     
-    func extraTagselected(_ sender: UIButton){
+    @objc func extraTagselected(_ sender: UIButton){
         guard let post = post else {return}
         let listTag = sender.tag
         
@@ -849,7 +849,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         }
     }
  
-    func captionBubbleTap(){
+    @objc func captionBubbleTap(){
                 
         if captionDisplayed {
             captionView.alpha = 0
@@ -1117,7 +1117,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         print("test")
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         SharedFunctions.openGoogleMaps(lat: self.post?.locationGPS?.coordinate.latitude, long: self.post?.locationGPS?.coordinate.longitude)
     }
     
@@ -1276,7 +1276,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleLike() {
+    @objc func handleLike() {
         //      delegate?.didLike(for: self)
         
         guard let postId = self.post?.id else {return}
@@ -1325,7 +1325,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleBookmark() {
+    @objc func handleBookmark() {
         guard let post = post else {return}
         delegate?.didTapBookmark(post: post)
 
@@ -1341,7 +1341,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleComment() {
+    @objc func handleComment() {
         guard let post = post else {return}
         delegate?.didTapComment(post: post)
     }
@@ -1358,7 +1358,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleMessage(){
+    @objc func handleMessage(){
         guard let post = post else {return}
         delegate?.didTapMessage(post: post)
         
@@ -1419,7 +1419,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         return label
     }()
     
-    func handleUpVote(){
+    @objc func handleUpVote(){
         guard let postId = self.post?.id else {return}
         guard let creatorId = self.post?.creatorUID else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -1461,7 +1461,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         self.delegate?.refreshPost(post: self.post!)
     }
     
-    func handleDownVote(){
+    @objc func handleDownVote(){
         guard let postId = self.post?.id else {return}
         guard let creatorId = self.post?.creatorUID else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -1656,7 +1656,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     
     var originalImageCenter:CGPoint?
     
-    func pan(sender: UIPanGestureRecognizer) {
+    @objc func pan(sender: UIPanGestureRecognizer) {
         if self.isZooming && sender.state == .began {
             self.originalImageCenter = sender.view?.center
         } else if self.isZooming && sender.state == .changed {
@@ -1669,7 +1669,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         }
     }
     
-    func pinch(sender:UIPinchGestureRecognizer) {
+    @objc func pinch(sender:UIPinchGestureRecognizer) {
         
         if sender.state == .began {
             let currentScale = self.photoImageScrollView.frame.size.height / self.photoImageScrollView.bounds.size.height
@@ -1787,7 +1787,7 @@ class HomePostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
 //    }
     
     
-    func photoDoubleTapped(){
+    @objc func photoDoubleTapped(){
         
         // Double Tap For Upvote - If Already Upvoted will change vote to 0. Upvote code handles it
         self.handleUpVote()

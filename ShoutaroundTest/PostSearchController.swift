@@ -142,11 +142,11 @@ class PostSearchController : UITableViewController, UISearchResultsUpdating, UIS
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: (#imageLiteral(resourceName: "filter")).withRenderingMode(.alwaysOriginal), style: .plain, target: self, action: #selector(openFilter))
     }
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
-    func decreaseScope(){
+    @objc func decreaseScope(){
         self.changeScope(change: -1)
     }
     
@@ -486,7 +486,7 @@ class PostSearchController : UITableViewController, UISearchResultsUpdating, UIS
         print("Error: \(error)")
     }
     
-    func openFilter(){
+    @objc func openFilter(){
         let filterController = FilterController()
         filterController.delegate = self
         

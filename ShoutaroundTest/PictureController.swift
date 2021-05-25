@@ -326,7 +326,7 @@ class PictureController: UIViewController, UICollectionViewDelegate, UICollectio
 
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         if let location = self.post?.locationGPS {
             SharedFunctions.openGoogleMaps(lat: location.coordinate.latitude, long: location.coordinate.longitude)
         } else {
@@ -1883,15 +1883,15 @@ class PictureController: UIViewController, UICollectionViewDelegate, UICollectio
         return label
     }()
     
-    func displayFollowLists(){
+    @objc func displayFollowLists(){
         self.displayPostSocialLists(post: self.post!, following: true)
     }
     
-    func displayFollowingVotes(){
+    @objc func displayFollowingVotes(){
         self.displayPostSocialUsers(post: self.post!, following: true)
     }
     
-    func displayAllLists(){
+    @objc func displayAllLists(){
         let displayFollowing = (self.post!.followingList.count > 0)
         self.displayPostSocialLists(post: self.post!, following: displayFollowing)
     }
@@ -1958,7 +1958,7 @@ class PictureController: UIViewController, UICollectionViewDelegate, UICollectio
     }()
 
     
-    func handleLike() {
+    @objc func handleLike() {
         //      delegate?.didLike(for: self)
         
         guard let postId = self.post?.id else {return}
@@ -2059,7 +2059,7 @@ class PictureController: UIViewController, UICollectionViewDelegate, UICollectio
         
     }()
     
-    func handleComment() {
+    @objc func handleComment() {
         guard let post = post else {return}
         self.didTapComment(post: post)
     }
@@ -2591,7 +2591,7 @@ class PictureController: UIViewController, UICollectionViewDelegate, UICollectio
     //    }
     
     
-    func photoDoubleTapped(){
+    @objc func photoDoubleTapped(){
         print("Double Tap")
         self.handleLike()
         

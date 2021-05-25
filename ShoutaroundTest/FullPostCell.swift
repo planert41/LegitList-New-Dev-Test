@@ -185,13 +185,13 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         photoCountLabel.reloadInputViews()
     }
     
-    func usernameTap() {
+    @objc func usernameTap() {
         print("Tap username label", post?.user.username ?? "")
         guard let post = post else {return}
         delegate?.didTapUser(post: post)
     }
     
-    func locationTap() {
+    @objc func locationTap() {
         print("Post Information: ", post)
         
         print("Tap location label", post?.locationName ?? "")
@@ -565,7 +565,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     var legitIconWidth: NSLayoutConstraint?
 
     
-    func openLegitList(){
+    @objc func openLegitList(){
         print("Open Legit List")
         if let legitIndex = self.postListNames.firstIndex(of: legitListName){
             var selectedListName = self.postListNames[legitIndex]
@@ -587,7 +587,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
 
     
     
-    func openBookmark(){
+    @objc func openBookmark(){
         print("Open Bookmark List")
             if let bookmarkId = self.post?.selectedListId?.key(forValue: bookmarkListName){
                 delegate?.didTapExtraTag(tagName: bookmarkListName, tagId: bookmarkId, post: post!)
@@ -773,7 +773,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }
     
-    func HandleTap(sender: UITapGestureRecognizer) {
+    @objc func HandleTap(sender: UITapGestureRecognizer) {
         
         let myTextView = sender.view as! UITextView //sender is TextView
         let layoutManager = myTextView.layoutManager //Set layout manager
@@ -863,7 +863,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     }()
     
 
-    func handleOptions() {
+    @objc func handleOptions() {
         guard let post = post else {return}
         print("Options Button Pressed")
         delegate?.userOptionPost(post: post)
@@ -1179,7 +1179,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }
 
-    func captionBubbleTap(){
+    @objc func captionBubbleTap(){
         
         print(post)
         
@@ -1418,7 +1418,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         print("test")
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         SharedFunctions.openGoogleMaps(lat: self.post?.locationGPS?.coordinate.latitude, long: self.post?.locationGPS?.coordinate.longitude)
     }
     
@@ -1716,7 +1716,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         return tv
     }()
     
-    func HandleVoteStatsTap(sender: UITapGestureRecognizer) {
+    @objc func HandleVoteStatsTap(sender: UITapGestureRecognizer) {
         
         let myTextView = sender.view as! UITextView //sender is TextView
         let layoutManager = myTextView.layoutManager //Set layout manager
@@ -1761,19 +1761,19 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         return label
     }()
     
-    func displayFollowLists(){
+    @objc func displayFollowLists(){
         self.delegate?.displayPostSocialLists(post: self.post!, following: true)
     }
     
-    func displayFollowingVotes(){
+    @objc func displayFollowingVotes(){
         self.delegate?.displayPostSocialUsers(post: self.post!, following: true)
     }
 
-    func displayAllLists(){
+    @objc func displayAllLists(){
         self.delegate?.displayPostSocialLists(post: self.post!, following: false)
     }
     
-    func displayAllVotes(){
+    @objc func displayAllVotes(){
         self.delegate?.displayPostSocialUsers(post: self.post!, following: false)
     }
     
@@ -1795,7 +1795,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleVote() {
+    @objc func handleVote() {
         //      delegate?.didLike(for: self)
         
         guard let postId = self.post?.id else {return}
@@ -1872,7 +1872,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleBookmark() {
+    @objc func handleBookmark() {
         guard let post = post else {return}
         delegate?.didTapBookmark(post: post)
         
@@ -1887,7 +1887,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleComment() {
+    @objc func handleComment() {
         guard let post = post else {return}
         delegate?.didTapComment(post: post)
     }
@@ -1904,7 +1904,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
     }()
     
-    func handleMessage(){
+    @objc func handleMessage(){
         guard let post = post else {return}
         delegate?.didTapMessage(post: post)
         
@@ -2143,7 +2143,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     
     var originalImageCenter:CGPoint?
     
-    func pan(sender: UIPanGestureRecognizer) {
+    @objc func pan(sender: UIPanGestureRecognizer) {
         if self.isZooming && sender.state == .began {
             self.originalImageCenter = sender.view?.center
         } else if self.isZooming && sender.state == .changed {
@@ -2156,7 +2156,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         }
     }
     
-    func pinch(sender:UIPinchGestureRecognizer) {
+    @objc func pinch(sender:UIPinchGestureRecognizer) {
         
         if sender.state == .began {
             let currentScale = self.photoImageScrollView.frame.size.height / self.photoImageScrollView.bounds.size.height
@@ -2274,7 +2274,7 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     //    }
     
     
-    func photoDoubleTapped(){
+    @objc func photoDoubleTapped(){
         print("Double Tap")
         self.handleVote()
         

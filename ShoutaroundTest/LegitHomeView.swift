@@ -964,7 +964,7 @@ extension LegitHomeView {
 }
 
 extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, BottomEmojiBarDelegate, PostSortFormatBarDelegate {
-    func toggleMapFunction() {
+    @objc func toggleMapFunction() {
         var tempFilter = self.viewFilter ?? Filter.init()
         print("toggleMapFunction | Legit Home View | \(tempFilter.filterCaptionArray) IsFiltering: \(tempFilter.isFiltering)")
         appDelegateFilter = tempFilter
@@ -1029,7 +1029,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     }
     
     
-    func didTapSearchButton() {
+    @objc func didTapSearchButton() {
         print("Tap Search | \(self.currentPostsFilterTagCounts.count) Tags | \(self.viewFilter.searchTerms)")
         searchViewController.inputViewFilter = self.viewFilter
 //        searchViewController.searchViewFilter = self.viewFilter

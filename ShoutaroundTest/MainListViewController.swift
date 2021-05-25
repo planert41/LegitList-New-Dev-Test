@@ -166,7 +166,7 @@ class MainListViewController: UIViewController, UITableViewDataSource, UITableVi
 
     }
     
-    func manageList(){
+    @objc func manageList(){
         let sharePhotoListController = ManageListViewController()
         navigationController?.pushViewController(sharePhotoListController, animated: true)
     }
@@ -204,7 +204,7 @@ class MainListViewController: UIViewController, UITableViewDataSource, UITableVi
         listTableView.keyboardDismissMode = .onDrag
     }
     
-    func refreshList(){
+    @objc func refreshList(){
         
     }
     

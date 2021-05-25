@@ -268,7 +268,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
         return btn
     }()
     
-    func handleLegit(){
+    @objc func handleLegit(){
         self.selectedLegit = !self.selectedLegit
         
         filterLegitButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
@@ -295,7 +295,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
         return segment
     }()
     
-    func handleSelectRange(sender: UISegmentedControl) {
+    @objc func handleSelectRange(sender: UISegmentedControl) {
         if (geoFilterRangeDefault[sender.selectedSegmentIndex] == self.selectedRange) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.selectedRange = nil
@@ -314,7 +314,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
         return segment
     }()
 
-    func handleSelectType(sender: UISegmentedControl) {
+    @objc func handleSelectType(sender: UISegmentedControl) {
         if (UploadPostTypeDefault[sender.selectedSegmentIndex] == self.selectedType) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.selectedType = nil
@@ -334,7 +334,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
         return segment
     }()
     
-    func handleSelectPrice(sender: UISegmentedControl) {
+    @objc func handleSelectPrice(sender: UISegmentedControl) {
         if (UploadPostPriceDefault[sender.selectedSegmentIndex] == self.selectedMaxPrice) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.selectedMaxPrice = nil
@@ -353,12 +353,12 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
         return segment
     }()
     
-    func handleSelectSort(sender: UISegmentedControl) {
+    @objc func handleSelectSort(sender: UISegmentedControl) {
         self.selectedSort = filterSortOptions[sender.selectedSegmentIndex]
         print("Selected Sort is ",self.selectedSort)
     }
     
-    func findCurrentLocation() {
+    @objc func findCurrentLocation() {
         
         self.selectedGooglePlaceID = nil
         self.selectedLocation = nil
@@ -553,7 +553,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
         }
     }
     
-    func filterSelected(){
+    @objc func filterSelected(){
         
         delegate?.filterControllerFinished(selectedCaption: self.selectedCaption, selectedRange: self.selectedRange, selectedLocation: self.selectedLocation, selectedLocationName: self.locationNameLabel.text, selectedGooglePlaceId: self.selectedGooglePlaceID, selectedGooglePlaceType: self.selectedGooglePlaceType, selectedMinRating: self.selectedMinRating, selectedType: self.selectedType, selectedMaxPrice: self.selectedMaxPrice, selectedSort: self.selectedSort, selectedLegit: self.selectedLegit)
 
@@ -566,7 +566,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
 
     }
     
-    func refreshFilter(){
+    @objc func refreshFilter(){
         self.distanceSegment.selectedSegmentIndex = UISegmentedControl.noSegment
         self.selectedRange = nil
         
@@ -672,7 +672,7 @@ class FilterController: UIViewController, GMSAutocompleteViewControllerDelegate,
     // Google Search Location Delegates
     
     
-    func tapSearchBar() {
+    @objc func tapSearchBar() {
         print("Search Bar Tapped")
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = self

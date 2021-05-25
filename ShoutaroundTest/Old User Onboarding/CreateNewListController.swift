@@ -418,7 +418,7 @@ class CreateNewListController: UIViewController, UITextFieldDelegate, UICollecti
         }
     }
     
-    func refreshAll(){
+    @objc func refreshAll(){
 //        if self.selectedListType == listOptions[0]
 //        {
 //            userListHeight?.constant = CGFloat(self.createdList.count) * 60

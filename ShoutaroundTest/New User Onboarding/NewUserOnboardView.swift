@@ -182,7 +182,7 @@ class NewUserOnboardView: UIViewController {
     } ()
     
     
-    func handleBackButton(){
+    @objc func handleBackButton(){
         self.dismiss(animated: true) {
             print("handleBack")
         }

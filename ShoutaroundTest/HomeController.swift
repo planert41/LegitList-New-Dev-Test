@@ -109,7 +109,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return button
     }()
     
-    func openCurrentUserProfile(){
+    @objc func openCurrentUserProfile(){
         let userProfileController = UserProfileController(collectionViewLayout: StickyHeadersCollectionViewFlowLayout())
         userProfileController.displayUserId = CurrentUser.user?.uid
         navigationController?.pushViewController(userProfileController, animated: true)
@@ -145,7 +145,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         return button
     }()
   
-    func filterLegitPosts(){
+    @objc func filterLegitPosts(){
         self.viewFilter?.filterLegit = !(self.viewFilter?.filterLegit)!
         self.refreshPostsForFilter()
         setupNavigationItems()
@@ -509,9 +509,9 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         print("Filter Sort is ", self.viewFilter?.filterSort)
     }
     
-    // Search Delegate And Methods
+    // Search Delegate And Metho@objc ds
     
-    func openFilter(){
+    @objc func openFilter(){
         let filterController = SearchFilterController()
         filterController.delegate = self
         filterController.searchFilter = self.viewFilter

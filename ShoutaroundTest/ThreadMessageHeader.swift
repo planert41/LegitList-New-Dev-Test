@@ -254,7 +254,7 @@ class ThreadMessageHeader: UICollectionViewCell {
         
     }()
     
-    func handleLike() {
+    @objc func handleLike() {
         guard let postId = self.post?.id else {return}
         guard let creatorId = self.post?.creatorUID else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -301,7 +301,7 @@ class ThreadMessageHeader: UICollectionViewCell {
         
     }()
     
-    func handleBookmark() {
+    @objc func handleBookmark() {
         
         //    delegate?.didBookmark(for: self)
         
@@ -366,7 +366,7 @@ class ThreadMessageHeader: UICollectionViewCell {
         
     }()
     
-    func handleMessage(){
+    @objc func handleMessage(){
         guard let post = post else {return}
         delegate?.didTapMessage(post: post)
         

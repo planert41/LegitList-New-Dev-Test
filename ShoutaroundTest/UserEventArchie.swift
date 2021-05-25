@@ -221,12 +221,12 @@ class UserEventViewControllerArchive : UITableViewController, EventCellDelegate 
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.displayFollowing = false
         self.tableView.reloadData()
     }
     
-    func decreaseScope(){
+    @objc func decreaseScope(){
         self.displayFollowing = true
         self.tableView.reloadData()
     }
@@ -384,7 +384,7 @@ class UserEventViewControllerArchive : UITableViewController, EventCellDelegate 
         }
     }
     
-    func openUserProfile(){
+    @objc func openUserProfile(){
         print("UserEventController | Open Current User Profile ")
         let userProfileController = UserProfileController(collectionViewLayout: StickyHeadersCollectionViewFlowLayout())
         userProfileController.displayUserId = CurrentUser.user?.uid

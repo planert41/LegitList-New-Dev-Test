@@ -203,7 +203,7 @@ extension PostSortFormatBar: PostSortFormatBarDelegate, postSortSegmentControlDe
         self.delegate?.headerSortSelected(sort: sort)
     }
     
-    func didTapGridButton() {
+    @objc func didTapGridButton() {
         self.delegate?.didTapGridButton()
     }
     

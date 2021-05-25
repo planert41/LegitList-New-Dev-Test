@@ -396,7 +396,7 @@ class NewListViewController: UIViewController, UICollectionViewDelegate, UIColle
         return button
     }()
     
-    func userOptionList(){
+    @objc func userOptionList(){
         
         let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
         
@@ -1087,7 +1087,7 @@ class NewListViewController: UIViewController, UICollectionViewDelegate, UIColle
         return button
     }()
     
-    func didTapCancel(){
+    @objc func didTapCancel(){
         self.refreshAll()
     }
     
@@ -1282,7 +1282,7 @@ class NewListViewController: UIViewController, UICollectionViewDelegate, UIColle
         
     }()
     
-    func listSettingButtonPressed(){
+    @objc func listSettingButtonPressed(){
         
         if currentDisplayList?.creatorUID != Auth.auth().currentUser?.uid {
             return
@@ -1311,7 +1311,7 @@ class NewListViewController: UIViewController, UICollectionViewDelegate, UIColle
         return button
     }()
     
-    func listShareButtonPressed(){
+    @objc func listShareButtonPressed(){
         
     }
     
@@ -1331,7 +1331,7 @@ class NewListViewController: UIViewController, UICollectionViewDelegate, UIColle
         return button
     }()
     
-    func listEditButtonPressed(){
+    @objc func listEditButtonPressed(){
         if listFollowEditButton.tag == 0 {
             // EDIT LIST
             self.alert(title: "Edit List", message: "Edit")

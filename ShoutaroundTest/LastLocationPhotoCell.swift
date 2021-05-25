@@ -38,7 +38,7 @@ class LastLocationPhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate {
         
     }
     
-    func didTap(){
+    @objc func didTap(){
         self.delegate?.searchNearby()
     }
     

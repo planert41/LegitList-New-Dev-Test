@@ -113,7 +113,7 @@ class TabListHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerViewDele
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         //        self.delegate?.openFilter()
     }
     
@@ -237,7 +237,7 @@ class TabListHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerViewDele
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         //        if isGridView{
         //            self.isGridView = false
         //            delegate?.didChangeToPostView()

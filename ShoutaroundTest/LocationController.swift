@@ -220,7 +220,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
     var hideAdditionalDetails:NSLayoutConstraint?
     var hidePlaceCollectionView:NSLayoutConstraint?
     
-    func togglePhotoView(){
+    @objc func togglePhotoView(){
         UIView.animate(withDuration: 0.3) {
             self.isFullView = !self.isFullView
             self.fullPhotoCollectionView?.isActive = self.isFullView
@@ -247,7 +247,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         if isGridView{
             self.isGridView = false
             if !self.isFullView {
@@ -527,7 +527,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
     }()
     
     // Location Detail Functions
-    func locationHoursIconTapped(){
+    @objc func locationHoursIconTapped(){
         print("LocationController | locationHoursIconTapped")
 
 //        var timeString = "" as String
@@ -550,18 +550,18 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         SharedFunctions.openGoogleMaps(lat: selectedLat, long: selectedLong)
         
 //        if (UIApplication.shared.canOpenURL(NSURL(string:"https://www.google.com/maps/search/?api=1&query=\(selectedLat!),\(selectedLong!)")! as URL)) {
 //            UIApplication.shared.openURL(NSURL(string:
 //                "https://www.google.com/maps/search/?api=1&query=\(selectedLat!),\(selectedLong!)")! as URL)
 //        } else {
-//            NSLog("Can't use comgooglemaps://");
+        //            NSLog("Can't use comgoogle@objc maps://"@objc );
 //        }
     }
     
-    func activatePhone(){
+    @objc func activatePhone(){
         print("Tapped Phone Icon")
         guard let url = URL(string: "tel://\(self.placePhoneNo!)") else {return}
         
@@ -572,7 +572,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         }
     }
     
-    func activateBrowser(){
+    @objc func activateBrowser(){
         guard let url = URL(string: self.placeWebsite!) else {return}
         print("activateBrowser | \(url)")
         if #available(iOS 10.0, *) {
@@ -720,7 +720,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         return button
     }()
     
-    func showLocation(){
+    @objc func showLocation(){
         guard let location = selectedLocation else {
             return
         }
@@ -984,7 +984,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         friendFilterSegment.tintColor = .white
     }
     
-    func selectFriendSort(sender: UISegmentedControl) {
+    @objc func selectFriendSort(sender: UISegmentedControl) {
         print("Selected Friend Filter | ",sender.selectedSegmentIndex)
         self.isFilteringFriends = (sender.selectedSegmentIndex == 0)
         self.underlineSegment(segment: sender.selectedSegmentIndex)
@@ -1284,7 +1284,7 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         
     }
     
-    func displayFullLocationName(){
+    @objc func displayFullLocationName(){
         self.alert(title: "Full Location Name", message: self.locationNameLabel.text!)
     }
     
@@ -1600,8 +1600,8 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
         let circleQuery = geoFire.query(at: location, withRadius: 5)
         circleQuery.observe(.keyEntered, with: { (key, location) in
             
-            guard let postId: String = key else {return}
-            guard let postLocation: CLLocation = location else {return}
+            guard let postId: String? = key else {return}
+            guard let postLocation: CLLocation? = location else {return}
             
             self.postNearby[key] = postLocation
             

@@ -364,7 +364,7 @@ class EmojiInfoView_OLD: UIViewController, UICollectionViewDelegate, UICollectio
     } ()
     
     
-    func openEmojiSearch(){
+    @objc func openEmojiSearch(){
         let emojiSearch = EmojiSearchTableViewController()
         self.navigationController?.pushViewController(emojiSearch, animated: true)
     }
@@ -661,8 +661,7 @@ class EmojiInfoView_OLD: UIViewController, UICollectionViewDelegate, UICollectio
         return button
     } ()
     
-    
-    func addList(){
+    @objc func addList(){
         self.dismiss(animated: true, completion: nil)
     }
     

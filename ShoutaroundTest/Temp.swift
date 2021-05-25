@@ -389,11 +389,11 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
-    func decreaseScope(){
+    @objc func decreaseScope(){
         self.changeScope(change: -1)
     }
     
@@ -623,7 +623,7 @@ class TempMainSearchController : UIViewController, UITableViewDelegate, UITableV
         self.handleFilter()
     }
     
-    func handleFilter(){
+    @objc func handleFilter(){
         if let addFilter = self.moreFilterView.searchFilter {
             // Location Filters always get transferred to advanced tab if exists since one click on location is filtered right away
             // Does not stay on filter once a location is selected

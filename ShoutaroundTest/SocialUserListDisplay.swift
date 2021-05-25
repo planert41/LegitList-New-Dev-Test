@@ -671,7 +671,7 @@ class PostSocialDisplayTableViewController : UITableViewController, UISearchResu
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     

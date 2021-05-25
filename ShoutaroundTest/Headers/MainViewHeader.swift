@@ -90,7 +90,7 @@ class MainViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UISearc
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         if isListView{
             self.isListView = false
             delegate?.didChangeToPostView()
@@ -119,7 +119,7 @@ class MainViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UISearc
         return button
     }()
     
-    func adjustMap(){
+    @objc func adjustMap(){
         if mapDisplayed{
             self.mapDisplayed = false
             delegate?.showFullList()
@@ -152,7 +152,7 @@ class MainViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UISearc
         return button
     }()
     
-    func filterLegit(){
+    @objc func filterLegit(){
         self.delegate?.filterLegitPosts()
     }
     
@@ -188,7 +188,7 @@ class MainViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UISearc
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     
@@ -282,7 +282,7 @@ class MainViewHeader: UICollectionViewCell, UIGestureRecognizerDelegate, UISearc
         }
     }
     
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         self.selectedSort = HeaderSortOptions[sender.selectedSegmentIndex]
         delegate?.headerSortSelected(sort: self.selectedSort)
         print("Selected Sort is ",self.selectedSort)

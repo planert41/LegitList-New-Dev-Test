@@ -352,7 +352,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     }
     
     
-    func goToHome(){
+    @objc func goToHome(){
         self.selectedTabBarIndex = 0
     }
     
@@ -416,7 +416,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         
     }
     
-    func presentLogin(){
+    @objc func presentLogin(){
         print("MainTabBar | No User | Display Login")
         let loginController = LoginController()
         loginController.delegate = self

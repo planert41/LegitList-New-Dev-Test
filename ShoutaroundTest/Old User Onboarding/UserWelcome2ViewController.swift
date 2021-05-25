@@ -95,7 +95,7 @@ class UserWelcome2View: UIViewController {
     } ()
     
     
-    func addList(){
+    @objc func addList(){
         let listView = NewUserWelcomeFollowViewController()
         self.navigationController?.pushViewController(listView, animated: true)
         //        self.navigationController?.present(listView, animated: true, completion: nil)

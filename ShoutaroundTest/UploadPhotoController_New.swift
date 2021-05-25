@@ -471,7 +471,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
         
     }
     
-    func clearExtraRating(){
+    @objc func clearExtraRating(){
         self.ratingEmojiTag = ""
     }
     
@@ -876,7 +876,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     }
     
     
-    func clearAutoTagEmojis(){
+    @objc func clearAutoTagEmojis(){
         mealTagEmojis = []
         cuisineTagEmojis = []
         dietTagEmojis = []
@@ -993,7 +993,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
         return segment
     }()
     
-    func handleSelectPostPrice(sender: UISegmentedControl) {
+    @objc func handleSelectPostPrice(sender: UISegmentedControl) {
         if (sender.selectedSegmentIndex == self.selectedPostPriceIndex) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.selectPostPrice = nil
@@ -1116,7 +1116,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     }()
     
     
-    func openInfo(sender : UIButton){
+    @objc func openInfo(sender : UIButton){
         print("Open Info | \(sender.tag)")
         if sender.tag == 0 {
             // Emoji Info
@@ -1153,7 +1153,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         }
     }
     
-    func openAutoTag(sender : UIButton){
+    @objc func openAutoTag(sender : UIButton){
         let autoTag = AutoTagTableViewController()
         autoTag.delegate = self
         autoTag.selectedScope = sender.tag
@@ -1168,7 +1168,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         self.navigationController?.pushViewController(autoTag, animated: true)
     }
     
-    func cancelAutoTag(sender : UIButton){
+    @objc func cancelAutoTag(sender : UIButton){
         if sender.tag == 0 {
             self.mealTagEmojis.removeAll()
         } else if sender.tag == 1 {
@@ -1394,7 +1394,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         //        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(handleBack))
     }
     
-    func handleBackNav(){
+    @objc func handleBackNav(){
 //        self.handleBack()
         self.dismiss(animated: true) {
         }
@@ -1894,7 +1894,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     }
     
     
-    func clearRating(){
+    @objc func clearRating(){
         self.selectPostStarRating = 0
     }
     
@@ -2113,7 +2113,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         return button
     }()
     
-    func clearEmojiFilter(){
+    @objc func clearEmojiFilter(){
         self.selectedEmojiFilter = nil
     }
     
@@ -2451,7 +2451,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     var locationNameHeight:NSLayoutConstraint?
 
     
-    func showLocationOptions(){
+    @objc func showLocationOptions(){
         let optionsAlert = UIAlertController(title: "Location Tag", message: "", preferredStyle: UIAlertController.Style.alert)
         
         optionsAlert.addAction(UIAlertAction(title: "Use Current Location", style: .default, handler: { (action: UIAlertAction!) in
@@ -2487,7 +2487,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     }
     
     
-    func tapSearchBar() {
+    @objc func tapSearchBar() {
         print("Search Bar Tapped")
         
         let autocompleteController = GMSAutocompleteViewController()
@@ -2620,7 +2620,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     } ()
     
     
-    func openEmojiSearch(){
+    @objc func openEmojiSearch(){
         let emojiSearch = EmojiSearchTableViewController()
         emojiSearch.delegate = self
         emojiSearch.selectedEmojis = self.nonRatingEmojiTags
@@ -2942,7 +2942,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     
     
     
-    func showUserMostUsedEmojis(){
+    @objc func showUserMostUsedEmojis(){
         self.showUserMostUsedEmojiInd = !self.showUserMostUsedEmojiInd
         userMostUsedEmojiButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         UIView.animate(withDuration: 1.0,
@@ -2961,7 +2961,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         self.refreshEmojiTagSelections()
     }
     
-    func showLocationSuggestedEmojis(){
+    @objc func showLocationSuggestedEmojis(){
         self.showlocationMostUsedEmojiInd = !self.showlocationMostUsedEmojiInd
         locationMostUsedEmojiButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         UIView.animate(withDuration: 1.0,
@@ -4199,7 +4199,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     }
     
     // ADD LOCATION
-    func openAddLocationNameInput(){
+    @objc func openAddLocationNameInput(){
         //1. Create the alert controller.
         let alert = UIAlertController(title: "Add Location", message: "Enter New Location Name", preferredStyle: .alert)
         

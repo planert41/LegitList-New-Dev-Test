@@ -296,7 +296,7 @@ class DualUserListSearchView : UITableViewController, UISearchResultsUpdating, U
     }
     
     
-    func increaseScope(){
+    @objc func increaseScope(){
         self.changeScope(change: 1)
     }
     
@@ -567,7 +567,7 @@ extension DualUserListSearchView {
         }
     }
     
-    func handleDismiss() {
+    @objc func handleDismiss() {
         print("UserListSearchView | Dismiss")
         self.dismiss(animated: true, completion: nil)
     }

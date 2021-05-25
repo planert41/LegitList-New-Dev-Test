@@ -482,7 +482,7 @@ class NewLocationHeader: UICollectionViewCell, EmojiSummaryCVDelegate, MKMapView
     }
     
     
-    func resetLocation(){
+    @objc func resetLocation(){
         guard let location = selectedLocation else {
             return
         }

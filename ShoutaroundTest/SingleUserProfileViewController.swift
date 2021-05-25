@@ -1550,7 +1550,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     }
 
     
-    func openInbox() {
+    @objc func openInbox() {
         let inboxController = InboxController(collectionViewLayout: UICollectionViewFlowLayout())
         self.navigationController?.pushViewController(inboxController, animated: true)
     }

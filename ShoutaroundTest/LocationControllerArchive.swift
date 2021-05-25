@@ -157,7 +157,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
     var fullPhotoCollectionView:NSLayoutConstraint?
     var halfPhotoCollectionView:NSLayoutConstraint?
     
-    func togglePhotoView(){
+    @objc func togglePhotoView(){
         UIView.animate(withDuration: 0.3) {
             self.isFullView = !self.isFullView
             self.fullPhotoCollectionView?.isActive = self.isFullView
@@ -184,7 +184,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         if isGridView{
             self.isGridView = false
             if !self.isFullView {
@@ -361,7 +361,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
     }()
     
     // Location Detail Functions
-    func locationHoursIconTapped(){
+    @objc func locationHoursIconTapped(){
         var timeString = "" as String
         for time in self.placeOpeningHours! {
             timeString = timeString + time.string! + "\n"
@@ -369,7 +369,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         self.alert(title: "Opening Hours", message: timeString)
     }
     
-    func activateMap() {
+    @objc func activateMap() {
         SharedFunctions.openGoogleMaps(lat: selectedLat, long: selectedLong)
         
         //        if (UIApplication.shared.canOpenURL(NSURL(string:"https://www.google.com/maps/search/?api=1&query=\(selectedLat!),\(selectedLong!)")! as URL)) {
@@ -380,7 +380,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         //        }
     }
     
-    func activatePhone(){
+    @objc func activatePhone(){
         print("Tapped Phone Icon")
         guard let url = URL(string: "tel://\(self.placePhoneNo!)") else {return}
         
@@ -391,7 +391,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         }
     }
     
-    func activateBrowser(){
+    @objc func activateBrowser(){
         guard let url = URL(string: self.placeWebsite!) else {return}
         
         if #available(iOS 10.0, *) {
@@ -576,7 +576,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         friendFilterSegment.selectedSegmentIndex = self.isFilteringFriends ? 0 : 1
     }
     
-    func selectFriendSort(sender: UISegmentedControl) {
+    @objc func selectFriendSort(sender: UISegmentedControl) {
         print("Selected Friend Filter | ",sender.selectedSegmentIndex)
         self.isFilteringFriends = (sender.selectedSegmentIndex == 0)
         self.updateScopeBarCount()
@@ -791,7 +791,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         
     }
     
-    func displayFullLocationName(){
+    @objc func displayFullLocationName(){
         self.alert(title: "Full Location Name", message: self.locationNameLabel.text!)
     }
     
@@ -1019,7 +1019,7 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
     
     
     
-    func didTapNavMessage() {
+    @objc func didTapNavMessage() {
         let messageController = MessageController()
         if selectedPost == nil {
             // Show first found post if no selected post
@@ -1181,8 +1181,8 @@ class ArchiveLocationController: UIViewController, UIScrollViewDelegate, UIColle
         let circleQuery = geoFire.query(at: location, withRadius: 5)
         circleQuery.observe(.keyEntered, with: { (key, location) in
             
-            guard let postId: String = key else {return}
-            guard let postLocation: CLLocation = location else {return}
+            guard let postId: String? = key else {return}
+            guard let postLocation: CLLocation? = location else {return}
             
             self.postNearby[key] = postLocation
             

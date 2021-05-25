@@ -201,7 +201,7 @@ class EmojiInfoView: UIViewController, UICollectionViewDelegate, UICollectionVie
     } ()
     
     
-    func openEmojiSearch(){
+    @objc func openEmojiSearch(){
         let emojiSearch = EmojiSearchTableViewController()
         self.navigationController?.pushViewController(emojiSearch, animated: true)
     }
@@ -370,7 +370,7 @@ class EmojiInfoView: UIViewController, UICollectionViewDelegate, UICollectionVie
         return button
     } ()
     
-    func exitView(){
+    @objc func exitView(){
         self.dismiss(animated: true, completion: nil)
     }
     

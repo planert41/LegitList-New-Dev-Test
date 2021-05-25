@@ -168,7 +168,7 @@ class LocationSummary: UIViewController, MKMapViewDelegate {
     // MARK: - BUTTON DELEGATE FUNCTIONS
     
         // Location Detail Functions
-        func locationHoursIconTapped(){
+    @objc func locationHoursIconTapped(){
             print("LocationController | locationHoursIconTapped")
 
     //        var timeString = "" as String
@@ -190,7 +190,7 @@ class LocationSummary: UIViewController, MKMapViewDelegate {
             
         }
         
-        func activateMap() {
+    @objc func activateMap() {
             SharedFunctions.openGoogleMaps(lat: selectedLat, long: selectedLong)
             
     //        if (UIApplication.shared.canOpenURL(NSURL(string:"https://www.google.com/maps/search/?api=1&query=\(selectedLat!),\(selectedLong!)")! as URL)) {
@@ -201,7 +201,7 @@ class LocationSummary: UIViewController, MKMapViewDelegate {
     //        }
         }
         
-        func activatePhone(){
+    @objc func activatePhone(){
             print("Tapped Phone Icon")
             guard let url = URL(string: "tel://\(self.placePhoneNo!)") else {return}
             
@@ -212,7 +212,7 @@ class LocationSummary: UIViewController, MKMapViewDelegate {
             }
         }
         
-        func activateBrowser(){
+    @objc func activateBrowser(){
             guard let url = URL(string: self.placeWebsite!) else {return}
             print("activateBrowser | \(url)")
             if #available(iOS 10.0, *) {

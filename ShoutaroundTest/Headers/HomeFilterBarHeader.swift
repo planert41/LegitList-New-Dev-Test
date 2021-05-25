@@ -136,7 +136,7 @@ class HomeFilterBarHeader: UICollectionViewCell, UISearchBarDelegate, UICollecti
         return button
     }()
     
-    func refreshTags(){
+    @objc func refreshTags(){
         self.didHideSearchBar()
         self.delegate?.refreshAll()
     }
@@ -288,7 +288,7 @@ class HomeFilterBarHeader: UICollectionViewCell, UISearchBarDelegate, UICollecti
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         //        if isGridView{
         //            self.isGridView = false
         //            delegate?.didChangeToPostView()

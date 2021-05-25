@@ -122,7 +122,7 @@ class NewTabListViewController: UIViewController {
     let followedListContainer = UIView()
     var followedListView = ListSummaryView()
     
-    func updateListObjects() {
+    @objc func updateListObjects() {
         refreshHeaderLabels()
         
     // Bookmark
@@ -436,7 +436,7 @@ extension NewTabListViewController: ListPostSummaryDelegate, SinglePostViewDeleg
         navigationController?.pushViewController(pictureController, animated: true)
     }
     
-    func didTapProfile() {
+    @objc func didTapProfile() {
         let userProfileController = UserProfileController(collectionViewLayout: StickyHeadersCollectionViewFlowLayout())
         userProfileController.displayUserId = self.displayUser?.uid
         navigationController?.pushViewController(userProfileController, animated: true)

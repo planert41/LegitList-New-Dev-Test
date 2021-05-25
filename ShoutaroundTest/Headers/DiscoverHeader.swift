@@ -127,7 +127,7 @@ class DiscoverHeader: UICollectionViewCell, UIGestureRecognizerDelegate {
     }()
     
     
-    func openSearch(){
+    @objc func openSearch(){
         if let _ = self.delegate {
             self.delegate!.openSearch(index: 0)
         }

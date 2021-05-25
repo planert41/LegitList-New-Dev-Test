@@ -179,7 +179,7 @@ class LocationOtherPostCell: UICollectionViewCell {
     }
     
 
-    func tapPost() {
+    @objc func tapPost() {
         guard let post = post else {return}
         self.delegate?.didTapPost(post: post)
     }

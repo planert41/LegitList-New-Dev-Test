@@ -116,7 +116,7 @@ class ManageListViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     
-    func editList(){
+    @objc func editList(){
         if !self.tableEdit{
             self.tableView.setEditing(true, animated: true)
             print("Table Editing")
@@ -128,7 +128,7 @@ class ManageListViewController: UIViewController, UITableViewDelegate, UITableVi
         setupNavigationItems()
     }
     
-    func refreshList(){
+    @objc func refreshList(){
         self.tableView.reloadData()
         self.tableView.refreshControl?.endRefreshing()
     }
@@ -187,7 +187,7 @@ class ManageListViewController: UIViewController, UITableViewDelegate, UITableVi
         
     }
     
-    func addList(){
+    @objc func addList(){
         let listId = NSUUID().uuidString
         guard let uid = Auth.auth().currentUser?.uid else {return}
         checkListName(listName: addListTextField.text) { (listName) in

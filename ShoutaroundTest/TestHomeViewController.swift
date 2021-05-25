@@ -87,7 +87,7 @@ class TestHomeController: UIViewController, UICollectionViewDelegate, UICollecti
     
     
     
-    func showEmojiInfo(){
+    @objc func showEmojiInfo(){
         let welcomeView = EmojiInfoView()
 //        self.navigationController?.pushViewController(welcomeView, animated: true)
 
@@ -118,7 +118,7 @@ class TestHomeController: UIViewController, UICollectionViewDelegate, UICollecti
         return button
     }()
     
-    func toggleFormatView(){
+    @objc func toggleFormatView(){
         self.isPostView = !self.isPostView
         postCollectionView.reloadData()
     }
@@ -295,7 +295,7 @@ class TestHomeController: UIViewController, UICollectionViewDelegate, UICollecti
         return button
     }()
     
-    func didTapCancel(){
+    @objc func didTapCancel(){
         self.refreshAll()
     }
     
@@ -463,7 +463,7 @@ class TestHomeController: UIViewController, UICollectionViewDelegate, UICollecti
         
     }
     
-    func showSearchBar(){
+    @objc func showSearchBar(){
         
         // Option Counts for Current Filter
 //        Database.countEmojis(posts: self.displayedPosts) { (emojiCounts) in

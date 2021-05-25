@@ -160,7 +160,7 @@ class TempNewTabListViewController: UIViewController {
     let followedListContainer = UIView()
     var followedListView = ListSummaryView()
     
-    func updateListObjects() {
+    @objc func updateListObjects() {
         refreshHeaderLabels()
         
     // Bookmark
@@ -474,7 +474,7 @@ extension TempNewTabListViewController: ListPostSummaryDelegate, SinglePostViewD
         navigationController?.pushViewController(pictureController, animated: true)
     }
     
-    func didTapProfile() {
+    @objc func didTapProfile() {
         let userProfileController = UserProfileController(collectionViewLayout: StickyHeadersCollectionViewFlowLayout())
         userProfileController.displayUserId = self.displayUser?.uid
         navigationController?.pushViewController(userProfileController, animated: true)

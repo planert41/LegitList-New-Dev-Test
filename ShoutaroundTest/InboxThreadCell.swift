@@ -166,7 +166,7 @@ class InboxThreadCell: UICollectionViewCell {
         
     }()
     
-    func handleBookmark() {
+    @objc func handleBookmark() {
         
         //    delegate?.didBookmark(for: self)
         
@@ -407,7 +407,7 @@ class InboxMessageThreadTableViewCell: UITableViewCell {
             
         }()
         
-        func handleBookmark() {
+    @objc func handleBookmark() {
             
             //    delegate?.didBookmark(for: self)
             

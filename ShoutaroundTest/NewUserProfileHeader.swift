@@ -138,7 +138,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     
@@ -154,7 +154,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
         return button
     }()
     
-    func openSearch(){
+    @objc func openSearch(){
         if let _ = self.delegate {
             self.delegate!.openSearch(index: 0)
         }
@@ -170,7 +170,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
         return button
     }()
     
-    func openMap(){
+    @objc func openMap(){
 //        self.delegate?.openMap()
     }
     
@@ -406,7 +406,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
     
         let emojiCellID = "emojiCellID"
     
-    func tapProfileImage(){
+    @objc func tapProfileImage(){
         guard let image = profileImageView.image else {
             print("UserProfileHeader | tapProfileImage | No Image")
             return}
@@ -570,7 +570,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
     }
     
     
-    func updateSegments(){
+    @objc func updateSegments(){
         for i in 0..<headerSortSegment.numberOfSegments {
             if headerSortSegment.titleForSegment(at: i) != sortOptions[i] {
                 //Update Segment Label
@@ -579,7 +579,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
         }
     }
     
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         self.selectedSort = sortOptions[sender.selectedSegmentIndex]
         let when = DispatchTime.now() + 0.5 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
@@ -883,7 +883,7 @@ class NewUserProfileHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerV
     
     // UIPicker Delegate Functions
     
-    func activateSort() {
+    @objc func activateSort() {
         let rangeIndex = sortOptions.firstIndex(of: self.selectedSort)
         pickerView.selectRow(rangeIndex!, inComponent: 0, animated: false)
         dummyTextView.perform(#selector(becomeFirstResponder), with: nil, afterDelay: 0.1)

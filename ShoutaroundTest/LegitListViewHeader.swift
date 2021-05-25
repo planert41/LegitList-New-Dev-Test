@@ -280,7 +280,7 @@ class LegitListViewHeader: UICollectionViewCell {
         return button
     }()
     
-    func listShareButtonPressed(){
+    @objc func listShareButtonPressed(){
         
     }
     
@@ -299,7 +299,7 @@ class LegitListViewHeader: UICollectionViewCell {
         return button
     }()
     
-    func listOptionButtonPressed(){
+    @objc func listOptionButtonPressed(){
         
     }
     
@@ -357,7 +357,7 @@ class LegitListViewHeader: UICollectionViewCell {
     // 1 List View
     // 2 Full View
     
-    func toggleView(){
+    @objc func toggleView(){
         // 0 = Grid
         // 1 = List
         
@@ -572,7 +572,7 @@ class LegitListViewHeader: UICollectionViewCell {
         // Do any additional setup after loading the view.
     }
     
-    func didTapFollowEditButton(){
+    @objc func didTapFollowEditButton(){
         if self.listFollowButton.titleLabel?.text == "Options"
         {
             self.didTapOptionButton()
@@ -583,7 +583,7 @@ class LegitListViewHeader: UICollectionViewCell {
         }
     }
     
-    func didTapUser(){
+    @objc func didTapUser(){
         guard let userId = displayUser?.uid else {return}
         self.delegate?.goToUser(userId: userId)
     }

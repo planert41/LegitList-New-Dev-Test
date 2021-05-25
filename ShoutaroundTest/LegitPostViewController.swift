@@ -146,7 +146,7 @@ class LegitPostViewController: UIViewController {
         return button
     }()
     
-    func didTapFollowButton() {
+    @objc func didTapFollowButton() {
         
     }
     
@@ -1147,7 +1147,7 @@ extension LegitPostViewController: UIScrollViewDelegate, UIGestureRecognizerDele
         self.pageControl.isHidden = self.pageControl.numberOfPages == 1
     }
     
-    func captionBubbleTap() {
+    @objc func captionBubbleTap() {
         if captionDisplayed {
              print("PictureController | Picture Tapped | Hide Caption")
              
@@ -1224,12 +1224,12 @@ extension LegitPostViewController: UIScrollViewDelegate, UIGestureRecognizerDele
         
     }
     
-    func photoDoubleTapped(){
+    @objc func photoDoubleTapped(){
         print("Double Tap")
         self.handleLike()
     }
     
-    func handleLike() {
+    @objc func handleLike() {
         
     }
     
@@ -1354,7 +1354,7 @@ extension LegitPostViewController: UICollectionViewDelegate, UICollectionViewDat
         otherPostSegmentControl.tintColor = .white
     }
     
-    func selectOtherPostFilter(sender: UISegmentedControl) {
+    @objc func selectOtherPostFilter(sender: UISegmentedControl) {
         print("Selected Friend Filter | ",sender.selectedSegmentIndex)
         self.isFilteringFriends = (sender.selectedSegmentIndex == 0)
         photoCollectionView.reloadData()
@@ -1482,18 +1482,18 @@ extension LegitPostViewController: TestGridPhotoCellDelegate {
         })
     }
 
-    func didTapUserName() {
+    @objc func didTapUserName() {
         guard let userId = post?.user.uid else {return}
         self.extTapUser(userId: userId)
     }
     
-    func didTapLocation() {
+    @objc func didTapLocation() {
         guard let post = self.post else {return}
         self.extTapLocation(post: post)
     }
 
 
-    func displayFollowLists() {
+    @objc func displayFollowLists() {
         
     }
     

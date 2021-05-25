@@ -256,7 +256,7 @@ class NewSinglePostView: UIViewController {
     
     var hideRatingEmojiConstraint: NSLayoutConstraint? = nil
     
-    func displayExtraRatingInfo(){
+    @objc func displayExtraRatingInfo(){
         self.didTapRatingEmoji()
 //        self.extDisplayExtraRatingInfo()
     }
@@ -1379,7 +1379,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         self.extTapPicture(post: post)
     }
     
-    func didTapLocation(){
+    @objc func didTapLocation(){
         guard let post = post else {return}
         self.extTapLocation(post: post)
     }
@@ -1529,7 +1529,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         return true
     }
     
-    func photoDoubleTapped(){
+    @objc func photoDoubleTapped(){
         print("Double Tap | Handle Like")
         self.handleLike()
 
@@ -1858,7 +1858,7 @@ class UserHeaderView: UIView {
         
     }
     
-    func didTapUser(){
+    @objc func didTapUser(){
         guard let user = user else {return}
         self.delegate?.didTapUser(user: user)
     }

@@ -145,7 +145,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         self.createNewListButton.isHidden = !(fetchType == ListYours)
     }
     
-    func didCreateNewList() {
+    @objc func didCreateNewList() {
         print("New Lists Created | Discover Controller")
         self.selectedSort = sortNew
         self.fetchLists()
@@ -156,7 +156,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     var segmentWidth_unselected: CGFloat = 80.0
     
     
-    func deletedList(_ notification: NSNotification) {
+    @objc func deletedList(_ notification: NSNotification) {
 
          if let listId = notification.userInfo?["deleteListId"] as? String {
             print("Deleted List \(listId) Notification ListViewControllerNew")
@@ -283,7 +283,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    func sortLists() {
+    @objc func sortLists() {
         self.yourLists = allLists.filter({ (list) -> Bool in
             CurrentUser.listIds.contains(list.id!)
         })

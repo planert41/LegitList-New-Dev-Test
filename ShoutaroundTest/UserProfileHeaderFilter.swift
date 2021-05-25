@@ -85,7 +85,7 @@ class UserProfileHeaderFilter: UICollectionViewCell, UISearchBarDelegate, UIGest
         return button
     }()
     
-    func changeView(){
+    @objc func changeView(){
         if isGridView{
             self.isGridView = false
             delegate?.didChangeToPostView()
@@ -128,7 +128,7 @@ class UserProfileHeaderFilter: UICollectionViewCell, UISearchBarDelegate, UIGest
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     
@@ -199,7 +199,7 @@ class UserProfileHeaderFilter: UICollectionViewCell, UISearchBarDelegate, UIGest
         }
     }
     
-    func handleEditProfileOrFollow() {
+    @objc func handleEditProfileOrFollow() {
         
         guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else {return}
         guard let userId = user?.uid else {return}
@@ -478,17 +478,17 @@ class UserProfileHeaderFilter: UICollectionViewCell, UISearchBarDelegate, UIGest
     
     }
     
-    func selectFollowers(){
+    @objc func selectFollowers(){
         print("User Profile: Select Follower")
         self.delegate?.selectUserFollowers()
     }
     
-    func selectFollowing(){
+    @objc func selectFollowing(){
         print("User Profile: Select Following")
         self.delegate?.selectUserFollowing()
     }
     
-    func selectLists(){
+    @objc func selectLists(){
         print("User Profile: Select Lists")
         self.delegate?.selectUserLists()
     }
@@ -526,7 +526,7 @@ class UserProfileHeaderFilter: UICollectionViewCell, UISearchBarDelegate, UIGest
         }
     }
     
-    func selectSort(sender: UISegmentedControl) {
+    @objc func selectSort(sender: UISegmentedControl) {
         self.selectedSort = HeaderSortOptions[sender.selectedSegmentIndex]
         delegate?.headerSortSelected(sort: self.selectedSort)
         print("Selected Sort is ",self.selectedSort)

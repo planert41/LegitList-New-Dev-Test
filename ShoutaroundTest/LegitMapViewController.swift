@@ -67,7 +67,7 @@ class LegitMapViewController: UIViewController {
     var first50EmojiCounts: [String:Int] = [:]
     var searchTerms: [String] = []
 
-    func didTapSearchButton() {
+    @objc func didTapSearchButton() {
         print("Tap Search | \(self.currentPostsFilterTagCounts.count) Tags | \(self.mapFilter.searchTerms)")
         search.delegate = self
         search.viewFilter = self.mapFilter
@@ -139,7 +139,7 @@ class LegitMapViewController: UIViewController {
     }()
     
     
-    func tapCancelButton() {
+    @objc func tapCancelButton() {
         self.handleRefresh()
     }
 
@@ -287,7 +287,7 @@ class LegitMapViewController: UIViewController {
         return button
     }()
 
-    func expandList(){
+    @objc func expandList(){
         print("Expand List")
     }
     
@@ -900,7 +900,7 @@ class LegitMapViewController: UIViewController {
     }
 
     
-    func handleUpdateFeed() {
+    @objc func handleUpdateFeed() {
         
         // Check for new post that was edited or uploaded
         if newPost != nil && newPostId != nil {#imageLiteral(resourceName: "icons8-hash-30.png")
@@ -924,7 +924,7 @@ class LegitMapViewController: UIViewController {
         self.postCollectionView.refreshControl?.endRefreshing()
     }
     
-    func handleRefresh() {
+    @objc func handleRefresh() {
         self.refreshAll()
         self.postCollectionView.refreshControl?.endRefreshing()
         print("Refresh Home Feed. FetchPostIds: ", self.fetchedPostIds.count, "FetchedPostCount: ", self.fetchedPosts.count, " DisplayedPost: ", self.paginatePostsCount)
@@ -1265,7 +1265,7 @@ extension LegitMapViewController : MKMapViewDelegate {
     }
     
     
-    func passToSelectedPost(){
+    @objc func passToSelectedPost(){
         
         let pictureController = SinglePostView()
         pictureController.post = self.selectedMapPost

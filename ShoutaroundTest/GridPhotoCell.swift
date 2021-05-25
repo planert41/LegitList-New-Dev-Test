@@ -213,12 +213,12 @@ class GridPhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScroll
     }
     
     
-    func handlePictureTap() {
+    @objc func handlePictureTap() {
         guard let post = post else {return}
         print("Tap Picture")
         delegate?.didTapPicture(post: post)
     }
-    
+    @objc  
     func handleLongPress(_ gestureReconizer: UILongPressGestureRecognizer) {
 
         let animationDuration = 0.25

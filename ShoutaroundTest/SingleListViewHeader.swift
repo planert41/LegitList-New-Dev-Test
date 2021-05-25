@@ -323,7 +323,7 @@ class SingleListViewHeader: UICollectionViewCell {
         return button
     }()
     
-    func listShareButtonPressed(){
+    @objc func listShareButtonPressed(){
         
     }
     
@@ -342,7 +342,7 @@ class SingleListViewHeader: UICollectionViewCell {
         return button
     }()
     
-    func listOptionButtonPressed(){
+    @objc func listOptionButtonPressed(){
         print("List Option Pressed")
     }
     
@@ -718,7 +718,7 @@ class SingleListViewHeader: UICollectionViewCell {
         }
     }
     
-    func didTapUser(){
+    @objc func didTapUser(){
         guard let userId = displayUser?.uid else {return}
         self.delegate?.goToUser(userId: userId)
     }
@@ -868,7 +868,7 @@ extension SingleListViewHeader: UISearchBarDelegate, postSortSegmentControlDeleg
         self.delegate?.didTapCell(tag: tag)
     }
     
-    func handleRefresh() {
+    @objc func handleRefresh() {
         self.delegate?.handleRefresh()
     }
     

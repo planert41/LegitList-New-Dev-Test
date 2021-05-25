@@ -262,7 +262,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         
     }
     
-    func handleLegit(){
+    @objc func handleLegit(){
         self.searchFilter?.filterLegit = !(self.searchFilter?.filterLegit)!
         
         filterLegitButton.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
@@ -304,7 +304,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         return segment
     }()
     
-    func handleSelectRange(sender: UISegmentedControl) {
+    @objc func handleSelectRange(sender: UISegmentedControl) {
         if (geoFilterRangeDefault[sender.selectedSegmentIndex] == self.searchFilter?.filterRange) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.searchFilter?.filterRange = nil
@@ -323,7 +323,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         return segment
     }()
     
-    func handleSelectType(sender: UISegmentedControl) {
+    @objc func handleSelectType(sender: UISegmentedControl) {
         if (UploadPostTypeDefault[sender.selectedSegmentIndex] == self.searchFilter?.filterType) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.searchFilter?.filterType = nil
@@ -343,7 +343,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         return segment
     }()
     
-    func handleSelectPrice(sender: UISegmentedControl) {
+    @objc func handleSelectPrice(sender: UISegmentedControl) {
         if (UploadPostPriceDefault[sender.selectedSegmentIndex] == self.searchFilter?.filterMaxPrice) {
             sender.selectedSegmentIndex =  UISegmentedControl.noSegment
             self.searchFilter?.filterMaxPrice = nil
@@ -362,7 +362,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         return segment
     }()
     
-    func handleSelectTime(sender: UISegmentedControl) {
+    @objc func handleSelectTime(sender: UISegmentedControl) {
         let timeSelected = FilterTimeDefault[sender.selectedSegmentIndex]
         let timeSelectedDays = FilterTimeDefaultDict[timeSelected]
         
@@ -385,12 +385,12 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         return segment
     }()
     
-    func handleSelectSort(sender: UISegmentedControl) {
+    @objc func handleSelectSort(sender: UISegmentedControl) {
         self.searchFilter?.filterSort = filterSortOptions[sender.selectedSegmentIndex]
         print("Selected Sort | ",self.searchFilter?.filterSort)
     }
     
-    func findCurrentLocation() {
+    @objc func findCurrentLocation() {
         
         if CurrentUser.currentLocation == nil {
             self.searchFilter?.clearFilterLocation()
@@ -610,7 +610,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         }
     }
     
-    func filterSelected(){
+    @objc func filterSelected(){
         delegate?.filterControllerSelected(filter: self.searchFilter)
         print("Filter By | ",self.searchFilter)
         
@@ -621,7 +621,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         
     }
     
-    func refreshFilter(){
+    @objc func refreshFilter(){
         print("Clear Filter")
         self.delegate?.refreshFilter()
         self.searchFilter?.clearFilter()
@@ -693,7 +693,7 @@ class MoreFilterView: UIView, GMSAutocompleteViewControllerDelegate, MainSearchC
         self.delegate?.captionSearchTap()
     }
     
-    func tapLocation(){
+    @objc func tapLocation(){
         print("Location Tapped")
         self.delegate?.locationSearchTap()
     }

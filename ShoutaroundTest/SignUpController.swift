@@ -86,7 +86,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         return button
     }()
     
-    func handleCancel() {
+    @objc func handleCancel() {
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -563,7 +563,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 //        SVProgressHUD.dismiss()
     }
     
-    func updatePassword(){
+    @objc func updatePassword(){
         let passwordAlert = UIAlertController(title: "Update Password", message: "", preferredStyle: UIAlertController.Style.alert)
         passwordAlert.addTextField { (textField : UITextField!) -> Void in
             textField.placeholder = "Enter New Password"

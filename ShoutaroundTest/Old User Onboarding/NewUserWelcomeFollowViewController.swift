@@ -255,7 +255,7 @@ class NewUserWelcomeFollowViewController: UIViewController, UITableViewDataSourc
         // Do any additional setup after loading the view.
     }
     
-    func refreshAll(){
+    @objc func refreshAll(){
         self.tableView.reloadData()
     }
     

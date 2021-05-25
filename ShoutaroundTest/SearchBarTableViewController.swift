@@ -261,7 +261,7 @@ class SearchBarTableViewController: UITableViewController, UISearchBarDelegate, 
         return button
     }()
     
-    func didTapCancel(){
+    @objc func didTapCancel(){
 //        self.view.isHidden = true
         print(" SearchBarTV - Hide Search Bar")
         self.searchBar.resignFirstResponder()

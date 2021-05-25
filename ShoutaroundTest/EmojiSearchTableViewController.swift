@@ -262,7 +262,7 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
         self.navigationController?.popViewController(animated: true)
     }
     
-    func autoTagSelected(){
+    @objc func autoTagSelected(){
         self.delegate?.setEmojiTags(emojiInput: self.selectedEmojis)
         print("Selected Emojis | \(self.selectedEmojis)")
 

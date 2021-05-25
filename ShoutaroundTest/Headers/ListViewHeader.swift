@@ -97,7 +97,7 @@ class ListViewHeader: UICollectionViewCell, UISearchBarDelegate, UIPickerViewDel
         return button
     }()
     
-    func openFilter(){
+    @objc func openFilter(){
         self.delegate?.openFilter()
     }
     

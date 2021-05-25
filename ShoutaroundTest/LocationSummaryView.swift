@@ -134,7 +134,7 @@ class LocationSummaryView: UIView {
         }
     }
     
-    func showLocation(){
+    @objc func showLocation(){
         guard let location = selectedLocation else {
             return
         }
@@ -852,7 +852,7 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
         friendFilterSegment.tintColor = .ianLightGrayColor()
     }
     
-    func selectFriendSort(sender: UISegmentedControl) {
+    @objc func selectFriendSort(sender: UISegmentedControl) {
         self.isFilteringFriends = (sender.selectedSegmentIndex == 0)
         self.updateScopeBarCount()
         self.photoCollectionView.reloadData()

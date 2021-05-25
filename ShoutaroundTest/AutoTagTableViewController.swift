@@ -243,7 +243,7 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
         
     }
     
-    func autoTagSelected(){
+    @objc func autoTagSelected(){
         
         switch self.selectedScope {
         case 0:
