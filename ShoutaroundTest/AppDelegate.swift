@@ -676,6 +676,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
             EmojiDictionaryEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
         }
         
+        
+    // SETUP REVERSE EMOJI DICTIONARY
+        ReverseEmojiDictionary = [:]
+        // ADD EVERYTHING IN EMOJI DICTIONARY
+        for pair in EmojiDictionary { ReverseEmojiDictionary[pair.value] = pair.key }
+        
+        // ADD REVERSE EMOJI DUPS
+        ReverseEmojiDictionary = ReverseEmojiDictionary.merging(ReverseEmojiDictionaryDups, uniquingKeysWith: { (first, _) in first })
+        
+        
         for (name,emoji) in ReverseEmojiDictionary {
             let tempEmoji = EmojiBasic(emoji: emoji, name: name, count: 0)
 

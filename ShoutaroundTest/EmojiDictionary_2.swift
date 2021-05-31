@@ -8,7 +8,9 @@
 
 import Foundation
 
-var ReverseEmojiDictionary: [String:String] =
+var ReverseEmojiDictionary: [String:String] = [:]
+
+var ReverseEmojiDictionaryDups: [String:String] =
 
 
 [
@@ -16,17 +18,72 @@ var ReverseEmojiDictionary: [String:String] =
 // MANY TO ONE MAPPING
     
 // NEW - Start Adding Emojis here to keep track of dup keys
-    "vegetable": "🥒",
-    "vegetables": "🥒",
-    "fruit":"🍎",
-    "fruits":"🍎",
-    "berry":"🍇",
-    "melon": "🍈",
-    "cracker":"🍘",
-    "biscuit":"🍘",
+
     
+    
+    "unique":"🌟",
+    "innovative":"🌟",
+    "inspire":"🌊",
+    "inspiration":"🌊",
+    "most":"🌟",
+
+    "bun":"🍞",
+    "bakery":"🥐",
+    "pastries":"🥐",
+    "bake":"🥐",
+    "roll":"🍞",
+    "tart":"🍮",
+    "pub":"🍺",
+    "tavern":"🍺",
+    "community":"🏘",
+    "homemade":"🧑‍🌾",
+    "chill":"🏖",
+    "casual":"🏖",
+    "well known":"🗽",
+    "national":"🗽",
+    "classic":"🗽",
+
+    "craving":"🤤",
+    "drool":"🤤",
+    "crave":"🤤",
+    "environment":"🕯",
+    "place":"🏠",
+    "spot":"🏠",
+    "friendly":"🤵",
+    "native":"👘",
+    "quick":"⚡️",
+    "hip":"😎",
+    "splendid":"😍",
+    "wonderful":"😍",
+    "comfy":"🧶",
+    "espresso":"☕️",
+    "cafe":"☕️",
+    "why":"🤔",
+
+    "hash":"🥘",
+    "tapas":"🥘",
+    "plate":"🥘",
+    "fly":"✈️",
+    "flight":"✈️",
+    "low key":"🩴",
+    "affordable":"💲",
+    "bubble tea":"🧋",
+    "bubble":"🧋",
+    "diamond":"💎",
+    "posh":"👠",
+    "dress up":"👠",
+    "non profit":"🎗",
+    
+    
+    "fruit":"🍎",
+    "berry":"🍇",
+    "honeydew": "🍈",
+    "cracker":"🍘",
+    "crunch":"🍘",
+
     
 // Existing
+    "sob": "😭",
     "tasty": "😋",
     "lied": "🤥",
     "meh": "😑",
@@ -41,7 +98,6 @@ var ReverseEmojiDictionary: [String:String] =
     "angry": "😤",
     "sad": "😢",
     "cry": "😭",
-    "drool":"🤤",
     "amazing": "⭐️",
     "good": "😀",
     "lol": "😝",
@@ -50,46 +106,25 @@ var ReverseEmojiDictionary: [String:String] =
     "great": "👍",
     "hot": "🔥",
     "cold":"❄️",
-    "sizzling":"♨️",
-    "best":"🏆",
+    "barbecue":"♨️",
     "award":"🏅",
-    "100":"💯",
-    "love":"❤️",
-    
-    "indian": "🇮🇳",
-    "cuban": "🇨🇺",
-    "thai": "🇹🇭",
-    "colombian": "🇨🇴",
-    "bolivian": "🇪🇹",
-    "swedish": "🇸🇪",
-    "greek": "🇬🇷",
-    "russian": "🇷🇺",
-    "japanese": "🇯🇵",
-    "jamaican": "🇯🇲",
-    "brazilian": "🇧🇷",
-    "german": "🇩🇪",
-    "korean": "🇰🇷",
-    "malaysian": "🇲🇾",
-    "italian": "🇮🇹",
-    "american": "🇺🇸",
-    "senagalese": "🇸🇳",
-    "dutch": "🇳🇱",
-    "argentinian": "🇦🇷",
-    "turkish": "🇹🇷",
-    "spanish": "🇪🇸",
-    "chinese": "🇨🇳",
-    "portugese": "🇵🇹",
-    "peruvian": "🇵🇪",
-    "persian": "🇮🇷",
-    "french": "🇫🇷",
-    "mexican": "🇲🇽",
-    "canadian": "🇨🇦",
-    "vietnamese": "🇻🇳",
-    "british": "🇬🇧",
-    "irish": "🇮🇪",
-    "filipino": "🇵🇭",
-    "laos": "🇱🇦",
-    
+    "spooky":"👻",
+    "power":"💪",
+    "omg":"🤯",
+    "wow":"🤯",
+    "mind blown":"🤯",
+    "my mind":"🤯",
+    "solid":"👍",
+    "awful":"😓",
+    "number one":"🏅",
+    "phone":"☎️",
+    "disabled":"♿️",
+    "ping pong":"🏓",
+    "mma":"🥋",
+    "workout":"🏋️",
+
+
+
     "bbq":"♨️",
     "grill":"♨️",
     "steam":"🌫",
@@ -231,11 +266,36 @@ var ReverseEmojiDictionary: [String:String] =
     "dessert":"🍮",
     "coffee": "☕️",
     "drinks":"🍻",
-    "latenight":"🌙"
+    "latenight":"🌙",
 
-
-
-
-
+    // NOT DUP FOR ALL COUNTRIES. LIKE MALAYSIA WILL DETECT MALAYSIAN BUT NOT CANADA & CANADIAN
+    
+    "greek":"🇬🇷",
+    "turkish":"🇹🇷",
+    "french":"🇫🇷",
+    "italian":"🇮🇹",
+    "german":"🇩🇪",
+    "spanish":"🇪🇸",
+    "chinese":"🇨🇳",
+    "thai":"🇹🇭",
+    "portugese":"🇵🇹",
+    "british":"🇬🇧",
+    "irish":"🇮🇪",
+    "swedish":"🇸🇪",
+    "argentinian":"🇦🇷",
+    "dutch":"🇳🇱",
+    "finnish":"🇫🇮",
+    "laotian":"🇱🇦",
+    "mexican":"🇲🇽",
+    "moroccan":"🇲🇦",
+    "burmese":"🇲🇲",
+    "burma":"🇲🇲",
+    "norwegian":"🇳🇴",
+    "palestinian":"🇵🇸",
+    "phillipino":"🇵🇭",
+    "filipino":"🇵🇭",
+    "polish":"🇵🇱",
+    "puerto rican":"🇵🇷",
+    "singaporean":"🇸🇬"
 
 ]

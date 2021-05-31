@@ -10939,6 +10939,70 @@ extension Database{
             }
         }
     }
+    
+    static func filterCaptionForEmoji(inputText: String?, completion: @escaping ([String]) -> ()){
+        guard let inputText = inputText else {
+            completion([])
+            return
+        }
+        
+        var outputEmojis:[String] = []
+        
+        // Split up words
+        var tempSingleCaptionWords = inputText.lowercased().components(separatedBy: " ")
+        if tempSingleCaptionWords.count == 0 {
+            completion([])
+            return
+        }
+        
+        // Detect Emojis in String
+        if inputText.emojis.count > 0 {
+            for emoji in inputText.emojis {
+                if emoji != "" {
+                    outputEmojis.append(emoji)
+                }
+            }
+        }
+        
+        
+        // Format Caption Word to only be alpha numeric
+        for (index, word) in tempSingleCaptionWords.enumerated() {
+            tempSingleCaptionWords[index] = word.alphaNumericOnly()
+        }
+        
+        // Create Double Word Combinations for all words to capture 2 word maps (eg: Pad Thai)
+        var tempDoubleCaptionWords: [String] = []
+        if tempSingleCaptionWords.count > 1 {
+            for i in (1...tempSingleCaptionWords.count-1) {
+                let joinedWord = tempSingleCaptionWords[i-1] + " " + tempSingleCaptionWords[i]
+                    tempDoubleCaptionWords.append(joinedWord)
+            }
+        }
+        
+        var tempAllLookUpWords = tempDoubleCaptionWords + tempSingleCaptionWords
+
+        for word in tempAllLookUpWords {
+            // Look up Emoji based on word
+            if let tempEmoji = ReverseEmojiDictionary[word] {
+                if !outputEmojis.contains(tempEmoji){
+                    outputEmojis.append(tempEmoji)
+                }
+            }
+
+            // Look up Emoji based on word without s at the end
+            if word.suffix(1) == "s" {
+                if let tempEmoji = ReverseEmojiDictionary[String(word.dropLast())] {
+                    if !outputEmojis.contains(tempEmoji){
+                        outputEmojis.append(tempEmoji)
+                    }
+                }
+            }
+        }
+        
+        completion(outputEmojis)
+        
+        
+    }
 
     
 //    static func printImageSizes(image: UIImage){
