@@ -129,6 +129,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "grill":"♨️",
     "steam":"🌫",
     
+    "chilli":"🌶",
     
     "taco": "🌮",
     "burrito": "🌯",
@@ -150,7 +151,6 @@ var ReverseEmojiDictionaryDups: [String:String] =
 
     "beer": "🍺",
     "croissant": "🥐",
-    "pastry":"🥐",
     "omelette":"🍳",
     "pancake": "🥞",
     "rice": "🍚",

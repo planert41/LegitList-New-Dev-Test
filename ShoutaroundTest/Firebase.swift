@@ -1391,6 +1391,82 @@ extension Database{
         completion(tempEmojis)
     }
     
+    static func sortEmojisWithCounts(inputEmojis: [String]?, emojiCounts: [String:Int]?, dictionaryMatch: Bool = false, completion: ([String]) -> ()) {
+        
+        // Food Emojis are tagged as Emojis but Auto-Tags are tagged as the dictionary string.
+        // Dictionary Match allows the string to also add counts for the representative emojis, ie: flags, countries, cuisine
+        
+        guard let inputEmojis = inputEmojis else {
+            print("sortEmojis ERROR: No Input Emojis")
+            completion([])
+            return
+        }
+        
+        guard let emojiCounts = emojiCounts else {
+            print("sortEmojis ERROR: No Emoji Counts ")
+            completion(inputEmojis)
+            return
+        }
+        
+        if emojiCounts.count == 0 {
+            print("sortEmojis ERROR: 0 Emoji Counts")
+            completion(inputEmojis)
+            return
+        }
+        
+        // REMOVES ALL INPUT EMOJI DUPS
+        var tempEmojis: [String] = []
+        var tempEmojiCounts = emojiCounts
+
+        
+        // COMBINE EMOJI COUNTS FOR EMOJI == WORD LIKE FLAGS
+        if dictionaryMatch {
+            // Add Count for Dictionary String
+            for (key,value) in tempEmojiCounts {
+                // Look up flag Emoji for string. Add Flag Emoji Count to String Count
+                if !key.containsOnlyEmoji {
+                    if let emo = ReverseEmojiDictionary[key] {
+                        if let _ = tempEmojiCounts[emo] {
+                            tempEmojiCounts[emo]! += value
+                        } else {
+                            tempEmojiCounts[emo] = value
+                        }
+                    }
+                }
+                /*
+                if let repEmoji = cuisineEmojiDictionary.key(forValue: key) {
+                    tempEmojiCounts[key] = (tempEmojiCounts[key] ?? 0) + (tempEmojiCounts[repEmoji] ?? 0)
+                }*/
+            }
+        }
+            
+
+        // ADD MISSING EMOJI COUNTS
+        let tempEmojiCountsSort = tempEmojiCounts.sorted { (key1, key2) -> Bool in
+            return key1.value < key2.value
+        }
+        
+        for (key,value) in tempEmojiCounts {
+            if inputEmojis.contains(key) {
+                tempEmojis.append(key)
+            }
+        }
+        
+        
+    // FILL IN THE REST
+        for x in inputEmojis {
+            if !tempEmojis.contains(x) {
+                tempEmojis.append(x)
+            }
+        }
+
+        
+
+
+
+        completion(tempEmojis)
+    }
+    
    
     
 // LOCATION COUNTS
@@ -2798,6 +2874,13 @@ extension Database{
         Database.fetchAllPostIDWithCreatorUID(creatoruid: creatoruid) { (postIds) in
             Database.fetchAllPosts(fetchedPostIds: postIds) { (posts) in
                 print("fetchAllPostWithUID | Success \(posts.count) Posts | uid: \(creatoruid)")
+                if creatoruid == Auth.auth().currentUser?.uid {
+                    countEmojis(posts: posts) { counts in
+                        CurrentUser.userTaggedEmojiCounts = counts
+                    }
+                }
+                
+                
                 completion(posts)
             }
         }

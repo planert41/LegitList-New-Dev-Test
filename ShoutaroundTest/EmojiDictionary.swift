@@ -208,7 +208,7 @@ var coffeeEmojiArray: [String] = [
 ]
 
 var UploadFlavorsEmojiArray: [String] = [
-"💯","❤️","😋","😵","💩","🔥","🍯","🌶","🍋","🍫","🍨","🍼","🍺","🍵","🌿"
+"💯","❤️","😋","😵","💩","🔥","🍯","🌶","🍋","🍫","🍨","🍼","🍺","🍵"
 ]
 
 var UploadIngredientsEmojiArray: [String] = [
@@ -288,7 +288,8 @@ var EmojiDictionary: [String:String] =
     "🥂":"celebrate",
     "🥠":"fortune",
     "🍭":"sweet",
-
+    "🌶":"spicy",
+    
     "🍎":"apple",
     "🍐":"pear",
     "🍊":"orange",
@@ -321,7 +322,7 @@ var EmojiDictionary: [String:String] =
     "🥬":"vegetable",
 
     
-    "🥐":"croissant",
+    "🥐":"pastry",
     "🥯":"bagel",
     "🍞":"bread",
     "🥖":"baguette",
@@ -380,7 +381,7 @@ var EmojiDictionary: [String:String] =
     "🍯":"honey",
     "🥛":"milk",
     "☕️":"coffee",
-    "🫖":"coffee",
+    "🫖":"tea",
     "🍵":"matcha",
     "🧃":"juice",
     "🥤":"soda",
@@ -408,8 +409,9 @@ var EmojiDictionary: [String:String] =
     "🐮":"beef",
     "🐷":"pork",
     "🐔":"chicken",
+    "🐓":"poultry",
     "🐒":"monkey",
-    "🐦":"bird",
+    "🐤":"bird",
     "🦆":"duck",
     "🦉":"owl",
     "🦇":"bat",
@@ -518,8 +520,8 @@ var EmojiDictionary: [String:String] =
     "🌳":"plant",
     "⛰":"natural",
     "✅":"organic",
-    "🌱":"vegetarian",
-    "🍃":"vegan",
+    "🌿":"vegetarian",
+    "☘️":"vegan",
     "⛪️":"christian",
     "🕍":"kosher",
     "🛕":"hindu",

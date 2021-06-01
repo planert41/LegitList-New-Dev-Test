@@ -50,6 +50,21 @@ let legitID = "EbSrCmEl9ROpi6YZkTdO5aWlKKI2"
 
 // Upload Defaults
 
+var recentEmoji = "Recent"
+var smileyEmoji = "😍 Smiley"
+var foodEmoji = "🍔 Food"
+var drinkEmoji = "🧋 Drink"
+var snackEmoji = "🍦 Snack"
+var meatEmoji = "🐔 Meat"
+var vegEmoji = "🥬 Veg"
+var flagEmoji = "🇲🇾 Cuisine"
+
+
+
+var FilterEmojiTypes:[String] = [recentEmoji, smileyEmoji, foodEmoji, drinkEmoji, snackEmoji, meatEmoji, vegEmoji, flagEmoji]
+
+
+
 var UploadTagSelection:[String] = ["🙋‍♂️ User", "😋 Smiley", "🍔 Eats", "☕️ Drinks", "🍩 Snacks", "🐮 Meat","🌱 Veg", "Other"]
 
 var UploadTagSelectionRef:[String:[String]] = ["🙋‍♂️ User":CurrentUser.mostUsedEmojis, "😋 Smiley":smileyEmojis, "🍔 Eats":eatsEmojis, "☕️ Drinks":drinksEmojis, "🍩 Snacks":snacksEmojis, "🐮 Meat":meatEmojis,"🌱 Veg":vegEmojis, "Other":otherEmojis ]

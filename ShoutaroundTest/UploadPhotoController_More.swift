@@ -1088,8 +1088,9 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     let emojiCellID = "emojiCellID"
     let EmojiContainerView = UIView()
 
-    var selectedEmojiFilterOptions = ["Recommended", "Recent", "Food", "Drink", "Snack", "Raw", "Veg", "Smiley", "Flag"]
-    var selectedEmojiFilter: String? = "Recommended" {
+//    var selectedEmojiFilterOptions = ["Recent", "Smiley", "Food", "Drink", "Snack", "Meat", "Veg",  "Flag"]
+    var selectedEmojiFilterOptions = FilterEmojiTypes
+    var selectedEmojiFilter: String? = nil {
         didSet {
             self.filterEmojiSelections()
         }
@@ -1136,7 +1137,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     
     let searchEmojiButton: UIButton = {
         let button = UIButton(type: .system)
-                button.setImage(#imageLiteral(resourceName: "icons8-book-64").withRenderingMode(.alwaysOriginal), for: .normal)
+                button.setImage(#imageLiteral(resourceName: "search_blank").withRenderingMode(.alwaysOriginal), for: .normal)
 
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 0.5 * button.bounds.size.width
@@ -1293,20 +1294,6 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         view.addSubview(emojiDescLabel)
         emojiDescLabel.anchor(top: emojiHeaderView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         emojiDescLabel.sizeToFit()
-        
-        
-        view.addSubview(emojiOptionsView)
-        emojiOptionsView.anchor(top: emojiDescLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
-        
-    
-        // Add Places Collection View
-        view.addSubview(filterEmojiCollectionView)
-        filterEmojiCollectionView.anchor(top: emojiOptionsView.topAnchor, left: view.leftAnchor, bottom: emojiOptionsView.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
-        filterEmojiCollectionView.backgroundColor = UIColor.clear
-        filterEmojiCollectionView.register(EmojiFilterCell.self, forCellWithReuseIdentifier: emojiFilterCellID)
-        filterEmojiCollectionView.delegate = self
-        filterEmojiCollectionView.dataSource = self
-        filterEmojiCollectionView.showsHorizontalScrollIndicator = false
 
         
         
@@ -1315,7 +1302,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         let searchBarContainer = UIView()
         searchBarContainer.backgroundColor = UIColor.white
         view.addSubview(searchBarContainer)
-        searchBarContainer.anchor(top: emojiOptionsView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        searchBarContainer.anchor(top: emojiDescLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
 
     
         view.addSubview(searchEmojiButton)
@@ -1352,7 +1339,20 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 //        imageBottomDiv.anchor(top: filterEmojiCollectionView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 1)
 //        imageBottomDiv.backgroundColor = UIColor.lightGray.withAlphaComponent(0.5)
         
-
+        
+        
+        view.addSubview(emojiOptionsView)
+        emojiOptionsView.anchor(top: EmojiContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
+        
+    
+        // Add Places Collection View
+        view.addSubview(filterEmojiCollectionView)
+        filterEmojiCollectionView.anchor(top: emojiOptionsView.topAnchor, left: view.leftAnchor, bottom: emojiOptionsView.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
+        filterEmojiCollectionView.backgroundColor = UIColor.clear
+        filterEmojiCollectionView.register(EmojiFilterCell.self, forCellWithReuseIdentifier: emojiFilterCellID)
+        filterEmojiCollectionView.delegate = self
+        filterEmojiCollectionView.dataSource = self
+        filterEmojiCollectionView.showsHorizontalScrollIndicator = false
 
         
         
@@ -1362,7 +1362,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         
 // ADD LINK
         view.addSubview(addLinkHeader)
-        addLinkHeader.anchor(top: EmojiContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 0, height: 0)
+        addLinkHeader.anchor(top: emojiOptionsView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 0, height: 0)
         
         view.addSubview(addLinkView)
         addLinkView.anchor(top: addLinkHeader.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 4, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 0, height: 40)
@@ -1828,19 +1828,19 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     }
     
     func filterEmojiSelections(){
-        var tempEmojis :[String] = []
+        var tempEmojis: [String] = []
         self.emojiIndex.removeAll()
         
         if self.selectedEmojiFilter == nil || self.selectedEmojiFilter == "Recommended"{
             // AUTO - Show Caption Suggested, then User Recent, then all
-            
+            tempEmojis = self.nonRatingEmojiTags
             // 1a. Caption Emojis            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: captionEmojis)
             
             // 1b. Location Most Used Emojis
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: self.locationMostUsedEmojis)
             
             // 1c. Most Used Emojis
-            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: Array(CurrentUser.mostUsedEmojis.prefix(10)))
+            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: Array(CurrentUser.mostUsedEmojis.prefix(20)))
             
             // 1d. Default Emojis - Meal Emojis
             if mealTagEmojis.count > 0 {
@@ -1869,32 +1869,36 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             //1e. Default Emojis
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: allDefaultEmojis)
             
-        } else if self.selectedEmojiFilter == "Recent" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == recentEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: CurrentUser.mostUsedEmojis)
 //            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: allFoodEmojis)
 
-        } else if self.selectedEmojiFilter == "Food" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == foodEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FoodEmojis)
-        } else if self.selectedEmojiFilter == "Drink" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == drinkEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_DrinkEmojis)
-        } else if self.selectedEmojiFilter == "Snack" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == snackEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_SnackEmojis)
-        } else if self.selectedEmojiFilter == "Raw" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == meatEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_RawEmojis)
-        } else if self.selectedEmojiFilter == "Veg" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == vegEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_VegEmojis)
-        } else if self.selectedEmojiFilter == "Smiley" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
+        } else if self.selectedEmojiFilter == smileyEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_SmileyEmojis)
-        } else if self.selectedEmojiFilter == "Flag" {
-            tempEmojis.append(self.selectedEmojiFilter ?? "")
-            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FlagEmojis)
+        } else if self.selectedEmojiFilter == flagEmoji {
+//            tempEmojis.append(self.selectedEmojiFilter ?? "")
+            Database.sortEmojisWithCounts(inputEmojis: SET_FlagEmojis, emojiCounts: CurrentUser.userTaggedEmojiCounts, completion: { emojis in
+                SET_FlagEmojis = emojis
+                tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FlagEmojis)
+            })
+//            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FlagEmojis)
         }
         
         
@@ -1914,6 +1918,13 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
                 let searchTextEmojis = Array(Set(searchText.emojis)).filter({ $0 != "️"})
                 tempEmojis = searchTextEmojis + tempEmojis
                 print("Filter Emojis by \(searchBar.text) : \(tempEmojis.count) Emojis | Found \(searchTextEmojis) in SearchBar")
+            }
+        }
+        
+        for emoji in self.nonRatingEmojiTags {
+            if let index = tempEmojis.index(of: emoji) {
+                var temp = tempEmojis.remove(at: index)
+                tempEmojis.insert(temp, at: 0)
             }
         }
         
@@ -2615,7 +2626,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emojiCellID, for: indexPath) as! UploadEmojiCell
             cell.uploadEmojis.text = self.emojiTagSelection[indexPath.item]
-            cell.uploadEmojis.font = cell.uploadEmojis.font.withSize((cell.uploadEmojis.text?.containsOnlyEmoji)! ? EmojiSize.width * 0.8 : 10)
+//            cell.uploadEmojis.font = cell.uploadEmojis.font.withSize((cell.uploadEmojis.text?.containsOnlyEmoji)! ? EmojiSize.width * 0.8 : 10)
             var containsEmoji = (self.nonRatingEmojiTags.contains(cell.uploadEmojis.text!))
             cell.isRatingEmoji = false
             
@@ -2624,12 +2635,15 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             cell.layer.borderColor = containsEmoji ? UIColor.ianLegitColor().cgColor : UIColor.rgb(red: 221, green: 221, blue: 221).cgColor
             cell.layer.borderWidth = containsEmoji ? 2 : 1
             cell.delegate = self
+            var isSelected = self.nonRatingEmojiTags.contains(cell.uploadEmojis.text!)
             cell.isSelected = self.nonRatingEmojiTags.contains(cell.uploadEmojis.text!)
             cell.sizeToFit()            
             var noDic = EmojiDictionary[self.emojiTagSelection[indexPath.item]] == nil
-            if noDic {
-                cell.backgroundColor = UIColor.ianLightGrayColor().withAlphaComponent(0.8)
+            if noDic{
+                cell.backgroundColor = noDic ? UIColor.ianLightGrayColor().withAlphaComponent(0.6) : UIColor.white
             }
+
+
             return cell
             
         }   else if collectionView == filterEmojiCollectionView {
@@ -2639,7 +2653,8 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             cell.uploadLocations.text = selectedEmojiFilterOptions[indexPath.row]
             cell.backgroundColor = isEmojiFilter ? UIColor.legitColor() : UIColor.clear
             cell.uploadLocations.textColor = isEmojiFilter ? UIColor.white : UIColor.mainBlue()
-            cell.uploadLocations.font = isEmojiFilter ? UIFont(font: .avenirNextDemiBold, size: 13) : UIFont(font: .avenirNextRegular, size: 13)
+//            cell.uploadLocations.font = UIFont(font: .avenirNextDemiBold, size: 13)
+            cell.uploadLocations.font = isEmojiFilter ? UIFont(font: .avenirNextBold, size: 13) : UIFont(font: .avenirNextHeavy, size: 13)
             cell.bottomDiv.isHidden = true
             cell.uploadLocations.sizeToFit()
             cell.sizeToFit()
@@ -3286,8 +3301,11 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         } else {
             if nonRatingEmojiTags.count >= 3 {
                 print("Replacing Last Emoji | \(tempEmojiInput!) \(tempEmojiInputTag!)) | 3 Emojis | addRemoveEmojiTags ")
-                nonRatingEmojiTags[nonRatingEmojiTags.count - 1] = tempEmojiInput!
-                nonRatingEmojiTagsDict[nonRatingEmojiTagsDict.count - 1] = tempEmojiInputTag!
+                self.alert(title: "Too Many Emojis", message: "Each post is limited to 3 emoji tags. Please unselect one or more emojis before adding a new one.")
+                self.suggestedEmojiCollectionView.reloadData()
+                return
+//                nonRatingEmojiTags[nonRatingEmojiTags.count - 1] = tempEmojiInput!
+//                nonRatingEmojiTagsDict[nonRatingEmojiTagsDict.count - 1] = tempEmojiInputTag!
             } else {
                 print("Adding \(tempEmojiInput!) \(tempEmojiInputTag!)) | \(nonRatingEmojiTags.count) Emojis | addRemoveEmojiTags")
                 nonRatingEmojiTags.append(tempEmojiInput!)

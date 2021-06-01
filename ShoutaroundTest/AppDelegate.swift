@@ -639,7 +639,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         allDrinkEmojis = drinkEmojis
         allIngredientEmojis = meatIngredientEmojis + vegIngredientEmojis + fruitsIngredientEmojis
         allDefaultEmojis = allFoodEmojis + allDrinkEmojis + allIngredientEmojis
-    
+        cuisineEmojiSelect = Array(cuisineEmojiDictionary.keys)
 //        // Adds all first default emojis first
 //        for emoji in allDefaultEmojis {
 //            var emoji_dic = EmojiDictionary[emoji] ?? ""

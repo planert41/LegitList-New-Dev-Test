@@ -52,20 +52,27 @@ class UploadEmojiCell: UICollectionViewCell {
         
     }
     
-    var selectedBackgroundColor = UIColor.ianLegitColor()
+    var selectedBackgroundColor = UIColor.ianLegitColor().withAlphaComponent(0.6)
     var selectedBorderColor = UIColor.ianLegitColor().cgColor
+    var suggestedBackgroundColor = UIColor.lightGray.withAlphaComponent(0.6)
 
     func setupSelectedView(){
         if !turnOffSelection {
             self.uploadEmojis.alpha = isSelected ? 1 : 0.6
-            self.backgroundColor = isSelected ? selectedBackgroundColor : UIColor.clear
-            self.layer.borderColor = isSelected ? selectedBorderColor : UIColor.clear.cgColor
+            self.backgroundColor = isSelected ? selectedBackgroundColor : (isSuggested ? suggestedBackgroundColor : UIColor.clear)
+            self.layer.borderColor = isSelected ? selectedBorderColor : (isSuggested ? suggestedBackgroundColor.cgColor : UIColor.clear.cgColor)
         }
     }
     
     var turnOffSelection = false
     
     override var isSelected: Bool {
+        didSet {
+            setupSelectedView()
+        }
+    }
+    
+    var isSuggested: Bool = false {
         didSet {
             setupSelectedView()
         }

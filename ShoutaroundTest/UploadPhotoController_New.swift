@@ -25,7 +25,7 @@ import FirebaseStorage
 
 
 
-class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate,UICollectionViewDataSource, UITextViewDelegate, UIGestureRecognizerDelegate, GMSAutocompleteViewControllerDelegate, UITableViewDelegate, UITableViewDataSource, SKPhotoBrowserDelegate, AutoTagTableViewControllerDelegate, CLImageEditorDelegate, CropViewControllerDelegate, UITextFieldDelegate, UIScrollViewDelegate, EmojiSearchTableViewControllerDelegate, UploadPhotoFooterDelegate, UploadEmojiCellDelegate, AddTagSearchControllerDelegate {
+class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate,UICollectionViewDataSource, UITextViewDelegate, UIGestureRecognizerDelegate, GMSAutocompleteViewControllerDelegate, UITableViewDelegate, UITableViewDataSource, SKPhotoBrowserDelegate, AutoTagTableViewControllerDelegate, CLImageEditorDelegate, CropViewControllerDelegate, UITextFieldDelegate, UIScrollViewDelegate, EmojiSearchTableViewControllerDelegate, UploadPhotoFooterDelegate, UploadEmojiCellDelegate, AddTagSearchControllerDelegate, SelectedFilterBarCellDelegate {
     
     static let updateFeedNotificationName = NSNotification.Name(rawValue: "UpdateFeed")
     
@@ -42,7 +42,9 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     let emojiCellID = "emojiCellID"
     let testemojiCellID = "testemojiCellID"
     let emojiFilterCellID = "emojiFilterCellID"
-    
+    let emojiCaptionCellID = "emojiCaptionCellID"
+    let emojiCaptionTitleID = "emojiCaptionTitleID"
+
     //    let captionDefault = "Was it Legit👌? \n\nAdd Emoji tags. Create a list."
     
     let captionDefaultString = "Write a caption"
@@ -174,6 +176,8 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
             // Emojis
             self.nonRatingEmojiTags = (editPost?.nonRatingEmoji)!
             self.nonRatingEmojiTagsDict = (editPost?.nonRatingEmojiTags)!
+            self.newCaptionEmojis = self.nonRatingEmojiTags
+            self.captionEmojiCollectionView.reloadData()
             
             self.ratingEmojiTag = editPost?.ratingEmoji ?? ""
             
@@ -1236,6 +1240,8 @@ Rating Emojis help you describe your experience beyond just star ratings
     // Emoji Variables
     
     
+//    var captionEmojis: [String] = []
+    
     var nonRatingEmojiTags: [String] = [] {
         didSet{
             //            self.updateEmojiTextView()
@@ -1467,6 +1473,7 @@ Rating Emojis help you describe your experience beyond just star ratings
     
     fileprivate func setupViews() {
         setupImageCaption()
+        setupCaptionEmojiView()
         setupLocationView()
         setupRatingEmojiView()
 //        setupNonRatingEmojiView()
@@ -1635,10 +1642,36 @@ Rating Emojis help you describe your experience beyond just star ratings
         
     }
     
+    func setupCaptionEmojiView(){
+        
+//        view.addSubview(captionEmojiLabel)
+        
+        captionEmojiCollectionView.backgroundColor = UIColor.clear
+        captionEmojiCollectionView.register(SelectedFilterBarCell.self, forCellWithReuseIdentifier: emojiCaptionCellID)
+        captionEmojiCollectionView.register(EmojiBarTitleCell.self, forCellWithReuseIdentifier: emojiCaptionTitleID)
+
+        captionEmojiCollectionView.delegate = self
+        captionEmojiCollectionView.dataSource = self
+        captionEmojiCollectionView.showsHorizontalScrollIndicator = false
+        captionEmojiCollectionView.isScrollEnabled = true
+        
+        
+        
+        view.addSubview(captionEmojiCollectionView)
+        captionEmojiCollectionView.anchor(top: imageContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 0, paddingRight: 15, width: 0, height: 0)
+        captionEmojiHeight = captionEmojiCollectionView.heightAnchor.constraint(equalToConstant: 0)
+        captionEmojiHeight?.isActive = true
+//        captionEmojiLabel.anchor(top: captionEmojiCollectionView.topAnchor, left: view.leftAnchor, bottom: captionEmojiCollectionView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        captionEmojiLabel.sizeToFit()
+
+    }
+    
     func setupLocationView(){
         
         view.addSubview(LocationContainerView)
-        LocationContainerView.anchor(top: imageContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        LocationContainerView.anchor(top: captionEmojiCollectionView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+//        LocationContainerView.anchor(top: imageContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+
         //        LocationContainerView.layer.borderColor = UIColor.gray.cgColor
         //        LocationContainerView.layer.borderWidth = 1
         
@@ -2603,6 +2636,31 @@ Rating Emojis help you describe your experience beyond just star ratings
         return cv
     }()
     
+    let captionEmojiCollectionView: UICollectionView = {
+        let uploadEmojiList = UICollectionViewFlowLayout()
+        uploadEmojiList.estimatedItemSize = CGSize(width: 120, height: 35)
+        uploadEmojiList.sectionInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        uploadEmojiList.scrollDirection = .horizontal
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: uploadEmojiList)
+        cv.layer.borderWidth = 0
+        cv.backgroundColor = UIColor.white
+        return cv
+    }()
+    
+    let captionEmojiLabel: UILabel = {
+        let tv = UILabel()
+        tv.font = UIFont(name: "Poppins-Regular", size: 8)
+        tv.textColor = UIColor.darkGray
+        tv.text = "Suggested Emojis: "
+        tv.backgroundColor = UIColor.clear
+        tv.numberOfLines = 2
+        tv.textAlignment = NSTextAlignment.left
+        return tv
+    }()
+    
+    var captionEmojiHeight: NSLayoutConstraint?
+    var captionEmojiFullHeight: CGFloat = 50
+    
     let searchEmojiButton: UIButton = {
         let button = UIButton(type: .system)
                 button.setImage(#imageLiteral(resourceName: "icons8-book-64").withRenderingMode(.alwaysOriginal), for: .normal)
@@ -2812,6 +2870,8 @@ Rating Emojis help you describe your experience beyond just star ratings
 //            return true
         }
         
+        self.filterTextForEmoji(string: textView.text)
+        
         if text.isSingleEmoji == true {
             // Emoji was typed
             if textView.text.contains(text){
@@ -2872,6 +2932,24 @@ Rating Emojis help you describe your experience beyond just star ratings
             }
         }
         
+    }
+    
+    func filterTextForEmoji(string: String){
+        Database.filterCaptionForEmoji(inputText: string) { emojis in
+            var tempEmojis = self.nonRatingEmojiTags
+            var tempRatingEmojis: [String] = []
+            for emoji in emojis {
+                if extraRatingEmojis.contains(emoji) {
+                    // Rating Emoji
+                    tempRatingEmojis.append(emoji)
+                }
+                else if !tempEmojis.contains(emoji) {
+                    tempEmojis.append(emoji)
+                }
+            }
+            self.newCaptionRatingEmojis = tempRatingEmojis
+            self.newCaptionEmojis = tempEmojis
+        }
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -3542,6 +3620,10 @@ Rating Emojis help you describe your experience beyond just star ratings
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
+        if collectionView == captionEmojiCollectionView {
+            return self.newCaptionEmojis.count + 1
+        }
+        
         if collectionView == placesCollectionView {
             return nearbyGoogleLocations.count
             print("Nearby Google Locations | \(nearbyGoogleLocations.count)")
@@ -3591,7 +3673,63 @@ Rating Emojis help you describe your experience beyond just star ratings
         else {return 0}
     }
     
+    func didRemoveTag(tag: String) {
+        
+    }
+    func didRemoveLocationFilter(location: String){
+        
+    }
+    func didRemoveRatingFilter(rating: String){
+        
+    }
+    func didTapCell(tag: String){
+        self.tapCaptionEmoji(emoji: tag)
+    }
+    
+    func didTapCaptionEmoji() {
+        
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        // FILTER CAPTION EMOJI
+        if collectionView == captionEmojiCollectionView {
+            
+            if indexPath.item == 0 {
+                let refreshCell = collectionView.dequeueReusableCell(withReuseIdentifier: emojiCaptionTitleID, for: indexPath) as! EmojiBarTitleCell
+                refreshCell.emojiTitle.text = "Suggested\nEmojis"
+                refreshCell.emojiTitle.sizeToFit()
+                refreshCell.backgroundColor = .clear
+                refreshCell.emojiTitle.backgroundColor = .clear
+                refreshCell.sizeToFit()
+                refreshCell.layoutIfNeeded()
+                refreshCell.showSearchButton = false
+                return refreshCell
+            } else {
+                let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: emojiCaptionCellID, for: indexPath) as! SelectedFilterBarCell
+                var emojiTerm = newCaptionEmojis[indexPath.item - 1]
+                filterCell.searchTerm = emojiTerm
+                if let text = EmojiDictionary[emojiTerm] {
+                    filterCell.uploadLocations.text = "\(emojiTerm) \(text.capitalizingFirstLetter())"
+                    filterCell.uploadLocations.sizeToFit()
+                } else {
+                    filterCell.uploadLocations.text = ""
+                }
+                filterCell.uploadLocations.sizeToFit()
+                filterCell.delegate = self
+                filterCell.showCancel = false
+                
+                var isSelected = self.nonRatingEmojiTags.contains(emojiTerm) || self.ratingEmojiTag.contains(emojiTerm)
+                filterCell.backgroundColor = isSelected ? UIColor.ianLegitColor().withAlphaComponent(0.6) : UIColor.ianWhiteColor()
+                filterCell.layer.borderColor = isSelected ? UIColor.ianLegitColor().cgColor : UIColor.black.cgColor
+                filterCell.isUserInteractionEnabled = true
+                
+                return filterCell
+            }
+            
+
+        }
+        
         
         // SUGGESTED LOCATION NAME CELLS
         if collectionView == placesCollectionView {
@@ -3625,12 +3763,14 @@ Rating Emojis help you describe your experience beyond just star ratings
             
         else if collectionView == extraRatingEmojiCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: testemojiCellID, for: indexPath) as! UploadEmojiCell
-            cell.uploadEmojis.text = extraRatingEmojis[indexPath.item]
+            var ratingEmojiText = extraRatingEmojis[indexPath.item]
+            cell.uploadEmojis.text = ratingEmojiText
             cell.backgroundColor = UIColor.white
 //            cell.layer.borderColor = (self.ratingEmojiTag == (cell.uploadEmojis.text!)) ? UIColor.selectedColor().cgColor : UIColor.clear.cgColor
-            let isSelected = self.ratingEmojiTag == (cell.uploadEmojis.text!)
+            let isSelected = self.ratingEmojiTag == (ratingEmojiText)
+            let suggested = self.newCaptionRatingEmojis.contains(ratingEmojiText)
             cell.isSelected = isSelected
-            cell.layer.borderColor = isSelected ? UIColor.ianLegitColor().cgColor : UIColor.clear.cgColor
+            cell.isSuggested = suggested
 //            cell.alpha = isSelected ? 1 : 0.7
             cell.isRatingEmoji = true
 
@@ -3751,8 +3891,46 @@ Rating Emojis help you describe your experience beyond just star ratings
 
     }
     
+    func tapCaptionEmoji(emoji: String) {
+        if extraRatingEmojis.contains(emoji) {
+            // Rating Emoji
+            if self.ratingEmojiTag.contains(emoji) {
+                self.ratingEmojiTag = ""
+            } else {
+                self.ratingEmojiTag = emoji
+            }
+            self.captionEmojiCollectionView.reloadData()
+            self.extraRatingEmojiCollectionView.reloadData()
+            return
+        }
+        
+        if self.nonRatingEmojiTags.contains(emoji) {
+            // REMOVE EMOJI
+            if let index = self.nonRatingEmojiTags.index(of: emoji) {
+                self.nonRatingEmojiTags.remove(at: index)
+            }
+            if let index = self.nonRatingEmojiTagsDict.index(of: EmojiDictionary[emoji]!) {
+                self.nonRatingEmojiTagsDict.remove(at: index)
+            }
+            print("Remove \(emoji) Tag, Current: \(self.nonRatingEmojiTags.joined())")
+        } else {
+            self.nonRatingEmojiTags.append(emoji)
+            self.nonRatingEmojiTagsDict.append(EmojiDictionary[emoji]!)
+            print("ADD \(emoji) Tag, Current: \(self.nonRatingEmojiTags.joined())")
+        }
+        self.captionEmojiCollectionView.reloadData()
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        if collectionView == captionEmojiCollectionView {
+            
+            
+            //                nonRatingEmojiTags.append(tempEmojiInput!)
+            //                nonRatingEmojiTagsDict.append(tempEmojiInputTag!)
+            let emoji = self.newCaptionEmojis[indexPath.item]
+            self.tapCaptionEmoji(emoji: emoji)
+        }
         
         if collectionView == suggestedEmojiCollectionView{
 //            let cell = collectionView.cellForItem(at: indexPath) as! UploadEmojiCell
@@ -4472,6 +4650,24 @@ Rating Emojis help you describe your experience beyond just star ratings
             self.refreshEmojiTagSelections()
         }
     }
+    
+    var newCaptionEmojis:[String] = [] {
+        didSet {
+            triggerCaptionEmoji()
+        }
+    }
+    
+    var newCaptionRatingEmojis:[String] = [] {
+        didSet {
+            triggerCaptionEmoji()
+        }
+    }
+    
+    func triggerCaptionEmoji() {
+        self.captionEmojiHeight?.constant = (self.newCaptionEmojis.count == 0) ? 0 : captionEmojiFullHeight
+        self.captionEmojiCollectionView.reloadData()
+    }
+    
     var locationMostUsedEmojis:[String] = [] {
         didSet{
             if locationMostUsedEmojis.count > 0 {
