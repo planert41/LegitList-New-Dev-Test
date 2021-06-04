@@ -28,9 +28,9 @@ class AutoTagTableViewController: UITableViewController,UISearchResultsUpdating,
             for tag in selectedTags {
                 if let _ = mealEmojiDictionary.key(forValue: tag) {
                     tempMealTags.append(tag)
-                } else if let _ = cuisineEmojiDictionary.key(forValue: tag) {
+                } else if let _ = FlagEmojiDictionary.key(forValue: tag) {
                     tempCuisineTags.append(tag)
-                } else if let _ = dietEmojiDictionary.key(forValue: tag) {
+                } else if let _ = DietEmojiDictionary.key(forValue: tag) {
                     tempDietTags.append(tag)
                 }
             }

@@ -250,7 +250,13 @@ struct CurrentUser {
     static var mostUsedEmojis: [String] = []
     static var mostTaggedLocations: [String] = []
     
-    static var userTaggedEmojiCounts: [String: Int] = [:]
+    static var userTaggedEmojiCounts: [String: Int] = [:] {
+        didSet {
+            Database.sortEmojisWithCounts(inputEmojis: allEmojis, emojiCounts: userTaggedEmojiCounts) { sortedEmojis in
+                allEmojis = sortedEmojis
+                }
+            }
+    }
     static var userTaggedPlaceCounts: [String: Int] = [:]
     static var userTaggedCityCounts: [String: Int] = [:]
 

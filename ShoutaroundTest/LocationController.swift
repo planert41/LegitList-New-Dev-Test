@@ -1573,9 +1573,9 @@ class LocationController: UIViewController, UIScrollViewDelegate, UICollectionVi
                     // Not Emoji. Is Auto-tag String
                     if let temp = mealEmojiDictionary.key(forValue: key) {
                         displayEmojis.append(temp)
-                    } else if let temp = cuisineEmojiDictionary.key(forValue: key) {
+                    } else if let temp = FlagEmojiDictionary.key(forValue: key) {
                         displayEmojis.append(temp)
-                    } else if let temp = dietEmojiDictionary.key(forValue: key) {
+                    } else if let temp = DietEmojiDictionary.key(forValue: key) {
                         displayEmojis.append(temp)
                     }
                 }

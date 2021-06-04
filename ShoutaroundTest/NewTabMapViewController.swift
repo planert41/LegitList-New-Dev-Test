@@ -155,6 +155,17 @@ class NewTabMapViewController: UIViewController {
         ul.textColor = UIColor.darkGray
         return ul
     }()
+    
+    lazy var hideLabel: UILabel = {
+        let ul = UILabel()
+        ul.isUserInteractionEnabled = true
+        ul.text = "Hide Info"
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.right
+        ul.font = UIFont(name: "Poppins-Bold", size: 14)
+        ul.textColor = UIColor.black
+        return ul
+    }()
 
     // MARK: - NAVIGATION
 
@@ -688,7 +699,12 @@ class NewTabMapViewController: UIViewController {
         postContainer.backgroundColor = UIColor.lightBackgroundGrayColor()
         postContainer.layer.applySketchShadow(color: UIColor(red: 0, green: 0, blue: 0, alpha: 1), alpha: 0.5, x: 0, y: 3, blur: 4, spread: 0)
         
-        
+        view.addSubview(hideLabel)
+        hideLabel.anchor(top: nil, left: postContainer.leftAnchor, bottom: postContainer.topAnchor, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 5, paddingRight: 0, width: 0, height: 0)
+        hideLabel.isHidden = true
+        hideLabel.isUserInteractionEnabled = true
+        hideLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(togglePost)))
+
        setupPostCollectionView()
        postContainer.addSubview(postCollectionView)
        postCollectionView.anchor(top: postContainer.topAnchor, left: postContainer.leftAnchor, bottom: postContainer.bottomAnchor, right: postContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
@@ -1164,6 +1180,8 @@ class NewTabMapViewController: UIViewController {
     
     func togglePostHeight(){
         self.postContainerHeightConstraint?.constant = CGFloat(20 + (self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
+        self.hideLabel.isHidden = !self.isPostFullView
+        self.hideLabel.isUserInteractionEnabled = !self.hideLabel.isHidden
 //        self.postCollectionViewFlowLayout.estimatedItemSize = CGSize(width: self.postCollectionView.frame.width, height: CGFloat(self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
 //        self.postCollectionView.collectionViewLayout = self.postCollectionViewFlowLayout
         self.showSelectedPost()
@@ -2535,7 +2553,7 @@ extension NewTabMapViewController : NewListPhotoCellDelegate, MessageControllerD
         self.emojiDetailLabel.alpha = 0
     }
 
-    func togglePost() {
+    @objc func togglePost() {
         self.isPostFullView = !self.isPostFullView
         print("TOGGLE POST")
     }

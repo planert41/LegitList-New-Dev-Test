@@ -515,7 +515,7 @@ class TemplateObjects {
         sc.tintColor = UIColor.oldLegitColor()
         if #available(iOS 13.0, *) {
 //            sc.selectedSegmentTintColor = UIColor.ianBlackColor()
-            sc.selectedSegmentTintColor = UIColor.darkGray
+            sc.selectedSegmentTintColor = UIColor.mainBlue()
 
         }
         

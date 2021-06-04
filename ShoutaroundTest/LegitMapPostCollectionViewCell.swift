@@ -296,7 +296,7 @@ class LegitMapPostCollectionViewCell: UICollectionViewCell {
 //        locationNameLabel.rightAnchor.constraint(lessThanOrEqualTo: userProfileImageView.leftAnchor).isActive = true
         locationNameLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 35).isActive = true
         
-        let locationTap = UITapGestureRecognizer(target: self, action: #selector(handlePictureTap))
+        let locationTap = UITapGestureRecognizer(target: self, action: #selector(togglePost))
         locationNameLabel.addGestureRecognizer(locationTap)
         locationNameLabel.isUserInteractionEnabled = true
         

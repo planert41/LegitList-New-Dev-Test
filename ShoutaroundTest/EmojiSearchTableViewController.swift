@@ -55,7 +55,7 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
     }
 
 //    var searchEmojiScope = ["All" , "Ing", "Feel", "Flags", "More" ]
-    var searchEmojiScope = ["All" , "🐮 Ingr", "🇺🇸 Flags", "😋 Feels", "🏠 Other" ]
+    var searchEmojiScope = ["All" , smileyEmojiSearch, foodEmojiSearch, typeEmojiSearch, flagEmojiSearch, OtherEmojiSearch ]
 
     var displayedEmojis: [EmojiBasic] = []
     var filteredEmojis: [EmojiBasic] = []
@@ -89,60 +89,88 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
         tableView.scrollToNearestSelectedRow(at: .top, animated: true)
         setupNavigationItems()
         self.setupSearchController()
-        self.searchController.searchBar.becomeFirstResponder()
+        self.searchBar.becomeFirstResponder()
+        self.searchController.searchBar.sizeToFit()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.searchController.searchBar.becomeFirstResponder()
+        self.searchBar.becomeFirstResponder()
         self.navigationController?.isNavigationBarHidden = false
 
-        if (self.navigationItem.searchController?.searchBar.canBecomeFirstResponder)! {
-            self.navigationItem.searchController?.searchBar.becomeFirstResponder()
-        }
+//        if (self.navigationItem.searchController?.searchBar.canBecomeFirstResponder)! {
+//            self.navigationItem.searchController?.searchBar.becomeFirstResponder()
+//        }
         //        self.searchController.searchBar.becomeFirstResponder()
     }
     
     
     func setupEmojiDictionaries(){
+//        var searchEmojiScope = ["All" , smileyEmoji, foodEmoji, typeEmoji, flagEmoji, OtherEmoji ]
+//
+//        channelsArray = channelsArray.sorted { (channel1, channel2) -> Bool in
+//                    let channelName1 = channel1.name
+//                    let channelName2 = channel2.name
+//                    return (channelName1.localizedCaseInsensitiveCompare(channelName2) == .orderedAscending)
+        var temp:[EmojiBasic] = []
+
         
         switch self.selectedScope {
+        
         case 0:
             // All Emojis
-            self.displayedEmojis = allEmojis
+            Database.sortEmojisWithCounts(inputEmojis: allEmojis, emojiCounts: CurrentUser.userTaggedEmojiCounts) { sortedEmojis in
+                temp = sortedEmojis
+            }
         case 1:
-            // Ingredients
-            self.displayedEmojis = allEmojis.filter({ (emoji_ref) -> Bool in
-                allIngredientEmojis.contains(emoji_ref.emoji)
+            // smileyEmoji
+            temp = allEmojis.filter({ (emoji_ref) -> Bool in
+//                allIngredientEmojis.contains(emoji_ref.emoji)
+                SmileyEmojiDictionary[emoji_ref.emoji] != nil
             })
+            
         case 2:
-            // Flag
-            self.displayedEmojis = allEmojis.filter({ (emoji_ref) -> Bool in
-                cuisineEmojiSelect.contains(emoji_ref.emoji)
+            // Food
+            temp = allEmojis.filter({ (emoji_ref) -> Bool in
+                FoodEmojiDictionary[emoji_ref.emoji] != nil || DrinksEmojiDictionary[emoji_ref.emoji] != nil
             })
         case 3:
-            // Smiley
-            self.displayedEmojis = allEmojis.filter({ (emoji_ref) -> Bool in
-                smileyEmojis.contains(emoji_ref.emoji)
+            // Type
+            temp = allEmojis.filter({ (emoji_ref) -> Bool in
+                IngEmojiDictionary[emoji_ref.emoji] != nil
             })
         case 4:
-            // Other
-            self.displayedEmojis = allEmojis.filter({ (emoji_ref) -> Bool in
-                otherEmojis.contains(emoji_ref.emoji)
+            // FLAG
+            temp = allEmojis.filter({ (emoji_ref) -> Bool in
+                FlagEmojiDictionary[emoji_ref.emoji] != nil || DietEmojiDictionary[emoji_ref.emoji] != nil
+            })
+        case 5:
+            // OTHER
+            temp = allEmojis.filter({ (emoji_ref) -> Bool in
+                OtherEmojiDictionary[emoji_ref.emoji] != nil
             })
         default:
             print("Nothing Happens")
         }
         
-        
+//        if self.selectedScope != 0 {
+            temp.sort { (channel1, channel2) -> Bool in
+                let channelName1 = channel1.name ?? ""
+                let channelName2 = channel2.name ?? ""
+                return (channelName1.localizedCaseInsensitiveCompare(channelName2) == .orderedAscending)
+            }
+//        }
+
         // Move Selected Emoji To Front
         for emoji in self.selectedEmojis {
-            if let index = self.displayedEmojis.firstIndex(where: { (emoji_ref) -> Bool in
+            if let index = temp.firstIndex(where: { (emoji_ref) -> Bool in
                 emoji_ref.emoji == emoji
             }) {
-                let tempEmoji = self.displayedEmojis.remove(at: index)
-                self.displayedEmojis.insert(tempEmoji, at: 0)
+                let tempEmoji = temp.remove(at: index)
+                temp.insert(tempEmoji, at: 0)
             }
         }
+        
+        self.displayedEmojis = temp
         
     }
     
@@ -242,14 +270,16 @@ class EmojiSearchTableViewController: UITableViewController,UISearchResultsUpdat
             }
         }
         
-        if #available(iOS 11.0, *) {
-            navigationItem.searchController = searchController
-            self.searchController.searchBar.becomeFirstResponder()
-        } else {
-            self.tableView.tableHeaderView = searchBar
-            searchBar.becomeFirstResponder()
-        }
-        
+//        if #available(iOS 11.0, *) {
+//            navigationItem.searchController = searchController
+//            navigationItem.searchController?.searchBar.becomeFirstResponder()
+//            navigationItem.searchController?.searchBar.sizeToFit()
+//        } else {
+//            self.tableView.tableHeaderView = searchBar
+//            searchBar.becomeFirstResponder()
+//        }
+        self.tableView.tableHeaderView = searchBar
+        searchBar.becomeFirstResponder()
         
 
     }

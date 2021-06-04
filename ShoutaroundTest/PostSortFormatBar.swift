@@ -158,7 +158,7 @@ class PostSortFormatBar: UIView{
         sortSegmentControl.selectedSegmentIndex = 0
         sortSegmentControl.addTarget(self, action: #selector(selectPostSort), for: .valueChanged)
         if #available(iOS 13.0, *) {
-            sortSegmentControl.selectedSegmentTintColor = UIColor.darkGray
+            sortSegmentControl.selectedSegmentTintColor = UIColor.mainBlue()
             sortSegmentControl.layer.borderColor = sortSegmentControl.selectedSegmentTintColor?.cgColor
             sortSegmentControl.tintColor = UIColor.white
         }

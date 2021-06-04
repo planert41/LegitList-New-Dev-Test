@@ -488,7 +488,7 @@ class HomeFilterBarHeader: UICollectionViewCell, UISearchBarDelegate, UICollecti
             }
             
             // CHECK FOR FLAGS FIRST
-            for (emoji, emojiText) in cuisineEmojiDictionary {
+            for (emoji, emojiText) in FlagEmojiDictionary {
                 if caption.contains(emoji) {
                     displayedTags.append(emoji)
                     caption = caption.replacingOccurrences(of: emoji, with: "")

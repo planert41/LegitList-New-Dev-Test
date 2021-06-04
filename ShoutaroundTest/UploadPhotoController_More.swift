@@ -111,7 +111,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         }
     }
     
-    
+        
     func refreshLinkButton() {
         if (self.urlLink == nil) || (self.urlLink?.isEmptyOrWhitespace() ?? true) {
             addLinkInput.text = ""
@@ -1100,23 +1100,23 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 
     var captionEmojis:[String] = [] {
         didSet{
-            self.filterEmojiSelections()
+//            self.filterEmojiSelections()
         }
     }
     var locationMostUsedEmojis:[String] = [] {
         didSet{
-            self.filterEmojiSelections()
+//            self.filterEmojiSelections()
         }
     }
     var reviewSuggestedEmojis: [String] = [] {
         didSet{
-            self.filterEmojiSelections()
+//            self.filterEmojiSelections()
         }
     }
     
     var mealTagEmojis: [EmojiBasic] = [] {
         didSet{
-            self.filterEmojiSelections()
+//            self.filterEmojiSelections()
         }
     }
     
@@ -1827,47 +1827,59 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         
     }
     
+    var defaultEmojis:[String] = []
+    func setDefaultEmojis() {
+        defaultEmojis = self.nonRatingEmojiTags
+        // 1a. Caption Emojis
+        defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: captionEmojis)
+        
+        // 1b. Location Most Used Emojis
+        defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: self.locationMostUsedEmojis)
+        
+        // 1c. Most Used Emojis
+        defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: Array(CurrentUser.mostUsedEmojis.prefix(20)))
+        
+        // 1d. Default Emojis - Meal Emojis
+        if mealTagEmojis.count > 0 {
+            if mealTagEmojis.contains(where: { (emoji) -> Bool in
+                return emoji.name == "breakfast" || emoji.name == "brunch"
+            }) {defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: breakfastFoodEmojis)}
+            
+            if mealTagEmojis.contains(where: { (emoji) -> Bool in
+                return emoji.name == "lunch"
+            }) {defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: lunchFoodEmojis)}
+            
+            if mealTagEmojis.contains(where: { (emoji) -> Bool in
+                return emoji.name == "dinner" || emoji.name == "latenight"
+            }) {defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: dinnerFoodEmojis)}
+            
+            if mealTagEmojis.contains(where: { (emoji) -> Bool in
+                return emoji.name == "dessert" || emoji.name == "coffee"
+            }) {defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: snackEmojis)}
+            
+            if mealTagEmojis.contains(where: { (emoji) -> Bool in
+                return emoji.name == "drinks"
+            }) {defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: allDrinkEmojis)}
+        }
+        
+        
+        //1e. Food Emojis
+        defaultEmojis = self.appendEmojis(currentEmojis: defaultEmojis, newEmojis: SET_AllEmojis)
+        
+        self.filterEmojiSelections()
+    }
+    
+    
     func filterEmojiSelections(){
         var tempEmojis: [String] = []
         self.emojiIndex.removeAll()
-        
+
         if self.selectedEmojiFilter == nil || self.selectedEmojiFilter == "Recommended"{
             // AUTO - Show Caption Suggested, then User Recent, then all
             tempEmojis = self.nonRatingEmojiTags
-            // 1a. Caption Emojis            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: captionEmojis)
             
             // 1b. Location Most Used Emojis
-            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: self.locationMostUsedEmojis)
-            
-            // 1c. Most Used Emojis
-            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: Array(CurrentUser.mostUsedEmojis.prefix(20)))
-            
-            // 1d. Default Emojis - Meal Emojis
-            if mealTagEmojis.count > 0 {
-                if mealTagEmojis.contains(where: { (emoji) -> Bool in
-                    return emoji.name == "breakfast" || emoji.name == "brunch"
-                }) {tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: breakfastFoodEmojis)}
-                
-                if mealTagEmojis.contains(where: { (emoji) -> Bool in
-                    return emoji.name == "lunch"
-                }) {tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: lunchFoodEmojis)}
-                
-                if mealTagEmojis.contains(where: { (emoji) -> Bool in
-                    return emoji.name == "dinner" || emoji.name == "latenight"
-                }) {tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: dinnerFoodEmojis)}
-                
-                if mealTagEmojis.contains(where: { (emoji) -> Bool in
-                    return emoji.name == "dessert" || emoji.name == "coffee"
-                }) {tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: snackEmojis)}
-                
-                if mealTagEmojis.contains(where: { (emoji) -> Bool in
-                    return emoji.name == "drinks"
-                }) {tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: allDrinkEmojis)}
-            }
-            
-            
-            //1e. Default Emojis
-            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: allDefaultEmojis)
+            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: defaultEmojis)
             
         } else if self.selectedEmojiFilter == recentEmoji {
 //            tempEmojis.append(self.selectedEmojiFilter ?? "")
@@ -1875,30 +1887,24 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
 //            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: allFoodEmojis)
 
         } else if self.selectedEmojiFilter == foodEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FoodEmojis)
         } else if self.selectedEmojiFilter == drinkEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_DrinkEmojis)
         } else if self.selectedEmojiFilter == snackEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_SnackEmojis)
         } else if self.selectedEmojiFilter == meatEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_RawEmojis)
         } else if self.selectedEmojiFilter == vegEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_VegEmojis)
         } else if self.selectedEmojiFilter == smileyEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_SmileyEmojis)
         } else if self.selectedEmojiFilter == flagEmoji {
-//            tempEmojis.append(self.selectedEmojiFilter ?? "")
             Database.sortEmojisWithCounts(inputEmojis: SET_FlagEmojis, emojiCounts: CurrentUser.userTaggedEmojiCounts, completion: { emojis in
                 SET_FlagEmojis = emojis
                 tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FlagEmojis)
             })
-//            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_FlagEmojis)
+        }  else if self.selectedEmojiFilter == otherEmoji {
+            tempEmojis = self.appendEmojis(currentEmojis: tempEmojis, newEmojis: SET_OtherEmojis)
         }
         
         
@@ -2654,7 +2660,7 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             cell.backgroundColor = isEmojiFilter ? UIColor.legitColor() : UIColor.clear
             cell.uploadLocations.textColor = isEmojiFilter ? UIColor.white : UIColor.mainBlue()
 //            cell.uploadLocations.font = UIFont(font: .avenirNextDemiBold, size: 13)
-            cell.uploadLocations.font = isEmojiFilter ? UIFont(font: .avenirNextBold, size: 13) : UIFont(font: .avenirNextHeavy, size: 13)
+            cell.uploadLocations.font = isEmojiFilter ? UIFont(font: .avenirNextBold, size: 13) : UIFont(font: .avenirNextBold, size: 13)
             cell.bottomDiv.isHidden = true
             cell.uploadLocations.sizeToFit()
             cell.sizeToFit()

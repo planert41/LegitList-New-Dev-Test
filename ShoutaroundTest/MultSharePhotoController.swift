@@ -185,11 +185,11 @@ class MultSharePhotoController: UIViewController, UICollectionViewDelegateFlowLa
                     }
                     
                     else if cuisineEmojiSelect.contains(tag) {
-                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: cuisineEmojiDictionary[tag], count: 0))
+                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: FlagEmojiDictionary[tag], count: 0))
                     }
                     
                     else if dietEmojiSelect.contains(tag) {
-                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: dietEmojiDictionary[tag], count: 0))
+                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: DietEmojiDictionary[tag], count: 0))
                     }
                 }
                 
@@ -1011,8 +1011,8 @@ Choose to tag one of the following to describe the location
         var tempEmoji = [] as [EmojiBasic]
         var allAutoTagDict: [String:String] = [:]
         
-        allAutoTagDict =  mealEmojiDictionary.merging(cuisineEmojiDictionary, uniquingKeysWith: { (current, _) -> String in current })
-        allAutoTagDict =  allAutoTagDict.merging(dietEmojiDictionary, uniquingKeysWith: { (current, _) -> String in current })
+        allAutoTagDict =  mealEmojiDictionary.merging(FlagEmojiDictionary, uniquingKeysWith: { (current, _) -> String in current })
+        allAutoTagDict =  allAutoTagDict.merging(DietEmojiDictionary, uniquingKeysWith: { (current, _) -> String in current })
         
         if scope != 3 {
             for tag in tag_selected {

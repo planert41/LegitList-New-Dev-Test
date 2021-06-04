@@ -200,11 +200,11 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
                     }
                         
                     else if cuisineEmojiSelect.contains(tag) {
-                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: cuisineEmojiDictionary[tag], count: 0))
+                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: FlagEmojiDictionary[tag], count: 0))
                     }
                         
                     else if dietEmojiSelect.contains(tag) {
-                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: dietEmojiDictionary[tag], count: 0))
+                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: DietEmojiDictionary[tag], count: 0))
                     }
                 }
                 
@@ -4234,6 +4234,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         sharePhotoListController.locationMostUsedEmojis = self.locationMostUsedEmojis
         sharePhotoListController.reviewSuggestedEmojis = self.reviewSuggestedEmojis
         sharePhotoListController.mealTagEmojis = self.mealTagEmojis
+        sharePhotoListController.setDefaultEmojis()
         print("Passing Caption Emojis : \(self.captionEmojis) | \(self.locationMostUsedEmojis) | \(self.reviewSuggestedEmojis) | \(self.mealTagEmojis)")
 
         //        sharePhotoListController.uploadPostDictionary = values

@@ -261,76 +261,16 @@ var EmojiDictionaryEmojis: [EmojiBasic] = []
 
 var userEmojiDictionary: [String:String] = [:]
 
-var EmojiDictionary: [String:String] =
-
-[
-// RATING EMOJIS
-    "💩":"poop",
-    "😡":"furious",
-    "🤔":"iffy",
-    "👌":"legit",
-    "🔥":"fire",
-    "💯":"100%",
-    "🥇":"best",
-    
-
-    //🥬🍙🍘🍥🥠🍢🍡🍧🍨🎂🍭🍼🫖🍻🥂🥢🥡🥄🍴🍽🍻🍧
-    
-    
-    
-    "🍳":"breakfast",
-    "🍱":"lunch",
-    "🍽":"dinner",
-    "🍮":"dessert",
-    "🍙":"snack",
-    "🍻":"drinks",
-    "🎂":"birthday",
-    "🥂":"celebrate",
-    "🥠":"fortune",
-    "🍭":"sweet",
-    "🌶":"spicy",
-    
-    "🍎":"apple",
-    "🍐":"pear",
-    "🍊":"orange",
-    "🍋":"lemon",
-    "🍌":"banana",
-    "🍉":"watermelon",
-    "🍇":"grape",
-    "🍓":"strawberry",
-    "🫐":"blueberry",
-    "🍈":"melon",
-    "🍒":"cheery",
-    "🍑":"peach",
-    "🥭":"mango",
-    "🍍":"pineapple",
-    "🥥":"coconut",
-    "🥝":"kiwi",
-    "🍅":"tomato",
-    "🍆":"eggplant",
-    "🥑":"avacado",
-    "🥦":"broccoli",
-    "🥒":"cucumber",
-    "🫑":"pepper",
-    "🌽":"corn",
-    "🥕":"carrot",
-    "🫒":"olive",
-    "🧄":"garlic",
-    "🧅":"onion",
-    "🥔":"potato",
-    "🍠":"sweet potato",
-    "🥬":"vegetable",
-
-    
+var FoodEmojiDictionary: [String:String] = [
+    "🧀":"cheese",
+    "🥚":"egg",
+    "🧈":"butter",
+    "🍯":"honey",
     "🥐":"pastry",
     "🥯":"bagel",
     "🍞":"bread",
     "🥖":"baguette",
     "🥨":"pretzel",
-
-    "🧀":"cheese",
-    "🥚":"egg",
-    "🧈":"butter",
     
     "🥞":"pancake",
     "🧇":"waffle",
@@ -338,7 +278,6 @@ var EmojiDictionary: [String:String] =
     
     "🥩":"steak",
     "🍗":"wings",
-    "🦴":"bone",
     "🌭":"hotdog",
     "🍔":"burger",
     "🍟":"fries",
@@ -376,9 +315,40 @@ var EmojiDictionary: [String:String] =
     "🍿":"popcorn",
     "🍩":"donut",
     "🍪":"cookie",
-    "🌰":"chestnut",
-    "🥜":"peanut",
-    "🍯":"honey",
+    "🦴":"bone",
+    "🧂":"salt",
+    "🥠":"fortune",
+    "🍭":"sweet",
+    "🌶":"spicy",
+    "🥣":"bowl",
+    "🍖":"bbq",
+    "🍤":"seafood"
+]
+
+var SnacksEmojiDictionary: [String:String] = [
+    "🥐":"pastry",
+    "🥯":"bagel",
+    "🍞":"bread",
+    "🥖":"baguette",
+    "🥨":"pretzel",
+    "🍨":"sundae",
+    "🍦":"icecream",
+    "🥧":"pie",
+    "🧁":"cupcake",
+    "🍰":"cake",
+    "🍘":"biscuit",
+    "🍬":"candy",
+    "🍫":"chocolate",
+    "🍿":"popcorn",
+    "🍩":"donut",
+    "🍪":"cookie",
+    "🥮":"mooncake",
+    "🥠":"fortune",
+    "🍟":"fries"
+]
+
+var DrinksEmojiDictionary: [String:String] = [
+
     "🥛":"milk",
     "☕️":"coffee",
     "🫖":"tea",
@@ -393,88 +363,46 @@ var EmojiDictionary: [String:String] =
     "🍸":"cocktail",
     "🍾":"champagne",
     "🧊":"ice",
-    "🥣":"bowl",
-    "🧂":"salt",
+    "🍹":"fruity"
 
-    "🐶":"dog",
-    "🐱":"cat",
-    "🐭":"mouse",
-    "🐹":"hamster",
-    "🐰":"rabbit",
-    "🦊":"fox",
-    "🐻":"bear",
-    "🐼":"panda",
-    "🐯":"tiger",
-    "🦁":"lion",
-    "🐮":"beef",
-    "🐷":"pork",
-    "🐔":"chicken",
-    "🐓":"poultry",
-    "🐒":"monkey",
-    "🐤":"bird",
-    "🦆":"duck",
-    "🦉":"owl",
-    "🦇":"bat",
-    "🦅":"eagle",
-    "🐺":"wolf",
-    "🐗":"boar",
-    "🐴":"horse",
-    "🦄":"unicorn",
-    "🐝":"bee",
-    "🪱":"worm",
-    "🐛":"bug",
-    "🦋":"butterfly",
-    "🐌":"snail",
-    "🪲":"beetle",
-    "🐜":"ant",
-    "🪰":"fly",
-    "🪳":"cockroach",
-    "🦟":"mosquito",
-    "🦗":"cricket",
-    "🕷":"spider",
-    "🕸":"web",
-    "🦂":"scorpion",
-    "🐢":"turtle",
-    "🐍":"snake",
-    "🦎":"lizard",
-    "🐙":"octopus",
-    "🦑":"squid",
-    "🦐":"shrimp",
-    "🦞":"lobster",
-    "🦀":"crab",
-    "🐟":"fish",
-    "🐋":"whale",
-    "🦈":"dolphin",
-    "🦭":"seal",
-    "🐊":"crocodile",
-    "🦓":"zebra",
-    "🦍":"ape",
-    "🐘":"elephant",
-    "🦛":"hippopotamus",
-    "🦏":"rhinoceros",
-    "🐪":"camel",
-    "🦒":"giraffe",
-    "🦘":"kangaroo",
-    "🦬":"bison",
-    "🐃":"buffalo",
-    "🐂":"ox",
-    "🐎":"horse",
-    "🐑":"sheep",
-    "🦙":"llama",
-    "🐐":"goat",
-    "🦃":"turkey",
-    "🦜":"parrot",
-    "🦢":"swan",
-    "🦩":"flamingo",
-    "🦝":"raccoon",
-    "🦨":"skunk",
-    "🦡":"badger",
-    "🦫":"beaver",
-    "🦦":"otter",
-    "🦥":"sloth",
-    "🐿":"squirrel",
-    "🦔":"hedgehog",
-    "🐲":"dragon",
+
+]
+
+var IngEmojiDictionary: [String:String] = [:]
+
+var VegEmojiDictionary: [String:String] = [
+    "🍎":"apple",
+    "🍐":"pear",
+    "🍊":"orange",
+    "🍋":"lemon",
+    "🍌":"banana",
+    "🍉":"watermelon",
+    "🍇":"grape",
+    "🍓":"strawberry",
+    "🫐":"blueberry",
+    "🍈":"melon",
+    "🍒":"cheery",
+    "🍑":"peach",
+    "🥭":"mango",
+    "🍍":"pineapple",
+    "🥥":"coconut",
+    "🥝":"kiwi",
+    "🍅":"tomato",
+    "🍆":"eggplant",
+    "🥑":"avacado",
+    "🥦":"broccoli",
+    "🥒":"cucumber",
+    "🫑":"pepper",
+    "🌽":"corn",
+    "🥕":"carrot",
+    "🫒":"olive",
+    "🧄":"garlic",
+    "🧅":"onion",
+    "🥔":"potato",
+    "🍠":"sweet potato",
+    "🥬":"vegetable",
+    "🌰":"chestnut",
+    "🥜":"peanut",
 
     "🌵":"cactus",
     "🪵":"wood",
@@ -490,61 +418,112 @@ var EmojiDictionary: [String:String] =
     "🌼":"flower",
     "🌻":"sunflower",
 
-    "🎉":"fun",
+]
 
-    "🚗":"delivery",
-    "🏠":"restaurant",
-    "🚌":"truck",
-    "🏪":"24hour",
-    "💑":"date",
-    "👔":"business",
-    "👖":"informal",
-    "💵":"cash",
-    "💳":"card",
-    "💲":"cheap",
-    "💸":"expensive",
-    "🔕":"quiet",
-    "🅿️":"parking",
-    "🆕":"new",
-    "👶":"kid",
-    "🍼":"baby",
-    "👨‍👩‍👧‍👦":"family",
-    "👨‍🌾":"local",
-    "💎":"gem",
-    "🏕":"outdoor",
-    "🧲":"chain",
-    "🎖":"honor",
-    "🎗":"charity",
-    "🎃":"seasonal",
+var MeatEmojiDictionary: [String: String] =
+[
+       "🐶":"dog",
+       "🐱":"cat",
+       "🐭":"mouse",
+       "🐹":"hamster",
+       "🐰":"rabbit",
+       "🦊":"fox",
+       "🐻":"bear",
+       "🐼":"panda",
+       "🐯":"tiger",
+       "🦁":"lion",
+       "🐮":"beef",
+       "🐷":"pork",
+       "🐔":"chicken",
+       "🐒":"monkey",
+       "🐤":"poultry",
+       "🦆":"duck",
+       "🦉":"owl",
+       "🦇":"bat",
+       "🦅":"eagle",
+       "🐺":"wolf",
+       "🐗":"boar",
+       "🐴":"horse",
+       "🦄":"unicorn",
+       "🐝":"bee",
+       "🪱":"worm",
+       "🐛":"bug",
+       "🦋":"butterfly",
+       "🐌":"snail",
+       "🪲":"beetle",
+       "🐜":"ant",
+       "🪰":"fly",
+       "🪳":"cockroach",
+       "🦟":"mosquito",
+       "🦗":"cricket",
+       "🕷":"spider",
+       "🕸":"web",
+       "🦂":"scorpion",
+       "🐢":"turtle",
+       "🐍":"snake",
+       "🦎":"lizard",
+       "🐙":"octopus",
+       "🦑":"squid",
+       "🦐":"shrimp",
+       "🦞":"lobster",
+       "🦀":"crab",
+       "🐟":"fish",
+       "🐋":"whale",
+       "🦈":"dolphin",
+       "🦭":"seal",
+       "🐊":"crocodile",
+       "🦓":"zebra",
+       "🦍":"ape",
+       "🐘":"elephant",
+       "🦛":"hippopotamus",
+       "🦏":"rhinoceros",
+       "🐪":"camel",
+       "🦒":"giraffe",
+       "🦘":"kangaroo",
+       "🦬":"bison",
+       "🐃":"buffalo",
+       "🐂":"ox",
+       "🐎":"horse",
+       "🐑":"sheep",
+       "🦙":"llama",
+       "🐐":"goat",
+       "🦃":"turkey",
+       "🦜":"parrot",
+       "🦢":"swan",
+       "🦩":"flamingo",
+       "🦝":"raccoon",
+       "🦨":"skunk",
+       "🦡":"badger",
+       "🦫":"beaver",
+       "🦦":"otter",
+       "🦥":"sloth",
+       "🐿":"squirrel",
+       "🦔":"hedgehog",
+       "🐲":"dragon"]
 
+var DietEmojiDictionary: [String:String] =
+[
     "🌳":"plant",
     "⛰":"natural",
-    "✅":"organic",
-    "🌿":"vegetarian",
-    "☘️":"vegan",
+    "✅":"vegan",
+    "☘️":"organic",
     "⛪️":"christian",
     "🕍":"kosher",
     "🛕":"hindu",
     "🕌":"halal",
     "☸️":"buddhist",
     
-    
-    
-    
     "❌🍖": "vegetarian",
-    "❌🌽": "gluten free",
+    "❌🌾": "gluten free",
     "❌🥜":"peanut free",
     "❌🥛":"non dairy",
-    "🇹🇭🍝":"pad thai" ,
-    "🍖🍡":"meatball",
-    
-    "🎃👻": "halloween",
-    "🐔🍗": "chicken wing",
-    "🐔🍚":"chicken rice",
-    "🐔🍛": "chicken curry",
-    "🐷🍛":"pork curry",
-    "🐟🍛":"fish curry",
-    
+]
+
+
+var SmileyEmojiDictionary: [String:String] =
+[
+
+    // OTHER SMILEYS
     
 // FEELINGS
     "😍":"love",
@@ -575,6 +554,42 @@ var EmojiDictionary: [String:String] =
     "😱":"shock",
     "😮‍💨":"sigh",
 
+]
+
+var EmojiDictionary: [String:String] =
+
+[
+
+    
+
+    //🥬🍙🍘🍥🥠🍢🍡🍧🍨🎂🍭🍼🫖🍻🥂🥢🥡🥄🍴🍽🍻🍧
+    
+    // RATING EMOJIS
+        "💩":"poop",
+        "😡":"furious",
+        "🤔":"iffy",
+        "👌":"legit",
+        "🔥":"fire",
+        "💯":"100%",
+        "🥇":"best",
+    
+    "🇹🇭🍝":"pad thai" ,
+    "🍖🍡":"meatball",
+    
+    "🎃👻": "halloween",
+    "🐔🍗": "chicken wing",
+    "🐔🍚":"chicken rice",
+    "🐔🍛": "chicken curry",
+    "🐷🍛":"pork curry",
+    "🐟🍛":"fish curry",
+    
+    
+
+
+    
+]
+
+var OtherEmojiDictionary:[String:String] = [
     // OTHER
     "🧶":"comfortable",
     "🤲":"handmade",
@@ -592,16 +607,15 @@ var EmojiDictionary: [String:String] =
 
     "🌟":"special",
     "❤️":"love",
-    "♨️":"bbq",
 
-    "🍤":"seafood",
     "❄️":"cold",
     "🫀":"heart",
     "🧠":"brain",
     "👻":"scary",
     "🦷":"teeth",
-    "💋":"kiss",
+    "💋":"romantic",
     "💪":"strong",
+    "🏆":"champ",
     "🙏":"pray",
     "👨‍🍳":"chef",
     "👨‍💻":"work",
@@ -667,12 +681,36 @@ var EmojiDictionary: [String:String] =
     "🚬":"cigarette",
     "⚡️":"fast",
     "🤵":"service",
+    "🎉":"fun",
 
-    
-    
-    
-// COUNTRIES
+    "🚗":"delivery",
+    "🏠":"restaurant",
+    "🚌":"truck",
+    "🏪":"24hour",
+    "💑":"date",
+    "👔":"business",
+    "👖":"informal",
+    "💵":"cash",
+    "💳":"card",
+    "💲":"cheap",
+    "💸":"expensive",
+    "🔕":"quiet",
+    "🅿️":"parking",
+    "🆕":"new",
+    "👶":"kid",
+    "🍼":"baby",
+    "👨‍👩‍👧‍👦":"family",
+    "👨‍🌾":"local",
+    "💎":"gem",
+    "🏕":"outdoor",
+    "🧲":"chain",
+    "🎖":"honor",
+    "🎗":"charity",
+    "🎃":"seasonal"
 
+]
+
+var FlagEmojiDictionary:[String:String] = [
     "🇦🇫":"afghanistan",
     "🇦🇱":"albania",
     "🇩🇿":"algeria",
@@ -880,9 +918,9 @@ var EmojiDictionary: [String:String] =
     "🇾🇪":"yemen",
     "🇿🇲":"zambia",
     "🇿🇼":"zimbabwe"
-    
-    
 ]
+
+var emojiDictionarySets:[[String:String]] = [mealEmojiDictionary, FoodEmojiDictionary, DrinksEmojiDictionary, VegEmojiDictionary, FlagEmojiDictionary, DietEmojiDictionary, SmileyEmojiDictionary, OtherEmojiDictionary, MeatEmojiDictionary, OtherEmojiDictionary, SnacksEmojiDictionary]
 
 
 //[

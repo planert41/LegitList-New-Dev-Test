@@ -1147,7 +1147,7 @@ extension SingleUserProfileHeader {
         sortSegmentControl.backgroundColor = UIColor.white
         sortSegmentControl.tintColor = UIColor.oldLegitColor()
         if #available(iOS 13.0, *) {
-            sortSegmentControl.selectedSegmentTintColor = UIColor.darkGray
+            sortSegmentControl.selectedSegmentTintColor = UIColor.mainBlue()
             sortSegmentControl.layer.borderColor = sortSegmentControl.selectedSegmentTintColor?.cgColor
 //            sortSegmentControl.selectedSegmentTintColor = UIColor.ianBlackColor()
         }

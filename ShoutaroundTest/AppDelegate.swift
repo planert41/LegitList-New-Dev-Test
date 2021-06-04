@@ -609,37 +609,68 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     
     @objc func compileEmojis(){
         
+        for dic in emojiDictionarySets{
+            EmojiDictionary = EmojiDictionary.merging(dic) { (current, _) in current }
+        }
+        
+        cuisineEmojiSelect = Array(FlagEmojiDictionary.keys)
 
-        // Check ReverseEmojiDictionary
         
         for emoji in defaultEmojiSelection {
             let tempEmoji = EmojiBasic(emoji: emoji, name: EmojiDictionary[emoji], count: 0)
             defaultEmojis.append(tempEmoji)
         }
         
-        let autotagEmojiSet = [mealEmojiDictionary, cuisineEmojiDictionary, dietEmojiDictionary]
+        let autotagEmojiSet = [mealEmojiDictionary, FlagEmojiDictionary, DietEmojiDictionary]
         
-        for (x) in mealEmojisSelect {
-            mealEmojis.append(EmojiBasic(emoji: x, name: mealEmojiDictionary[x], count: 0))
+        for (x, y) in mealEmojiDictionary {
+            mealEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
         }
         
-        for (x) in cuisineEmojiSelect {
-            cuisineEmojis.append(EmojiBasic(emoji: x, name: cuisineEmojiDictionary[x], count: 0))
+        for (x, y) in FlagEmojiDictionary {
+            cuisineEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
         }
         
-        for (x) in dietEmojiSelect {
-            dietEmojis.append(EmojiBasic(emoji: x, name: dietEmojiDictionary[x], count: 0))
+        for (x, y) in DietEmojiDictionary {
+            dietEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
         }
         
         for (x, y) in extraRatingEmojisDic {
              allRatingEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
          }
         
-        allFoodEmojis = breakfastFoodEmojis +  lunchFoodEmojis + dinnerFoodEmojis + snackEmojis
-        allDrinkEmojis = drinkEmojis
-        allIngredientEmojis = meatIngredientEmojis + vegIngredientEmojis + fruitsIngredientEmojis
+        allFoodEmojis = Array(FoodEmojiDictionary.keys)
+        allDrinkEmojis = Array(DrinksEmojiDictionary.keys)
+        IngEmojiDictionary = MeatEmojiDictionary
+        IngEmojiDictionary.merge(VegEmojiDictionary) {(current,_) in current}
+        allIngredientEmojis = Array(IngEmojiDictionary.keys)
         allDefaultEmojis = allFoodEmojis + allDrinkEmojis + allIngredientEmojis
-        cuisineEmojiSelect = Array(cuisineEmojiDictionary.keys)
+        
+        
+        SET_FoodEmojis = Database.appendEmojis(currentEmojis: SET_FoodEmojis, newEmojis: Array(FoodEmojiDictionary.keys))
+        SET_AllEmojis += SET_FoodEmojis
+        SET_SnackEmojis = Database.appendEmojis(currentEmojis: SET_SnackEmojis, newEmojis: Array(SnacksEmojiDictionary.keys))
+        SET_AllEmojis += SET_SnackEmojis
+        SET_DrinkEmojis = Database.appendEmojis(currentEmojis: SET_DrinkEmojis, newEmojis: Array(DrinksEmojiDictionary.keys))
+        SET_AllEmojis += SET_DrinkEmojis
+
+        SET_RawEmojis = Database.appendEmojis(currentEmojis: SET_RawEmojis, newEmojis: Array(MeatEmojiDictionary.keys))
+        SET_AllEmojis += SET_RawEmojis
+
+        SET_VegEmojis = Database.appendEmojis(currentEmojis: SET_VegEmojis, newEmojis: Array(VegEmojiDictionary.keys))
+        SET_AllEmojis += SET_VegEmojis
+
+        SET_FlagEmojis = Database.appendEmojis(currentEmojis: SET_FlagEmojis, newEmojis: Array(FlagEmojiDictionary.keys))
+        SET_AllEmojis += SET_FlagEmojis
+
+        SET_SmileyEmojis = Database.appendEmojis(currentEmojis: SET_SmileyEmojis, newEmojis: Array(SmileyEmojiDictionary.keys))
+        SET_AllEmojis += SET_SmileyEmojis
+
+        SET_OtherEmojis = Database.appendEmojis(currentEmojis: SET_OtherEmojis, newEmojis: Array(OtherEmojiDictionary.keys))
+        SET_AllEmojis += SET_OtherEmojis
+
+
+
 //        // Adds all first default emojis first
 //        for emoji in allDefaultEmojis {
 //            var emoji_dic = EmojiDictionary[emoji] ?? ""
@@ -672,9 +703,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         }
         
         // Create All Emoji Dictionary Emojis
-        for (x, y) in EmojiDictionary {
-            EmojiDictionaryEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
+        for x in SET_AllEmojis {
+            if let name = EmojiDictionary[x] {
+                EmojiDictionaryEmojis.append(EmojiBasic(emoji: x, name: name, count: 0))
+            }
         }
+//        for (x, y) in EmojiDictionary {
+//            EmojiDictionaryEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
+//        }
         
         
     // SETUP REVERSE EMOJI DICTIONARY

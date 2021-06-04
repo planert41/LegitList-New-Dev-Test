@@ -58,16 +58,23 @@ var snackEmoji = "🍦 Snack"
 var meatEmoji = "🐔 Meat"
 var vegEmoji = "🥬 Veg"
 var flagEmoji = "🇲🇾 Cuisine"
+var otherEmoji = "🌟 Other"
+
+var smileyEmojiSearch = "😍\nSmiley"
+var foodEmojiSearch = "🍔\nFood"
+var flagEmojiSearch = "🇲🇾\nCuisine"
+var typeEmojiSearch = "🐮\nType"
+var OtherEmojiSearch = "🌟\nOther"
 
 
 
-var FilterEmojiTypes:[String] = [recentEmoji, smileyEmoji, foodEmoji, drinkEmoji, snackEmoji, meatEmoji, vegEmoji, flagEmoji]
+var FilterEmojiTypes:[String] = [foodEmoji, drinkEmoji, snackEmoji, flagEmoji, smileyEmoji, meatEmoji, vegEmoji, otherEmoji]
 
 
 
 var UploadTagSelection:[String] = ["🙋‍♂️ User", "😋 Smiley", "🍔 Eats", "☕️ Drinks", "🍩 Snacks", "🐮 Meat","🌱 Veg", "Other"]
 
-var UploadTagSelectionRef:[String:[String]] = ["🙋‍♂️ User":CurrentUser.mostUsedEmojis, "😋 Smiley":smileyEmojis, "🍔 Eats":eatsEmojis, "☕️ Drinks":drinksEmojis, "🍩 Snacks":snacksEmojis, "🐮 Meat":meatEmojis,"🌱 Veg":vegEmojis, "Other":otherEmojis ]
+//var UploadTagSelectionRef:[String:[String]] = ["🙋‍♂️ User":CurrentUser.mostUsedEmojis, "😋 Smiley":smileyEmojis, "🍔 Eats":eatsEmojis, "☕️ Drinks":drinksEmojis, "🍩 Snacks":snacksEmojis, "🐮 Meat":meatEmojis,"🌱 Veg":vegEmojis, "Other":otherEmojis ]
 var LocationSuggestUploadTagSelection: String = "🏠 Auto"
 
 

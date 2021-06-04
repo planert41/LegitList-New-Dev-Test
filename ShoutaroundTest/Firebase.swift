@@ -11086,6 +11086,22 @@ extension Database{
         
         
     }
+    
+    static func appendEmojis(currentEmojis: [String]?, newEmojis: [String]?) -> [String]{
+        var tempEmojis: [String] = []
+        var tempCurrentEmojis = currentEmojis ?? []
+        var tempNewEmojis = newEmojis ?? []
+        
+        tempEmojis = tempCurrentEmojis
+        
+        for emoji in tempNewEmojis {
+            if !tempEmojis.contains(emoji){
+                tempEmojis.append(emoji)
+            }
+        }
+        
+        return tempEmojis
+    }
 
     
 //    static func printImageSizes(image: UIImage){

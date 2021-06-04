@@ -125,7 +125,6 @@ var ReverseEmojiDictionaryDups: [String:String] =
 
 
 
-    "bbq":"♨️",
     "grill":"♨️",
     "steam":"🌫",
     
@@ -154,7 +153,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "omelette":"🍳",
     "pancake": "🥞",
     "rice": "🍚",
-    "steak":"🍖",
+    "steak":"🥩",
     "chocolate": "🍫",
     "vanilla":"🍨",
     "shaved ice": "🍧",
@@ -223,8 +222,11 @@ var ReverseEmojiDictionaryDups: [String:String] =
 
     "egg": "🥚",
     "pineapple": "🍍",
+    "flavored ice":"🍧",
+    "flavor ice":"🍧",
+    "ice cone":"🍧",
+    "slush":"🍧",
 
-    
     
     "chicken curry": "🐔🍛",
     "chicken rice": "🐔🍚",

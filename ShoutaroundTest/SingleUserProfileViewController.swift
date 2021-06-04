@@ -485,7 +485,7 @@ class SingleUserProfileViewController: UIViewController {
         sortSegmentControl.tintColor = UIColor.oldLegitColor()
         sortSegmentControl.layer.borderWidth = 1
         if #available(iOS 13.0, *) {
-            sortSegmentControl.selectedSegmentTintColor = UIColor.darkGray
+            sortSegmentControl.selectedSegmentTintColor = UIColor.mainBlue()
         }
         
         sortSegmentControl.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14), NSAttributedString.Key.foregroundColor: UIColor.gray], for: .normal)
