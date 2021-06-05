@@ -527,6 +527,7 @@ class TemplateObjects {
         
         sc.addTarget(TemplateObjects.self, action: #selector(selectPostSort), for: .valueChanged)
         sc.selectedSegmentIndex = 0
+        sc.layer.borderColor = UIColor.lightGray.cgColor
         self.refreshSort(sender: sc)
         return sc
         

@@ -214,6 +214,8 @@ class NewLegitHomeHeader: UICollectionViewCell {
             notificationLabel.isHidden = true
             notificationButton.tintColor = UIColor.darkGray
         }
+        notificationButton.isUserInteractionEnabled = true
+
     }
     
     @objc func openNotifications(){
@@ -264,12 +266,6 @@ class NewLegitHomeHeader: UICollectionViewCell {
 
 //        let profilePicView = UIView()
                 
-        headerView.addSubview(notificationButton)
-        notificationButton.anchor(top: nil, left: nil, bottom: nil, right: headerView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 40, height: 40)
-
-        refreshNotifications()
-
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshNotifications), name: MainTabBarController.NewNotificationName, object: nil)
 
 //        headerView.addSubview(navMapButton)
 //        navMapButton.anchor(top: nil, left: nil, bottom: nil, right: headerView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 40, height: 40)
@@ -314,150 +310,17 @@ class NewLegitHomeHeader: UICollectionViewCell {
 //        headerLabelView.layer.masksToBounds = true
 //        headerLabelView.backgroundColor = UIColor.ianWhiteColor()
         
-//        headerLabelView.leftAnchor.constraint(lessThanOrEqualTo: notificationButton.rightAnchor).isActive = true
+        headerView.addSubview(notificationButton)
+        notificationButton.anchor(top: nil, left: nil, bottom: nil, right: headerView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 40, height: 40)
         notificationButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        notificationButton.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
+
+        refreshNotifications()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshNotifications), name: MainTabBarController.NewNotificationName, object: nil)
+
+//        headerLabelView.leftAnchor.constraint(lessThanOrEqualTo: notificationButton.rightAnchor).isActive = true
 //        navMapButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-
-        
-
-        
-        
-//        headerLabelView.addSubview(emojiSearchBar)
-//        emojiSearchBar.anchor(top: nil, left: profileImageView.rightAnchor, bottom: headerView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
-////        emojiSearchBar.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//
-//        emojiSearchBar.delegate = self
-//        emojiSearchBar.showEmoji = true
-
-//        headerLabelView.addSubview(navGridToggleButton)
-//        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
-//        navGridToggleButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-//        setupnavGridToggleButton()
-        
-//        headerLabelView.addSubview(navEmojiButtonView)
-//        navEmojiButtonView.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 35, height: 35)
-//        navEmojiButtonView.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        navEmojiButtonView.layer.cornerRadius = 35/2
-//        navEmojiButtonView.layer.masksToBounds = true
-//        navEmojiButtonView.backgroundColor = UIColor.ianWhiteColor()
-//        navEmojiButtonView.layer.borderWidth = 0
-//        navEmojiButton.layer.borderColor = UIColor.gray.cgColor
-
-//        headerLabelView.addSubview(navEmojiButton)
-//        navEmojiButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 30, height: 30)
-//        navEmojiButton.centerYAnchor.constraint(equalTo: navEmojiButtonView.centerYAnchor).isActive = true
-//        navEmojiButton.centerXAnchor.constraint(equalTo: navEmojiButtonView.centerXAnchor).isActive = true
-//
-//        navEmojiButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-////        navEmojiButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        navEmojiButton.addTarget(self, action: #selector(didTapNavEmoji), for: .touchUpInside)
-//        navEmojiButton.layer.cornerRadius = 30/2
-//        navEmojiButton.layer.masksToBounds = true
-//        navEmojiButton.tintColor = UIColor.gray
-//        navEmojiButton.layer.borderColor = UIColor.gray.cgColor
-//        navEmojiButton.setTitleColor(UIColor.gray, for: .normal)
-//        navEmojiButton.backgroundColor = UIColor.clear
-//        navEmojiButton.layer.borderWidth = 0
-//        navEmojiButton.titleLabel?.adjustsFontSizeToFitWidth = true
-//        navEmojiButton.isHidden = false
-//        navEmojiButton.setImage(UIImage(), for: .normal)
-//        scheduledTimerWithTimeInterval()
-//        updateEmojiButton()
-
-//        navEmojiButtonView.isHidden = true
-//        navEmojiButton.isHidden = true
-
-
-        
-        
-//        headerLabelView.addSubview(navMapButton)
-//        navMapButton.anchor(top: nil, left: navFeedTypeLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 0, width: 25, height: 25)
-//        navMapButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-////        navMapButton.addTarget(self, action: #selector(didTapMapButton), for: .touchUpInside)
-//        navMapButton.addTarget(self, action: #selector(didTapMapButton), for: .touchUpInside)
-////        navMapButton.leftAnchor.constraint(lessThanOrEqualTo: sortSegmentControl.rightAnchor, constant: 15).isActive = true
-////        navMapButton.layer.cornerRadius = 50/2
-////        navMapButton.layer.cornerRadius = 30/2
-////        navMapButton.layer.masksToBounds = true
-////        navMapButton.backgroundColor = UIColor.backgroundGrayColor()
-////        navMapButton.alpha = 0.8
-//        navMapButton.tintColor = UIColor.darkGray
-//        navMapButton.layer.borderColor = navMapButton.tintColor.cgColor
-//        navMapButton.backgroundColor = UIColor.clear
-//        navMapButton.layer.borderWidth = 0
-//        navMapButton.isHidden = true
-        
-        
-        
-        
-//        headerLabelView.addSubview(navFeedTypeButton)
-//        navFeedTypeButton.anchor(top: nil, left: navFeedTypeLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 25, height: 25)
-//        navFeedTypeButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-////        navFeedTypeButton.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 10).isActive = true
-//        navFeedTypeButton.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 10).isActive = true
-
-
-                
-        
-        
-//        headerLabelView.backgroundColor = UIColor.lightLegitColor()
-        
-
-        
-//        headerLabelView.addSubview(navSearchButton)
-//        navSearchButton.setTitle("", for: .normal)
-//        navSearchButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 35, height: 35)
-//        navSearchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapSearchButton)))
-//        navSearchButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        navSearchButton.semanticContentAttribute  = .forceLeftToRight
-//        navSearchButton.layer.borderWidth = 0
-//        navSearchButton.backgroundColor = UIColor.white
-//        navSearchButton.layer.cornerRadius = 35/2
-//        navSearchButton.layer.masksToBounds = true
-
-//        headerLabelView.addSubview(notificationButton)
-//        notificationButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
-//        notificationButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        refreshNotifications()
-        
-        
-
-//        headerLabelView.addSubview(navMapButton)
-//        navMapButton.tintColor = UIColor.ianBlackColor()
-//        navMapButton.setTitle(" Map ", for: .normal)
-////        navMapButton.setTitleColor(UIColor.darkGray, for: .normal)
-//        navMapButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
-//        navMapButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        navMapButton.semanticContentAttribute  = .forceLeftToRight
-//        navMapButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-//        navMapButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-//        navMapButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMapButton)))
-//        navMapButton.backgroundColor = UIColor.clear
-//        navMapButton.layer.cornerRadius = 5
-//        navMapButton.layer.masksToBounds = true
-        
-//        headerLabelView.addSubview(navGridToggleButton)
-//        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
-//        navGridToggleButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-//        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-//        setupnavGridToggleButton()
-        
-//        headerLabelView.addSubview(navEmojiButton)
-//        navEmojiButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
-//        navEmojiButton.addTarget(self, action: #selector(didTapNavEmoji), for: .touchUpInside)
-//        navEmojiButton.layer.cornerRadius = 5
-//        navEmojiButton.layer.masksToBounds = true
-//        navEmojiButton.tintColor = UIColor.gray
-//        navEmojiButton.layer.borderColor = UIColor.gray.cgColor
-//        navEmojiButton.setTitleColor(UIColor.gray, for: .normal)
-//        navEmojiButton.backgroundColor = UIColor.clear
-//        navEmojiButton.layer.borderWidth = 0
-//        navEmojiButton.alpha = 0.6
-//        navEmojiButton.isHidden = false
-//        updateEmojiButton()
-
-
 
 
         
@@ -552,6 +415,147 @@ class NewLegitHomeHeader: UICollectionViewCell {
 //        sortSegmentControl.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).isActive = true
         
         
+        
+        
+        
+        
+        //        headerLabelView.addSubview(emojiSearchBar)
+        //        emojiSearchBar.anchor(top: nil, left: profileImageView.rightAnchor, bottom: headerView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
+        ////        emojiSearchBar.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //
+        //        emojiSearchBar.delegate = self
+        //        emojiSearchBar.showEmoji = true
+
+        //        headerLabelView.addSubview(navGridToggleButton)
+        //        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
+        //        navGridToggleButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        //        setupnavGridToggleButton()
+                
+        //        headerLabelView.addSubview(navEmojiButtonView)
+        //        navEmojiButtonView.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 35, height: 35)
+        //        navEmojiButtonView.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        navEmojiButtonView.layer.cornerRadius = 35/2
+        //        navEmojiButtonView.layer.masksToBounds = true
+        //        navEmojiButtonView.backgroundColor = UIColor.ianWhiteColor()
+        //        navEmojiButtonView.layer.borderWidth = 0
+        //        navEmojiButton.layer.borderColor = UIColor.gray.cgColor
+
+        //        headerLabelView.addSubview(navEmojiButton)
+        //        navEmojiButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 30, height: 30)
+        //        navEmojiButton.centerYAnchor.constraint(equalTo: navEmojiButtonView.centerYAnchor).isActive = true
+        //        navEmojiButton.centerXAnchor.constraint(equalTo: navEmojiButtonView.centerXAnchor).isActive = true
+        //
+        //        navEmojiButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        ////        navEmojiButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        navEmojiButton.addTarget(self, action: #selector(didTapNavEmoji), for: .touchUpInside)
+        //        navEmojiButton.layer.cornerRadius = 30/2
+        //        navEmojiButton.layer.masksToBounds = true
+        //        navEmojiButton.tintColor = UIColor.gray
+        //        navEmojiButton.layer.borderColor = UIColor.gray.cgColor
+        //        navEmojiButton.setTitleColor(UIColor.gray, for: .normal)
+        //        navEmojiButton.backgroundColor = UIColor.clear
+        //        navEmojiButton.layer.borderWidth = 0
+        //        navEmojiButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        //        navEmojiButton.isHidden = false
+        //        navEmojiButton.setImage(UIImage(), for: .normal)
+        //        scheduledTimerWithTimeInterval()
+        //        updateEmojiButton()
+
+        //        navEmojiButtonView.isHidden = true
+        //        navEmojiButton.isHidden = true
+
+
+                
+                
+        //        headerLabelView.addSubview(navMapButton)
+        //        navMapButton.anchor(top: nil, left: navFeedTypeLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 0, width: 25, height: 25)
+        //        navMapButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        ////        navMapButton.addTarget(self, action: #selector(didTapMapButton), for: .touchUpInside)
+        //        navMapButton.addTarget(self, action: #selector(didTapMapButton), for: .touchUpInside)
+        ////        navMapButton.leftAnchor.constraint(lessThanOrEqualTo: sortSegmentControl.rightAnchor, constant: 15).isActive = true
+        ////        navMapButton.layer.cornerRadius = 50/2
+        ////        navMapButton.layer.cornerRadius = 30/2
+        ////        navMapButton.layer.masksToBounds = true
+        ////        navMapButton.backgroundColor = UIColor.backgroundGrayColor()
+        ////        navMapButton.alpha = 0.8
+        //        navMapButton.tintColor = UIColor.darkGray
+        //        navMapButton.layer.borderColor = navMapButton.tintColor.cgColor
+        //        navMapButton.backgroundColor = UIColor.clear
+        //        navMapButton.layer.borderWidth = 0
+        //        navMapButton.isHidden = true
+                
+                
+                
+                
+        //        headerLabelView.addSubview(navFeedTypeButton)
+        //        navFeedTypeButton.anchor(top: nil, left: navFeedTypeLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 25, height: 25)
+        //        navFeedTypeButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        ////        navFeedTypeButton.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 10).isActive = true
+        //        navFeedTypeButton.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 10).isActive = true
+
+
+                        
+                
+                
+        //        headerLabelView.backgroundColor = UIColor.lightLegitColor()
+                
+
+                
+        //        headerLabelView.addSubview(navSearchButton)
+        //        navSearchButton.setTitle("", for: .normal)
+        //        navSearchButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 35, height: 35)
+        //        navSearchButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapSearchButton)))
+        //        navSearchButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        navSearchButton.semanticContentAttribute  = .forceLeftToRight
+        //        navSearchButton.layer.borderWidth = 0
+        //        navSearchButton.backgroundColor = UIColor.white
+        //        navSearchButton.layer.cornerRadius = 35/2
+        //        navSearchButton.layer.masksToBounds = true
+
+        //        headerLabelView.addSubview(notificationButton)
+        //        notificationButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
+        //        notificationButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        refreshNotifications()
+                
+                
+
+        //        headerLabelView.addSubview(navMapButton)
+        //        navMapButton.tintColor = UIColor.ianBlackColor()
+        //        navMapButton.setTitle(" Map ", for: .normal)
+        ////        navMapButton.setTitleColor(UIColor.darkGray, for: .normal)
+        //        navMapButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
+        //        navMapButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        navMapButton.semanticContentAttribute  = .forceLeftToRight
+        //        navMapButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        //        navMapButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        //        navMapButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMapButton)))
+        //        navMapButton.backgroundColor = UIColor.clear
+        //        navMapButton.layer.cornerRadius = 5
+        //        navMapButton.layer.masksToBounds = true
+                
+        //        headerLabelView.addSubview(navGridToggleButton)
+        //        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
+        //        navGridToggleButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
+        //        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        //        setupnavGridToggleButton()
+                
+        //        headerLabelView.addSubview(navEmojiButton)
+        //        navEmojiButton.anchor(top: nil, left: nil, bottom: nil, right: headerLabelView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 30)
+        //        navEmojiButton.addTarget(self, action: #selector(didTapNavEmoji), for: .touchUpInside)
+        //        navEmojiButton.layer.cornerRadius = 5
+        //        navEmojiButton.layer.masksToBounds = true
+        //        navEmojiButton.tintColor = UIColor.gray
+        //        navEmojiButton.layer.borderColor = UIColor.gray.cgColor
+        //        navEmojiButton.setTitleColor(UIColor.gray, for: .normal)
+        //        navEmojiButton.backgroundColor = UIColor.clear
+        //        navEmojiButton.layer.borderWidth = 0
+        //        navEmojiButton.alpha = 0.6
+        //        navEmojiButton.isHidden = false
+        //        updateEmojiButton()
+
+
+
     }
     
     required init?(coder: NSCoder) {

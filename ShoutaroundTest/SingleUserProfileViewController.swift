@@ -484,12 +484,13 @@ class SingleUserProfileViewController: UIViewController {
         sortSegmentControl.backgroundColor = UIColor.white
         sortSegmentControl.tintColor = UIColor.oldLegitColor()
         sortSegmentControl.layer.borderWidth = 1
+        sortSegmentControl.layer.borderColor = UIColor.lightGray.cgColor
         if #available(iOS 13.0, *) {
             sortSegmentControl.selectedSegmentTintColor = UIColor.mainBlue()
         }
         
-        sortSegmentControl.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14), NSAttributedString.Key.foregroundColor: UIColor.gray], for: .normal)
-        sortSegmentControl.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 13), NSAttributedString.Key.foregroundColor: UIColor.ianWhiteColor()], for: .selected)
+        sortSegmentControl.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 16), NSAttributedString.Key.foregroundColor: UIColor.gray], for: .normal)
+        sortSegmentControl.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 15), NSAttributedString.Key.foregroundColor: UIColor.ianWhiteColor()], for: .selected)
     }
     
     @objc func selectSort(sender: UISegmentedControl) {

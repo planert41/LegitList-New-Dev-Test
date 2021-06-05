@@ -230,6 +230,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         sortSegmentControl.backgroundColor = UIColor.white
         sortSegmentControl.tintColor = UIColor.oldLegitColor()
         sortSegmentControl.layer.borderWidth = 1
+        sortSegmentControl.layer.borderColor = UIColor.lightGray.cgColor
         if #available(iOS 13.0, *) {
             sortSegmentControl.selectedSegmentTintColor = UIColor.mainBlue()
         }
