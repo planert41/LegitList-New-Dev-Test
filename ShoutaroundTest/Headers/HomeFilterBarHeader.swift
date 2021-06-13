@@ -430,7 +430,7 @@ class HomeFilterBarHeader: UICollectionViewCell, UISearchBarDelegate, UICollecti
     
     let emojiCellID = "emojiCellID"
     
-    var defaultMeals = ["breakfast","brunch","lunch","dinner","latenight","other","dessert", "drinks","coffee"]
+    var defaultMeals = ["breakfast","lunch","dinner","latenight","other","dessert", "drinks","coffee"]
 //    var defaultDrinks = ["coffee", "dessert", "drinks"]
 //    var defaultAddTagOptions = ["coffee", "dessert", "drinks","breakfast","brunch","lunch","dinner","latenight","other"]
     var addTagOptions: [String] = []

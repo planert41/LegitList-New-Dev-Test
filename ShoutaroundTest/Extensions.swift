@@ -1296,7 +1296,7 @@ extension UIViewController {
     💯 : 100%
     🔥 : Fire
     👌 : Legit
-    🤔 : Iffy
+    😍 : Awesome
     😡 : Angry
     💩 : Poop
     """)

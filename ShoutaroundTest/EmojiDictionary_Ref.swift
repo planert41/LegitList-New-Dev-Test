@@ -52,7 +52,7 @@ var smileyEmojis: [String] = ["😍","😋","🤤","👍","😀","😝","😂","
 var extraRatingEmojis: [String] = ["💩","😡","🤔","👌","🔥","💯", "🥇"]
 
 var extraRatingEmojisDic: [String: String] =
-    ["💩":"poop", "😡":"angry", "🤔":"iffy", "👌":"legit","🔥":"fire", "💯":"100%", "🥇":"best"]
+    ["💩":"poop", "😡":"angry", "😍":"awesome", "👌":"legit","🔥":"fire", "💯":"100%", "🥇":"best"]
 
 
 var UserStatusEmojis: [String] = "😍😋🤤🤩😭😤😥😓💩😡😵🤑💪👍✌️👌💯❤️🔥🏆🤯😭😤😢🤤😵🤮😋".map(String.init)
@@ -71,18 +71,16 @@ var mealEmojis:[EmojiBasic] = []
 var cuisineEmojis:[EmojiBasic] = []
 var dietEmojis:[EmojiBasic] = []
 
-var mealEmojisSelect:[String] = ["🍳","🍱","🍽","🍮","☕️","🍻","🌙","📍"]
+var mealEmojisSelect:[String] = ["🍳","🍱","🍽","🍨","☕️","🍙","🍻","🌙","📍"]
 var mealEmojiDictionary:[String:String] = [
 //    "🥞":"brunch",
     "🍳":"breakfast",
     "🍱":"lunch",
     "🍽":"dinner",
-    "🍮":"dessert",
+    "🍨":"dessert",
     "🍙":"snack",
-    "🍻":"drinks",
-    "🎂":"birthday",
-    "🥂":"celebrate",
     "☕️":"coffee",
+    "🍻":"drinks",
     "🌙":"latenight",
     "📍":"poi"
 ]
@@ -91,9 +89,7 @@ var cuisineEmojiSelect:[String] = [
 
 ]
 
-var dietEmojiSelect:[String] = [
-   "❌🍖","❌🌽","❌🥜","❌🥛","⛪️","🕍","🕌", "☸️"
-]
+var dietEmojiSelect:[String] = ["❌🍖","❌🌾","✅","☘️","❌🍚","🕍","🕌","⛪️","🛕","☸️","❌🥜","❌🥛"]
 //var dietEmojiDictionary:[String:String] = [
 //    "⛪️":"christian",
 //    "🕍":"kosher",
@@ -106,7 +102,7 @@ var dietEmojiSelect:[String] = [
 //]
 
 var allAutoTagDictionary = [mealEmojiDictionary, FlagEmojiDictionary, DietEmojiDictionary]
-
+var autoTagEmojiSelect:[String] = []
 
 
 
@@ -123,7 +119,6 @@ var SET_SmileyEmojis: [String] = ["😀","😍","🤤","🤯","😂","😢","�
 var SET_RawEmojis: [String] = ["🐮","🐷","🐔","🦆","🐟","🦐","🦀","🦞","🐙","🦑","🦃","🐑","🐐","🦬","🐗","🐴","🐰"]
 var SET_OtherEmojis: [String] = ["🚗","🏠","💑","👔","🩴","🕯","⚡️","🎉","📆","🧨","💣","✈️","❤️","🌟","🗽","👑"]
 var SET_AllEmojis: [String] = ["🚗","🏠","💑","👔","🩴","🕯","⚡️","🎉","📆","🧨","💣","✈️","❤️","🌟","🗽","👑"]
-
 
 
 

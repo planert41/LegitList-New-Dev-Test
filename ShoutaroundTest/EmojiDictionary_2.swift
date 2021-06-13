@@ -70,10 +70,11 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "bubble tea":"🧋",
     "bubble":"🧋",
     "diamond":"💎",
-    "posh":"👠",
-    "dress up":"👠",
+    "posh":"🎩",
+    "high end":"🎩",
+    "dress up":"🎩",
     "non profit":"🎗",
-    
+//    👠
     
     "fruit":"🍎",
     "berry":"🍇",
@@ -98,7 +99,6 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "angry": "😤",
     "sad": "😢",
     "cry": "😭",
-    "amazing": "⭐️",
     "good": "😀",
     "lol": "😝",
     "furious": "😡",
@@ -116,13 +116,16 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "my mind":"🤯",
     "solid":"👍",
     "awful":"😓",
+    "celebrate":"🥳",
+    "specialty":"🌟",
+
     "number one":"🏅",
     "phone":"☎️",
     "disabled":"♿️",
     "ping pong":"🏓",
     "mma":"🥋",
     "workout":"🏋️",
-
+    "smoothie": "🥤",
 
 
     "grill":"♨️",
@@ -134,7 +137,6 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "burrito": "🌯",
     "cake": "🍰",
     "cakes": "🍰",
-    "birthday": "🎂",
     "noodles": "🍜",
     "noodle": "🍜",
     "mee": "🍜",
@@ -147,6 +149,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "hotdog": "🌭",
     "pizza": "🍕",
     "ice cream": "🍦",
+    "gelato": "🍦",
 
     "beer": "🍺",
     "croissant": "🥐",
@@ -155,7 +158,6 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "rice": "🍚",
     "steak":"🥩",
     "chocolate": "🍫",
-    "vanilla":"🍨",
     "shaved ice": "🍧",
     "soup": "🍲",
     "donut": "🍩",
@@ -201,7 +203,6 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "wheat": "🌾",
     "kiwi": "🥝",
     "cherry": "🍒",
-    "vegetarian": "🍀",
     "octopus": "🐙",
     "squid":"🦑",
     "corn": "🌽",
@@ -265,7 +266,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "brunch":"🥞",
     "lunch":"🍱",
     "dinner":"🍽",
-    "dessert":"🍮",
+    "dessert":"🍨",
     "coffee": "☕️",
     "drinks":"🍻",
     "latenight":"🌙",

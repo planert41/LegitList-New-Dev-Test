@@ -623,22 +623,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         
         let autotagEmojiSet = [mealEmojiDictionary, FlagEmojiDictionary, DietEmojiDictionary]
         
-        for (x, y) in mealEmojiDictionary {
-            mealEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
-        }
-        
-        for (x, y) in FlagEmojiDictionary {
-            cuisineEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
-        }
-        
-        for (x, y) in DietEmojiDictionary {
-            dietEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
-        }
-        
-        for (x, y) in extraRatingEmojisDic {
-             allRatingEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
-         }
-        
+//        for (x, y) in mealEmojiDictionary {
+//            mealEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
+//        }
+
         allFoodEmojis = Array(FoodEmojiDictionary.keys)
         allDrinkEmojis = Array(DrinksEmojiDictionary.keys)
         IngEmojiDictionary = MeatEmojiDictionary
@@ -669,6 +657,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         SET_OtherEmojis = Database.appendEmojis(currentEmojis: SET_OtherEmojis, newEmojis: Array(OtherEmojiDictionary.keys))
         SET_AllEmojis += SET_OtherEmojis
 
+        
+        for meal in mealEmojisSelect {
+            mealEmojis.append(EmojiBasic(emoji: meal, name: mealEmojiDictionary[meal], count: 0))
+        }
+        
+        for country in SET_FlagEmojis {
+            cuisineEmojis.append(EmojiBasic(emoji: country, name: FlagEmojiDictionary[country], count: 0))
+        }
+//
+//        for (x, y) in FlagEmojiDictionary {
+//            cuisineEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
+//        }
+        
+        for x in dietEmojiSelect {
+            dietEmojis.append(EmojiBasic(emoji: x, name: DietEmojiDictionary[x], count: 0))
+        }
+        
+        for (x, y) in extraRatingEmojisDic {
+             allRatingEmojis.append(EmojiBasic(emoji: x, name: y, count: 0))
+         }
+        
+        autoTagEmojiSelect = mealEmojisSelect
+        autoTagEmojiSelect += dietEmojiSelect
+        autoTagEmojiSelect += SET_FlagEmojis
 
 
 //        // Adds all first default emojis first

@@ -54,7 +54,8 @@ class UploadEmojiCell: UICollectionViewCell {
     
     var selectedBackgroundColor = UIColor.ianLegitColor().withAlphaComponent(0.6)
     var selectedBorderColor = UIColor.ianLegitColor().cgColor
-    var suggestedBackgroundColor = UIColor.lightGray.withAlphaComponent(0.6)
+    var suggestedBackgroundColor = UIColor.mainBlue().withAlphaComponent(0.2)
+    var suggestedBorderColor = UIColor.mainBlue().withAlphaComponent(0.8)
 
     func setupSelectedView(){
         if !turnOffSelection {

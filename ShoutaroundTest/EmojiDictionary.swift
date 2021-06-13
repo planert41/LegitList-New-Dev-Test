@@ -503,8 +503,6 @@ var MeatEmojiDictionary: [String: String] =
 
 var DietEmojiDictionary: [String:String] =
 [
-    "🌳":"plant",
-    "⛰":"natural",
     "✅":"vegan",
     "☘️":"organic",
     "⛪️":"christian",
@@ -517,6 +515,7 @@ var DietEmojiDictionary: [String:String] =
     "❌🌾": "gluten free",
     "❌🥜":"peanut free",
     "❌🥛":"non dairy",
+    "❌🍚":"keto",
 ]
 
 
@@ -526,7 +525,6 @@ var SmileyEmojiDictionary: [String:String] =
     // OTHER SMILEYS
     
 // FEELINGS
-    "😍":"love",
     "😋":"tasty",
     "🤤":"delicious",
     "👍":"awesome",
@@ -535,6 +533,8 @@ var SmileyEmojiDictionary: [String:String] =
     "😂":"funny",
     "😎":"cool",
     "😮":"surprised",
+    "🤩":"amazing",
+
 //    "🤑":"expensive",
 
     "😴":"slow",
@@ -546,13 +546,15 @@ var SmileyEmojiDictionary: [String:String] =
     "🤒":"sick",
     "😩":"terrible",
     "😓":"bad",
-    "🥳":"celebrate",
-    "👠":"class",
+    "🥳":"party",
+    "🎩":"classy",
     "🥺":"please",
     "😭":"cry",
     "🤬":"wtf",
     "😱":"shock",
     "😮‍💨":"sigh",
+    "😡":"awful",
+    "🤫":"secret",
 
 ]
 
@@ -567,7 +569,7 @@ var EmojiDictionary: [String:String] =
     // RATING EMOJIS
         "💩":"poop",
         "😡":"furious",
-        "🤔":"iffy",
+        "😍":"awesome",
         "👌":"legit",
         "🔥":"fire",
         "💯":"100%",
@@ -603,7 +605,11 @@ var OtherEmojiDictionary:[String:String] = [
     "🏜":"dry",
     "🩴":"casual",
     "✈️":"travel",
-
+    "⭐️":"star",
+    "🎂":"birthday",
+    "🥂":"celebrate",
+    "🌳":"plant",
+    "⛰":"natural",
 
     "🌟":"special",
     "❤️":"love",

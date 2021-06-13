@@ -9950,10 +9950,11 @@ extension Database{
             // Guess By Location Type
             if (googleLocationType.contains("restaurant")) {
                 // Guess by Timing - For restaurant since most places are bar AND restaurant
-                if (day == 1 || day == 7) && (hour > 8 && hour <= 14) {
-                    // Weekend Brunch
-                    tempPostType = "brunch"
-                } else if hour > 5 && hour <= 11 {
+//                if (day == 1 || day == 7) && (hour > 8 && hour <= 14) {
+//                    // Weekend Brunch
+//                    tempPostType = "brunch"
+//                } else
+                if hour > 5 && hour <= 11 {
                     tempPostType = "breakfast"
                 } else if hour > 11 && hour <= 15 {
                     tempPostType = "lunch"
@@ -9974,10 +9975,11 @@ extension Database{
             }
         } else {
             // Guess by Timing - No Google Type Location
-            if (day == 1 || day == 7) && (hour > 8 && hour <= 14) {
-                // Weekend Brunch
-                tempPostType = "brunch"
-            } else if hour > 5 && hour <= 11 {
+//            if (day == 1 || day == 7) && (hour > 8 && hour <= 14) {
+//                // Weekend Brunch
+//                tempPostType = "brunch"
+//            } else
+            if hour > 5 && hour <= 11 {
                 tempPostType = "breakfast"
             } else if hour > 11 && hour <= 15 {
                 tempPostType = "lunch"
@@ -10099,7 +10101,8 @@ extension Database{
         let API_iOSKey = GoogleAPIKey()
         
         var urlParameters = URLComponents(string: "https://maps.googleapis.com/maps/api/place/search/json?")!
-        
+        //        https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=41.973675,-87.667548&radius=1500&type=restaurant|cafe&key=AIzaSyAzwACZh50Qq1V5YYKpmfN21mZs8dW6210
+
         urlParameters.queryItems = [
             URLQueryItem(name: "location", value: "\(location.coordinate.latitude),\(location.coordinate.longitude)"),
             URLQueryItem(name: "rankby", value: "distance"),

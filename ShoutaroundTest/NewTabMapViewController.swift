@@ -163,7 +163,7 @@ class NewTabMapViewController: UIViewController {
         ul.numberOfLines = 0
         ul.textAlignment = NSTextAlignment.right
         ul.font = UIFont(name: "Poppins-Bold", size: 14)
-        ul.textColor = UIColor.black
+        ul.textColor = UIColor.mainBlue()
         return ul
     }()
 
@@ -1472,7 +1472,7 @@ extension NewTabMapViewController : MKMapViewDelegate {
     }
     
     @objc func didTapMap(){
-        
+        self.minimizeCollectionView()
 //        if self.isPostFullView {
 //            print("Tap Map | Minimize Post View ")
 //            self.isPostFullView = false

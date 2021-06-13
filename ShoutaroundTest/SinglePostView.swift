@@ -1518,7 +1518,7 @@ Rating Emojis help you describe your experience beyond just star ratings
 💯 : 100%
 🔥 : Fire
 👌 : Legit
-🤔 : Iffy
+😍 : Awesome
 😡 : Angry
 💩 : Poop
 """)

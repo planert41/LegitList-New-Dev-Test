@@ -188,31 +188,31 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
                 self.postPriceSegment.selectedSegmentIndex = UploadPostPriceDefault.firstIndex(of: selectPostPrice!)!
             }
             
-            self.mealTagEmojis = []
-            self.cuisineTagEmojis = []
-            self.dietTagEmojis = []
-            
-            if (editPost?.autoTagEmoji.count)! > 0 {
-                
-                for tag in (editPost?.autoTagEmoji)! {
-                    if mealEmojisSelect.contains(tag) {
-                        self.mealTagEmojis.append(EmojiBasic(emoji: tag, name: mealEmojiDictionary[tag], count: 0))
-                    }
-                        
-                    else if cuisineEmojiSelect.contains(tag) {
-                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: FlagEmojiDictionary[tag], count: 0))
-                    }
-                        
-                    else if dietEmojiSelect.contains(tag) {
-                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: DietEmojiDictionary[tag], count: 0))
-                    }
-                }
-                
-                self.updateAllAutoTags()
-                print("EditPost | Loaded | \(editPost?.id) | AutoTagEmojis \(editPost?.autoTagEmoji) | \(self.allAutoTagEmojis.count)")
-                print("EditPost | Loaded | \(editPost?.id) | Loc Name \(editPost?.locationName) | \(editPost?.locationAdress)")
-
-            }
+//            self.mealTagEmojis = []
+//            self.cuisineTagEmojis = []
+//            self.dietTagEmojis = []
+//
+//            if (editPost?.autoTagEmoji.count)! > 0 {
+//
+//                for tag in (editPost?.autoTagEmoji)! {
+//                    if mealEmojisSelect.contains(tag) {
+//                        self.mealTagEmojis.append(EmojiBasic(emoji: tag, name: mealEmojiDictionary[tag], count: 0))
+//                    }
+//
+//                    else if cuisineEmojiSelect.contains(tag) {
+//                        self.cuisineTagEmojis.append(EmojiBasic(emoji: tag, name: FlagEmojiDictionary[tag], count: 0))
+//                    }
+//
+//                    else if dietEmojiSelect.contains(tag) {
+//                        self.dietTagEmojis.append(EmojiBasic(emoji: tag, name: DietEmojiDictionary[tag], count: 0))
+//                    }
+//                }
+//
+//                self.updateAllAutoTags()
+//                print("EditPost | Loaded | \(editPost?.id) | AutoTagEmojis \(editPost?.autoTagEmoji) | \(self.allAutoTagEmojis.count)")
+//                print("EditPost | Loaded | \(editPost?.id) | Loc Name \(editPost?.locationName) | \(editPost?.locationAdress)")
+//
+//            }
             
             self.selectedAddTags = editPost?.autoTagEmoji ?? []
             self.selectedAddTagsDic = editPost?.autoTagEmojiTags ?? []
@@ -806,79 +806,79 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     
     
     func updateAddTags(emojiArray: [EmojiBasic]) {
-        for emoji in emojiArray {
-            if !self.selectedAddTags.contains(emoji.emoji) {
-                self.selectedAddTags.append(emoji.emoji)
-                self.selectedAddTagsDic.append(emoji.name ?? "")
-            }
-        }
-        
-        self.reloadAddTag()
+//        for emoji in emojiArray {
+//            if !self.selectedAddTags.contains(emoji.emoji) {
+//                self.selectedAddTags.append(emoji.emoji)
+//                self.selectedAddTagsDic.append(emoji.name ?? "")
+//            }
+//        }
+//
+//        self.reloadAddTag()
     }
     
     func removeAddTags(emojiArray: [EmojiBasic]) {
-        for emoji in emojiArray {
-            if let index = self.selectedAddTagsDic.firstIndex(of: emoji.name!){
-                self.selectedAddTags.remove(at: index)
-                self.selectedAddTagsDic.remove(at: index)
-                print("removeAddTags | Removing \(emoji.emoji) \(emoji.name))")
-            }
-        }
-        
-        self.reloadAddTag()
+//        for emoji in emojiArray {
+//            if let index = self.selectedAddTagsDic.firstIndex(of: emoji.name!){
+//                self.selectedAddTags.remove(at: index)
+//                self.selectedAddTagsDic.remove(at: index)
+//                print("removeAddTags | Removing \(emoji.emoji) \(emoji.name))")
+//            }
+//        }
+//
+//        self.reloadAddTag()
     }
     
-    func updateAllAutoTags(){
-        print("AllAutoTag | \(self.allAutoTagEmojis)")
-        self.allAutoTagEmojis = self.mealTagEmojis + self.cuisineTagEmojis + self.dietTagEmojis
-        
-//        if self.mealTagEmojis.count > 0 {
-//            self.mealTagButton.setTitleColor(autoTagSelectColor, for: .normal)
-//            self.mealTagButton.alpha = 1
-//            self.cancelMealTagButton.isHidden = false
-//        } else {
-//            self.mealTagButton.setTitleColor(UIColor.lightGray, for: .normal)
-//            self.mealTagButton.alpha = 0.75
-//            self.cancelMealTagButton.isHidden = true
+//    func updateAllAutoTags(){
+//        print("AllAutoTag | \(self.allAutoTagEmojis)")
+//        self.allAutoTagEmojis = self.mealTagEmojis + self.cuisineTagEmojis + self.dietTagEmojis
+//
+////        if self.mealTagEmojis.count > 0 {
+////            self.mealTagButton.setTitleColor(autoTagSelectColor, for: .normal)
+////            self.mealTagButton.alpha = 1
+////            self.cancelMealTagButton.isHidden = false
+////        } else {
+////            self.mealTagButton.setTitleColor(UIColor.lightGray, for: .normal)
+////            self.mealTagButton.alpha = 0.75
+////            self.cancelMealTagButton.isHidden = true
+////        }
+////
+////        if self.cuisineTagEmojis.count > 0 {
+////            self.cuisineTagButton.setTitleColor(autoTagSelectColor, for: .normal)
+////            self.cuisineTagButton.alpha = 1
+////            self.cancelCuisineTagButton.isHidden = false
+////        } else {
+////            self.cuisineTagButton.setTitleColor(UIColor.lightGray, for: .normal)
+////            self.cuisineTagButton.alpha = 0.75
+////            self.cancelCuisineTagButton.isHidden = true
+////        }
+////
+////        if self.dietTagEmojis.count > 0 {
+////            self.dietTagButton.setTitleColor(autoTagSelectColor, for: .normal)
+////            self.dietTagButton.alpha = 1
+////            self.cancelDietTagButton.isHidden = false
+////        } else {
+////            self.dietTagButton.setTitleColor(UIColor.lightGray, for: .normal)
+////            self.dietTagButton.alpha = 0.75
+////            self.cancelDietTagButton.isHidden = true
+////        }
+////
+////        self.mealTypeCollectionView.reloadData()
+////        self.cuisineTypeCollectionView.reloadData()
+////        self.dietTypeCollectionView.reloadData()
+////
+////        self.refreshEmojiTagSelections()
+//
+//        for emoji in self.allAutoTagEmojis {
+//            if !self.selectedAddTags.contains(emoji.emoji) {
+//                self.selectedAddTags.append(emoji.emoji)
+//                self.selectedAddTagsDic.append(emoji.name ?? "")
+//            }
 //        }
 //
-//        if self.cuisineTagEmojis.count > 0 {
-//            self.cuisineTagButton.setTitleColor(autoTagSelectColor, for: .normal)
-//            self.cuisineTagButton.alpha = 1
-//            self.cancelCuisineTagButton.isHidden = false
-//        } else {
-//            self.cuisineTagButton.setTitleColor(UIColor.lightGray, for: .normal)
-//            self.cuisineTagButton.alpha = 0.75
-//            self.cancelCuisineTagButton.isHidden = true
-//        }
+//        self.reloadAddTag()
 //
-//        if self.dietTagEmojis.count > 0 {
-//            self.dietTagButton.setTitleColor(autoTagSelectColor, for: .normal)
-//            self.dietTagButton.alpha = 1
-//            self.cancelDietTagButton.isHidden = false
-//        } else {
-//            self.dietTagButton.setTitleColor(UIColor.lightGray, for: .normal)
-//            self.dietTagButton.alpha = 0.75
-//            self.cancelDietTagButton.isHidden = true
-//        }
+//    }
 //
-//        self.mealTypeCollectionView.reloadData()
-//        self.cuisineTypeCollectionView.reloadData()
-//        self.dietTypeCollectionView.reloadData()
-//
-//        self.refreshEmojiTagSelections()
-        
-        for emoji in self.allAutoTagEmojis {
-            if !self.selectedAddTags.contains(emoji.emoji) {
-                self.selectedAddTags.append(emoji.emoji)
-                self.selectedAddTagsDic.append(emoji.name ?? "")
-            }
-        }
-        
-        self.reloadAddTag()
-        
-    }
-    
     
     @objc func clearAutoTagEmojis(){
         mealTagEmojis = []
@@ -952,7 +952,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     
     func reloadAddTag(){
 
-        print("Reload \(self.selectedAddTags.count) Add Tags")
+        print("Reload \(self.selectedAddTags.count) Add Tags \(self.selectedAddTags)")
 //        additionalTagCollectionView.collectionViewLayout.invalidateLayout()
         additionalTagCollectionView.reloadData()
         additionalTagCollectionView.sizeToFit()
@@ -1150,7 +1150,7 @@ Rating Emojis help you describe your experience beyond just star ratings
 💯 : 100%
 🔥 : Fire
 👌 : Legit
-🤔 : Iffy
+😍 : Awesome
 😡 : Angry
 💩 : Poop
 """)
@@ -1909,15 +1909,29 @@ Rating Emojis help you describe your experience beyond just star ratings
         var autoTagEmojis: [String] = []
         var autoTagEmojisDict: [String] = []
         
-        for tag in tags {
-            if tag.isSingleEmoji {
-                autoTagEmojis.append(tag)
-                autoTagEmojisDict.append((EmojiDictionary[tag] ?? "").capitalizingFirstLetter())
-            } else {
-                autoTagEmojis.append((ReverseEmojiDictionary[tag] ?? ""))
-                autoTagEmojisDict.append(tag)
+        // IN SEQUENCE
+        for x in autoTagEmojiSelect {
+            if tags.contains(x) {
+                if x.containsOnlyEmoji {
+                    autoTagEmojis.append(x)
+                    autoTagEmojisDict.append((EmojiDictionary[x] ?? ""))
+                } else {
+                    autoTagEmojis.append((ReverseEmojiDictionary[x] ?? ""))
+                    autoTagEmojisDict.append(x)
+                }
             }
         }
+        
+        
+//        for tag in tags {
+//            if tag.isSingleEmoji {
+//                autoTagEmojis.append(tag)
+//                autoTagEmojisDict.append((EmojiDictionary[tag] ?? "").capitalizingFirstLetter())
+//            } else {
+//                autoTagEmojis.append((ReverseEmojiDictionary[tag] ?? ""))
+//                autoTagEmojisDict.append(tag)
+//            }
+//        }
         
         self.selectedAddTags = autoTagEmojis
         self.selectedAddTagsDic = autoTagEmojisDict
@@ -2938,10 +2952,14 @@ Rating Emojis help you describe your experience beyond just star ratings
         Database.filterCaptionForEmoji(inputText: string) { emojis in
             var tempEmojis = self.nonRatingEmojiTags
             var tempRatingEmojis: [String] = []
+            var tempAutoTagEmojis: [String] = []
             for emoji in emojis {
                 if extraRatingEmojis.contains(emoji) {
                     // Rating Emoji
                     tempRatingEmojis.append(emoji)
+                }
+                else if mealEmojisSelect.contains(emoji) || dietEmojiSelect.contains(emoji) || cuisineEmojiSelect.contains(emoji) {
+                    tempAutoTagEmojis.append(emoji)
                 }
                 else if !tempEmojis.contains(emoji) {
                     tempEmojis.append(emoji)
@@ -2949,6 +2967,7 @@ Rating Emojis help you describe your experience beyond just star ratings
             }
             self.newCaptionRatingEmojis = tempRatingEmojis
             self.newCaptionEmojis = tempEmojis
+            self.newAutoTagCaptionEmojis = tempAutoTagEmojis
         }
     }
     
@@ -3814,6 +3833,8 @@ Rating Emojis help you describe your experience beyond just star ratings
             }
             
             var isSelected: Bool = self.selectedAddTagsDic.contains(option)
+//            print(indexPath.row, option, isSelected, self.selectedAddTagsDic, self.selectedAddTags)
+            
             
             cell.uploadLocations.text = displayText
             cell.uploadLocations.textColor = isSelected ? UIColor.ianBlackColor() : UIColor.darkGray
@@ -4511,7 +4532,6 @@ Rating Emojis help you describe your experience beyond just star ratings
         //        var searchTerm = "restaurant|bakery|cafe"
         
         //        searchNearbyRestaurants(GPSLocation, searchRadius: searchRadius, searchType: searchTerm)
-        
         Database.searchNearbyGoogle(GPSLocation: GPSLocation, searchType: searchTerm) { (nearbyLocations) in
             if let nearbyLocations = nearbyLocations {
                 self.nearbyGoogleLocations = nearbyLocations
@@ -4667,6 +4687,24 @@ Rating Emojis help you describe your experience beyond just star ratings
     func triggerCaptionEmoji() {
         self.captionEmojiHeight?.constant = (self.newCaptionEmojis.count == 0) ? 0 : captionEmojiFullHeight
         self.captionEmojiCollectionView.reloadData()
+    }
+    
+    var newAutoTagCaptionEmojis:[String] = [] {
+        didSet {
+            updateCaptionAutoTagEmojis()
+        }
+    }
+    
+    func updateCaptionAutoTagEmojis() {
+        var temp = self.selectedAddTags
+        
+        for x in newAutoTagCaptionEmojis {
+            if !temp.contains(x) {
+                temp.append(x)
+            }
+        }
+        
+        self.additionalTagSelected(tags: temp)
     }
     
     var locationMostUsedEmojis:[String] = [] {

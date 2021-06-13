@@ -14,8 +14,8 @@
             filePath = "ShoutaroundTest/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "890"
-            endingLineNumber = "890"
+            startingLineNumber = "902"
+            endingLineNumber = "902"
             landmarkName = "messaging(_:didReceiveRegistrationToken:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "ShoutaroundTest/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "888"
-            endingLineNumber = "888"
+            startingLineNumber = "900"
+            endingLineNumber = "900"
             landmarkName = "messaging(_:didReceiveRegistrationToken:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,8 +46,8 @@
             filePath = "ShoutaroundTest/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "889"
-            endingLineNumber = "889"
+            startingLineNumber = "901"
+            endingLineNumber = "901"
             landmarkName = "messaging(_:didReceiveRegistrationToken:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "ShoutaroundTest/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "889"
-            endingLineNumber = "889"
+            startingLineNumber = "901"
+            endingLineNumber = "901"
             landmarkName = "messaging(_:didReceiveRegistrationToken:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "ShoutaroundTest/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "890"
-            endingLineNumber = "890"
+            startingLineNumber = "902"
+            endingLineNumber = "902"
             landmarkName = "messaging(_:didReceiveRegistrationToken:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -280,7 +280,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "54183307-467E-4AB8-B467-EC4B0B80DA28"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../../../../var/folders/kx/l6zxvtr56nd9js64lnpfzw5m0000gn/T/xcode/scm/LegitList New Dev/23346f6187a60f14841923a52479800f8b61f441/ShoutaroundTest/Extensions.swift"
@@ -384,8 +384,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1771"
             endingLineNumber = "1771"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:didSelect:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -400,8 +400,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1773"
             endingLineNumber = "1773"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:didSelect:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -416,8 +416,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1772"
             endingLineNumber = "1772"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:didSelect:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -432,8 +432,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1192"
             endingLineNumber = "1192"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "showSelectedPost()"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "52B4339B-5D6D-4D99-B353-386414AE7850 - 85915f72b13421a7"
@@ -480,8 +480,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1191"
             endingLineNumber = "1191"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "showSelectedPost()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -496,8 +496,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1213"
             endingLineNumber = "1213"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "showSelectedPost()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -512,8 +512,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1777"
             endingLineNumber = "1777"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:didSelect:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -528,8 +528,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1776"
             endingLineNumber = "1776"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:didSelect:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -544,8 +544,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1764"
             endingLineNumber = "1764"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:didSelect:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -560,8 +560,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1907"
             endingLineNumber = "1907"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "didTapPost(post:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -576,8 +576,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1632"
             endingLineNumber = "1632"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "mapView(_:annotationView:calloutAccessoryControlTapped:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -592,8 +592,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1210"
             endingLineNumber = "1210"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "showSelectedPost()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -896,8 +896,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1214"
             endingLineNumber = "1214"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "showSelectedPost()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1152,8 +1152,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "63"
             endingLineNumber = "63"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "inputViewFilter"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1168,8 +1168,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "707"
             endingLineNumber = "707"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "searchBarCancelButtonClicked(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1808,8 +1808,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "638"
             endingLineNumber = "638"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            landmarkName = "extCreateNewPhoto()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2030,8 +2030,8 @@
             filePath = "ShoutaroundTest/UploadPhotoController_New.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4205"
-            endingLineNumber = "4205"
+            startingLineNumber = "4226"
+            endingLineNumber = "4226"
             landmarkName = "finishToListTags()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2414,8 +2414,8 @@
             filePath = "ShoutaroundTest/UploadPhotoController_New.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3932"
-            endingLineNumber = "3932"
+            startingLineNumber = "3953"
+            endingLineNumber = "3953"
             landmarkName = "collectionView(_:didSelectItemAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2430,8 +2430,8 @@
             filePath = "ShoutaroundTest/UploadPhotoController_New.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2941"
-            endingLineNumber = "2941"
+            startingLineNumber = "2956"
+            endingLineNumber = "2956"
             landmarkName = "filterTextForEmoji(string:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2446,8 +2446,8 @@
             filePath = "ShoutaroundTest/EmojiDictionary.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "817"
-            endingLineNumber = "817"
+            startingLineNumber = "823"
+            endingLineNumber = "823"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
@@ -2465,6 +2465,86 @@
             startingLineNumber = "222"
             endingLineNumber = "222"
             landmarkName = "openNotifications()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8CEF49F-6DBF-4522-ABD0-CFE40670FE0E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitSearchViewControllerNew.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "914"
+            endingLineNumber = "914"
+            landmarkName = "didRemoveTag(tag:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "022F48AA-2E1B-4202-BE6B-CDD41E8C893E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitSearchViewControllerNew.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "920"
+            endingLineNumber = "920"
+            landmarkName = "didRemoveTag(tag:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1C7C3483-0EDF-475C-985D-9F59751A24BE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitSearchViewControllerNew.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "923"
+            endingLineNumber = "923"
+            landmarkName = "didRemoveTag(tag:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C5D6F9F2-7EB3-4C9E-8103-A67234B53BF3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitSearchViewControllerNew.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "916"
+            endingLineNumber = "916"
+            landmarkName = "didRemoveTag(tag:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6F4D8E68-9A69-469D-B54D-30F3BA5E311D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/UploadPhotoController_New.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3839"
+            endingLineNumber = "3839"
+            landmarkName = "collectionView(_:cellForItemAt:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

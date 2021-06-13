@@ -128,7 +128,7 @@ class LegitSearchViewControllerNew: UIViewController {
         button.titleLabel?.numberOfLines = 2
         button.titleLabel?.font = UIFont(name: "Poppins-Regular", size: 10)
 //        button.setImage(#imageLiteral(resourceName: "info").withRenderingMode(.alwaysOriginal), for: .normal)
-        button.setTitle("Mult\nFilter", for: .normal)
+        button.setTitle("Filter\nMultiple", for: .normal)
         button.addTarget(self, action: #selector(toggleSingleSearch), for: .touchUpInside)
 //        button.setTitleColor(UIColor.darkGray, for: .normal)
         button.layer.backgroundColor = UIColor.ianWhiteColor().cgColor
@@ -430,12 +430,12 @@ class LegitSearchViewControllerNew: UIViewController {
         searchBarView.anchor(top: searchTermView.bottomAnchor, left: searchView.leftAnchor, bottom: nil, right: searchView.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
 
         searchBarView.addSubview(singleSearchButton)
-        singleSearchButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 60, height: 35)
+        singleSearchButton.anchor(top: nil, left: searchBarView.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 60, height: 35)
         setupSingleSearchButton()
         
         setupSearch()
         searchBarView.addSubview(searchBar)
-        searchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: singleSearchButton.leftAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
+        searchBar.anchor(top: searchBarView.topAnchor, left: singleSearchButton.rightAnchor, bottom: searchBarView.bottomAnchor, right: searchBarView.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
         singleSearchButton.centerYAnchor.constraint(equalTo: searchBar.centerYAnchor).isActive = true
 
         
@@ -728,12 +728,16 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
         
         if self.selectedSearchSegmentIndex == nil {
             filteredAllSearchItems = allSearchItems.filter({ (string) -> Bool in
-                return string[0].lowercased().contains(searchCaption.lowercased())
+                let emojiName = EmojiDictionary[string[0]]?.lowercased() ?? ""
+                return string[0].lowercased().contains(searchCaption.lowercased()) || emojiName.contains(searchCaption.lowercased())
             })
             filteredAllSearchItems = Array(Set(filteredAllSearchItems))
             filteredAllSearchItems.sort { (p1, p2) -> Bool in
-                let p1Ind = ((p1[0].hasPrefix(searchCaption.lowercased())) ? 0 : 1)
-                let p2Ind = ((p2[0].hasPrefix(searchCaption.lowercased())) ? 0 : 1)
+                let emojiName1 = EmojiDictionary[p1[0]]?.lowercased() ?? ""
+                let emojiName2 = EmojiDictionary[p2[0]]?.lowercased() ?? ""
+                
+                let p1Ind = ((p1[0].hasPrefix(searchCaption.lowercased()) || emojiName1.hasPrefix(searchCaption.lowercased())) ? 0 : 1)
+                let p2Ind = ((p2[0].hasPrefix(searchCaption.lowercased()) || emojiName2.hasPrefix(searchCaption.lowercased())) ? 0 : 1)
                 if p1Ind != p2Ind {
                     return p1Ind < p2Ind
                 } else {
@@ -910,9 +914,12 @@ extension LegitSearchViewControllerNew: UICollectionViewDelegate, UICollectionVi
         if tag.containsOnlyEmoji {
             let tempEmoji = EmojiBasic(emoji: tag, name: "")
             self.addEmojiToSearchTerm(inputEmoji: tempEmoji)
+            print("didRemoveTag | Remove Search Emoji | \(tag) | Caption | \(self.searchViewFilter.filterCaption) | LegitSearchViewController")
+
         } else if let deleteIndex = self.searchTerms.firstIndex(of: tag) {
             self.searchTerms.remove(at: deleteIndex)
             self.searchText = self.searchText!.replacingOccurrences(of: tag, with: "")
+            print("didRemoveTag | Remove Search Other | \(tag) | Caption | \(self.searchTerms) | LegitSearchViewController")
             self.refreshSearchTerm()
         }
 //
@@ -941,7 +948,6 @@ extension LegitSearchViewControllerNew: UICollectionViewDelegate, UICollectionVi
 //        }
 //        self.refreshSearchTerm()
 
-        print("didRemoveTag | Remove Search | \(tag) | Caption | \(self.searchViewFilter.filterCaption) | LegitSearchViewController")
     }
     
     func didRemoveLocationFilter(location: String) {
@@ -1005,6 +1011,8 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             if tempEmojis.count > 0 {
                 tempDisplayAllTerms += Array(tempEmojis.prefix(upTo: 30)).map({[$0.emoji, SearchEmojis]})
             }
+            
+//            tempAllTerms += tempEmojis.map({[($0.name ?? ""), SearchEmojis]})
 
         }
                 
