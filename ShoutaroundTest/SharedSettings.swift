@@ -209,7 +209,7 @@ let RatingCountArray: [Int: Int] =
 let SearchSegmentLookup = [
     "🔍":"All",
     "🍔":"All Emojis",
-    "🍽":"Cuisine",
+    "🍽":"Meal",
     "🏠":"Places",
 //    "🏙":"City",
     "⭐️":"Rating",

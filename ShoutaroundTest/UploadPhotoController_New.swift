@@ -2958,6 +2958,11 @@ Rating Emojis help you describe your experience beyond just star ratings
                     // Rating Emoji
                     tempRatingEmojis.append(emoji)
                 }
+            // INSERTING AN EXCEPTION FOR COFFEE
+                else if emoji == "☕️" {
+                    tempAutoTagEmojis.append(emoji)
+                    tempEmojis.append(emoji)
+                }
                 else if mealEmojisSelect.contains(emoji) || dietEmojiSelect.contains(emoji) || cuisineEmojiSelect.contains(emoji) {
                     tempAutoTagEmojis.append(emoji)
                 }

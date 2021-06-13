@@ -963,7 +963,7 @@ First emoji will displayed on map.
 
                 You can also tag your posts by
                 1) Price - $5, $$$
-                2) Meal type - Breakfast🍳, Coffee☕️
+                2) Meal type - Breakfast🍳, Drinks 🍻
                 3) Cuisine - Mexican🇲🇽, Japanese🇯🇵
                 4) Diet - Vegetarian ❌🍖, 🕌 halal
                 """)

@@ -1427,8 +1427,8 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
         }
    
         self.searchBar.text?.alphaNumericOnly()
-        let temp = [indexPath]
-        tableView.reloadRows(at: temp, with: .automatic)
+//        let temp = [indexPath]
+//        tableView.reloadRows(at: temp, with: .automatic)
 
     }
     

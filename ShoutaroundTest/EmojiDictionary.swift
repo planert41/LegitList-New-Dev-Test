@@ -689,7 +689,6 @@ var OtherEmojiDictionary:[String:String] = [
     "🤵":"service",
     "🎉":"fun",
 
-    "🚗":"delivery",
     "🏠":"restaurant",
     "🚌":"truck",
     "🏪":"24hour",

@@ -71,7 +71,7 @@ var mealEmojis:[EmojiBasic] = []
 var cuisineEmojis:[EmojiBasic] = []
 var dietEmojis:[EmojiBasic] = []
 
-var mealEmojisSelect:[String] = ["🍳","🍱","🍽","🍨","☕️","🍙","🍻","🌙","📍"]
+var mealEmojisSelect:[String] = ["🍳","🍱","🍽","🍨","☕️","🍙","🍻","🌙","🥡","🚗","📍"]
 var mealEmojiDictionary:[String:String] = [
 //    "🥞":"brunch",
     "🍳":"breakfast",
@@ -82,6 +82,8 @@ var mealEmojiDictionary:[String:String] = [
     "☕️":"coffee",
     "🍻":"drinks",
     "🌙":"latenight",
+    "🚗":"delivery",
+    "🥡":"takeout",
     "📍":"poi"
 ]
 

@@ -366,12 +366,13 @@ class NewTabMapViewController: UIViewController {
     
     let globeButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-//        button.setImage(#imageLiteral(resourceName: "Globe"), for: .normal)
-        button.setImage(#imageLiteral(resourceName: "zoom_out").withRenderingMode(.alwaysTemplate), for: .normal)
+        button.setImage(#imageLiteral(resourceName: "Globe"), for: .normal)
+//        button.setImage(#imageLiteral(resourceName: "zoom_out").withRenderingMode(.alwaysTemplate), for: .normal)
         button.addTarget(self, action: #selector(showGlobe), for: .touchUpInside)
         
 //        button.addTarget(self, action: #selector(testFunc), for: .touchUpInside)
         button.tintColor = UIColor.mainBlue()
+        button.tintColor = UIColor.darkGray
         button.layer.backgroundColor = UIColor.clear.cgColor
 //        button.layer.cornerRadius = button.frame.width/2
 //        button.layer.masksToBounds = true
@@ -487,7 +488,8 @@ class NewTabMapViewController: UIViewController {
 //        temp.loadImage(urlString: userImageURL)
 //        filterUserButton.setImage(temp.image, for: .normal)
         if filteredUser == nil && filteredList == nil {
-            let defaultImage = #imageLiteral(resourceName: "Globe").withRenderingMode(.alwaysOriginal)
+//            let defaultImage = #imageLiteral(resourceName: "Globe").withRenderingMode(.alwaysOriginal)
+            let defaultImage = #imageLiteral(resourceName: "filter").withRenderingMode(.alwaysOriginal)
             filterUserButton.setImage(defaultImage, for: .normal)
             
             filterUserLabel.text = ""

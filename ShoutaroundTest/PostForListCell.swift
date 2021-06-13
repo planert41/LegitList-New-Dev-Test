@@ -351,7 +351,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     let ratingEmojiLabel: UILabel = {
         let label = UILabel()
         label.text = "😍"
-        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 25)
         label.sizeToFit()
         return label
     }()
@@ -1081,18 +1081,20 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         postdetailView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ListPhotoCell.handlePictureTap)))
 
         
-        
-        addSubview(ratingEmojiLabel)
-        ratingEmojiLabel.anchor(top: nil, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 3, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-        ratingEmojiLabelWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
-        ratingEmojiLabelWidth?.isActive = true
-        
+
         
         // ADD STAR RATING
         addSubview(starRating)
-        starRating.anchor(top: postdetailView.topAnchor, left: ratingEmojiLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        starRating.anchor(top: postdetailView.topAnchor, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
 //        starRating.centerYAnchor.constraint(equalTo: userProfileImageView.centerYAnchor).isActive = true
 //        hideStarRatingWidth = starRating.heightAnchor.constraint(equalToConstant: 0)
+        
+        
+        addSubview(ratingEmojiLabel)
+        ratingEmojiLabel.anchor(top: nil, left: starRating.rightAnchor, bottom: nil, right: nil, paddingTop: 3, paddingLeft: 4, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        ratingEmojiLabelWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
+        ratingEmojiLabelWidth?.isActive = true
+        
         ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
 
 

@@ -25,6 +25,7 @@ import FirebaseDatabase
 
 protocol AddTagSearchControllerDelegate {
     func additionalTagSelected(tags: [String])
+    // Additional Tag Selected is now based Emojis instead of the text
 }
 
 
@@ -455,15 +456,31 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     
     @objc func handleBackButton(){
         print("Back Button Tapped | AddTagSearchViewController")
-        self.delegate?.additionalTagSelected(tags: self.selectedTags)
         self.navigationController?.popViewController(animated: true)
+
+//        var temp: [String] = []
+//        for tag in self.selectedTags {
+//            if let emoji = EmojiDictionary.key(forValue: tag){
+//                temp.append(emoji ?? "")
+//            }
+//        }
+//        self.delegate?.additionalTagSelected(tags: temp)
+//        //        self.delegate?.additionalTagSelected(tags: self.selectedTags)
+//        self.navigationController?.popViewController(animated: true)
         
         //        self.navigationController?.popToRootViewController(animated: true)
         
     }
     
     @objc func handleDone(){
-        self.delegate?.additionalTagSelected(tags: self.selectedTags)
+        var temp: [String] = []
+        for tag in self.selectedTags {
+            if let emoji = EmojiDictionary.key(forValue: tag){
+                temp.append(emoji ?? "")
+            }
+        }
+        self.delegate?.additionalTagSelected(tags: temp)
+//        self.delegate?.additionalTagSelected(tags: self.selectedTags)
         self.navigationController?.popViewController(animated: true)
 
     }

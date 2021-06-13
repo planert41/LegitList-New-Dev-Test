@@ -268,6 +268,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "dinner":"🍽",
     "dessert":"🍨",
     "coffee": "☕️",
+    "latte": "☕️",
     "drinks":"🍻",
     "latenight":"🌙",
 
@@ -299,6 +300,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "filipino":"🇵🇭",
     "polish":"🇵🇱",
     "puerto rican":"🇵🇷",
-    "singaporean":"🇸🇬"
+    "singaporean":"🇸🇬",
+    "korean": "🇰🇷",
 
 ]
