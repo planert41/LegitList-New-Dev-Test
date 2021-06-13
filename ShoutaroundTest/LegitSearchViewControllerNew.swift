@@ -1036,6 +1036,18 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
             }
             
             if !self.searchViewFilter.isFiltering {
+                // RANK FOR DIET EMOJIS FIRST
+                for x in dietEmojiSelect.reversed() {
+                    if (curEmojiCounts[x] ?? 0) > 0 {
+                        if let index = sortedEmojis.firstIndex(where: { (emoji) -> Bool in
+                            return (emoji.emoji == x) || (emoji.name == x)
+                        }) {
+                            let temp = sortedEmojis.remove(at: index)
+                            sortedEmojis.insert(temp, at: 0)
+                        }
+                    }
+                }
+                
                 // RANK FOR MEAL EMOJIS FIRST
                 for x in mealEmojisSelect.reversed() {
                     if (curEmojiCounts[x] ?? 0) > 0 {
@@ -1244,7 +1256,7 @@ extension LegitSearchViewControllerNew: UITableViewDataSource, UITableViewDelega
                 
                 cell.isSelected = self.searchViewFilter.searchTerms.contains(displayTerm.emoji) || self.searchViewFilter.searchTerms.contains(displayTerm.name!)
                 cell.tempView.backgroundColor = UploadPostTypeEmojis.contains(displayTerm.emoji) ? UIColor.gray : UIColor.ianLightGrayColor()
-                print(UploadPostTypeEmojis.contains(displayTerm.emoji), displayTerm)
+//                print(UploadPostTypeEmojis.contains(displayTerm.emoji), displayTerm)
 
     //            cell.isSelected = (self.searchText?.contains(displayTerm.emoji) ?? false) || (self.searchText?.contains(displayTerm.name ?? "     ") ?? false)
     //            cell.tempView.backgroundColor = cell.isSelected ? UIColor.mainBlue().withAlphaComponent(0.2) : UIColor.white

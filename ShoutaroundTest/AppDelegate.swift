@@ -700,7 +700,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         
         // All Search Emojis is All Food + Drink + Ingredient Emojis
         allSearchEmojis = defaultEmojis + cuisineEmojis + mealEmojis + dietEmojis
-        allMealTypeEmojis = mealEmojis + cuisineEmojis
+        allMealTypeEmojis = mealEmojis + dietEmojis + cuisineEmojis
         allMealTypeOptions = allMealTypeEmojis.map { $0.name! }
         
         
