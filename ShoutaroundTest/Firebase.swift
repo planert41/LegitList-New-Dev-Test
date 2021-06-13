@@ -1127,8 +1127,8 @@ extension Database{
             }
             
             // AUTO TAGS
-            if post.autoTagEmojiTags.count > 0 {
-                for string in post.autoTagEmojiTags {
+            if post.autoTagEmoji.count > 0 {
+                for string in post.autoTagEmoji {
                     if let curCount = autotagCounts[string] {
                         autotagCounts[string]! += 1
                         allCounts[string]! += 1
