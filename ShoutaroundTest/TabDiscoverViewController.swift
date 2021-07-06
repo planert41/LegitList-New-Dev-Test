@@ -878,13 +878,13 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if searchType == DiscoverUser {
-            return max(1, self.isFiltering ? self.filteredUsers.count : self.allUsers.count)
+            return max(0, self.isFiltering ? self.filteredUsers.count : self.allUsers.count)
         } else if searchType == DiscoverList {
-            return max(1, self.isFiltering ? self.filteredLists.count : self.allLists.count)
+            return max(0, self.isFiltering ? self.filteredLists.count : self.allLists.count)
         } else if searchType == DiscoverPlaces {
-            return max(1, self.isFiltering ? self.filteredPlaces.count : self.allPlaces.count)
+            return max(0, self.isFiltering ? self.filteredPlaces.count : self.allPlaces.count)
         } else if searchType == DiscoverCities {
-            return max(1, self.isFiltering ? self.filteredCity.count : self.allCity.count)
+            return max(0, self.isFiltering ? self.filteredCity.count : self.allCity.count)
         } else {
             return 0
         }
@@ -895,14 +895,14 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
 //    tableView.register(SearchResultsCell.self, forCellReuseIdentifier: searchResultCellId)
 //    tableView.register(UserAndListCell.self, forCellReuseIdentifier: newCellId)
     
-    func returnEmptyCell() -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: searchResultCellId, for: IndexPath(row: 0, section: 0)) as! SearchResultsCell
-        cell.emojiTextLabel.textAlignment = .center
-        cell.locationName = "No Results Available"
-        cell.selectionStyle = .none
-        cell.postCountLabel.isHidden = true
-        return cell
-    }
+//    func returnEmptyCell() -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: searchResultCellId, for: IndexPath(row: 0, section: 0)) as! SearchResultsCell
+//        cell.emojiTextLabel.textAlignment = .center
+//        cell.locationName = "No Results Available"
+//        cell.selectionStyle = .none
+//        cell.postCountLabel.isHidden = true
+//        return cell
+//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -913,9 +913,9 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         cell.contentView.isUserInteractionEnabled = false
         
         if searchType == DiscoverUser {
-            if (allUsers.count == 0 || (isFiltering && filteredUsers.count == 0)) {
-                return returnEmptyCell()
-            }
+//            if (allUsers.count == 0 || (isFiltering && filteredUsers.count == 0)) {
+//                return returnEmptyCell()
+//            }
             let currentUser = isFiltering ? filteredUsers[indexPath.row] : allUsers[indexPath.row]
             cell.user = currentUser
             cell.selectionStyle = .none
@@ -923,27 +923,27 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
             return cell
         }
         else if searchType == DiscoverList {
-            if (allLists.count == 0 || (isFiltering && filteredLists.count == 0)) {
-                return returnEmptyCell()
-            }
+//            if (allLists.count == 0 || (isFiltering && filteredLists.count == 0)) {
+//                return returnEmptyCell()
+//            }
             let currentList = isFiltering ? filteredLists[indexPath.row] : allLists[indexPath.row]
             cell.cellHeight?.constant = 90
             cell.list = currentList
             return cell
         }
         else if searchType == DiscoverPlaces {
-            if (allPlaces.count == 0 || (isFiltering && filteredPlaces.count == 0)) {
-                return returnEmptyCell()
-            }
+//            if (allPlaces.count == 0 || (isFiltering && filteredPlaces.count == 0)) {
+//                return returnEmptyCell()
+//            }
             let currentLoc = isFiltering ? filteredPlaces[indexPath.row] : allPlaces[indexPath.row]
             cell.cellHeight?.constant = 80
             cell.location = currentLoc
             return cell
         }
         else if searchType == DiscoverCities {
-            if (allCity.count == 0 || (isFiltering && filteredCity.count == 0)) {
-                return returnEmptyCell()
-            }
+//            if (allCity.count == 0 || (isFiltering && filteredCity.count == 0)) {
+//                return returnEmptyCell()
+//            }
             let tempCity = isFiltering ? filteredCity[indexPath.row] : allCity[indexPath.row]
             cell.cellHeight?.constant = 80
             cell.city = tempCity

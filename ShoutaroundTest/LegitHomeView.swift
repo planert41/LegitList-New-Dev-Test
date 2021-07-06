@@ -342,7 +342,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             blur: 10,
             spread: 0)
  
-        self.scalar = UIScreen.main.nativeBounds.height / defaultHeight
+        self.scalar = min(1, UIScreen.main.nativeBounds.height / defaultHeight)
         print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
         let addPhotoButtonSize: CGFloat = min(150, 75 * scalar)
 
