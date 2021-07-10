@@ -1084,6 +1084,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
         }
         
         if !self.viewFilter.isFiltering {
+            print("Not Filtering | ReSort Posts | \(sort) | \(self.viewFilter.isFiltering)")
             // Not Filtering for anything, so Pull in Post Ids by Recent or Social
             if (self.viewFilter.filterSort == HeaderSortOptions[1] && (self.viewFilter.filterLocation == nil)){
                 print("Sort by Nearest, No Location, Look up Current Location")
@@ -1103,6 +1104,8 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
         else
         {
             // Filtered for something else, so just resorting posts based on social
+            print("Filtering | ReSort Posts With Filter | \(sort) | \(self.viewFilter.isFiltering)")
+
             self.refreshPostsForSort()
         }
     }
@@ -1974,6 +1977,7 @@ extension LegitHomeView {
     func fetchPostIdsByDate(){
         print("Fetching Post Id By \(self.viewFilter.filterSort)")
         Database.fetchAllPostByCreationDate(fetchLimit: 100) { (fetchedPosts, fetchedPostIds) in
+            self.isFetchingPosts = false
             self.fetchedPostIds = fetchedPostIds
             self.displayedPosts = fetchedPosts
             print("Fetch Posts By Date: Success, Posts: \(self.displayedPosts.count)")
@@ -1989,7 +1993,6 @@ extension LegitHomeView {
             guard let postIds = postIds else {
                 print("Fetched Post Id By \(trendingStat) : Error, No Post Ids")
                 return}
-            
             print("Fetched Post Id By \(trendingStat) : Success, \(postIds.count) Post Ids")
             self.fetchedPostIds = postIds
             NotificationCenter.default.post(name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
@@ -2043,6 +2046,7 @@ extension LegitHomeView {
             return}
         
         Database.fetchAllPostWithLocation(location: location, distance: Double(self.viewFilter.filterRange!)! ) { (fetchedPosts, fetchedPostIds) in
+            self.isFetchingPosts = false
             self.fetchedPostIds = fetchedPostIds
             self.displayedPosts = fetchedPosts
             self.filterSortFetchedPosts()
@@ -2059,7 +2063,7 @@ extension LegitHomeView {
         
         
         Database.fetchAllPostWithGooglePlaceID(googlePlaceId: googlePlaceID) { (fetchedPosts, fetchedPostIds) in
-            
+            self.isFetchingPosts = false
             self.fetchedPostIds = fetchedPostIds
             self.displayedPosts = fetchedPosts
             self.filterSortFetchedPosts()

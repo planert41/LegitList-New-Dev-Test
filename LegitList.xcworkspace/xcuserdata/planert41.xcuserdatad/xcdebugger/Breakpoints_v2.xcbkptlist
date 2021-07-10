@@ -606,8 +606,8 @@
             filePath = "ShoutaroundTest/LegitHomeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2115"
-            endingLineNumber = "2115"
+            startingLineNumber = "2119"
+            endingLineNumber = "2119"
             landmarkName = "filterSortFetchedPosts()"
             landmarkType = "7">
             <Locations>
@@ -990,8 +990,8 @@
             filePath = "ShoutaroundTest/LegitHomeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2870"
-            endingLineNumber = "2870"
+            startingLineNumber = "2874"
+            endingLineNumber = "2874"
             landmarkName = "filterControllerSelected(filter:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2064,7 +2064,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "2427"
                   endingLineNumber = "2427"
-                  offsetFromSymbolStart = "2956">
+                  offsetFromSymbolStart = "2685">
                </Location>
                <Location
                   uuid = "447B6CF8-87D7-48C7-A852-CC8B1CB9064F - 30c7d0aa1ca3b500"
@@ -2079,7 +2079,7 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "2429"
                   endingLineNumber = "2429"
-                  offsetFromSymbolStart = "120">
+                  offsetFromSymbolStart = "78">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -2562,6 +2562,214 @@
             endingLineNumber = "467"
             landmarkName = "unknown"
             landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FC71AE21-548E-4C32-A8D8-819E894C1946"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1762"
+            endingLineNumber = "1762"
+            landmarkName = "fetchPostIds()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "661966FD-5863-49BB-9EBE-730769C8BAA5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1078"
+            endingLineNumber = "1078"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EF3B66BD-503F-469E-9395-308C9EF042AC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1077"
+            endingLineNumber = "1077"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C8315A1C-FD62-41FD-A3CA-12307E254897"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1086"
+            endingLineNumber = "1086"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D3679F98-6676-4B00-AD3D-11FF947FA103"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1098"
+            endingLineNumber = "1098"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A1CAEDBB-D8F4-4BF6-A7C9-EB2AE10052E7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1101"
+            endingLineNumber = "1101"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C16C4A51-1CCB-4E7D-AC44-17941A909AEC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1107"
+            endingLineNumber = "1107"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3B5A54EC-0A8A-4F8E-8ED4-47A44599858C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1109"
+            endingLineNumber = "1109"
+            landmarkName = "headerSortSelected(sort:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FF781C1E-FA6B-4ACB-A31E-EE85B40EA7A3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1766"
+            endingLineNumber = "1766"
+            landmarkName = "fetchPostIds()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2EF0AB98-E57F-4B1C-A80E-84F341AB52ED"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1769"
+            endingLineNumber = "1769"
+            landmarkName = "fetchPostIds()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "51BFFC62-FE17-4CD2-BDEA-37760CAAEDF6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1773"
+            endingLineNumber = "1773"
+            landmarkName = "fetchPostIds()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A067E90B-038A-42AF-AA32-789260140676"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1779"
+            endingLineNumber = "1779"
+            landmarkName = "fetchPostIds()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1C0B2FF8-56A2-4CF8-80EA-26421732222D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ShoutaroundTest/LegitHomeView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1782"
+            endingLineNumber = "1782"
+            landmarkName = "fetchPostIds()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

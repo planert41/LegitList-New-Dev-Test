@@ -42,7 +42,6 @@
 		A52156AC24AA18F20026ADEF /* PostSummaryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52156AB24AA18F20026ADEF /* PostSummaryCellView.swift */; };
 		A521B09124E3442100A100A3 /* NewUserOnboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A521B09024E3442100A100A3 /* NewUserOnboardView.swift */; };
 		A523043124AD545C00BEE210 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A523043024AD545C00BEE210 /* MessageCell.swift */; };
-		A527D6C1224BA6CD007DF729 /* TestHomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A527D6C0224BA6CD007DF729 /* TestHomeViewController.swift */; };
 		A527D6C3224E469F007DF729 /* DiscoverController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A527D6C2224E469F007DF729 /* DiscoverController.swift */; };
 		A527D6C5224E4AFA007DF729 /* DiscoverHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A527D6C4224E4AFA007DF729 /* DiscoverHeader.swift */; };
 		A527D6C7224FFE8B007DF729 /* DiscoverListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A527D6C6224FFE8A007DF729 /* DiscoverListCell.swift */; };
@@ -400,7 +399,6 @@
 		A52156AB24AA18F20026ADEF /* PostSummaryCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostSummaryCellView.swift; sourceTree = "<group>"; };
 		A521B09024E3442100A100A3 /* NewUserOnboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardView.swift; sourceTree = "<group>"; };
 		A523043024AD545C00BEE210 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
-		A527D6C0224BA6CD007DF729 /* TestHomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHomeViewController.swift; sourceTree = "<group>"; };
 		A527D6C2224E469F007DF729 /* DiscoverController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverController.swift; sourceTree = "<group>"; };
 		A527D6C4224E4AFA007DF729 /* DiscoverHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverHeader.swift; sourceTree = "<group>"; };
 		A527D6C6224FFE8A007DF729 /* DiscoverListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverListCell.swift; sourceTree = "<group>"; };
@@ -901,7 +899,6 @@
 			children = (
 				A538E778232E7F8A0065B08F /* LegitHomeHeader.swift */,
 				A5FB25D4232FBB4000E1BE13 /* LegitNavHeader.swift */,
-				A527D6C0224BA6CD007DF729 /* TestHomeViewController.swift */,
 				A535309722F91D49006AA4BA /* PrevTabListController.swift */,
 				A5C645131F565E8800C78244 /* HomeController.swift */,
 				A5E30E56215AB94A000FDF32 /* MapViewController.swift */,
@@ -1820,7 +1817,6 @@
 				A50D455120215F5C0039667F /* FixedHeaderLayout.swift in Sources */,
 				A52156AC24AA18F20026ADEF /* PostSummaryCellView.swift in Sources */,
 				A54E173523CDFBBA00D4E9E3 /* SingleUserProfileViewController.swift in Sources */,
-				A527D6C1224BA6CD007DF729 /* TestHomeViewController.swift in Sources */,
 				A5F46C3D1FC5EBE400D69945 /* SMSegment.swift in Sources */,
 				A544EF0720D414CD0023B14E /* Documentation.swift in Sources */,
 				A5CC6EE01FCC81050074AB78 /* ThreadCell.swift in Sources */,
@@ -2085,7 +2081,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2117,7 +2113,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				ENABLE_ONLY_ACTIVE_RESOURCES = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2153,7 +2149,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationService/Info.plist;
@@ -2183,7 +2179,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationService/Info.plist;
