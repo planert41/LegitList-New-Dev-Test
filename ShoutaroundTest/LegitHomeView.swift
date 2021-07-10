@@ -1841,15 +1841,6 @@ extension LegitHomeView {
             let locationName = locationGoogleIdDictionary.key(forValue: googleId) ?? ""
             SVProgressHUD.show(withStatus: "Searching Posts at \((locationName.capitalizingFirstLetter()))")
         }
-        else if self.viewFilter.filterLocation != nil
-        {
-            guard let coord = self.viewFilter.filterLocation?.coordinate else {return}
-            let lat = Double(coord.latitude).rounded(toPlaces: 2)
-            let long = Double(coord.longitude).rounded(toPlaces: 2)
-            
-            var coordinate = "(\(lat),\(long))"
-            SVProgressHUD.show(withStatus: "Searching Posts at \n GPS: \(coordinate)")
-        }
         else if self.viewFilter.filterUser != nil
         {
             guard let user = self.viewFilter.filterUser else {return}
@@ -1858,6 +1849,15 @@ extension LegitHomeView {
         else if self.viewFilter.filterType != nil
         {
             SVProgressHUD.show(withStatus: "Searching Posts by \(self.viewFilter.filterType!.capitalizingFirstLetter())")
+        }
+        else if self.viewFilter.filterLocation != nil
+        {
+            guard let coord = self.viewFilter.filterLocation?.coordinate else {return}
+            let lat = Double(coord.latitude).rounded(toPlaces: 2)
+            let long = Double(coord.longitude).rounded(toPlaces: 2)
+            
+            var coordinate = "(\(lat),\(long))"
+            SVProgressHUD.show(withStatus: "Searching Posts at \n GPS: \(coordinate)")
         }
         else if self.viewFilter.isFiltering
         {
