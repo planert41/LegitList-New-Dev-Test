@@ -82,7 +82,7 @@ class BottomEmojiBar: UIView {
         updateSearchButton()
         
         addSubview(emojiCollectionView)
-        emojiCollectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: navSearchButton.leftAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 10, width: 0, height: 40)
+        emojiCollectionView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: navSearchButton.leftAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 5, paddingRight: 10, width: 0, height: 0)
         setupEmojiCollectionView()
         
         
@@ -148,6 +148,7 @@ extension BottomEmojiBar: UICollectionViewDelegate, UICollectionViewDataSource {
         emojiCollectionView.dataSource = self
         emojiCollectionView.showsHorizontalScrollIndicator = false
         emojiCollectionView.isScrollEnabled = true
+        emojiCollectionView.automaticallyAdjustsScrollIndicatorInsets = false
         
 //        emojiCollectionView.addGestureRecognizer(tapEmojiCollectionView)
         refreshEmojiCollectionView()

@@ -960,7 +960,12 @@ extension SingleListViewHeader: UISearchBarDelegate, postSortSegmentControlDeleg
             self.listDescTextView.text = ListDescPlaceHolder
             self.listDescTextView.textColor = UIColor.lightGray
         } else {
-            self.listDescTextView.text = self.currentDisplayList?.listDescription
+            if (currentDisplayList?.listDescription == "" || currentDisplayList?.listDescription == nil) {
+                self.listDescTextView.text = "No List Description"
+            } else {
+                self.listDescTextView.text = self.currentDisplayList?.listDescription
+            }
+            print("refreshListDesc: ", self.currentDisplayList?.listDescription)
             self.listDescTextView.textColor = UIColor.black
         }
         self.listDescTextView.sizeToFit()

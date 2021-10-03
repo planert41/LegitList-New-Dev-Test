@@ -371,7 +371,7 @@ class LegitSearchViewControllerNew: UIViewController {
 
         self.searchTermCollectionView.reloadData()
         self.tableView.reloadData()
-        self.view.layoutIfNeeded()
+//        self.view.layoutIfNeeded()
     }
     
     

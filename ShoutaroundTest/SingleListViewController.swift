@@ -688,7 +688,7 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
         if indexPath.section == 1 {
             if self.showEmpty /*&& self.isFiltering*/
             {
-                return CGSize(width: view.frame.width, height: view.frame.width)
+                return CGSize(width: view.frame.width - 50, height: view.frame.width - 50)
             }
             else if self.postFormatInd == 0
             {
@@ -1089,7 +1089,7 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
         bottomEmojiBar.displayedEmojis = topEmojis
         let showBottomEmojiBar = (self.viewFilter.isFiltering || self.viewFilter.filterSort != defaultRecentSort)
         bottomEmojiBarHide?.constant = showBottomEmojiBar ? bottomEmojiBarHeight : 0
-        self.view.layoutIfNeeded()
+//        self.view.layoutIfNeeded()
     }
     
 

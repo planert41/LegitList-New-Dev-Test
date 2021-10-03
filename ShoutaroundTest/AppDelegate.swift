@@ -126,7 +126,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         NotificationCenter.default.addObserver(self, selector: #selector(refreshAppIconBadge), name: InboxController.newMsgNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshAppIconBadge), name: MainTabBarController.NewNotificationName, object: nil)
 
-        
+        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(toggleListView), name: AppDelegate.SuccessLoginNotificationName, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(successLoginView), name: AppDelegate.SuccessLoginNotificationName, object: nil)

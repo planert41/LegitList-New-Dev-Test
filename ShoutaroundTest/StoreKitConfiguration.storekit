@@ -1,4 +1,8 @@
 {
+  "identifier" : "5F76D127",
+  "nonRenewingSubscriptions" : [
+
+  ],
   "products" : [
     {
       "displayPrice" : "0.99",
@@ -121,6 +125,6 @@
   ],
   "version" : {
     "major" : 1,
-    "minor" : 0
+    "minor" : 1
   }
 }

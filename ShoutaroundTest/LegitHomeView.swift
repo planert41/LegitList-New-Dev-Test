@@ -1016,7 +1016,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
         bottomEmojiBarHide?.constant = 0
 
 //        bottomEmojiBarHide?.constant = showBottomEmojiBar ? bottomEmojiBarHeight : 0
-        self.view.layoutIfNeeded()
+//        self.view.layoutIfNeeded()
         
     }
     

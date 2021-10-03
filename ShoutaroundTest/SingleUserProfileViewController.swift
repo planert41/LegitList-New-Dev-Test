@@ -391,8 +391,8 @@ class SingleUserProfileViewController: UIViewController {
 //        postSortFormatBar.navMapButton.isHidden = false
 ////        postSortFormatBar.isHidden = true
 //
-//        self.scalar = UIScreen.main.nativeBounds.height / defaultHeight
-//        print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
+        self.scalar = min(1, UIScreen.main.nativeBounds.height / defaultHeight)
+        print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
 //
 //        let addPhotoButtonSize: CGFloat = 75 * scalar
 //        self.view.addSubview(addPhotoButton)
@@ -894,7 +894,7 @@ extension SingleUserProfileViewController {
         bottomEmojiBar.displayedEmojis = topEmojis
         let showBottomEmojiBar = (self.viewFilter.isFiltering || self.viewFilter.filterSort != defaultRecentSort)
         bottomEmojiBarHide?.constant = showBottomEmojiBar ? bottomEmojiBarHeight : 0
-        self.view.layoutIfNeeded()
+//        self.view.layoutIfNeeded()
     }
     
     @objc func handleRefresh() {

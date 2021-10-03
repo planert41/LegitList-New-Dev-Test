@@ -34,7 +34,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             if self.fetchType == ListAll {
                 self.fetchAllLists()
             }
-//            self.sortDisplayLists()
+            self.sortDisplayLists()
         }
     }
     

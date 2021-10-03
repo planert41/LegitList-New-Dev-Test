@@ -132,7 +132,7 @@ class UserSearchBar: UIView, UISearchBarDelegate {
 //        uploadEmojiList.estimatedItemSize = CGSize(width: 120, height: 35)
         uploadEmojiList.estimatedItemSize = CGSize(width: 60, height: 35)
 
-        uploadEmojiList.sectionInset = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        uploadEmojiList.sectionInset = UIEdgeInsets(top: 2, left: 5, bottom: 2, right: 5)
         uploadEmojiList.scrollDirection = .horizontal
         let cv = UICollectionView(frame: .zero, collectionViewLayout: uploadEmojiList)
         cv.layer.borderWidth = 0

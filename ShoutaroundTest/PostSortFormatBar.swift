@@ -72,7 +72,7 @@ class PostSortFormatBar: UIView{
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.scalar = UIScreen.main.nativeBounds.width / defaultWidth
+        self.scalar = min(1, UIScreen.main.nativeBounds.width / defaultWidth)
         print(" ~ PostSortFormatBar Scalar", self.scalar, UIScreen.main.nativeBounds.width, defaultWidth)
         
 
@@ -103,7 +103,7 @@ class PostSortFormatBar: UIView{
 //        navMapButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
 //        navMapButton.isHidden = true
         //        navMapButton.alpha = 0.8
-        //        navMapButton.rightAnchor.constraint(lessThanOrEqualTo: barView.rightAnchor, constant: 20).isActive = true
+        navMapButton.rightAnchor.constraint(lessThanOrEqualTo: barView.rightAnchor, constant: 20).isActive = true
 
 
         
