@@ -451,7 +451,7 @@ class LegitSearchViewControllerNew: UIViewController {
 
         searchSegmentView.addSubview(searchSegment)
         searchSegment.anchor(top: nil, left: searchSegmentView.leftAnchor, bottom: nil, right: searchSegmentView.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 40)
-        searchSegment.centerYAnchor.constraint(equalToSystemSpacingBelow: searchSegmentView.centerYAnchor, multiplier: 1).isActive = true
+        searchSegment.centerYAnchor.constraint(equalTo: searchSegmentView.centerYAnchor).isActive = true
 //        searchSegment.centerXAnchor.constraint(equalTo: searchSegmentView.centerXAnchor).isActive = true
         searchSegmentView.layer.applySketchShadow(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0.5), alpha: 0.5, x: 0, y: 2, blur: 4, spread: 0)
 

@@ -450,7 +450,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 //        tuserId = userId ?? ""
 //        tpostId = postId ?? ""
         
-        print("New User Post Notification ", tuserId, tpostId)
+//        print("New User Post Notification ", tuserId, tpostId)
         
         
         if self.isFetchingPosts {return}

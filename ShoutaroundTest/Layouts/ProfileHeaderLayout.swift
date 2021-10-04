@@ -8,12 +8,15 @@
 
 import UIKit
 
-class ListViewFlowLayout: UICollectionViewFlowLayout {
+class ProfileHeaderLayout: UICollectionViewFlowLayout {
     
     // MARK: - Collection View Flow Layout Methods
     var priorOffsetY: CGFloat? = nil
     var priorHeaderPosition: CGFloat? = nil
     var initContentYOffset: CGFloat? = nil
+    var headerHeightConstant: CGFloat? = nil
+    
+    
     
     override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         return true
@@ -58,40 +61,60 @@ class ListViewFlowLayout: UICollectionViewFlowLayout {
         guard let layoutAttributes = super.layoutAttributesForSupplementaryView(ofKind: elementKind, at: indexPath) else { return nil }
         guard let boundaries = boundaries(forSection: indexPath.section) else { return layoutAttributes }
         guard let collectionView = collectionView else { return layoutAttributes }
-        
-        
+        let postDetailHeight = CGFloat(80)
+
         // Helpers
         let contentOffsetY = collectionView.contentOffset.y
         var frameForSupplementaryView = layoutAttributes.frame
         // Set minimum to zero for 0 cell collectionview
         let minimum = max(0,boundaries.minimum - frameForSupplementaryView.height)
         let maximum = boundaries.maximum - frameForSupplementaryView.height
-        
+
         
         var headerOffset = frameForSupplementaryView.origin.y
+        
+        if (headerHeightConstant == nil || headerHeightConstant == 0) && frameForSupplementaryView.height > 0 {
+            headerHeightConstant = frameForSupplementaryView.height
+        }
+        
         
         if (self.initContentYOffset == nil || self.initContentYOffset == 0) {
             // Init Offsets
             self.initContentYOffset = contentOffsetY
             self.priorHeaderPosition = frameForSupplementaryView.origin.y
             self.priorOffsetY = contentOffsetY
-            //            print("Set Init Offset, OffsetY \(contentOffsetY), InitOffset: \(self.initContentYOffset)")
+            print("Set Init Offset, OffsetY \(contentOffsetY), InitOffset: \(self.initContentYOffset)")
         }
         
-        // 40 is the height of list bar
-        //        let headerfloor = max(0,contentOffsetY - self.initContentYOffset! - frameForSupplementaryView.height - 80)
-        //        let headerceiling = max(0,contentOffsetY - self.initContentYOffset! - 80)
+        var headerfloor = max(0,contentOffsetY - self.initContentYOffset! - (headerHeightConstant ?? 0.0))
+        var headerceiling = max(0,contentOffsetY - self.initContentYOffset!)
         
-        let headerfloor = max(0,contentOffsetY - self.initContentYOffset! - (frameForSupplementaryView.height)) /*+ UIApplication.shared.statusBarFrame.height*/
-        let headerceiling = max(0,contentOffsetY/* - self.initContentYOffset!*/) /*+ UIApplication.shared.statusBarFrame.height*/
+        if contentOffsetY > (headerHeightConstant ?? 0.0) {
+            headerceiling = max(0, contentOffsetY - (headerHeightConstant ?? 0.0) + postDetailHeight)
+        }
+        
         
         // Basically if scrolls down, lets the header dissapear, and then resets filter when scrolling up and cap
+            
+//        if contentOffsetY < priorOffsetY! {
+//            // Scrolling Up
+//            if self.priorHeaderPosition! > headerceiling {
+//                print("Scroll up capping header")
+//                headerOffset = headerceiling
+//            } else if self.priorHeaderPosition! < headerfloor {
+//                print("Scroll up reset header")
+//                headerOffset = headerfloor
+//            }
+//
+//        } else {
+//            headerOffset = self.priorHeaderPosition!
+//        }
         
         if contentOffsetY < priorOffsetY! &&  self.priorHeaderPosition! < headerfloor{
-            //            print("Scroll up reset header")
+            print("Scroll up reset header")
             headerOffset = headerfloor
         } else if contentOffsetY < priorOffsetY! && self.priorHeaderPosition! > headerceiling{
-            //            print("Scroll up capping header")
+            print("Scroll up capping header")
             headerOffset = headerceiling
         } else {
             headerOffset = self.priorHeaderPosition!
@@ -101,13 +124,8 @@ class ListViewFlowLayout: UICollectionViewFlowLayout {
         layoutAttributes.frame = frameForSupplementaryView
         
         
-       // print("Offset \(contentOffsetY) | Header \(headerOffset) | Ceiling \(headerceiling) | Floor \(headerfloor) | Height \(frameForSupplementaryView.height) | Init Offset \(self.initContentYOffset!)")
+//        print("Offsety : ", contentOffsetY.rounded(), "Prior Offset: ", self.priorOffsetY!.rounded(), "Header Postion ", headerOffset.rounded(), "floor: ", headerfloor.rounded(), "ceiling: ", headerceiling.rounded(), "init offset: ",self.initContentYOffset!.rounded() , "HeaderHeight :", headerHeightConstant?.rounded())
         
-//                print("Offsety : ", contentOffsetY, "Prior Offset: ", self.priorOffsetY, "Header Postion ", headerOffset, "floor: ", headerfloor, "ceiling: ", headerceiling, "init offset: ",self.initContentYOffset)
-//        print("Offsety : ", contentOffsetY, "Prior Offset: ", self.priorOffsetY!, "Header Postion ", headerOffset, "floor: ", headerfloor, "ceiling: ", headerceiling, "init offset: ",self.initContentYOffset! , "HeaderHeight :", frameForSupplementaryView.height)
-        print("Offsety : ", contentOffsetY.rounded(), "Prior Offset: ", self.priorOffsetY!.rounded(), "Header Postion ", headerOffset.rounded(), "floor: ", headerfloor.rounded(), "ceiling: ", headerceiling.rounded(), "init offset: ",self.initContentYOffset!.rounded() , "HeaderHeight :", frameForSupplementaryView.height.rounded())
-        
-
         self.priorOffsetY = contentOffsetY
         self.priorHeaderPosition = frameForSupplementaryView.origin.y
         

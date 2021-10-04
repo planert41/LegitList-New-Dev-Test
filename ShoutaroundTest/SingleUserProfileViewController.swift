@@ -159,7 +159,7 @@ class SingleUserProfileViewController: UIViewController {
         let layout = ListViewFlowLayout()
         layout.minimumInteritemSpacing = 5
         layout.minimumLineSpacing = 5
-        let cv = UICollectionView(frame: CGRect.zero, collectionViewLayout: HomeSortFilterHeaderFlowLayout())
+        let cv = UICollectionView(frame: CGRect.zero, collectionViewLayout: ProfileHeaderLayout())
         cv.translatesAutoresizingMaskIntoConstraints = false
         cv.delegate = self
         cv.dataSource = self
@@ -470,6 +470,7 @@ class SingleUserProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshInboxNotifications), name: InboxController.newMsgNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        self.view.layoutIfNeeded()
 
         print("  END |  NewListCollectionView | ViewdidLoad")
 
@@ -894,7 +895,7 @@ extension SingleUserProfileViewController {
         bottomEmojiBar.displayedEmojis = topEmojis
         let showBottomEmojiBar = (self.viewFilter.isFiltering || self.viewFilter.filterSort != defaultRecentSort)
         bottomEmojiBarHide?.constant = showBottomEmojiBar ? bottomEmojiBarHeight : 0
-//        self.view.layoutIfNeeded()
+        self.view.layoutIfNeeded()
     }
     
     @objc func handleRefresh() {
@@ -948,7 +949,7 @@ extension SingleUserProfileViewController {
                print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
             
                self.updateNoFilterCounts()
-               self.imageCollectionView.reloadSections(IndexSet(integer: 1))
+               self.imageCollectionView.reloadSections(IndexSet(integer: 0))
 
            // Reload Data here to reload header, because only update the pics everywhere else
 //               self.imageCollectionView.reloadData()
@@ -1084,7 +1085,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
                 }
                 
                 self.paginatePostsCount = (self.isFiltering) ? self.displayedPosts.count : self.fetchedPosts.count
-                self.imageCollectionView.reloadSections(IndexSet(integer: 1))
+                self.imageCollectionView.reloadSections(IndexSet(integer: 0))
 //
 //                self.refreshPagination()
 //                self.paginatePosts()
@@ -1736,7 +1737,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 1 {
+        if section == 0 {
             var postCount = (isFiltering) ? displayedPosts.count : fetchedPosts.count
             self.showEmpty = (postCount == 0 && isFiltering)
             postCount = self.showEmpty ? 1 : self.paginatePostsCount
@@ -1747,12 +1748,12 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 2
+        return 1
     }
     
         
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.section == 1 {
+        if indexPath.section == 0 {
             
             if showEmpty && self.isFiltering {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
@@ -1830,7 +1831,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        if indexPath.section == 1 {
+        if indexPath.section == 0 {
             if self.showEmpty && self.isFiltering
             {
                 return CGSize(width: view.frame.width, height: view.frame.width)
@@ -1889,7 +1890,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
 
         }
         
-        header.isHidden = !(indexPath.section == 0)
+//        header.isHidden = !(indexPath.section == 0)
         
         
         return header

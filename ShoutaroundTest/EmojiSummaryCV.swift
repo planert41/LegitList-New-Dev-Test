@@ -136,7 +136,9 @@ class EmojiSummaryCV: UIView{
     
     
     func refreshEmojiCollectionView() {
-        self.emojiCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .left, animated: false)
+        if self.emojiCollectionView.numberOfItems(inSection: 0) > 0 {
+            self.emojiCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .left, animated: false)
+        }
         self.emojiCollectionView.reloadData()
     }
     
