@@ -199,6 +199,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         didSet {
             self.setAddListButtonWidth()
             self.setupNextButton()
+            self.nextButton.isHidden = viewListMode
 //            self.nextButton.isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
 //                .isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
             self.setupNavigationItems()
