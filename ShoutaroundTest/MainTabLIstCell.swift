@@ -94,6 +94,12 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
         }
     }
     
+    var emoji: String? {
+        didSet {
+            guard let emoji = emoji else {return}
+        }
+    }
+    
     var list: List? {
         didSet {
             guard let list = list else {return}
@@ -488,6 +494,8 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
             self.profileImageView.contentMode = .scaleAspectFit
 //            self.profileImageView.backgroundColor = UIColor.backgroundGrayColor()
         }
+        
+        self.profileImageView.isHidden = list.isRatingList && self.profileImageView.image == UIImage()
                 
         let listnameLabelText = NSMutableAttributedString()
         
@@ -499,7 +507,9 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
         image1Attachment.bounds = CGRect(x: 0, y: (headerLabel.font.capHeight - (inputImage.size.height)).rounded() / 2, width: inputImage.size.width, height: inputImage.size.height)
 
         let image1String = NSAttributedString(attachment: image1Attachment)
-        listnameLabelText.append(image1String)
+        if !(self.list?.isRatingList ?? false) {
+            listnameLabelText.append(image1String)
+        }
         
         var listNameText = (self.list?.name ?? "").truncate(length: 20)
         if list.topEmojis.count > 0 {

@@ -105,7 +105,7 @@ class ListViewFlowLayout: UICollectionViewFlowLayout {
         
 //                print("Offsety : ", contentOffsetY, "Prior Offset: ", self.priorOffsetY, "Header Postion ", headerOffset, "floor: ", headerfloor, "ceiling: ", headerceiling, "init offset: ",self.initContentYOffset)
 //        print("Offsety : ", contentOffsetY, "Prior Offset: ", self.priorOffsetY!, "Header Postion ", headerOffset, "floor: ", headerfloor, "ceiling: ", headerceiling, "init offset: ",self.initContentYOffset! , "HeaderHeight :", frameForSupplementaryView.height)
-        print("Offsety : ", contentOffsetY.rounded(), "Prior Offset: ", self.priorOffsetY!.rounded(), "Header Postion ", headerOffset.rounded(), "floor: ", headerfloor.rounded(), "ceiling: ", headerceiling.rounded(), "init offset: ",self.initContentYOffset!.rounded() , "HeaderHeight :", frameForSupplementaryView.height.rounded())
+//        print("Offsety : ", contentOffsetY.rounded(), "Prior Offset: ", self.priorOffsetY!.rounded(), "Header Postion ", headerOffset.rounded(), "floor: ", headerfloor.rounded(), "ceiling: ", headerceiling.rounded(), "init offset: ",self.initContentYOffset!.rounded() , "HeaderHeight :", frameForSupplementaryView.height.rounded())
         
 
         self.priorOffsetY = contentOffsetY

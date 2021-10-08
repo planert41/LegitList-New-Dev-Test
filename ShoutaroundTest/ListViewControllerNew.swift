@@ -23,7 +23,95 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     var allLists: [List] = []
     var followingLists: [List] = []
     var yourLists: [List] = []
+    
+    var userPosts:[Post] = [] {
+        didSet {
+            self.updateUserPostFavCounts()
+        }
+    }
+    
+    var userPostsFavCounts:[String:Int] = [:]
+    var userFavs = Array(extraRatingEmojis.reversed())
+    var userFavsLists:[String: List] = [:]
+    var filteredUserFavs: [String] = []
 
+    func loadCurrentUserPosts(){
+        if CurrentUser.posts.count == 0 {
+            print("No Current User Posts. Fetch Posts | ListViewControllerNew")
+            guard let uid = Auth.auth().currentUser?.uid else {
+                print("No Current User UID")
+                return
+            }
+            Database.fetchAllPostWithUID(creatoruid: uid) { fetchedPosts in
+                self.createTempListsForUserFavs()
+            }
+        } else {
+            self.createTempListsForUserFavs()
+        }
+    }
+    
+    func updateUserPostFavCounts() {
+        var tempCounts:[String:Int] = [:]
+        for post in userPosts {
+            if let x = post.ratingEmoji {
+                tempCounts[x] = (tempCounts[x] ?? 0) + 1
+            }
+        }
+        self.userPostsFavCounts = tempCounts
+    }
+    
+    
+    func createTempListsForUserFavs() {
+        print("Creating Temp Fav Lists \(CurrentUser.posts.count) User Posts | ListViewControllerNew")
+
+        var tempListPostIds:[String:[String: Double]] = [:]
+        var tempLists:[String: List] = [:]
+
+        // Create empty sets and default lists
+        for emoji in userFavs {
+            tempListPostIds[emoji] = [:]
+            let name: String! = (extraRatingEmojisDic[emoji]!.capitalized)
+            var temp = List.init(id: emoji, name: "\(emoji) \(name!)", publicList: 0)
+            temp.isRatingList = true
+            tempLists[emoji] = temp
+        }
+        
+        // Loop through posts for rating emojis
+        for (id, post) in CurrentUser.posts {
+            if post.ratingEmoji != nil {
+                guard let emoji = post.ratingEmoji else {return}
+                var temp = tempListPostIds[emoji]
+                temp?[id] = post.creationSecondsFrom1970 ?? 0
+                tempListPostIds[emoji] = temp
+            }
+        }
+        
+        // Attach post ids to rating lists
+        for emoji in userFavs {
+            var temp = tempLists[emoji]
+            var postIds = tempListPostIds[emoji]
+            temp?.postIds = postIds ?? [:]
+            
+            if (postIds?.count) ?? 0 > 0 {
+                let latestPost = postIds!.max { a, b in a.value < b.value }
+                if let post = CurrentUser.posts[(latestPost?.key)!] {
+                    var imageUrl = post.imageUrls.first
+                    temp?.heroImageUrl = imageUrl
+                }
+            }            
+            
+            tempLists[emoji] = temp
+        }
+        self.userFavsLists = tempLists
+        
+        self.tableView.reloadData()
+    }
+    
+    
+    
+
+    
+    
     var fetchedList: [List] = []
     var filteredDisplayList: [List] = []
     
@@ -33,8 +121,11 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         didSet {
             if self.fetchType == ListAll {
                 self.fetchAllLists()
+            } else if self.fetchType == ListFav {
+                self.loadCurrentUserPosts()
+            } else {
+                self.sortDisplayLists()
             }
-            self.sortDisplayLists()
         }
     }
     
@@ -389,6 +480,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     @objc func selectFetchType(sender: UISegmentedControl) {
         self.fetchType = self.fetchTypeOptions[sender.selectedSegmentIndex]
         self.underlineSegment(segment: sender.selectedSegmentIndex)
+        self.sortSegmentControl.isHidden = (self.fetchType == ListFav)
         print("DiscoverController | Type Selected | \(self.fetchType)")
     }
     
@@ -556,6 +648,12 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         
         let searchTerms = searchText.lowercased().components(separatedBy: " ")
         
+        if self.fetchType == ListFav {
+            self.filteredUserFavs = userFavs.filter({ (emoji) -> Bool in
+                return emoji.lowercased().contains(searchText.lowercased()) || extraRatingEmojisDic[emoji]!.contains(searchText.lowercased())
+            })
+        }
+        
         // FILTER LIST TABLE VIEW
                 
         self.filteredDisplayList = fetchedList.filter({ (list) -> Bool in
@@ -686,12 +784,17 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return max(1, self.isFiltering ? self.filteredDisplayList.count : self.fetchedList.count)
-        
+        if self.fetchType == ListFav {
+            return max(1, self.isFiltering ? self.filteredUserFavs.count : self.userFavs.count)
+        } else {
+            return max(1, self.isFiltering ? self.filteredDisplayList.count : self.fetchedList.count)
+        }
     }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    
+    // LISTS
         
         if self.isFiltering && filteredDisplayList.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: listCellId, for: indexPath) as! SearchResultsCell
@@ -707,7 +810,15 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             cell.selectionStyle = .none
             cell.postCountLabel.isHidden = true
             return cell
-        } else {
+        } else if self.fetchType == ListFav {
+            var emoji = isFiltering ? filteredUserFavs[indexPath.row] : userFavs[indexPath.row]
+            let currentList = self.userFavsLists[emoji]
+            let cell = tableView.dequeueReusableCell(withIdentifier: newCellId, for: indexPath) as! MainTabListCell
+            cell.cellHeight?.constant = 100
+            cell.list = currentList
+            return cell
+        }
+        else {
             let currentList = isFiltering ? filteredDisplayList[indexPath.row] : fetchedList[indexPath.row]
 //            let cell = tableView.dequeueReusableCell(withIdentifier: newCellId, for: indexPath) as! UserAndListCell
             let cell = tableView.dequeueReusableCell(withIdentifier: newCellId, for: indexPath) as! MainTabListCell
@@ -723,9 +834,16 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         if let currentCell = tableView.cellForRow(at: indexPath) as? SearchResultsCell {
             self.didTapCreateNewList()
         } else {
+            if self.fetchType == ListFav {
+                let emoji = self.isFiltering ? filteredUserFavs[indexPath.row] : userFavs[indexPath.row]
+                let list = userFavsLists[emoji]!
+                self.extTapList(list: list)
+            } else {
+                let selectedList = self.isFiltering ? filteredDisplayList[indexPath.row] : fetchedList[indexPath.row]
+                self.extTapList(list: selectedList)
+            }
             
-            let selectedList = self.isFiltering ? filteredDisplayList[indexPath.row] : fetchedList[indexPath.row]
-            self.extTapList(list: selectedList)
+
     //            self.goToList(list: selectedList, filter: nil)
             tableView.deselectRow(at: indexPath, animated: false)
         }

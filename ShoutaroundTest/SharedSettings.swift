@@ -253,7 +253,8 @@ var TabSearchDefault:String = ListYours
 var ListYours = "Yours"
 var ListFollowing = "Following"
 var ListAll = "All Lists"
-var ListOptions:[String] = [ListYours, ListFollowing, ListAll]
+var ListFav = "Favorites"
+var ListOptions:[String] = [ListYours, ListFollowing, ListFav]
 var ListDefault:String = ListYours
 
 var DiscoverSortOptions:[String] = [sortPost, sortNew, sortNearest, sortTrending]

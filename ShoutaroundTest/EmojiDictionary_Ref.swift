@@ -52,7 +52,7 @@ var smileyEmojis: [String] = ["😍","😋","🤤","👍","😀","😝","😂","
 var extraRatingEmojis: [String] = ["💩","😡","🤔","👌","🔥","💯", "🥇"]
 
 var extraRatingEmojisDic: [String: String] =
-    ["💩":"poop", "😡":"angry", "😍":"awesome", "👌":"legit","🔥":"fire", "💯":"100%", "🥇":"best"]
+    ["💩":"poop", "😡":"angry", "😍":"awesome", "👌":"legit","🔥":"fire", "💯":"100%", "🥇":"best","🤔":"curious"]
 
 
 var UserStatusEmojis: [String] = "😍😋🤤🤩😭😤😥😓💩😡😵🤑💪👍✌️👌💯❤️🔥🏆🤯😭😤😢🤤😵🤮😋".map(String.init)

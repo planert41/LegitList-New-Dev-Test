@@ -69,8 +69,15 @@ class SingleListViewHeader: UICollectionViewCell {
             }
             
             
-            let inputImage = self.currentDisplayList?.creatorUID == CurrentUser.uid ? #imageLiteral(resourceName: "bookmark_filled").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate)
-            self.listNameIcon.setImage(inputImage, for: .normal)
+            if self.currentDisplayList?.isRatingList ?? false {
+                self.listNameIcon.setImage(UIImage(), for: .normal)
+                self.listNameIcon.isHidden = true
+            } else {
+                let inputImage = self.currentDisplayList?.creatorUID == CurrentUser.uid ? #imageLiteral(resourceName: "bookmark_filled").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate)
+                self.listNameIcon.setImage(inputImage, for: .normal)
+                self.listNameIcon.isHidden = false
+            }
+
             
             
             listOptionButton.isHidden = (currentDisplayList?.creatorUID != Auth.auth().currentUser?.uid)

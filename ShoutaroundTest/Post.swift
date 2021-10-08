@@ -98,6 +98,7 @@ struct Post: Hashable, Equatable  {
     
     let user: User
     let caption: String
+    let creationSecondsFrom1970: Double
     let creationDate: Date
     var locationGPS: CLLocation?
     var imageGPS: CLLocation?
@@ -244,8 +245,8 @@ struct Post: Hashable, Equatable  {
         self.autoTagEmojiTags = dictionary["autoTagEmojisDict"] as? [String] ?? []
         
         
-        let tagSecondsFrom1970 = dictionary["tagTime"] as? Double ?? 0
-        self.tagTime = Date(timeIntervalSince1970: tagSecondsFrom1970)
+        self.creationSecondsFrom1970 = dictionary["tagTime"] as? Double ?? 0
+        self.tagTime = Date(timeIntervalSince1970: self.creationSecondsFrom1970)
         
         let secondsFrom1970 = dictionary["creationDate"] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: secondsFrom1970)

@@ -1740,6 +1740,13 @@ extension Database{
                 postCache.removeValue(forKey: postId)
                 postCache[postId] = newPost
                 
+                // Update Current User
+                if CurrentUser.posts[postId] == nil {
+                    var temp = PostId.init(id: postId, creatorUID: CurrentUser.uid, sort: 0)
+                    CurrentUser.postIds.append(temp)
+                    CurrentUser.posts[postId] = newPost
+                }
+                
                 let postDict:[String: String] = ["updatedPostId": postId]
                 NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
                 
