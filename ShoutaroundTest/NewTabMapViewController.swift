@@ -696,7 +696,7 @@ class NewTabMapViewController: UIViewController {
         view.addSubview(postContainer)
 //        postContainer.anchor(top: nil, left: expandListButton.rightAnchor, bottom: expandListButton.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
         postContainer.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
-        postContainerHeightConstraint = postContainer.heightAnchor.constraint(equalToConstant: 20)
+        postContainerHeightConstraint = postContainer.heightAnchor.constraint(equalToConstant: 0)
         postContainerHeightConstraint?.isActive = true
         postContainer.backgroundColor = UIColor.lightBackgroundGrayColor()
         postContainer.layer.applySketchShadow(color: UIColor(red: 0, green: 0, blue: 0, alpha: 1), alpha: 0.5, x: 0, y: 3, blur: 4, spread: 0)
@@ -709,7 +709,7 @@ class NewTabMapViewController: UIViewController {
 
        setupPostCollectionView()
        postContainer.addSubview(postCollectionView)
-       postCollectionView.anchor(top: postContainer.topAnchor, left: postContainer.leftAnchor, bottom: postContainer.bottomAnchor, right: postContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+       postCollectionView.anchor(top: postContainer.topAnchor, left: postContainer.leftAnchor, bottom: nil, right: postContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: CGFloat(self.postFullHeight))
        
         
         view.addSubview(morePostLabel)
@@ -1172,7 +1172,19 @@ class NewTabMapViewController: UIViewController {
         self.postCollectionViewFlowLayout.estimatedItemSize = CGSize(width: self.postCollectionView.frame.width, height: CGFloat(self.postFullHeight))
         self.postCollectionView.collectionViewLayout = self.postCollectionViewFlowLayout
         self.view.layoutIfNeeded()
-        self.postContainerHeightConstraint?.constant = CGFloat(20 + (self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
+//        self.postContainerHeightConstraint?.constant = CGFloat(10 + (self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
+        
+        
+        UIView.animate(withDuration: 1,
+                       delay: 0,
+                       usingSpringWithDamping: 0.2,
+                       initialSpringVelocity: 6.0,
+                       options: .curveEaseIn,
+                       animations: { [weak self] in
+                        var height = CGFloat(10 + ((self?.isPostFullView ?? false) ? self?.postFullHeight ?? 0 : self?.postHalfHeight ?? 0))
+                        self?.postContainerHeightConstraint?.constant = height
+            },
+                       completion: nil)
 
         self.postCollectionView.reloadData()
         SVProgressHUD.dismiss()
@@ -1181,7 +1193,7 @@ class NewTabMapViewController: UIViewController {
     }
     
     func togglePostHeight(){
-        self.postContainerHeightConstraint?.constant = CGFloat(20 + (self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
+        self.postContainerHeightConstraint?.constant = CGFloat(10 + (self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
         self.hideLabel.isHidden = !self.isPostFullView
         self.hideLabel.isUserInteractionEnabled = !self.hideLabel.isHidden
 //        self.postCollectionViewFlowLayout.estimatedItemSize = CGSize(width: self.postCollectionView.frame.width, height: CGFloat(self.isPostFullView ? self.postFullHeight : self.postHalfHeight))
