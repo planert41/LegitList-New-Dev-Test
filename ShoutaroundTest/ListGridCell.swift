@@ -505,11 +505,6 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
 
         //emojiLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.5)
         emojiLabel.sizeToFit()
-
-        addSubview(locationDistanceLabel)
-        locationDistanceLabel.anchor(top: nil, left: emojiLabel.leftAnchor, bottom: emojiLabel.topAnchor, right: nil, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-//        locationDistanceLabel.centerYAnchor.constraint(lessThanOrEqualTo: emojiLabel.centerYAnchor).isActive = true
-        locationDistanceLabel.isHidden = true
         
 
         // IMAGE COUNT
@@ -553,6 +548,11 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
 //        ratingEmojiWidth?.isActive = true
         ratingEmojiLabel.sizeToFit()
         
+        
+        addSubview(locationDistanceLabel)
+        locationDistanceLabel.anchor(top: nil, left: nil, bottom: headerView.bottomAnchor, right: userProfileImageView.leftAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+//        locationDistanceLabel.centerYAnchor.constraint(lessThanOrEqualTo: emojiLabel.centerYAnchor).isActive = true
+        locationDistanceLabel.isHidden = true
         
         
     // LOCATION NAME

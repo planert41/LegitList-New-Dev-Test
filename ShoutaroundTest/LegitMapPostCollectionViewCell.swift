@@ -44,7 +44,7 @@ class LegitMapPostCollectionViewCell: UICollectionViewCell {
     let cellId = "cellId"
     
     var listCollectionHeightConstraint:NSLayoutConstraint?
-    let listCollectionHeight: CGFloat = 35
+    let listCollectionHeight: CGFloat = 40
     
     
     // Lists
@@ -353,7 +353,7 @@ class LegitMapPostCollectionViewCell: UICollectionViewCell {
         
         setupListCollectionView()
         bottomView.addSubview(listCollectionView)
-        listCollectionView.anchor(top: nil, left: bottomView.leftAnchor, bottom: bottomView.bottomAnchor, right: bottomView.rightAnchor, paddingTop: 3, paddingLeft: 15, paddingBottom: 5, paddingRight: 15, width: 0, height: 30)
+        listCollectionView.anchor(top: nil, left: bottomView.leftAnchor, bottom: bottomView.bottomAnchor, right: bottomView.rightAnchor, paddingTop: 3, paddingLeft: 15, paddingBottom: 5, paddingRight: 15, width: 0, height: listCollectionHeight)
         listCollectionHeightConstraint = listCollectionView.heightAnchor.constraint(equalToConstant: listCollectionHeight)
         
         

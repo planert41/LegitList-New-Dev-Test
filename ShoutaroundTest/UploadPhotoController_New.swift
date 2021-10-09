@@ -916,7 +916,11 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     }()
     
     var additionalTagCollectionView: UICollectionView = {
-        let uploadLocationTagList = UploadLocationTagList()
+//        let uploadLocationTagList = UploadLocationTagList()
+        let uploadLocationTagList = UICollectionViewFlowLayout()
+        uploadLocationTagList.estimatedItemSize = CGSize(width: 30, height: 30)
+        uploadLocationTagList.minimumInteritemSpacing = 10
+        uploadLocationTagList.minimumLineSpacing = 10
         uploadLocationTagList.scrollDirection = UICollectionView.ScrollDirection.horizontal
         uploadLocationTagList.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         var cv = UICollectionView(frame: .zero, collectionViewLayout: uploadLocationTagList)
@@ -1488,7 +1492,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         additionalTagHeader.isUserInteractionEnabled = true
 
         view.addSubview(additionalTagCollectionView)
-        additionalTagCollectionView.anchor(top: additionalTagHeader.bottomAnchor, left: additionalTagHeader.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 15, width: 0, height: 30)
+        additionalTagCollectionView.anchor(top: additionalTagHeader.bottomAnchor, left: additionalTagHeader.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 15, width: 0, height: 40)
 //        additionalTagCollectionView.centerYAnchor.constraint(equalTo: additionalTagHeader.centerYAnchor).isActive = true
         setupAdditionalTags()
         
