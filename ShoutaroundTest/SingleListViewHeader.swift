@@ -801,6 +801,8 @@ class SingleListViewHeader: UICollectionViewCell {
             listFollowButton.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
 
         }
+        
+        listFollowButton.isHidden = (currentDisplayList?.isRatingList ?? false)
     }
     
     @objc func didTapMapButton() {
@@ -962,8 +964,11 @@ extension SingleListViewHeader: UISearchBarDelegate, postSortSegmentControlDeleg
 //            self.listDescLabel.isUserInteractionEnabled = false
 //        }
         
-        
-        if Auth.auth().currentUser?.uid == currentDisplayList?.creatorUID && (currentDisplayList?.listDescription == "" || currentDisplayList?.listDescription == nil) {
+        if (currentDisplayList?.isRatingList ?? false) {
+            self.listDescTextView.text = "All your posts tagged with \((currentDisplayList?.id)!)"
+            self.listDescTextView.textColor = UIColor.black
+        }
+        else if Auth.auth().currentUser?.uid == currentDisplayList?.creatorUID && (currentDisplayList?.listDescription == "" || currentDisplayList?.listDescription == nil) {
             self.listDescTextView.text = ListDescPlaceHolder
             self.listDescTextView.textColor = UIColor.lightGray
         } else {
