@@ -717,10 +717,9 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
         
         self.searchText = searchText
         
-        if searchCaption.removingWhitespaces() == "" {
+        if searchCaption.removingWhitespaces() == "" && searchCaptionEmojis[0] == "" {
             // No Search, Restore Defaults
             self.restoreDefaultSearch()
-            self.searchFiltering = false
             return
         }
         
@@ -729,7 +728,7 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
         if self.selectedSearchSegmentIndex == nil {
             filteredAllSearchItems = allSearchItems.filter({ (string) -> Bool in
                 let emojiName = EmojiDictionary[string[0]]?.lowercased() ?? ""
-                return string[0].lowercased().contains(searchCaption.lowercased()) || emojiName.contains(searchCaption.lowercased())
+                return string[0].lowercased().contains(searchCaption.lowercased()) || emojiName.contains(searchCaption.lowercased()) || searchCaptionEmojis.contains(string[0])
             })
             filteredAllSearchItems = Array(Set(filteredAllSearchItems))
             filteredAllSearchItems.sort { (p1, p2) -> Bool in
@@ -822,6 +821,7 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
     }
     
     func restoreDefaultSearch() {
+        self.searchFiltering = false
         self.searchBar.text = ""
         self.filteredEmojis = self.displayEmojis
         self.filteredCuisines = self.displayCuisines

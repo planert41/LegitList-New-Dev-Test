@@ -82,7 +82,7 @@ class SingleListViewController: UIViewController {
 
     let searchViewController = LegitSearchViewControllerNew()
 
-    var viewFilter: Filter = Filter.init(defaultSort: defaultRankSort) {
+    var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort) {
         didSet {
             if (self.viewFilter.isFiltering) {
                 let currentFilter = self.viewFilter
@@ -478,7 +478,7 @@ class SingleListViewController: UIViewController {
 
            // Sort Recent Post By Listed Date
            var listSort: String = "Listed"
-           if self.viewFilter.filterSort == defaultRecentSort {
+            if self.viewFilter.filterSort == defaultRecentSort && !(self.currentDisplayList?.isRatingList ?? false){
                listSort = "Listed"
            } else {
                listSort = (self.viewFilter.filterSort)!
@@ -522,7 +522,7 @@ class SingleListViewController: UIViewController {
 
            // Sort Recent Post By Listed Date
            var listSort: String = "Listed"
-           if self.viewFilter.filterSort == defaultRecentSort {
+            if self.viewFilter.filterSort == defaultRecentSort && !(self.currentDisplayList?.isRatingList ?? false) {
                listSort = "Listed"
            } else {
                listSort = (self.viewFilter.filterSort)!
@@ -1149,7 +1149,7 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
 
         // Sort Recent Post By Listed Date
         var listSort: String = "Listed"
-        if self.viewFilter.filterSort == defaultRecentSort {
+        if self.viewFilter.filterSort == defaultRecentSort && !(self.currentDisplayList?.isRatingList ?? false){
             listSort = "Listed"
         } else {
             listSort = (self.viewFilter.filterSort)!

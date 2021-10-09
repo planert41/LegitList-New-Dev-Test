@@ -7433,7 +7433,10 @@ extension Database{
                     var tempDate = postListDate as! Double
                     var tempPost = fetchedPost
                     let listDate = Date(timeIntervalSince1970: tempDate)
-                    tempPost.listedDate = listDate
+                    if !list.isRatingList {
+                        // IF NON RATING LIST WE USE THE LISTED DATE INSTEAD OF THE POST DATE
+                        tempPost.listedDate = listDate
+                    }
                     
                     if let tempRank = list.listRanks[(tempPost.id)!] {
                         tempPost.listedRank = tempRank

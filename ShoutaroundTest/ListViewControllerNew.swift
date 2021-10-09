@@ -31,10 +31,15 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     var userPostsFavCounts:[String:Int] = [:]
-    var userFavs = Array(extraRatingEmojis.reversed())
+    var userFavs = extraRatingEmojisForList
     var userFavsLists:[String: List] = [:]
     var filteredUserFavs: [String] = []
 
+    func loadCurrentUserEmojis() {
+        self.userFavs = extraRatingEmojisForList + CurrentUser.mostUsedEmojis
+        self.loadCurrentUserPosts()
+    }
+    
     func loadCurrentUserPosts(){
         if CurrentUser.posts.count == 0 {
             print("No Current User Posts. Fetch Posts | ListViewControllerNew")
@@ -70,7 +75,12 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         // Create empty sets and default lists
         for emoji in userFavs {
             tempListPostIds[emoji] = [:]
-            let name: String! = (extraRatingEmojisDic[emoji]!.capitalized)
+            var name: String! = ""
+            if let ratingName = extraRatingEmojisDic[emoji] {
+                name = ratingName.capitalized
+            } else if let emojiName = EmojiDictionary[emoji] {
+                name = emojiName.capitalized
+            }
             var temp = List.init(id: emoji, name: "\(emoji) \(name!)", publicList: 0)
             temp.isRatingList = true
             tempLists[emoji] = temp
@@ -83,6 +93,14 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
                 var temp = tempListPostIds[emoji]
                 temp?[id] = post.creationSecondsFrom1970 ?? 0
                 tempListPostIds[emoji] = temp
+            }
+            
+            if post.nonRatingEmoji.count > 0 {
+                for emoji in post.nonRatingEmoji {
+                    var temp = tempListPostIds[emoji]
+                    temp?[id] = post.creationSecondsFrom1970 ?? 0
+                    tempListPostIds[emoji] = temp
+                }
             }
         }
         
@@ -122,7 +140,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             if self.fetchType == ListAll {
                 self.fetchAllLists()
             } else if self.fetchType == ListFav {
-                self.loadCurrentUserPosts()
+                self.loadCurrentUserEmojis()
             } else {
                 self.sortDisplayLists()
             }

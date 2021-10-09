@@ -507,7 +507,7 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         emojiLabel.sizeToFit()
 
         addSubview(locationDistanceLabel)
-        locationDistanceLabel.anchor(top: topAnchor, left: nil, bottom: bottomAnchor, right: nil, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        locationDistanceLabel.anchor(top: photoImageScrollView.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
         locationDistanceLabel.centerYAnchor.constraint(lessThanOrEqualTo: emojiLabel.centerYAnchor).isActive = true
         locationDistanceLabel.isHidden = true
         
