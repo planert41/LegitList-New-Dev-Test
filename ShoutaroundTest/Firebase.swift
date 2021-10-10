@@ -11054,7 +11054,7 @@ extension Database{
         // Detect Emojis in String
         if inputText.emojis.count > 0 {
             for emoji in inputText.emojis {
-                if emoji != "" {
+                if emoji != "" && !emoji.isEmptyOrWhitespace() {
                     outputEmojis.append(emoji)
                 }
             }
@@ -11095,6 +11095,11 @@ extension Database{
             }
         }
         
+        // Clear Blanks
+        outputEmojis.removeAll { String in
+            return String.isEmptyOrWhitespace()
+        }
+                
         completion(outputEmojis)
         
         

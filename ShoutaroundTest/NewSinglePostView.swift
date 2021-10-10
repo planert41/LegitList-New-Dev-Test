@@ -98,7 +98,7 @@ class NewSinglePostView: UIViewController {
     
 // NAV BUTTONS
     lazy var navBackButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 60, height: 30))
         let icon = #imageLiteral(resourceName: "back_icon").withRenderingMode(.alwaysTemplate)
         button.setImage(icon, for: .normal)
         button.layer.backgroundColor = UIColor.clear.cgColor
@@ -106,7 +106,7 @@ class NewSinglePostView: UIViewController {
         button.layer.borderWidth = 0
         button.layer.cornerRadius = 2
         button.clipsToBounds = true
-        button.contentHorizontalAlignment = .center
+        button.contentHorizontalAlignment = .left
         button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         button.tintColor = UIColor.ianBlackColor()
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)

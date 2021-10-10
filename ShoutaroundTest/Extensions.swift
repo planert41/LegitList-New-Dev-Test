@@ -1479,9 +1479,13 @@ class navBackButtonTemplate: UIButton {
         
         let navShareTitle = NSAttributedString(string: " BACK ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor(), NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12)])
         self.setAttributedTitle(navShareTitle, for: .normal)
-        self.setImage((#imageLiteral(resourceName: "navBackImage").resizeImageWith(newSize: CGSize(width: 15, height: 15))).withRenderingMode(.alwaysTemplate), for: .normal)
+        let icon = #imageLiteral(resourceName: "back_icon").withRenderingMode(.alwaysTemplate)
 
-        self.tintColor = UIColor.ianLegitColor()
+        self.setImage(icon, for: .normal)
+        self.tintColor = UIColor.ianBlackColor()
+
+//        self.setImage((#imageLiteral(resourceName: "navBackImage").resizeImageWith(newSize: CGSize(width: 15, height: 15))).withRenderingMode(.alwaysTemplate), for: .normal)
+//        self.tintColor = UIColor.ianLegitColor()
     }
     
     required init?(coder aDecoder: NSCoder) {

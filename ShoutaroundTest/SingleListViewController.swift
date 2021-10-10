@@ -149,7 +149,7 @@ class SingleListViewController: UIViewController {
     
     // NAV BUTTONS
     lazy var navBackButton: UIButton = {
-        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 70, height: 30))
         let icon = #imageLiteral(resourceName: "back_icon").withRenderingMode(.alwaysTemplate)
         button.setImage(icon, for: .normal)
         button.layer.backgroundColor = UIColor.ianWhiteColor().cgColor
@@ -157,10 +157,12 @@ class SingleListViewController: UIViewController {
         button.layer.borderWidth = 0
         button.layer.cornerRadius = 2
         button.clipsToBounds = true
-        button.contentHorizontalAlignment = .center
+        button.contentHorizontalAlignment = .left
         button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
         button.tintColor = UIColor.ianBlackColor()
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+        let navShareTitle = NSAttributedString(string: " BACK ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor(), NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12)])
+        button.setAttributedTitle(navShareTitle, for: .normal)
         return button
     }()
     
@@ -338,7 +340,7 @@ class SingleListViewController: UIViewController {
         
         navBackButton.addTarget(self, action: #selector(handleBackPressNav), for: .touchUpInside)
         self.view.addSubview(navBackButton)
-        navBackButton.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: UIApplication.shared.statusBarFrame.height + 10, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        navBackButton.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: UIApplication.shared.statusBarFrame.height + 10, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 70, height: 30)
 
         
         self.view.addSubview(searchViewController.view)
@@ -1386,8 +1388,8 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
         
         let transition = CATransition()
         transition.duration = 0.5
-        transition.type = CATransitionType.push
-        transition.subtype = CATransitionSubtype.fromBottom
+        transition.type = CATransitionType.moveIn
+        transition.subtype = CATransitionSubtype.fromTop
         transition.timingFunction = CAMediaTimingFunction(name:CAMediaTimingFunctionName.easeInEaseOut)
         view.window!.layer.add(transition, forKey: kCATransition)
         self.present(testNav, animated: true) {

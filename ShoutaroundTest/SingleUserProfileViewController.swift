@@ -845,6 +845,7 @@ extension SingleUserProfileViewController {
                 self.updateBottomSearchBar()
             // Reload Data here to reload header, because only update the pics everywhere else
                 self.imageCollectionView.reloadData()
+                self.imageCollectionView.refreshControl?.endRefreshing()
                 self.paginatePosts()
 
 //                if self.imageCollectionView.isDescendant(of: self.view) {
@@ -900,9 +901,8 @@ extension SingleUserProfileViewController {
     
     @objc func handleRefresh() {
         self.refreshAll()
-        fetchPostsForUser()
-        self.imageCollectionView.refreshControl?.endRefreshing()
-        print("Refresh User Profile Feed. FetchedPostCounr: ", self.displayedPosts.count, " DisplayedPost: ", self.paginatePostsCount)
+//        fetchPostsForUser()
+        print("Refresh User Profile Feed. FetchedPostCount: ", self.displayedPosts.count, " DisplayedPost: ", self.paginatePostsCount)
     }
     
     @objc func refreshAll(){
@@ -912,7 +912,6 @@ extension SingleUserProfileViewController {
         self.fetchUser()
         self.fetchPostsForUser()
         self.refreshBottomEmojiBar()
-        self.imageCollectionView.reloadData()
     }
     
     func clearFilter(){
@@ -939,7 +938,7 @@ extension SingleUserProfileViewController {
     
     @objc func refreshPostsForSort(){
        self.isFiltering = self.viewFilter.isFiltering
-    
+    		
        Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
            self.fetchedPosts = sortedPosts ?? []
 
@@ -1766,7 +1765,13 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
                     paginatePosts()
                 }
                 
+                if fetchedPosts.count == 0 {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: fullPostCellId, for: indexPath) as! FullPictureCell
+                    return cell
+                }
+                
                 var displayPost = (isFiltering) ? displayedPosts[indexPath.item] : fetchedPosts[indexPath.item]
+                
 
                 if self.postFormatInd == 1 {
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: fullPostCellId, for: indexPath) as! FullPictureCell

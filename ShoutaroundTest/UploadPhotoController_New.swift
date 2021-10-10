@@ -3735,12 +3735,20 @@ Rating Emojis help you describe your experience beyond just star ratings
                 return refreshCell
             } else {
                 let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: emojiCaptionCellID, for: indexPath) as! SelectedFilterBarCell
+                if (indexPath.item - 1) >= newCaptionEmojis.count {
+                    return filterCell
+                }
+                
                 var emojiTerm = newCaptionEmojis[indexPath.item - 1]
                 filterCell.searchTerm = emojiTerm
                 if let text = EmojiDictionary[emojiTerm] {
                     filterCell.uploadLocations.text = "\(emojiTerm) \(text.capitalizingFirstLetter())"
                     filterCell.uploadLocations.sizeToFit()
-                } else {
+                } else if let text = ReverseEmojiDictionary.key(forValue: emojiTerm) {
+                    filterCell.uploadLocations.text = "\(emojiTerm) \(text.capitalizingFirstLetter())"
+                    filterCell.uploadLocations.sizeToFit()
+                }
+                else {
                     filterCell.uploadLocations.text = ""
                 }
                 filterCell.uploadLocations.sizeToFit()
@@ -3773,7 +3781,11 @@ Rating Emojis help you describe your experience beyond just star ratings
         if collectionView == suggestedEmojiCollectionView {
             
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emojiCellID, for: indexPath) as! UploadEmojiCell
-            cell.uploadEmojis.text = self.emojiTagSelection[indexPath.item]
+            if indexPath.item >= self.emojiTagSelection.count {
+                cell.uploadEmojis.text = ""
+            } else {
+                cell.uploadEmojis.text = self.emojiTagSelection[indexPath.item]
+            }
             cell.uploadEmojis.font = cell.uploadEmojis.font.withSize((cell.uploadEmojis.text?.containsOnlyEmoji)! ? EmojiSize.width * 0.8 : 10)
             var containsEmoji = (self.nonRatingEmojiTags.contains(cell.uploadEmojis.text!))
             cell.isRatingEmoji = false
@@ -3791,7 +3803,10 @@ Rating Emojis help you describe your experience beyond just star ratings
             
         else if collectionView == extraRatingEmojiCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: testemojiCellID, for: indexPath) as! UploadEmojiCell
-            var ratingEmojiText = extraRatingEmojis[indexPath.item]
+            var ratingEmojiText = ""
+            if indexPath.item < extraRatingEmojis.count {
+                ratingEmojiText = extraRatingEmojis[indexPath.item]
+            }
             cell.uploadEmojis.text = ratingEmojiText
             cell.backgroundColor = UIColor.white
 //            cell.layer.borderColor = (self.ratingEmojiTag == (cell.uploadEmojis.text!)) ? UIColor.selectedColor().cgColor : UIColor.clear.cgColor

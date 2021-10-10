@@ -60,13 +60,15 @@ class CreateNewListCardController: UIViewController {
         let next = NewListDescCardController()
         let listName = listNameTextField.text ?? ""
         
-        if listName.isEmptyOrWhitespace() {
-            self.alert(title: "Create New List Error", message: "New List Needs a Name! 🤦‍♂️")
-        } else {
-            self.curList.name = ((listName.isEmptyOrWhitespace()) ? nil : listNameTextField.text)!
-            tempListCreated = self.curList
-            next.curList = self.curList
-            self.navigationController?.pushViewController(next, animated: true)
+        Database.checkListName(listName: listName) { listName in
+            if listName.isEmptyOrWhitespace() {
+                self.alert(title: "Create New List Error", message: "New List Needs a Name! 🤦‍♂️")
+            } else {
+                self.curList.name = listName
+                tempListCreated = self.curList
+                next.curList = self.curList
+                self.navigationController?.pushViewController(next, animated: true)
+            }
         }
     }
     
@@ -85,20 +87,21 @@ class CreateNewListCardController: UIViewController {
     @objc func skipAllCreeateNewList(){
         let listName = listNameTextField.text ?? ""
         
-        if listName.isEmptyOrWhitespace() {
-            self.alert(title: "Create New List Error", message: "New List Needs a Name! 🤦‍♂️")
-        } else {
-            self.curList.name = ((listName.isEmptyOrWhitespace()) ? nil : listNameTextField.text)!
-            SVProgressHUD.show(withStatus: "Creating \(self.curList.name) List")
-            Database.createList(uploadList: self.curList) {
-                self.dismiss(animated: true) {
-                    print("CREATE NEW LIST COMPLETE | LIST VIEW DISMISSED")
-                    tempListCreated =  nil
-                    SVProgressHUD.dismiss()
+        Database.checkListName(listName: listName) { listName in
+            if listName.isEmptyOrWhitespace() {
+                self.alert(title: "Create New List Error", message: "New List Needs a Name! 🤦‍♂️")
+            } else {
+                self.curList.name = listName
+                SVProgressHUD.show(withStatus: "Creating \(self.curList.name) List")
+                Database.createList(uploadList: self.curList) {
+                    self.dismiss(animated: true) {
+                        print("CREATE NEW LIST COMPLETE | LIST VIEW DISMISSED")
+                        tempListCreated =  nil
+                        SVProgressHUD.dismiss()
+                    }
                 }
             }
         }
-        
 
     }
     
