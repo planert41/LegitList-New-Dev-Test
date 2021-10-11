@@ -1141,10 +1141,16 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
            self.editUser()
        }))
        
+    optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
+        self.contactUs()
+    }))
+       
+    
        optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .default, handler: { (action: UIAlertAction!) in
            self.didSignOut()
        }))
-       
+    
+
        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
            print("Handle Cancel Logic here")
        }))
@@ -1346,6 +1352,19 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
+        present(deleteAlert, animated: true, completion: nil)
+        
+    }
+    
+    func contactUs{
+        
+        let deleteAlert = UIAlertController(title: "Contact Us", message: "Hi there. Please email us at weizouang@gmail.com if you have any feedback or ideas! We would love to hear how we can make Legit better for you!", preferredStyle: UIAlertController.Style.alert)
+        deleteAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+                print("Contact US - OK")
+
+        }))
+        
+
         present(deleteAlert, animated: true, completion: nil)
         
     }
