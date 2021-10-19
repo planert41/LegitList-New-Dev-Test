@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import CoreLocation
 import SVProgressHUD
+import SwiftLocation
 
 class LocationSingleton: NSObject,CLLocationManagerDelegate {
 
@@ -79,11 +80,31 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
         }
         
         CurrentUser.currentLocation = nil
+        locationManager.requestWhenInUseAuthorization()
+        if SwiftLocation.authorizationStatus != CLAuthorizationStatus.authorizedAlways && SwiftLocation.authorizationStatus != CLAuthorizationStatus.authorizedWhenInUse {
+            SwiftLocation.requestAuthorization(.onlyInUse) { newStatus in
+                print("New status \(newStatus.description)")
+            }
+            return
+        }
         
         if CLLocationManager.locationServicesEnabled() {
             locationManager.startUpdatingLocation()
 //            SVProgressHUD.show(withStatus: "Finding Your Location")
-
+        } else {
+            print("Requesting User Location")
+            locationManager.requestWhenInUseAuthorization()
+        }
+    }
+    
+    // MARK: - CLLocationManagerDelegate
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            print("notDetermined")
+            manager.requestWhenInUseAuthorization()
+        default:
+            self.determineCurrentLocation()
         }
     }
 

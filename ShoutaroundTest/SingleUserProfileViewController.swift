@@ -1356,7 +1356,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         
     }
     
-    func contactUs{
+    func contactUs() {
         
         let deleteAlert = UIAlertController(title: "Contact Us", message: "Hi there. Please email us at weizouang@gmail.com if you have any feedback or ideas! We would love to hear how we can make Legit better for you!", preferredStyle: UIAlertController.Style.alert)
         deleteAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in

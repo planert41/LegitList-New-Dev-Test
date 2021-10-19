@@ -19,7 +19,7 @@ import FirebaseStorage
 import FBSDKLoginKit
 import SKPhotoBrowser
 import SwiftyJSON
-
+import SwiftLocation
 
 
 extension UIApplication {

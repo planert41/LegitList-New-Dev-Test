@@ -1086,7 +1086,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
         if !self.viewFilter.isFiltering {
             print("Not Filtering | ReSort Posts | \(sort) | \(self.viewFilter.isFiltering)")
             // Not Filtering for anything, so Pull in Post Ids by Recent or Social
-            if (self.viewFilter.filterSort == HeaderSortOptions[1] && (self.viewFilter.filterLocation == nil)){
+            if (self.viewFilter.filterSort == sortNearest && (self.viewFilter.filterLocation == nil)){
                 print("Sort by Nearest, No Location, Look up Current Location")
                 SVProgressHUD.show(withStatus: "Fetching Current Location")
                 LocationSingleton.sharedInstance.determineCurrentLocation()
@@ -2114,6 +2114,10 @@ extension LegitHomeView {
     
 // DATA HANDLING
     func filterSortFetchedPosts(){
+        if self.viewFilter.filterSort == sortNearest && self.viewFilter.filterLocation == nil && CurrentUser.currentLocation == nil {
+            LocationSingleton.sharedInstance.determineCurrentLocation()
+        }
+        
         // Filter Posts
         Database.filterPostsNew(inputPosts: self.displayedPosts, postFilter: self.viewFilter) { (filteredPosts) in
             
@@ -2133,6 +2137,12 @@ extension LegitHomeView {
 //                self.showFilterView()
                 
             })
+        }
+    }
+    
+    func checkLocation() {
+        if self.viewFilter.filterSort == sortNearest && self.viewFilter.filterLocation == nil && CurrentUser.currentLocation == nil {
+            print("No Current Location")
         }
     }
     

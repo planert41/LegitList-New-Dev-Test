@@ -9634,7 +9634,11 @@ extension Database{
             
             if filterLocation == nil {
                 print("Sort Nearest: ERROR, No Location")
-                completion(nil)
+                self.alert(title: "No Location", message: "Legit doesn't have access to your current location. Will default to sorting new.")
+                tempPosts.sort(by: { (p1, p2) -> Bool in
+                    return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+                })
+                completion(tempPosts)
                 return
             }
             

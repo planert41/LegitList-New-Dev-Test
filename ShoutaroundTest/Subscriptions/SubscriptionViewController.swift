@@ -292,7 +292,9 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
-
+        if #available(iOS 13.0, *) {
+            overrideUserInterfaceStyle = .light
+        }
         NotificationCenter.default.addObserver(self, selector: #selector(loadCurrentUser), name: SubscriptionViewController.newSubNotification, object: nil)
         
         let navView = UIView()

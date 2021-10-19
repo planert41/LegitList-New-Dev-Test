@@ -118,6 +118,9 @@ class PremiumSubViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if #available(iOS 13.0, *) {
+            overrideUserInterfaceStyle = .light
+        }
         view.backgroundColor = UIColor.lightBackgroundGrayColor()
         view.addSubview(legitImage)
         legitImage.anchor(top: view.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 200, height: 120)
