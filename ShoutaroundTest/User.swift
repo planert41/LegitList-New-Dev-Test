@@ -49,6 +49,7 @@ struct User {
     var premiumPeriod: SubPeriod?
     var isPremium: Bool = false
     var isPremiumFree: Bool = false
+    var APNTokens: [String] = []
 
     
     
@@ -106,6 +107,11 @@ struct User {
         if let location = CurrentUser.currentLocation {
             
         }
+        
+        let tokens = (dictionary["APNTokens"] as? [String: Bool] ?? [:]).filter { key, value in
+            return value == true
+        }
+        self.APNTokens = Array(tokens.keys)
         
     // PREMIUM
         self.isPremium = dictionary["isPremium"] as? Bool ?? false
@@ -279,6 +285,9 @@ struct CurrentUser {
     }
     
     
+    static var APNTokens: [String] = []
+    static var curAPNToken: String?
+    
     static var user: User? {
         didSet{
             if user != nil{
@@ -292,6 +301,8 @@ struct CurrentUser {
                 self.premiumStart = user?.premiumStart
                 self.premiumCancel = user?.premiumCancel
                 self.premiumPeriod = user?.premiumPeriod
+                self.APNTokens = user?.APNTokens ?? []
+                self.checkAPNToken()
             } else {
                 self.username = nil
                 self.uid = nil
@@ -304,6 +315,22 @@ struct CurrentUser {
                 self.premiumCancel = nil
                 self.premiumPeriod = nil
             }
+        }
+    }
+    
+    static func checkAPNToken() {
+        if let curToken = self.curAPNToken {
+            if !self.APNTokens.contains(curToken) {
+                Database.saveAPNTokenForUser(userId: Auth.auth().currentUser?.uid, token: curToken)
+            }
+        }
+    }
+    
+    static func addAPNToken(token: String) {
+        print("Current User | Added APNToken | \(token)")
+        self.curAPNToken = token
+        if !self.APNTokens.contains(token) {
+            self.APNTokens.append(token)
         }
     }
     

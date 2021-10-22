@@ -138,6 +138,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
+//        Database.sendPushNotification(token: "3523424234", title: "test", body: "test")
+        
 //        let mainViewController = MainViewController()
 //        let navController = UINavigationController(rootViewController: mainViewController)
 //        mapWindow = UIWindow()
@@ -870,7 +872,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
   ) {
     Messaging.messaging().apnsToken = deviceToken
     if let refreshedToken = Messaging.messaging().fcmToken {
-        print("InstanceID token: \(refreshedToken)")
+        print("APN token: \(refreshedToken)")
+        CurrentUser.curAPNToken = refreshedToken
+        Database.saveAPNTokenForUser(userId: Auth.auth().currentUser?.uid, token: refreshedToken)
     }
     
 //    var token = FIRInstanceID.instanceID().token()

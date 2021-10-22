@@ -11124,6 +11124,127 @@ extension Database{
         
         return tempEmojis
     }
+    
+
+    static func saveAPNTokenForUser(userId: String?, token: String?){
+        guard let userId = userId else {
+            print("ERROR: No userId: saveTokenForUser")
+            return}
+        guard let token = token else {
+            print("ERROR: No userId: saveTokenForUser")
+            return}
+
+        print("Updating Token \(token) for \(userId)")
+        let dbRef = Database.database().reference().child("users").child(userId).child("APNTokens")
+
+        dbRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+            var tokens = currentData.value as? [String : AnyObject] ?? [:]
+            var curToken = tokens[token] as! Bool?
+            if (curToken == nil || curToken == false)  {
+                tokens[token] = true as AnyObject
+                currentData.value = tokens
+                return TransactionResult.success(withValue: currentData)
+            } else {
+                print("Token \(token) already exist for \(userId)")
+                return TransactionResult.abort()
+            }
+        }) { (error, committed, snapshot) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                print("Success: Updated Token \(token) for \(userId)")
+                if userId == CurrentUser.uid {
+                    CurrentUser.addAPNToken(token: token)
+                }
+            }
+        }
+    }
+    
+    static func deleteAPNTokenForUser(userId: String?, token: String?){
+        guard let userId = userId else {
+            print("ERROR: No userId: deleteAPNTokenForUser")
+            return}
+        guard let token = token else {
+            print("ERROR: No userId: deleteAPNTokenForUser")
+            return}
+
+        print("Delete Token \(token) for \(userId)")
+        let dbRef = Database.database().reference().child("users").child(userId).child("APNTokens")
+
+        dbRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+            var tokens = currentData.value as? [String : AnyObject] ?? [:]
+            var curToken = tokens[token] as! Bool?
+            if (curToken == true)  {
+                tokens.removeValue(forKey: token)
+                currentData.value = tokens
+                return TransactionResult.success(withValue: currentData)
+            } else {
+                print("Token \(token) already deleted for \(userId)")
+                return TransactionResult.abort()
+            }
+        }) { (error, committed, snapshot) in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                print("Success: Deleted Token \(token) for \(userId)")
+            }
+        }
+    }
+    
+    static func sendPushNotification(uid: String, title: String, body: String) {
+        self.fetchUserWithUID(uid: uid) { user in
+            guard let user = user else {
+                print("NO USER ",uid, " | sendPushNotification")
+                return}
+            
+            self.sendPushNotification(uid:uid, tokens: user.APNTokens, title: title, body: body)
+
+        }
+    }
+    
+    static func sendPushNotification(uid: String, tokens: [String], title: String, body: String) {
+        for token in tokens {
+            self.sendPushNotification(uid: uid, token: token, title: title, body: body)
+        }
+    }
+    
+    
+    static func sendPushNotification(uid: String, token: String, title: String, body: String) {
+        let urlString = "https://fcm.googleapis.com/fcm/send"
+        let url = NSURL(string: urlString)!
+        let paramString: [String : Any] = ["to" : token,
+                                           "notification" : ["title" : title, "body" : body],
+                                           "data" : ["user" : "test_id"]
+        ]
+        let request = NSMutableURLRequest(url: url as URL)
+        request.httpMethod = "POST"
+        request.httpBody = try? JSONSerialization.data(withJSONObject:paramString, options: [.prettyPrinted])
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("key=AAAApVhfkaE:APA91bFLVmlhGvFUTjJbOBwz9r_tqSq5o3z2byidiFZM4-Eog7U2tj96MQRQ6sVwX8QNacnwr-Hv_1uX46FmcAMKtCPP-n1ekUIu4qHD3gbUX0bWVIbnfLJ7_p2Pz_iS6eId3Ps_IGec", forHTTPHeaderField: "Authorization")
+        let task =  URLSession.shared.dataTask(with: request as URLRequest)  { (data, response, error) in
+            do {
+                if let jsonData = data {
+                    if let jsonDataDict  = try JSONSerialization.jsonObject(with: jsonData, options: JSONSerialization.ReadingOptions.allowFragments) as? [String: AnyObject] {
+                        NSLog("Received data:\n\(jsonDataDict))")
+                        if JSON(rawValue: jsonDataDict["success"]!) == 1 {
+                            print("Success sendPushNotification \(uid) ; \(token) ; \(title) ; \(body)")
+                        } else if JSON(rawValue: jsonDataDict["failure"]!) == 1 {
+                            print("Failure sendPushNotification \(uid) ; \(token) ; \(title) ; \(body)")
+                            let json = JSON(jsonDataDict["results"])
+                            let result = json.array?[0] ?? []
+                            if result["error"] == "InvalidRegistration" {
+                                print("InvalidRegistration | Remove token \(token) from uid \(uid)")
+                                self.deleteAPNTokenForUser(userId: uid, token: token)
+                            }
+                        }
+                    }
+                }
+            } catch let err as NSError {
+                print(err.debugDescription)
+            }
+        }
+        task.resume()
+    }
 
     
 //    static func printImageSizes(image: UIImage){
