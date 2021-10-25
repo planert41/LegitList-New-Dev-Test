@@ -623,7 +623,7 @@ extension InboxMessageViewController: UITextViewDelegate, MessageCellDelegate, P
         guard let messageText = messageTextField.text else {return}
         if messageText.isEmptyOrWhitespace() {return}
         
-        Database.createMessageForThread(threadId: messageThread.threadID, creatorUid: Auth.auth().currentUser!.uid, postId: nil, messageText: messageText)
+        Database.createMessageForThread(messageThread: messageThread, creatorUid: Auth.auth().currentUser!.uid, postId: nil, messageText: messageText)
 
         
 //        Database.respondMessageThread(threadKey: messageThread.threadID, creatorUid: Auth.auth().currentUser!.uid, message: messageText)

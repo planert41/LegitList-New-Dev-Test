@@ -666,6 +666,11 @@ extension TabNotificationViewController: UITableViewDelegate, UITableViewDataSou
         self.extTapPicture(post: post)
     }
     
+    func showPostComments(post: Post?) {
+        guard let post = post else {return}
+        self.extTapPictureComment(post: post)
+    }
+    
     func saveInteraction(event: Event?) {
         guard let event = event else {return}
         

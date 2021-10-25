@@ -327,6 +327,16 @@ var searchScopeButtons = ["Food","Cuisine","Users","Places"]
 var tipDefaults = ["Search Posts by Food 🍔 Cuisine 🇺🇸 Or Meal 🍳","Click on the Legit Tag to See a User's LegitList","Posts are Auto-Tagged by Meal, Cuisine, and Diet Restrictions"]
 
 
+var likeAction = "like"
+var followAction = "follow"
+var bookmarkAction = "bookmark"
+var commentAction = "comment"
+var commentTooAction = "commentToo"
+var messageAction = "message"
+var createAction = "create"
+
+var notificationActions = [likeAction, followAction, bookmarkAction, commentAction, commentTooAction]
+
 
 var firebaseCountVariable:[String:String] = ["likes":"likeCount", "Messages":"messageCount", "Lists": "listCount", "Votes": "voteCount"]
 var firebaseFieldVariable:[String:String] = [ "Votes": "post_votes", "Messages":"post_messages", "Lists": "post_lists", ]

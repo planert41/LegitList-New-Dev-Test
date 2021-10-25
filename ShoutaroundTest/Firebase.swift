@@ -1759,7 +1759,7 @@ extension Database{
                 if lists != nil {
                     if lists!.count > 0 {
                         for list in lists! {
-                            self.addPostForList(post: newPost, postCreatorUid: uid, listId: list.id, postCreationDate: uploadTime)
+                            self.addPostForList(post: newPost, postCreatorUid: uid, listId: list.id, postCreationDate: uploadTime, listName: list.name)
                         }
                     }
                 }
@@ -2664,14 +2664,11 @@ extension Database{
         
         for (list, listname) in deletedList {
             Database.DeletePostForList(postId: tempPost.id, postCreatorUid: uid, listId: list, postCreationDate: postCreationTime)
-            Database.createListEvent(listId: list, listName: listname, listCreatorUid: uid, postId: postId, postCreatorUid: uid, action: Social.bookmark, value: 0)
-//            Database.createPostEvent(postId: postId, creatorUid: uid, action: Social.follow, value: 0)
         }
         
         for (list,listname) in addedList {
             let imageLink = uploadDictionary["smallImageLink"] as! String?
-            Database.addPostForList(post: tempPost, postCreatorUid: uid, listId: list, postCreationDate: postCreationTime)
-            Database.createListEvent(listId: list, listName: listname, listCreatorUid: uid, postId: postId, postCreatorUid: uid, action: Social.bookmark, value: 1)
+            Database.addPostForList(post: tempPost, postCreatorUid: uid, listId: list, postCreationDate: postCreationTime, listName: listname)
         }
         
         
@@ -5196,7 +5193,12 @@ extension Database{
         
     }
     
-    static func addPostForList(post: Post, postCreatorUid: String, listId: String?, postCreationDate: Double?){
+    // ADD POST FOR LIST
+//    - UPDATE LIST OBJECT FOR NEW POST
+//    - UPDATE POST_LISTS DATABASE THAT TRACKS WHAT LIST ARE TAGGED FOR EACH POST
+//    - CREATE USER EVENT TO NOTIFY POST CREATOR THAT THEIR POST IS BEING ADDED TO A LIST
+    
+    static func addPostForList(post: Post, postCreatorUid: String, listId: String?, postCreationDate: Double?, listName: String? = ""){
         // There are 3 places to modify post objects in list
         // 1. Post ID within List Object in List Database
         // 2. List ID within Post_List Object in Post_List Database
@@ -5250,6 +5252,12 @@ extension Database{
         
         // Update Current User List
         CurrentUser.addPostToList(postId: postId, listId: listId)
+        
+        // Send Notification
+        if uid != postCreatorUid {
+            self.createNotificationEventForUser(postId: postId, listId: listId, targetUid: postCreatorUid, action: Social.bookmark, value: 1, locName: post.locationName, listName: listName, commentText: nil)
+        }
+        
         
         // Add to Post Lists
         Database.updatePostForList(postId: postId, postCreatorUid: postCreatorUid, listId: listId, postCreationDate: postCreationDate)
@@ -5507,8 +5515,8 @@ extension Database{
         CurrentUser.followedListIds.removeAll { (curFollowedLists) -> Bool in
             curFollowedLists == listId
         }
-        self.createListEvent(listId: listId, listName: followedList.name, listCreatorUid: followedList.creatorUID, postId: nil, postCreatorUid: nil, action: Social.follow, value: 0)
-        
+        self.createNotificationEventForUser(postId: nil, listId: listId, targetUid: followedList.creatorUID, action: Social.follow, value: 0, locName: nil, listName: followedList.name, commentText: nil)
+
         listRef.keepSynced(true)
         self.handleFollowedList(userUid: userUid, followedList: followedList, followedValue: -1, completion: {
             NotificationCenter.default.post(name: TabListViewController.newFollowedListNotificationName, object: nil)
@@ -5574,8 +5582,7 @@ extension Database{
                 
                 self.handleFollowedList(userUid: userUid, followedList: followedList, followedValue: 1, completion: {
                     completion()
-                    
-                    self.createListEvent(listId: listId, listName: followedList.name, listCreatorUid: followedList.creatorUID, postId: nil, postCreatorUid: nil, action: Social.follow, value: 1)
+                    self.createNotificationEventForUser(postId: nil, listId: listId, targetUid: followedList.creatorUID, action: Social.follow, value: 1, locName: nil, listName: followedList.name, commentText: nil)
                     NotificationCenter.default.post(name: TabListViewController.newFollowedListNotificationName, object: nil)
 
                 })
@@ -6180,7 +6187,7 @@ extension Database{
         
         
         for (list, listname) in addedList {
-            Database.addPostForList(post: post, postCreatorUid: (post.creatorUID)!, listId: list, postCreationDate: postCreationTime)
+            Database.addPostForList(post: post, postCreatorUid: (post.creatorUID)!, listId: list, postCreationDate: postCreationTime, listName: listname)
         }
         
         var tempPost = post
@@ -6391,61 +6398,10 @@ extension Database{
 
     }
     
-    static func createUserEvent(userId: String?, action: Social?, value: Int? = 0) {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        guard let action = action else {return}
-        guard let userId = userId else {return}
-
-        var eventId = NSUUID().uuidString
-        let eventTime = Date().timeIntervalSince1970
-        var value = min(1,value ?? 0)
-        var uploadDic: [String:Any] = [:]
-        
-        switch (action) {
-        case .like:
-            uploadDic["action"] = "like"
-        case .follow:
-            uploadDic["action"] = "follow"
-        case .bookmark:
-            uploadDic["action"] = "bookmark"
-        case .comment:
-            uploadDic["action"] = "comment"
-        case .create:
-            uploadDic["action"] = "create"
-        default:
-            uploadDic["action"] = ""
-        }
-        
-        uploadDic["initUserUid"] = uid
-        uploadDic["receiveUserUid"] = userId
-        uploadDic["eventTime"] = eventTime
-        uploadDic["value"] = value
-        
-        // ADDING TO LIST EVENT - Follow List
-        var initRef = Database.database().reference().child("user_event").child(uid)
-        var receiveRef = Database.database().reference().child("user_event").child(userId)
-
-        receiveRef.child(eventId).updateChildValues(uploadDic) { (error, reft) in
-            if let error = error {
-                print("   ~ Database | CreateUserEvent Receive | ERROR | \(error)")
-            } else {
-                print("   ~ Database | CreateUserEvent Receive | SUCCESS: \(eventId) | \(uid) : \(action) : \(userId)")
-            }
-        }
-        
-        initRef.child(eventId).updateChildValues(uploadDic) { (error, reft) in
-            if let error = error {
-                print("   ~ Database | CreateUserEvent Init | ERROR | \(error)")
-            } else {
-                print("   ~ Database | CreateUserEvent Init | SUCCESS: \(eventId) | \(uid) : \(action) : \(userId)")
-            }
-        }
-        
-        
-    }
-    
     
     static func createListEvent(listId: String?, listName: String?, listCreatorUid: String?, postId: String?, postCreatorUid: String?, action: Social?, value: Int? = 0) {
+        
+        // ALL THIS FUNCTION DOES IS TRACK WHEN LIST IS BEING CREATED AND WHAT POSTS ARE BEING ADDED/DELETED
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
         guard let listId = listId else {return}
@@ -6503,7 +6459,6 @@ extension Database{
                 print("   ~ Database | CreateListEvent | ERROR | \(error)")
             } else {
                 print("   ~ Database | CreateListEvent | SUCCESS | \(postId) : \(listId) | \(listName) : \(action)")
-                print(reft)
             }
         }
         
@@ -6528,33 +6483,34 @@ extension Database{
         
         var userUploadDic = uploadDic
         
-    // ADDING RECEIVING USER EVENT - FOR POST ADDED TO LIST
-        if postCreatorUid != nil && postCreatorUid != ""{
-            guard let postCreatorUid = postCreatorUid else {return}
-            let userReceiveRef = Database.database().reference().child("user_event").child(postCreatorUid)
-            userReceiveRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
-                if let error = error {
-                    print("   ~ Database | userReceiveRef List Event| ERROR | \(error)")
-                } else {
-                    print("   ~ Database | userReceiveRef List Event| SUCCESS | EVENT \(eventId) | \(postId) : \(listId) | \(listName) : \(action)")
-                }
-            }
-        }
-
-        
-    // ADDING CREATING USER EVENT
-        if uid != postCreatorUid {
-            let userCreatorRef = Database.database().reference().child("user_event").child(uid)
-            userCreatorRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
-                if let error = error {
-                    print("   ~ Database | userCreatorRef List Event| ERROR | \(error)")
-                } else {
-                    print("   ~ Database | userCreatorRef List Event| SUCCESS | EVENT \(eventId) | \(postId) : \(listId) | \(listName) : \(action)")
-                }
-            }
-        } else {
-            print("   ~ Database | userCreatorRef List Event| InitUser == PostCreator")
-        }
+//  ALREADY HANDLED UNDER CREATE POST EVENT
+//    // ADDING RECEIVING USER EVENT - FOR POST ADDED TO LIST
+//        if postCreatorUid != nil && postCreatorUid != ""{
+//            guard let postCreatorUid = postCreatorUid else {return}
+//            let userReceiveRef = Database.database().reference().child("user_event").child(postCreatorUid)
+//            userReceiveRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
+//                if let error = error {
+//                    print("   ~ Database | userReceiveRef List Event| ERROR | \(error)")
+//                } else {
+//                    print("   ~ Database | userReceiveRef List Event| SUCCESS | EVENT \(eventId) | \(postId) : \(listId) | \(listName) : \(action)")
+//                }
+//            }
+//        }
+//
+//
+//    // ADDING CREATING USER EVENT
+//        if uid != postCreatorUid {
+//            let userCreatorRef = Database.database().reference().child("user_event").child(uid)
+//            userCreatorRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
+//                if let error = error {
+//                    print("   ~ Database | userCreatorRef List Event| ERROR | \(error)")
+//                } else {
+//                    print("   ~ Database | userCreatorRef List Event| SUCCESS | EVENT \(eventId) | \(postId) : \(listId) | \(listName) : \(action)")
+//                }
+//            }
+//        } else {
+//            print("   ~ Database | userCreatorRef List Event| InitUser == PostCreator")
+//        }
 
 
     }
@@ -7558,11 +7514,13 @@ extension Database{
         })
     }
     
-    static func createMessageForThread(threadId: String?, creatorUid: String?, postId: String?, messageText: String?) {
+    static func createMessageForThread(messageThread: MessageThread? , creatorUid: String?, postId: String?, messageText: String?) {
         
-        guard let threadId = threadId else {
-            print("createMessageForThread | ERROR | No ThreadID")
+        
+        guard let messageThread = messageThread else {
+            print("createMessageForThread | ERROR | No messageThread")
             return}
+        let threadId = messageThread.threadID
         
         guard let creatorUid = creatorUid else {
             print("createMessageForThread | ERROR | No User")
@@ -7609,6 +7567,25 @@ extension Database{
             }
             
             self.saveMessageInteraction(messageUid: threadId)
+            
+            // NOTIFY OTHER USERS
+            for uid in messageThread.threadUserUids {
+                if uid != creatorUid {
+                    let notificationHeader = "\((CurrentUser.username)!) sent a message"
+                    var notificationBody = ""
+
+                    if !(postId ?? "").isEmptyOrWhitespace() {
+                        notificationBody = "Forwarded a post"
+                    } else if !(messageText ?? "").isEmptyOrWhitespace() {
+                        notificationBody = messageText ?? ""
+                    }
+                    
+                    self.sendPushNotification(uid: uid, title: notificationHeader, body: notificationBody, action: messageAction)
+                }
+            }
+            
+            
+
                         
             NotificationCenter.default.post(name: MainTabBarController.NewMessageName, object: nil)
             print("TRIGGER | NEW MESSAGE")
@@ -7804,6 +7781,12 @@ extension Database{
     
     // MARK: - SOCIAL ACTIONS
 
+    // HANDLE LIKE
+//        - UPDATE POST_VOTES (TRACK VOTES FOR EACH POST)
+//        - CREATE USER_EVENT - NOTIFY USER THAT POST IS LIKED
+//        - UPDATE HOW MANY LIKES POST CREATOR USER HAS
+//        - UPDATE HOW MANY LIKES IN POST OBJECT (SEPARATE FROM POST_VOTES WHICH IS A SEP DATABASE)
+    
     static func handleVote(post: Post!, creatorUid: String!, vote: Int!, completion: @escaping () -> Void){
 
         guard let postId = post.id else {return}
@@ -7879,10 +7862,10 @@ extension Database{
             if let error = error {
                 print(error.localizedDescription)
             } else {
-                var post = snapshot?.value as? [String : AnyObject] ?? [:]
-                var votes = post["votes"] as? [String : Int] ?? [:]
+                var postValue = snapshot?.value as? [String : AnyObject] ?? [:]
+                var votes = postValue["votes"] as? [String : Int] ?? [:]
                 
-                self.createPostEvent(postId: postId, creatorUid: creatorUid, action: Social.like, value: vote)
+                self.createNotificationEventForUser(postId: postId, listId: nil, targetUid: creatorUid, action: Social.like, value: vote, locName: post.locationName, listName: nil, commentText: nil)
 
                 self.createUserLike(postId: postId, like: vote, userId: uid)
                 spotChangeSocialCountForUser(creatorUid: creatorUid, socialField: "votes_received", change: voteChange)
@@ -7954,6 +7937,8 @@ extension Database{
                 var likes = post["likes"] as? [String : Int] ?? [:]
                 if likes[uid] == 1 {
                     print("   ~ Database | handleLike | \(uid) Liked \(postId)")
+                    let text = "\(CurrentUser.username) liked your post"
+                    self.sendPushNotification(uid: creatorUid, title: "Legit Notification", body: text, action: "like")
                 } else {
                     print("   ~ Database | handleLike | \(uid) UN-Liked \(postId)")
                 }
@@ -8020,6 +8005,7 @@ extension Database{
             myGroup.notify(queue: .main) {
                 let fileredEvent = Database.filterEvents(events: fetchedEvents, filterSelf: uid == (Auth.auth().currentUser?.uid))
 
+                // FILTERS OUT ALL EVENTS CREATED BY THE SAME USER
                 let temp = fileredEvent.filter({ (event) -> Bool in
                     return event.value == 1 && event.creatorUid != uid && !event.read
                 })
@@ -8079,88 +8065,137 @@ extension Database{
         })
     }
     
-    static func createPostEvent(postId: String!, creatorUid: String?, action: Social?, value: Int? = 0){
+    static func createNotificationEventForUser(postId: String? = nil, listId: String? = nil, targetUid: String? = nil, action: Social? = nil, value: Int? = 0, locName: String? = nil, listName: String? = nil, commentText: String? = nil){
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        guard let creatorUid = creatorUid else {return}
+        guard let targetUid = targetUid else {return}
         guard let action = action else {return}
 
 //        let ref = Database.database().reference().child("like_event").child(postId)
-
+        if targetUid == uid {
+            print("RETURN User Notifiying Self - createNotificationEventForUser")
+            return
+        }
         
         var eventId = NSUUID().uuidString
         let eventTime = Date().timeIntervalSince1970
         
         var value = min(1,value ?? 0)
         var uploadDic: [String:Any] = [:]
+        var eventAction:String? = nil
+        
+        var notificationHeader: String = ""
+        var notificationBody: String = ""
+        
         
         switch (action) {
         case .like:
-            uploadDic["action"] = "like"
+            eventAction = likeAction
+            if postId != nil {
+                notificationHeader = "\((CurrentUser.username)!) liked your post"
+                if let locName = locName {
+                    notificationBody = (locName).capitalizingFirstLetter()
+                }
+            }
+            else if listId != nil {
+                notificationHeader = "\((CurrentUser.username)!) liked your list"
+                if let listName = listName {
+                    notificationBody = (listName).capitalizingFirstLetter()
+                }
+            }
+
         case .follow:
-            uploadDic["action"] = "follow"
+            eventAction = followAction
+            if listId != nil {
+                notificationHeader = "\((CurrentUser.username)!) followed your list"
+                if let listName = listName {
+                    notificationBody = (listName).capitalizingFirstLetter()
+                }
+            } else {
+                notificationHeader = "\((CurrentUser.username)!) followed you"
+            }
         case .bookmark:
-            uploadDic["action"] = "bookmark"
+            eventAction = bookmarkAction
+            notificationHeader = "\((CurrentUser.username)!) bookmarked your post"
+            if let listName = listName, let locName = locName {
+                notificationBody = "\((locName).capitalizingFirstLetter()) Added To: \((listName).capitalizingFirstLetter())"
+            }
         case .comment:
-            uploadDic["action"] = "comment"
+            eventAction = commentAction
+            notificationHeader = "\((CurrentUser.username)!) commented on your post"
+            if let commentText = commentText {
+                notificationBody = (commentText).capitalizingFirstLetter()
+            }
+        case .commentToo:
+            eventAction = commentTooAction
+            notificationHeader = "\((CurrentUser.username)!) commented on a post you commented"
+            if let commentText = commentText {
+                notificationBody = (commentText).capitalizingFirstLetter()
+            }
         default:
-            uploadDic["action"] = ""
+            eventAction = nil
         }
         
+        uploadDic["action"] = eventAction
         uploadDic["initUserUid"] = uid
-        uploadDic["receiveUserUid"] = creatorUid
-
+        uploadDic["receiveUserUid"] = targetUid
         uploadDic["eventTime"] = eventTime
         uploadDic["value"] = value
-
         
-//        ref.child(eventId).updateChildValues(uploadDic) { (error, reft) in
-//            if let error = error {
-//                print("   ~ Database | CreateLikeEvent | ERROR | \(error)")
-//            } else {
-//                print("   ~ Database | CreateLikeEvent | SUCCESS | \(postId) : \(action)")
-//            }
-//        }
-        
-        var userUploadDic = uploadDic
-        userUploadDic["postId"] = postId
-
-        let receiveUserRef = Database.database().reference().child("user_event").child(creatorUid)
-        let creatorUserRef = Database.database().reference().child("user_event").child(uid)
-        
-        receiveUserRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
-            if let error = error {
-                print("   ~ Database | receiveUserRef Like Event| ERROR | \(error)")
-            } else {
-                print("   ~ Database | receiveUserRef Like Event| SUCCESS | EVENT \(eventId) | \(postId) : \(action)")
-            }
+        if let postId = postId {
+            uploadDic["postId"] = postId
         }
         
-        creatorUserRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
+        if let listId = listId {
+            uploadDic["listId"] = listId
+        }
+        
+        if let listName = listName {
+            uploadDic["listName"] = listName
+        }
+        
+        if let locName = locName {
+            uploadDic["locName"] = locName
+        }
+        
+        if let commentText = commentText {
+            uploadDic["commentText"] = commentText
+        }
+        
+
+        let receiveUserRef = Database.database().reference().child("user_event").child(targetUid)
+        let creatorUserRef = Database.database().reference().child("user_event").child(uid)
+        
+        receiveUserRef.child(eventId).updateChildValues(uploadDic) { (error, reft) in
             if let error = error {
-                print("   ~ Database | creatorUserRef Like Event| ERROR | \(error)")
+                print("   ~ createNotificationEventForUser | receiveUserRef | ERROR | \(error)")
             } else {
-                print("   ~ Database | creatorUserRef Like Event| SUCCESS | EVENT \(eventId) | \(postId) : \(action)")
+                print("   ~ createNotificationEventForUser | receiveUserRef | SUCCESS | EVENT \(eventId) | \(postId) : \(action)")
+            }
+            
+            // NOTIFY RECEIVER
+            if value == 1 {
+                self.sendPushNotification(uid: targetUid, title: notificationHeader, body: notificationBody, action: eventAction)
+            } else {
+                print("Removing - No Notification")
+            }
+            
+        }
+        
+        if eventAction != commentTooAction {
+            // Avoid creating multiple actions by commenter when alerting other people who commented on the post
+            return
+        }
+        
+        creatorUserRef.child(eventId).updateChildValues(uploadDic) { (error, reft) in
+            if let error = error {
+                print("   ~ createNotificationEventForUser | creatorUserRef | ERROR | \(error)")
+            } else {
+                print("   ~ createNotificationEventForUser | creatorUserRef | SUCCESS | EVENT \(eventId) | \(postId) : \(action)")
             }
         }
     }
     
-//    static func setupLikeListener(postIds: [PostId]?){
-//
-//        guard let postIds = postIds else {return}
-//        if postIds.count == 0 {return}
-//
-//        for postId in postIds {
-//
-//            let listEventRef = Database.database().reference().child("like_event").child(postId.id)
-//            listEventRef.observe(DataEventType.childAdded) { (snapshot) in
-//                let key = snapshot.key
-//                guard let listEvent = snapshot.value as? [String: Any] else {return}
-//                print(listEvent)
-//            }
-//        }
-//        print("setupLikeListener | Added \(postIds.count) ")
-//
-//    }
+
     
     static func handleBookmark(postId: String!, creatorUid: String!, completion: @escaping () -> Void){
         
@@ -8260,6 +8295,7 @@ extension Database{
         
     }
     
+// FOLLOWING FUNCTION TO SPECIFY BOTH FOLLOWER AND FOLLOWING
     static func handleFollowing(followerUid: String?, followingUid: String?, hideAlert: Bool = false, forceFollow: Bool = false, completion: @escaping () -> Void){
         
         guard let uid = followerUid else {return}
@@ -8333,8 +8369,7 @@ extension Database{
 
                     CurrentUser.addFollower(userId: userUid)
                     print("   ~ handleFollowing | \(uid) Following \(userUid) | \(followingCount) Following Users")
-                    Database.createUserEvent(userId: userUid, action: Social.follow, value: 1)
-                    
+                    Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 1, locName: nil, listName: nil, commentText: nil)
                 } else {
                     if !hideAlert {
                         SVProgressHUD.showSuccess(withStatus: "You Unfollowed \(username)")
@@ -8343,8 +8378,7 @@ extension Database{
                     
                     CurrentUser.removeFollower(userId: userUid)
                     print("   ~ handleFollowing | \(uid) UNFOLLOW \(userUid) | \(followingCount) Following Users")
-                    Database.createUserEvent(userId: userUid, action: Social.follow, value: 0)
-                    
+                    Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
                 }
                 
                 
@@ -8383,6 +8417,16 @@ extension Database{
         }
     }
 
+    
+//    HANDLE FOLLOWING
+//    - UPDATE FOLLLOWING DATABASE
+//    - CREATE USER EVENT NOTIFYING USER HAS NEW FOLLOWER
+//    - UPDATE FOLLOWING COUNT IN CURRENT USER OBJECT
+//    - HANDLE FOLLOWER
+//        - UPDATE FOLLOWER DATABASE
+//        - UPDATE FOLLOWER COUNT IN FOLLOWED USER DATABASE
+    
+    
     static func handleFollowing(userUid: String!, hideAlert: Bool = false,  forceFollow: Bool = false, completion: @escaping () -> Void){
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -8448,7 +8492,7 @@ extension Database{
 
                     CurrentUser.addFollower(userId: userUid)
                     print("handleFollowing | Follow Success | \(uid) Following \(userUid!) | \(followingCount) Following Users")
-                    Database.createUserEvent(userId: userUid, action: Social.follow, value: 1)
+                    Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 1, locName: nil, listName: nil, commentText: nil)
 
                 } else {
                     if !hideAlert {
@@ -8458,7 +8502,7 @@ extension Database{
 
                     CurrentUser.removeFollower(userId: userUid)
                     print("handleFollowing | Unfollow Success | \(uid) UNFOLLOW \(userUid!) | \(followingCount) Following Users")
-                    Database.createUserEvent(userId: userUid, action: Social.follow, value: 0)
+                    Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
 
                 }
                 
@@ -11191,29 +11235,30 @@ extension Database{
         }
     }
     
-    static func sendPushNotification(uid: String, title: String, body: String) {
+    static func sendPushNotification(uid: String, title: String, body: String, action: String?) {
+        print("sendPushNotification \(action) \(uid) \(title)")
         self.fetchUserWithUID(uid: uid) { user in
             guard let user = user else {
                 print("NO USER ",uid, " | sendPushNotification")
                 return}
             
-            self.sendPushNotification(uid:uid, tokens: user.APNTokens, title: title, body: body)
+            self.sendPushNotification(uid:uid, tokens: user.APNTokens, title: title, body: body, action: action)
 
         }
     }
     
-    static func sendPushNotification(uid: String, tokens: [String], title: String, body: String) {
+    static func sendPushNotification(uid: String, tokens: [String], title: String, body: String, action: String?) {
         for token in tokens {
-            self.sendPushNotification(uid: uid, token: token, title: title, body: body)
+            self.sendPushNotification(uid: uid, token: token, title: title, body: body, action: action)
         }
     }
     
     
-    static func sendPushNotification(uid: String, token: String, title: String, body: String) {
+    static func sendPushNotification(uid: String, token: String, title: String, body: String, action: String?) {
         let urlString = "https://fcm.googleapis.com/fcm/send"
         let url = NSURL(string: urlString)!
         let paramString: [String : Any] = ["to" : token,
-                                           "notification" : ["title" : title, "body" : body],
+                                           "notification" : ["title" : title, "body" : body, "click_action" : action],
                                            "data" : ["user" : "test_id"]
         ]
         let request = NSMutableURLRequest(url: url as URL)
@@ -11334,3 +11379,192 @@ extension Database{
 
     
 }
+
+//    static func createUserEvent(userId: String?, action: Social?, value: Int? = 0) {
+//        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        guard let action = action else {return}
+//        guard let userId = userId else {return}
+//
+//        var eventId = NSUUID().uuidString
+//        let eventTime = Date().timeIntervalSince1970
+//        var value = min(1,value ?? 0)
+//        var uploadDic: [String:Any] = [:]
+//
+//        var notificationHeader: String = ""
+//        var notificationBody: String = ""
+//        var eventAction:String? = nil
+//
+//        switch (action) {
+//        case .like:
+//            eventAction = likeAction
+//            notificationHeader = "\((CurrentUser.username)!) liked you"
+//        case .follow:
+//            eventAction = followAction
+//            notificationHeader = "\((CurrentUser.username)!) followed you"
+//        case .bookmark:
+//            eventAction = bookmarkAction
+//            notificationHeader = "\((CurrentUser.username)!) bookmarked you"
+//        case .comment:
+//            eventAction = commentAction
+//            notificationHeader = "\((CurrentUser.username)!) commented you"
+//        case .create:
+//            eventAction = createAction
+//        default:
+//            eventAction = nil
+//        }
+//
+//        uploadDic["action"] = eventAction
+//        uploadDic["initUserUid"] = uid
+//        uploadDic["receiveUserUid"] = userId
+//        uploadDic["eventTime"] = eventTime
+//        uploadDic["value"] = value
+//
+//        // ADDING TO LIST EVENT - Follow List
+//        var initRef = Database.database().reference().child("user_event").child(uid)
+//        var receiveRef = Database.database().reference().child("user_event").child(userId)
+//
+//        receiveRef.child(eventId).updateChildValues(uploadDic) { (error, reft) in
+//            if let error = error {
+//                print("   ~ Database | CreateUserEvent Receive | ERROR | \(error)")
+//            } else {
+//                if value == 1{
+//                    self.sendPushNotification(uid: userId, title: notificationHeader, body: notificationBody, action: eventAction)
+//                }
+//                print("   ~ Database | CreateUserEvent Receive | SUCCESS: \(eventId) | \(uid) : \(action) : \(userId)")
+//            }
+//        }
+//
+//        initRef.child(eventId).updateChildValues(uploadDic) { (error, reft) in
+//            if let error = error {
+//                print("   ~ Database | CreateUserEvent Init | ERROR | \(error)")
+//            } else {
+//                print("   ~ Database | CreateUserEvent Init | SUCCESS: \(eventId) | \(uid) : \(action) : \(userId)")
+//            }
+//        }
+//
+//
+//    }
+//    static func createPostEvent(postId: String!, targetUid: String?, action: Social?, value: Int? = 0, locName: String? = nil, listName: String? = nil, commentText: String? = nil){
+//        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        guard let targetUid = targetUid else {return}
+//        guard let action = action else {return}
+//
+////        let ref = Database.database().reference().child("like_event").child(postId)
+//        if targetUid == uid {
+//            print("RETURN User Notifiying Self - createPostEvent")
+//            return
+//        }
+//
+//        var eventId = NSUUID().uuidString
+//        let eventTime = Date().timeIntervalSince1970
+//
+//        var value = min(1,value ?? 0)
+//        var uploadDic: [String:Any] = [:]
+//        var eventAction:String? = nil
+//
+//        var notificationHeader: String = ""
+//        var notificationBody: String = ""
+//
+//
+//
+//
+//        switch (action) {
+//        case .like:
+//            eventAction = likeAction
+//            notificationHeader = "\((CurrentUser.username)!) liked your post"
+//            if let locName = locName {
+//                notificationBody = (locName).capitalizingFirstLetter()
+//            }
+//        case .follow:
+//            eventAction = followAction
+//            notificationHeader = "\((CurrentUser.username)!) followed your post"
+//        case .bookmark:
+//            eventAction = bookmarkAction
+//            notificationHeader = "\((CurrentUser.username)!) bookmarked your post"
+//            if let listName = listName, let locName = locName {
+//                notificationBody = "\((listName).capitalizingFirstLetter()) - \((locName).capitalizingFirstLetter())"
+//            }
+//        case .comment:
+//            eventAction = commentAction
+//            notificationHeader = "\((CurrentUser.username)!) commented on your post"
+//            if let commentText = commentText {
+//                notificationBody = (commentText).capitalizingFirstLetter()
+//            }
+//        case .commentToo:
+//            eventAction = commentTooAction
+//            notificationHeader = "\((CurrentUser.username)!) commented on a post you commented"
+//            if let commentText = commentText {
+//                notificationBody = (commentText).capitalizingFirstLetter()
+//            }
+//        default:
+//            eventAction = nil
+//        }
+//        uploadDic["action"] = eventAction
+//        uploadDic["initUserUid"] = uid
+//        uploadDic["receiveUserUid"] = targetUid
+//
+//        uploadDic["eventTime"] = eventTime
+//        uploadDic["value"] = value
+//
+//
+////        ref.child(eventId).updateChildValues(uploadDic) { (error, reft) in
+////            if let error = error {
+////                print("   ~ Database | CreateLikeEvent | ERROR | \(error)")
+////            } else {
+////                print("   ~ Database | CreateLikeEvent | SUCCESS | \(postId) : \(action)")
+////            }
+////        }
+//
+//        var userUploadDic = uploadDic
+//        userUploadDic["postId"] = postId
+//
+//        let receiveUserRef = Database.database().reference().child("user_event").child(targetUid)
+//        let creatorUserRef = Database.database().reference().child("user_event").child(uid)
+//
+//        receiveUserRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
+//            if let error = error {
+//                print("   ~ Database | receiveUserRef Like Event| ERROR | \(error)")
+//            } else {
+//                print("   ~ Database | receiveUserRef Like Event| SUCCESS | EVENT \(eventId) | \(postId) : \(action)")
+//            }
+//
+//            // NOTIFY RECEIVER
+//            if value == 1 {
+//                self.sendPushNotification(uid: targetUid, title: notificationHeader, body: notificationBody, action: eventAction)
+//            } else {
+//                print("Removing - No Notification")
+//            }
+//
+//        }
+//
+//        if eventAction != commentTooAction {
+//            // Avoid creating multiple actions by commenter when alerting other people who commented on the post
+//            return
+//        }
+//
+//        creatorUserRef.child(eventId).updateChildValues(userUploadDic) { (error, reft) in
+//            if let error = error {
+//                print("   ~ Database | creatorUserRef Like Event| ERROR | \(error)")
+//            } else {
+//                print("   ~ Database | creatorUserRef Like Event| SUCCESS | EVENT \(eventId) | \(postId) : \(action)")
+//            }
+//        }
+//    }
+    
+//    static func setupLikeListener(postIds: [PostId]?){
+//
+//        guard let postIds = postIds else {return}
+//        if postIds.count == 0 {return}
+//
+//        for postId in postIds {
+//
+//            let listEventRef = Database.database().reference().child("like_event").child(postId.id)
+//            listEventRef.observe(DataEventType.childAdded) { (snapshot) in
+//                let key = snapshot.key
+//                guard let listEvent = snapshot.value as? [String: Any] else {return}
+//                print(listEvent)
+//            }
+//        }
+//        print("setupLikeListener | Added \(postIds.count) ")
+//
+//    }

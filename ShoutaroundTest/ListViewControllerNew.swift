@@ -251,7 +251,9 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func showHideAddListButton() {
-        self.createNewListButton.isHidden = !(fetchType == ListYours)
+//        self.createNewListButton.isHidden = !(fetchType == ListYours)
+//        Always Show
+        self.createNewListButton.isHidden = false
     }
     
     @objc func didCreateNewList() {

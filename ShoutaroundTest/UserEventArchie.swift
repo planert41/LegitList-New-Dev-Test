@@ -416,6 +416,14 @@ class UserEventViewControllerArchive : UITableViewController, EventCellDelegate 
         navigationController?.pushViewController(pictureController, animated: true)
     }
     
+    func showPostComments(post: Post?) {
+        print("UserEventController | showPost : \(post?.id)")
+        guard let post = post else {return}
+        let pictureController = SinglePostView()
+        pictureController.post = post
+        navigationController?.pushViewController(pictureController, animated: true)
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }

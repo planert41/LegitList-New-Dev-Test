@@ -656,6 +656,15 @@ extension UIViewController {
         navigationController?.pushViewController(pictureController, animated: true)
     }
     
+    func extTapPictureComment(post: Post?) {
+//        let pictureController = SinglePostView()
+        guard let post = post else {return}
+        let pictureController = NewSinglePostView()
+        pictureController.post = post
+        pictureController.handleComment()
+        navigationController?.pushViewController(pictureController, animated: true)
+    }
+    
     func extTapPostId(postId: String?) {
 //        let pictureController = SinglePostView()
         guard let postId = postId else {return}
@@ -1983,6 +1992,13 @@ extension UITableView {
 
         self.contentInset = edgeInset
         self.scrollIndicatorInsets = edgeInset
+    }
+}
+
+extension Sequence where Iterator.Element: Hashable {
+    func unique() -> [Iterator.Element] {
+        var seen: Set<Iterator.Element> = []
+        return filter { seen.insert($0).inserted }
     }
 }
 

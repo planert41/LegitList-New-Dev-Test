@@ -788,7 +788,7 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
 
         if isEmptyCell {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyPhotoGridCell
-            print("Empty Cell - \(isEmptyCell) | cellForItemAt | LocationSummaryView")
+//            print("Empty Cell - \(isEmptyCell) | cellForItemAt | LocationSummaryView")
             return cell
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: locationCellId, for: indexPath) as! LocationOtherPostCell

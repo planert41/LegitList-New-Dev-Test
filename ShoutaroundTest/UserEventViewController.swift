@@ -237,12 +237,12 @@ class UserEventViewController : UIViewController, UITableViewDelegate, UITableVi
     
     
     func setupNavigationItems(){
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.navigationController?.navigationBar.barTintColor = UIColor.white
         
         self.navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.ianLegitColor(), NSAttributedString.Key.font.rawValue: UIFont(name: "Poppins-Bold", size: 18)])
 //        self.navigationItem.title = "Alerts" + ((self.unReadEventCount > 0) ? " (\(self.unReadEventCount))" : "")
-        self.navigationItem.title = "Alerts"
+        self.navigationItem.title = "Notifications"
 
 //        self.navigationItem.titleView = filterSegment
         
@@ -479,6 +479,16 @@ class UserEventViewController : UIViewController, UITableViewDelegate, UITableVi
 //        pictureController.post = post
 //        navigationController?.pushViewController(pictureController, animated: true)
     }
+    
+    func showPostComments(post: Post?) {
+        print("UserEventController | showPostComments : \(post?.id)")
+        guard let post = post else {return}
+        self.extTapComment(post: post)
+//        self.extTapPictureComment(post: post)
+//        let pictureController = SinglePostView()
+//        pictureController.post = post
+//        navigationController?.pushViewController(pictureController, animated: true)
+    }
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -540,6 +550,7 @@ class UserEventViewController : UIViewController, UITableViewDelegate, UITableVi
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.setupNavigationItems()
         //      Show Searchbar scope during transition
 //        self.searchBar.isHidden = false
 //        self.searchBar.selectedScopeButtonIndex = self.selectedScope

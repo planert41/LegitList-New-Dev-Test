@@ -573,7 +573,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
             return cell
         }
         
-        if indexPath.item > self.userLists.count {
+        if indexPath.item >= self.userLists.count + (showAddListButton ? 1 : 0) {
             return cell
         }
         

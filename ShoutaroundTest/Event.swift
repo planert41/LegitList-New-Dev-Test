@@ -19,6 +19,7 @@ enum Social: String {
     case follow
     case bookmark
     case comment
+    case commentToo
     case create
 }
 
@@ -34,6 +35,7 @@ enum EventAction {
     case followList
     case likePost
     case commentPost
+    case commentTooPost
     case addPostToList
 }
 
@@ -43,6 +45,8 @@ class Event {
     var eventTime: Date = Date()
     var listId: String?
     var listName: String?
+    var locName: String?
+    var commentText: String?
     var creatorUid: String?
     var receiverUid: String?
     var readTime: Date? {
@@ -62,6 +66,9 @@ class Event {
     init(id: String?, dictionary: [String: Any]){
         self.id = id ?? ""
         self.listName = dictionary["listName"] as? String
+        self.locName = dictionary["locName"] as? String
+        self.commentText = dictionary["commentText"] as? String
+        
         if let eventTimetemp = dictionary["eventTime"] as? Double {
             self.eventTime = Date(timeIntervalSince1970: eventTimetemp)
         }
@@ -115,12 +122,17 @@ class Event {
         if self.postId == nil && self.listId == nil && self.action == Social.follow && self.receiverUid != nil {
             self.eventAction = .followUser
             self.isUserFollow = true
+        } else if self.action == Social.like && self.postId != nil {
+            self.eventAction = .likePost
         } else if self.action == Social.follow && self.listId != nil {
             self.eventAction = .followList
         } else if self.action == Social.bookmark && self.listId != nil && self.postId != nil{
             self.eventAction = .addPostToList
+        } else if self.action == Social.comment && self.postId != nil{
+            self.eventAction = .commentPost
+        } else if self.action == Social.commentToo && self.postId != nil{
+            self.eventAction = .commentTooPost
         }
-        
         
         else
         {

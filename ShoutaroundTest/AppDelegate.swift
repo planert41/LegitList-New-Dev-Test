@@ -759,10 +759,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register: \(error)")
     }
-    
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
-    }
+
     
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -862,6 +859,30 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     didReceive response: UNNotificationResponse,
     withCompletionHandler completionHandler: @escaping () -> Void
   ) {
+    let userInfo = response.notification.request.content.userInfo
+//    print(userInfo)
+    guard let aps = userInfo["aps"] as? [String: Any] else { return }
+    let action = aps["category"] as? String
+//    print(action)
+    if notificationActions.contains(action ?? "") {
+        // OPEN NOTIFICATION
+        print("Open Notification from Alert")
+        if  let tabBarController = self.window?.rootViewController as? UITabBarController,
+            let navController = tabBarController.selectedViewController as? UINavigationController {
+            let note = UserEventViewController()
+            navController.pushViewController(note, animated: true)
+        }
+    } else if action == messageAction {
+        // OPEN INBOX
+        print("Open Inbox from Alert")
+        if  let tabBarController = self.window?.rootViewController as? UITabBarController,
+            let navController = tabBarController.selectedViewController as? UINavigationController {
+            let inboxController = InboxController(collectionViewLayout: UICollectionViewFlowLayout())
+            navController.pushViewController(inboxController, animated: true)
+        }
+    }
+    
+    
     process(response.notification)
     completionHandler()
   }
@@ -879,8 +900,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
 //    var token = FIRInstanceID.instanceID().token()
 //    print("OTHER token: \(token)")
-
-
   }
 
   private func process(_ notification: UNNotification) {

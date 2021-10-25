@@ -365,7 +365,8 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
         
         // Nav Bar Buttons
         let navShareButton = navShareButtonTemplate.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        navShareButton.setTitle("Message", for: .normal)
+        let navMsgTitle = NSAttributedString(string: " Message ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor(), NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12)])
+        navShareButton.setAttributedTitle(navMsgTitle, for: .normal)
         let shareIcon = #imageLiteral(resourceName: "message_fill").withRenderingMode(.alwaysTemplate)
         navShareButton.setImage(shareIcon, for: .normal)
         navShareButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
@@ -621,7 +622,7 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
         var receiveUserEmail: [String: String] = [:]
         
         for (key,value) in sentUsers {
-            if key.isValidEmail {
+            if key.isValidEmail && value == "email" {
                 receiveUserEmail[key] = value
             } else {
                 receiveUserUid[key] = value
@@ -681,12 +682,12 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
                 // NO FOUND THREAD. CREATE NEW THREAD
                 Database.createMessageThread(users: allUsers) { (newThread) in
                     let newThreadId = newThread.threadID
-                    Database.createMessageForThread(threadId: newThreadId, creatorUid: creatorUID, postId: postId, messageText: message)
+                    Database.createMessageForThread(messageThread: newThread, creatorUid: creatorUID, postId: postId, messageText: message)
                 }
             } else {
                 // FOUND THREAD. CREATE NEW MSG
                 guard let foundThreadId = thread?.threadID else {return}
-                Database.createMessageForThread(threadId: foundThreadId, creatorUid: creatorUID, postId: postId, messageText: message)
+                Database.createMessageForThread(messageThread: thread, creatorUid: creatorUID, postId: postId, messageText: message)
             }
         }
     }
@@ -1008,13 +1009,18 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
     @objc func handleSend() {
 
         self.checkToText(inputString: toInput.text) { (users) in
-            var legitUsers = users.filter { (key, value) -> Bool in
+            // CHECK FUNCTION SPITS OUT:
+            //  UID: "USER" OR
+            //  EMAIL_ADRESS : "EMAIL"
+            
+            var internalUsers = users.filter { (key, value) -> Bool in
                 value != "email"
             }
             
             
-            if legitUsers.count > 1 {
-                self.onlySendToFirstUser(users: users)
+            if internalUsers.count > 1 {
+                // CURRENTLY ONLY CAN HANDLE ONE USER MESSAGE
+                self.onlySendToFirstInternalUser(users: users)
             } else {
                 self.handleSendToUsers(sentUsers: users)
             }
@@ -1023,7 +1029,7 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
         }
     }
     
-    func onlySendToFirstUser(users: [String:String]){
+    func onlySendToFirstInternalUser(users: [String:String]){
         var legitUsers = users.filter { (key, value) -> Bool in
             value != "email"
         }

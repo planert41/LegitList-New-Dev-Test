@@ -16,6 +16,7 @@ protocol EventCellDelegate {
     func didTapUsername(user:User?)
     func didTapListname(listId: String?)
     func showPost(post: Post?)
+    func showPostComments(post: Post?)
     func saveInteraction(event: Event?)
 }
 
@@ -196,80 +197,33 @@ class EventCell: UITableViewCell {
         
     // ACTION - LIST OR LIKE
         var actionString = ""
+        var noListName = event.listName?.isEmptyOrWhitespace() ?? true
         
-        switch action {
-        case .like:
-            actionString = "liked "
-        case .follow:
-            actionString = "followed "
-        case .bookmark:
-            actionString = "added "
-        case .comment:
-            actionString = "commented "
-        case .create:
-            actionString = "created "
-        default:
-            actionString = ""
+        if event.eventAction == .followUser {
+            actionString = "followed you"
+        } else if event.eventAction == .likePost {
+            actionString = "liked your post "
+        } else if event.eventAction == .commentPost {
+            actionString = "commented on your post "
+        } else if event.eventAction == .commentTooPost {
+            actionString = "commented on a post you commented"
+        } else if event.eventAction == .addPostToList {
+            actionString = "bookmarked your post to \(noListName ? "a list" : "")"
+        } else if event.eventAction == .followList {
+            actionString = "followed \(noListName ? "your list" : "")"
         }
         
-//        if self.eventType == Event.PostView.list {
-//            // Added a Post To a List
-//            let listname = self.event?.listName ?? "a list"
-//            actionString = "added your post to \(listname) "
-//        } else if self.eventType == Event.PostView.like {
-//            // Added a Post To a List
-//            actionString = "liked your post "
-//        }
-        
+
         let actionMString = NSMutableAttributedString(string: actionString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
         attributedText.append(actionMString)
         
-
-        // RECEIVER
-        
-        var receiverString = ""
-        if let receiveUser = receiveEventUser {
-            receiverString = (receiveUser.uid == uid ? "your" : receiveUser.username) + " "
+        // ADD LIST NAME IF AVAILABLE
+        if (event.eventAction == .addPostToList || event.eventAction == .followList) {
+            if let listName = event.listName {
+                let listNameText = NSMutableAttributedString(string: listName, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.black]))
+                attributedText.append(listNameText)
+            }
         }
-        
-        let receiverName = NSMutableAttributedString(string: receiverString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): (receiveEventUser?.isFollowing ?? false) ? UIColor.mainBlue() : UIColor.black]))
-        attributedText.append(receiverName)
-        
-        
-        // ITEM
-        var itemString = ""
-        switch event.eventType {
-        case .list:
-            // Grid View
-            itemString = "list"
-        case .post:
-            // List View
-            itemString = "post"
-        case .user:
-            // Full Post View
-            itemString = "user"
-        default:
-            itemString = ""
-        }
-        
-        itemString += action == Social.bookmark ? " to " : ""
-        
-        if itemString != "" {
-            let objectName = NSMutableAttributedString(string: itemString + " ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.black]))
-            attributedText.append(objectName)
-        }
-        
-
-        if action == Social.bookmark {
-            let listnameString = (event.listName ?? "a list")
-            
-            let listName = NSMutableAttributedString(string: listnameString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.legitColor()]))
-            attributedText.append(listName)
-        }
-
-        
-//        print(event.action, event.eventType, attributedText.string)
-        
         
         
     // ACTION DATE
@@ -298,18 +252,70 @@ class EventCell: UITableViewCell {
         
         let dateString = NSAttributedString(string: " \n " + postDateString!, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 12),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.lightGray]))
         attributedText.append(dateString)
+        
+        self.eventTextView.attributedText = attributedText
+        self.eventTextView.sizeToFit()
+        
 
-        if event.eventAction == .followUser {
-            let receiveUser = receiveEventUser
-            var followUserString: String = usernameString + " followed " + ((receiveUser?.uid == Auth.auth().currentUser?.uid) ? "You" : receiverString)
-            let attributedText = NSMutableAttributedString(string: followUserString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.black]))
-            attributedText.append(dateString)
-            self.eventTextView.attributedText = attributedText
-            self.eventTextView.sizeToFit()
-        } else {
-            self.eventTextView.attributedText = attributedText
-            self.eventTextView.sizeToFit()
-        }
+//        // RECEIVER
+//
+//        var receiverString = ""
+//        if let receiveUser = receiveEventUser {
+//            receiverString = (receiveUser.uid == uid ? "your" : receiveUser.username) + " "
+//        }
+//
+//        let receiverName = NSMutableAttributedString(string: receiverString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): (receiveEventUser?.isFollowing ?? false) ? UIColor.mainBlue() : UIColor.black]))
+//        attributedText.append(receiverName)
+//
+//
+//        // ITEM
+//        var itemString = ""
+//        switch event.eventType {
+//        case .list:
+//            // Grid View
+//            itemString = "list"
+//        case .post:
+//            // List View
+//            itemString = "post"
+//        case .user:
+//            // Full Post View
+//            itemString = "user"
+//        default:
+//            itemString = ""
+//        }
+//
+//        itemString += action == Social.bookmark ? " to " : ""
+//
+//        if itemString != "" {
+//            let objectName = NSMutableAttributedString(string: itemString + " ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.black]))
+//            attributedText.append(objectName)
+//        }
+//
+//
+//        if action == Social.bookmark {
+//            let listnameString = (event.listName ?? "a list")
+//
+//            let listName = NSMutableAttributedString(string: listnameString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.legitColor()]))
+//            attributedText.append(listName)
+//        }
+//
+//
+////        print(event.action, event.eventType, attributedText.string)
+//
+//
+//
+//
+//        if event.eventAction == .followUser {
+//            let receiveUser = receiveEventUser
+//            var followUserString: String = usernameString + " followed " + ((receiveUser?.uid == Auth.auth().currentUser?.uid) ? "you" : receiverString)
+//            let attributedText = NSMutableAttributedString(string: followUserString, attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 14),convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.black]))
+//            attributedText.append(dateString)
+//            self.eventTextView.attributedText = attributedText
+//            self.eventTextView.sizeToFit()
+//        } else {
+//            self.eventTextView.attributedText = attributedText
+//            self.eventTextView.sizeToFit()
+//        }
 
         
         
@@ -422,7 +428,12 @@ class EventCell: UITableViewCell {
                     self.delegate?.didTapUsername(user: self.initEventUser)
                 } else if tappedWord == self.event?.listName {
                     self.delegate?.didTapListname(listId: self.event?.listId)
-                } else {
+                }  else if self.event?.action == Social.bookmark {
+                    self.delegate?.didTapListname(listId: self.event?.listId)
+                } else if (self.event?.action == Social.comment || self.event?.action == Social.commentToo) {
+                    self.delegate?.showPostComments(post: self.post)
+                }
+                else {
                     self.delegate?.showPost(post: self.post)
                 }
             }

@@ -529,7 +529,7 @@ extension SelectUserMessageController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if selectedScope == 0 {
-            return isFiltering ? filteredUsers.count : followingUsers.count
+            return (isFiltering ? filteredUsers.count : followingUsers.count) + 1
         } else {
             return isFiltering ? filteredMessageThreads.count : messageThreads.count
         }

@@ -12,7 +12,7 @@ import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
 
-class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLayout, ThreadCellDelegate {
+class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLayout, ThreadCellDelegate, EmptyCellDelegate {
     
     static let newMsgNotificationName = NSNotification.Name(rawValue: "NewInboxMessage")
 
@@ -32,6 +32,7 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
     
     let inboxCellId = "inboxCellId"
     let threadCellId = "threadCellId"
+    let emptyCellId = "emptyCellId"
 
     var noResultsLabel: UILabel = {
         let label = UILabel()
@@ -86,6 +87,8 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
 
         setupNavigationItems()
         collectionView?.register(ThreadCell.self, forCellWithReuseIdentifier: threadCellId)
+        collectionView?.register(EmptyCell.self, forCellWithReuseIdentifier: emptyCellId)
+
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
         collectionView.refreshControl = refreshControl
@@ -140,7 +143,7 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
         
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "NEW", style: .plain, target: self, action: #selector(newMessgae))
 
-        navShareButton.addTarget(self, action: #selector(newMessgae), for: .touchUpInside)
+        navShareButton.addTarget(self, action: #selector(newMessage), for: .touchUpInside)
         let newBarButton = UIBarButtonItem.init(customView: navShareButton)
         self.navigationItem.rightBarButtonItem = newBarButton
         
@@ -151,7 +154,7 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
 
     }
     
-    @objc func newMessgae() {
+    @objc func newMessage() {
         let controller = SelectUserMessageController()
         controller.displayUserId = Auth.auth().currentUser?.uid
         controller.sendingPost = nil
@@ -213,6 +216,11 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
     
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if messageThreads.count == 0 {
+            self.newMessage()
+            return
+        }
+        
         var displayMessage = messageThreads[indexPath.item]
         messageThreads[indexPath.item].isRead = true
         self.extOpenMessage(message: self.messageThreads[indexPath.item], reload: true)
@@ -226,26 +234,40 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
 //        }
     }
         
-
+    func didTapEmptyCell() {
+        self.newMessage()
+    }
     
     
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return messageThreads.count
+        return max(1, messageThreads.count)
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        if messageThreads.count == 0 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
+            cell.imageLabel.text = "No Inbox Messages"
+            cell.imageSubLabel.text = "Tap To Send A New Message"
+            
+            let listIcon = #imageLiteral(resourceName: "inbox").withRenderingMode(.alwaysOriginal)
+            cell.imageIcon.setImage(listIcon, for: .normal)
+            cell.imageIcon.isHidden = true
+            cell.delegate = self
+            return cell
+        }
+        
         var displayMessage = messageThreads[indexPath.item]
         
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: threadCellId, for: indexPath) as! ThreadCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: threadCellId, for: indexPath) as! ThreadCell
 //            cell.delegate = self
-            cell.messageThread = displayMessage
-            cell.backgroundColor = displayMessage.isRead ? UIColor.white : UIColor.mainBlue().withAlphaComponent(0.5)
-            cell.delegate = self
+        cell.messageThread = displayMessage
+        cell.backgroundColor = displayMessage.isRead ? UIColor.white : UIColor.mainBlue().withAlphaComponent(0.5)
+        cell.delegate = self
 //            print("Displayed Message Thread", displayMessage)
-        
-            return cell
+    
+        return cell
 
         
     }
@@ -259,8 +281,11 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
+        if self.messageThreads.count == 0 {
+            return CGSize(width: view.frame.width, height: view.frame.height)
+        } else {
             return CGSize(width: view.frame.width, height: 70)
+        }
 
     }
     

@@ -109,6 +109,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     }
     
     var comments = [Comment]()
+    var commentUids: [String] = []
     
     func didTapCancel(comment: Comment) {
         print("Delete Comment from \(comment.user.username) | \(comment.text)")
@@ -134,6 +135,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         var captionComment = Comment(key: "postCaption", user: (post?.user)!, dictionary: [:])
         captionComment.text = (post?.caption)!
         captionComment.creationDate = post?.creationDate ?? Date()
+        captionComment.userId = (post?.user.uid)!
         self.comments = []
         self.comments.append(captionComment)
 
@@ -141,9 +143,16 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
 
         Database.fetchCommentsForPostId(postId: postId) { (commentsFirebase) in
             self.comments += commentsFirebase
+            self.refreshCommentUids()
             self.collectionView?.reloadData()
         }
     }
+    
+    fileprivate func refreshCommentUids() {
+        self.commentUids = []
+        self.commentUids = self.comments.map{ $0.userId }.unique()
+    }
+    
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return comments.count
@@ -407,7 +416,8 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
             return
         }
         let postId = self.post?.id ?? ""
-        let values = ["text": commentTextField.text ?? "", "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String:Any]
+        let commentText = commentTextField.text ?? ""
+        let values = ["text": commentText, "creationDate": Date().timeIntervalSince1970, "uid": uid] as [String:Any]
         
         commentTextField.text?.removeAll()
         let commentID = NSUUID().uuidString
@@ -432,8 +442,25 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
                 print("Failed to insert comment:", err)
                 return
             }
-                Database.createPostEvent(postId: postId, creatorUid: uid, action: Social.comment, value: 1)
+            
+            
+            // THE ONLY PEOPLE INVOLVED IN COMMENTING - PERSON WHO COMMENTED, POST CREATOR, OTHER PEOPLE WHO COMMENTED ON POST
+            // NO NEED TO NOTIFY THE CURRENT USER CREATING THE COMMENT
+            for user in self.commentUids {
+                if user == uid {
+                    // CREATOR OF CURRENT COMMENT DOESN"T NEED NOTIFICATION
+                    continue}
+                if user == self.post?.creatorUID {
+                    Database.createNotificationEventForUser(postId: postId, listId: nil, targetUid: user, action: Social.comment, value: 1, locName: self.post?.locationName, listName: nil, commentText: commentText)
+                } else {
+                    Database.createNotificationEventForUser(postId: postId, listId: nil, targetUid: user, action: Social.commentToo, value: 1, locName: self.post?.locationName, listName: nil, commentText: commentText)
+                }
+            }
+            
                 print("Successfully saved comment:")
+            
+            // Alert other users who commented
+            
         }
         
     }
