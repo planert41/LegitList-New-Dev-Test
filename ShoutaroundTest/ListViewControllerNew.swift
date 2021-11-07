@@ -296,7 +296,8 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(didCreateNewList), name:TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(sortLists), name:TabListViewController.newFollowedListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deletedList), name:MainTabBarController.deleteList, object: nil)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
         
         setupNavigationItems()
         setupTypeSegment()
@@ -395,6 +396,24 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
+    @objc func locationUpdated() {
+        if self.isPresented  {
+            if selectedSort == sortNearest {
+                self.fetchLists()
+                print("ListViewControllerNew Location UPDATED | \(CurrentUser.currentLocation)")
+            }
+        }
+    }
+    
+    @objc func locationDenied() {
+        if self.isPresented {
+            self.missingLocAlert()
+            self.sortSegmentControl.selectedSegmentIndex = ItemSortOptions.index(of: sortNew) ?? 0
+            self.selectItemSort(sender: self.sortSegmentControl)
+            print("ListViewControllerNew Location Denied Function")
+        }
+    }
+    
     @objc func sortLists() {
         self.yourLists = allLists.filter({ (list) -> Bool in
             CurrentUser.listIds.contains(list.id!)
@@ -414,6 +433,12 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             self.fetchedList = self.followingLists
         } else if self.fetchType == ListAll {
             self.fetchedList = self.allLists
+        }
+        
+        if self.selectedSort == sortNearest && CurrentUser.currentLocation == nil {
+            LocationSingleton.sharedInstance.determineCurrentLocation()
+            print("ListViewControllerNew Missing Location")
+            return
         }
         
         Database.sortList(inputList: self.fetchedList, sortInput: self.selectedSort, completion: { (lists) in

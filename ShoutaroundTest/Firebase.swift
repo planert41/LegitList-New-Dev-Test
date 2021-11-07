@@ -6078,8 +6078,12 @@ extension Database{
         
         if let cachedList = listCache[listId] {
             if cachedList != nil {
+                var temp = cachedList
+                if let location = CurrentUser.currentLocation {
+                    temp.listDistance = temp.listGPS?.distance(from: location) ?? 999999
+                }
 //                print("fetchListforSingleListId | Cache | \(listId)")
-                completion(cachedList)
+                completion(temp)
                 return
             }
         }
