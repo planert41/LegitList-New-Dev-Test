@@ -375,7 +375,9 @@ class SingleUserProfileViewController: UIViewController {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
-        } 
+        }
+
+        
         setupNavigationItems()
         setupCollectionView()
         self.view.backgroundColor = UIColor.white
@@ -470,6 +472,8 @@ class SingleUserProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshInboxNotifications), name: InboxController.newMsgNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
         self.view.layoutIfNeeded()
 
         print("  END |  NewListCollectionView | ViewdidLoad")
@@ -781,7 +785,7 @@ extension SingleUserProfileViewController {
         
         Database.fetchUserWithUID(uid: uid) { (fetchedUser) in
             self.displayUser = fetchedUser
-            print("UserprofileController | Fetched User | \(uid)")
+            print("SingleUserprofileController | Fetched User | \(uid)")
         }
     }
     
@@ -938,27 +942,48 @@ extension SingleUserProfileViewController {
     
     @objc func refreshPostsForSort(){
        self.isFiltering = self.viewFilter.isFiltering
-    		
-       Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-           self.fetchedPosts = sortedPosts ?? []
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
+                self.fetchedPosts = sortedPosts ?? []
 
-        Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-               
-               self.displayedPosts = filteredPosts ?? []
-               print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
-            
-               self.updateNoFilterCounts()
-               self.imageCollectionView.reloadSections(IndexSet(integer: 0))
+             Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
+                    
+                    self.displayedPosts = filteredPosts ?? []
+                    print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
+                 
+                    self.updateNoFilterCounts()
+                    self.imageCollectionView.reloadSections(IndexSet(integer: 0))
 
-           // Reload Data here to reload header, because only update the pics everywhere else
-//               self.imageCollectionView.reloadData()
-//               self.paginatePosts()
+                // Reload Data here to reload header, because only update the pics everywhere else
+     //               self.imageCollectionView.reloadData()
+     //               self.paginatePosts()
 
-//                if self.imageCollectionView.isDescendant(of: self.view) {
-//                    self.imageCollectionView.reloadData()
-//                }
-           }
-       })
+     //                if self.imageCollectionView.isDescendant(of: self.view) {
+     //                    self.imageCollectionView.reloadData()
+     //                }
+                }
+            })
+        }
+    }
+    
+    @objc func locationUpdated() {
+        if self.isPresented  {
+            if self.viewFilter.filterSort == sortNearest {
+                self.viewFilter.filterLocation = CurrentUser.currentLocation
+                print("SingleUserProfile Location UPDATED | \(CurrentUser.currentLocation)")
+                self.refreshPostsForSort()
+            }
+        }
+    }
+    
+    @objc func locationDenied() {
+        if self.isPresented {
+            self.missingLocAlert()
+            self.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
+            self.viewFilter.filterSort = sortNew
+            self.selectSort(sender: self.sortSegmentControl)
+            print("SingleUserProfile Location Denied Function")
+        }
     }
     
     
@@ -1098,28 +1123,8 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     
     @objc func headerSortSelected(sort: String) {
         self.viewFilter.filterSort = sort
+        self.refreshPostsForSort()
         print("SingleUserProfile | Sort is  \(self.viewFilter.filterSort) | \(self.displayUser?.username)")
-
-        let timeSinceLastLocation = Date().timeIntervalSince(self.viewFilter.filterLocationTime)
-        
-        if timeSinceLastLocation > 3600 {
-            self.viewFilter.filterLocation = nil
-            print("Refreshing Location Due to Too Long:", timeSinceLastLocation)
-        }
-        
-        if (self.viewFilter.filterSort == HeaderSortOptions[1] && self.viewFilter.filterLocation == nil){
-            print("Sort by Nearest, No Location, Look up Current Location")
-            LocationSingleton.sharedInstance.determineCurrentLocation()
-            let when = DispatchTime.now() + defaultGeoWaitTime // change 2 to desired number of seconds
-            DispatchQueue.main.asyncAfter(deadline: when) {
-                //Delay for 1 second to find current location
-                self.viewFilter.filterLocation = CurrentUser.currentLocation
-                self.refreshPostsForSort()
-            }
-        } else {
-            self.refreshPostsForSort()
-        }
-        
     }
     
    func userSettings(){
@@ -1677,7 +1682,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     
     func paginatePosts(){
         
-        if self.isViewLoaded && self.view.window != nil {
+        if self.isPresented {
             //Currently Active. Don't Refresh
             //print("User Profile Controller | paginatePosts | Don't Dismiss Progress Bar, not in view")
             SVProgressHUD.dismiss()
@@ -1698,7 +1703,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
         if self.paginatePostsCount == self.displayedPosts.count {
             self.isFinishedPaging = true
             
-            if self.isViewLoaded && self.view.window != nil {
+            if self.isPresented {
                 //Currently Active. Don't Refresh
                 //print("User Profile Controller | finishPaginationCheck | Don't Dismiss Progress Bar, not in view")
                 SVProgressHUD.dismiss()
@@ -1731,7 +1736,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
 //                    SVProgressHUD.dismiss()
 //                }
                 
-                if self.isViewLoaded && self.view.window != nil {
+                if self.isPresented {
                     //Currently Active. Don't Refresh
                     //print("User Profile Controller | finishPaginationCheck | Don't Dismiss Progress Bar, not in view")
                     SVProgressHUD.dismiss()

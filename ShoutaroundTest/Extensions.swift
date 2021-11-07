@@ -132,6 +132,11 @@ extension UIColor {
         
     }
     
+    static func backgroundLegitColor() -> UIColor {
+        return UIColor(hexColor: "ff9d94")
+    }
+    
+    
     static func oldLegitColor() -> UIColor {
         return UIColor(hexColor: "006978")
     }
@@ -611,6 +616,24 @@ extension UICollectionViewController {
 
 extension UIViewController {
 
+    var isModal: Bool {
+        if let index = navigationController?.viewControllers.firstIndex(of: self), index > 0 {
+            return false
+        } else if presentingViewController != nil {
+            return true
+        } else if navigationController?.presentingViewController?.presentedViewController == navigationController {
+            return true
+        } else if tabBarController?.presentingViewController is UITabBarController {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    var isPresented: Bool {
+        return self.isViewLoaded && self.view.window != nil
+    }
+    
     var topbarHeight: CGFloat {
         return UIApplication.shared.statusBarFrame.size.height +
             (self.navigationController?.navigationBar.frame.height ?? 0.0)
@@ -1086,6 +1109,32 @@ extension UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    func missingLocAlert() {
+        let alert = UIAlertController(title: "Can't Sort By Nearest", message: "Missing current user location to sort posts by nearest. Please enable location access in settings.", preferredStyle: .alert)
+        
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                    print("Settings opened: \(success)") // Prints true
+                })
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "OK", style: .cancel) { (_) -> Void in
+        }
+        alert.addAction(settingsAction)
+        alert.addAction(cancelAction)
+
+        self.present(alert, animated: true) {
+            print("DISPLAY Missing Location alert")
+        }
     }
     
     @objc func alertClose(gesture: UITapGestureRecognizer) {

@@ -287,6 +287,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
 
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -702,7 +704,9 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             }
             
             var displayPost = displayedPosts[indexPath.item]
-            SVProgressHUD.dismiss()
+            if self.isPresented && !self.isFetchingPosts{
+                SVProgressHUD.dismiss()
+            }
             // Can't Be Selected
             
             if self.viewFilter.filterLocation != nil && displayPost.locationGPS != nil {
@@ -935,11 +939,11 @@ extension LegitHomeView {
     }
     
     func refreshPostsForSort(){
-        print("Refresh Posts, SORT PostIds by \(self.viewFilter.filterSort)")
+        print("Refresh Posts, SORT PostIds by \(self.viewFilter.filterSort) | Filtering: \(self.viewFilter.isFiltering)")
         // Does not repull post ids, just resorts displayed posts
         self.fetchSortFilterPosts()
         self.scrollToHeader()
-        self.paginatePosts()
+//        self.paginatePosts()
         self.collectionView.refreshControl?.endRefreshing()
     }
     
@@ -1072,41 +1076,46 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     }
     
     
-    
-    func headerSortSelected(sort: String) {
-        self.viewFilter.filterSort = sort
-        
-        let timeSinceLastLocation = Date().timeIntervalSince(self.viewFilter.filterLocationTime)
-        
-        if timeSinceLastLocation > 3600 {
-            self.viewFilter.filterLocation = nil
-            print("Refreshing Location Due to Too Long:", timeSinceLastLocation)
-        }
-        
-        if !self.viewFilter.isFiltering {
-            print("Not Filtering | ReSort Posts | \(sort) | \(self.viewFilter.isFiltering)")
-            // Not Filtering for anything, so Pull in Post Ids by Recent or Social
-            if (self.viewFilter.filterSort == sortNearest && (self.viewFilter.filterLocation == nil)){
-                print("Sort by Nearest, No Location, Look up Current Location")
-                SVProgressHUD.show(withStatus: "Fetching Current Location")
-                LocationSingleton.sharedInstance.determineCurrentLocation()
-                let when = DispatchTime.now() + defaultGeoWaitTime // change 2 to desired number of seconds
-                DispatchQueue.main.asyncAfter(deadline: when) {
-                    //Delay for 1 second to find current location
-                    self.viewFilter.filterLocation = CurrentUser.currentLocation
-                    print("  - CURRENT USER LOCATION LOADED | headerSortSelected | \(CurrentUser.currentLocation)")
-                    self.refreshPostsForSort()
-                }
-            } else {
-                self.refreshPostsForSearch()
+    @objc func locationUpdated() {
+        if self.isPresented  {
+            if self.viewFilter.filterSort == sortNearest {
+                self.viewFilter.filterLocation = CurrentUser.currentLocation
+                print("LegitHomeView Location UPDATED | \(CurrentUser.currentLocation)")
+                self.refreshPostsForSort()
             }
         }
-        else
-        {
-            // Filtered for something else, so just resorting posts based on social
-            print("Filtering | ReSort Posts With Filter | \(sort) | \(self.viewFilter.isFiltering)")
-
+    }
+    
+    @objc func locationDenied() {
+        if self.isPresented {
+            self.missingLocAlert()
+            self.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
+            self.viewFilter.filterSort = sortNew
+            self.selectSort(sender: self.sortSegmentControl)
+            print("LegitHomeView Location Denied Function")
+        }
+    }
+    
+//
+//    func checkLocationForSort() {
+//        let timeSinceLastLocation = Date().timeIntervalSince(self.viewFilter.filterLocationTime)
+//        if timeSinceLastLocation > 3600 {
+//            self.viewFilter.filterLocation = nil
+//            print("Refreshing Location Due to Too Long:", timeSinceLastLocation)
+//        }
+//
+//        if self.viewFilter.filterSort == sortNearest && self.viewFilter.filterLocation == nil {
+//            LocationSingleton.sharedInstance.determineCurrentLocation()
+//            return
+//        }
+//    }
+        
+    func headerSortSelected(sort: String) {
+        self.viewFilter.filterSort = sort
+        if self.viewFilter.isFiltering {
             self.refreshPostsForSort()
+        } else {
+            self.refreshPostsForSearch()
         }
     }
     
@@ -1805,7 +1814,9 @@ extension LegitHomeView {
     
     
     func showFetchProgressDetail(){
-        
+        if !self.isPresented {
+            return
+        }
         print("showFetchProgressDetail | Filtering: \(self.viewFilter.isFiltering)")
         // DEFAULT NOT FILTERING
         if !self.viewFilter.isFiltering {
@@ -2078,11 +2089,11 @@ extension LegitHomeView {
 extension LegitHomeView {
 
     @objc func fetchSortFilterPosts(){
-        Database.fetchAllPosts(fetchedPostIds: self.fetchedPostIds, completion: { (firebaseFetchedPosts) in
-            self.isFetchingPosts = false
-            self.displayedPosts = firebaseFetchedPosts
-            self.filterSortFetchedPosts()
-        })
+            Database.fetchAllPosts(fetchedPostIds: self.fetchedPostIds, completion: { (firebaseFetchedPosts) in
+                self.isFetchingPosts = false
+                self.displayedPosts = firebaseFetchedPosts
+                self.filterSortFetchedPosts()
+            })
     }
     
     func updateNoFilterCounts(){
@@ -2114,35 +2125,28 @@ extension LegitHomeView {
     
 // DATA HANDLING
     func filterSortFetchedPosts(){
-        if self.viewFilter.filterSort == sortNearest && self.viewFilter.filterLocation == nil && CurrentUser.currentLocation == nil {
-            LocationSingleton.sharedInstance.determineCurrentLocation()
-        }
         
-        // Filter Posts
-        Database.filterPostsNew(inputPosts: self.displayedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-            
-            // Sort Posts
-            Database.sortPosts(inputPosts: filteredPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (filteredPosts) in
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            // Filter Posts
+            Database.filterPostsNew(inputPosts: self.displayedPosts, postFilter: self.viewFilter) { (filteredPosts) in
                 
-                self.displayedPosts = []
-                if filteredPosts != nil {
-                    self.displayedPosts = filteredPosts!
-                }
-                
-                self.scrollToHeader()
-                
-                print("Filter Sort Post: Success: \(self.displayedPosts.count) Posts")
-                self.updateNoFilterCounts()
-                self.paginatePosts()
-//                self.showFilterView()
-                
-            })
-        }
-    }
-    
-    func checkLocation() {
-        if self.viewFilter.filterSort == sortNearest && self.viewFilter.filterLocation == nil && CurrentUser.currentLocation == nil {
-            print("No Current Location")
+                // Sort Posts
+                Database.sortPosts(inputPosts: filteredPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (filteredPosts) in
+                    
+                    self.displayedPosts = []
+                    if filteredPosts != nil {
+                        self.displayedPosts = filteredPosts!
+                    }
+                    
+                    self.scrollToHeader()
+                    
+                    print("Filter Sort Post: Success: \(self.displayedPosts.count) Posts")
+                    self.updateNoFilterCounts()
+                    self.paginatePosts()
+    //                self.showFilterView()
+                    
+                })
+            }
         }
     }
     
@@ -2165,7 +2169,9 @@ extension LegitHomeView {
         DispatchQueue.main.async(execute: {
             self.collectionView.reloadData()
              })
+        if self.isPresented && !self.isFetchingPosts {
             SVProgressHUD.dismiss()
+        }
         //        DispatchQueue.main.async(execute: { self.collectionView?.reloadSections(IndexSet(integer: 0)) })
         
         
@@ -2372,6 +2378,7 @@ extension LegitHomeView: UITableViewDelegate, UITableViewDataSource, LegitSearch
     }
     
     @objc func selectSort(sender: UISegmentedControl) {
+        print("SelectSort: \(HeaderSortOptions[sender.selectedSegmentIndex])")
         self.selectedSearchType = sender.selectedSegmentIndex
         self.searchTableView.reloadData()
         

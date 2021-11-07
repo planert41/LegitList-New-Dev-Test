@@ -404,7 +404,7 @@ class NewListInitPostPhotoViewController: UIViewController, UIGestureRecognizerD
                 self.isFinishedPaging = false
             }
             
-            print("Home Paginate \(self.paginatePostsCount) : \(maxPost) | Filtering \(self.isFiltering), Finished Paging: \(self.isFinishedPaging)")
+            print("List Paginate \(self.paginatePostsCount) : \(maxPost) | Filtering \(self.isFiltering), Finished Paging: \(self.isFinishedPaging)")
             
             // NEED TO RELOAD ON MAIN THREAD OR WILL CRASH COLLECTIONVIEW
             DispatchQueue.main.async(execute: { self.imageCollectionView.reloadData() })

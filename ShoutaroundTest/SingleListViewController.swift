@@ -294,7 +294,9 @@ class SingleListViewController: UIViewController {
         self.setupNavigationItems()
 //        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name:UIResponder.keyboardWillShowNotification, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:UIResponder.keyboardWillHideNotification, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
+
         self.edgesForExtendedLayout = UIRectEdge.top
         setupNavigationItems()
         setupCollectionView()
@@ -479,30 +481,31 @@ class SingleListViewController: UIViewController {
            self.isFiltering = self.viewFilter.isFiltering
 
            // Sort Recent Post By Listed Date
-           var listSort: String = "Listed"
+           var listSort: String = sortListed
             if self.viewFilter.filterSort == defaultRecentSort && !(self.currentDisplayList?.isRatingList ?? false){
-               listSort = "Listed"
+               listSort = sortListed
            } else {
                listSort = (self.viewFilter.filterSort)!
            }
            
 
-        
-           Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: listSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-               self.fetchedPosts = sortedPosts ?? []
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: listSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
+                self.fetchedPosts = sortedPosts ?? []
 
-            Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-                   
-                   self.displayedPosts = filteredPosts ?? []
-                   print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
-//                   SVProgressHUD.dismiss()
-                
-                    self.updateNoFilterCounts()
-                   if self.imageCollectionView.isDescendant(of: self.view) {
-                       self.imageCollectionView.reloadData()
-                   }
-               }
-           })
+             Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
+                    
+                    self.displayedPosts = filteredPosts ?? []
+                    print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
+                 
+                     self.updateNoFilterCounts()
+                    if self.imageCollectionView.isDescendant(of: self.view) {
+                        self.imageCollectionView.reloadData()
+                    }
+                }
+            })
+        }
+
        }
     
     
@@ -520,32 +523,27 @@ class SingleListViewController: UIViewController {
  
     
     @objc func refreshPostsForSort(){
-           self.isFiltering = self.viewFilter.isFiltering
-
-           // Sort Recent Post By Listed Date
-           var listSort: String = "Listed"
-            if self.viewFilter.filterSort == defaultRecentSort && !(self.currentDisplayList?.isRatingList ?? false) {
-               listSort = "Listed"
-           } else {
-               listSort = (self.viewFilter.filterSort)!
-           }
-           
-
-        
-           Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: listSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-               self.fetchedPosts = sortedPosts ?? []
-
-            Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-                   
-                   self.displayedPosts = filteredPosts ?? []
-                   print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
-//                   SVProgressHUD.dismiss()
-                
-                    self.updateNoFilterCounts()
-                    self.imageCollectionView.reloadSections(IndexSet(integer: 1))
-
-               }
-           })
+        self.filterSortFetchedPosts()
+    }
+    
+    @objc func locationUpdated() {
+        if self.isPresented  {
+            if self.viewFilter.filterSort == sortNearest {
+                self.viewFilter.filterLocation = CurrentUser.currentLocation
+                print("SingleListViewController Location UPDATED | \(CurrentUser.currentLocation)")
+                self.refreshPostsForSort()
+            }
+        }
+    }
+    
+    @objc func locationDenied() {
+        if self.isPresented {
+            self.missingLocAlert()
+            self.postSortFormatBar.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
+            self.viewFilter.filterSort = sortNew
+            self.headerSortSelected(sort: sortNew)
+            print("SingleListViewController Location Denied Function")
+        }
     }
     
     
@@ -750,7 +748,9 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        SVProgressHUD.dismiss()
+        if self.isPresented {
+            SVProgressHUD.dismiss()
+        }
         
         if indexPath.section == 1 {
             
@@ -1182,7 +1182,6 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
                     print(temp.locationName)
                 }
                 
-//                SVProgressHUD.dismiss()
                 self.imageCollectionView.reloadSections(IndexSet(integer: 1))
 
             }
@@ -1288,27 +1287,8 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
         SVProgressHUD.show(withStatus: sortString)
         
         self.viewFilter.filterSort = sort
+        self.refreshPostsForSort()
         print("SingleListProfile | Sort is  \(self.viewFilter.filterSort) | \(self.currentDisplayList?.name)")
-
-        let timeSinceLastLocation = Date().timeIntervalSince(self.viewFilter.filterLocationTime)
-        
-        if timeSinceLastLocation > 3600 {
-            self.viewFilter.filterLocation = nil
-            print("Refreshing Location Due to Too Long:", timeSinceLastLocation)
-        }
-        
-        if (self.viewFilter.filterSort == HeaderSortOptions[1] && self.viewFilter.filterLocation == nil){
-            print("Sort by Nearest, No Location, Look up Current Location")
-            LocationSingleton.sharedInstance.determineCurrentLocation()
-            let when = DispatchTime.now() + defaultGeoWaitTime // change 2 to desired number of seconds
-            DispatchQueue.main.asyncAfter(deadline: when) {
-                //Delay for 1 second to find current location
-                self.viewFilter.filterLocation = CurrentUser.currentLocation
-                self.refreshPostsForSort()
-            }
-        } else {
-            self.refreshPostsForSort()
-        }
         
     }
     

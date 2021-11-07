@@ -117,12 +117,12 @@ extension Database{
         
 // 1. FIND CURRENT LOCATION
         
-        if CurrentUser.currentLocation == nil {
-            LocationSingleton.sharedInstance.determineCurrentLocation()
-            print(" 1 | FETCH_CURRENT_USER |Find Current Location")
-        } else {
-            print(" 1 | FETCH_CURRENT_USER |Use Current Location")
-        }
+//        if CurrentUser.currentLocation == nil {
+//            LocationSingleton.sharedInstance.determineCurrentLocation()
+//            print(" 1 | FETCH_CURRENT_USER |Find Current Location")
+//        } else {
+//            print(" 1 | FETCH_CURRENT_USER |Use Current Location")
+//        }
         
 // 2. FETCH USER OBJECT
         let fetchedUser = DispatchGroup()
@@ -9634,10 +9634,37 @@ extension Database{
         completion(tempPosts)
     }
     
+    static func checkLocationForSort(filter: Filter, completion: @escaping () -> ()) {
+        if filter.filterSort == sortNearest {
+            let timeSinceLastLocation = Date().timeIntervalSince(filter.filterLocationTime)
+            if timeSinceLastLocation > 3600 {
+                print("Refreshing Location - Too Long:", timeSinceLastLocation)
+                LocationSingleton.sharedInstance.determineCurrentLocation()
+                return
+            }
+            
+            if filter.filterSort == sortNearest && filter.filterLocation == nil {
+                print("Refreshing Location - No Location")
+                LocationSingleton.sharedInstance.determineCurrentLocation()
+                return
+            }
+            completion()
+        } else {
+            completion()
+        }
+    }
+
+    
     static func sortPosts(inputPosts: [Post]?, selectedSort: String?, selectedLocation: CLLocation?, completion: @escaping ([Post]?) -> ()){
         guard let inputPosts = inputPosts else {
             print("Sort Posts: ERROR, No Post")
             completion(nil)
+            return
+        }
+        
+        if selectedSort == defaultNearestSort && selectedLocation == nil {
+            print("Sort Posts Error - Sort Nearest With No Location")
+            LocationSingleton.sharedInstance.determineCurrentLocation()
             return
         }
         
@@ -9654,7 +9681,7 @@ extension Database{
         }
             
         // Recent Listed Date
-        else if selectedSort == "Listed" {
+        else if selectedSort == sortListed {
             tempPosts.sort(by: { (p1, p2) -> Bool in
                 return p1.listedDate!.compare(p2.listedDate!) == .orderedDescending
             })

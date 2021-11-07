@@ -916,7 +916,8 @@ class NewTabMapViewController: UIViewController {
         
         // FUNCTIONS FOR NEW POSTS
         NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateFeed), name: SharePhotoListController.updateFeedNotificationName, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
     }
     
     
@@ -1032,65 +1033,86 @@ class NewTabMapViewController: UIViewController {
             print("   HomeView | NoFilter Emoji Count | \(emojiCounts.count)")
         }
     }
+
     
+    @objc func locationUpdated() {
+        if self.isPresented  {
+            if self.mapFilter.filterSort == sortNearest {
+                self.mapFilter.filterLocation = CurrentUser.currentLocation
+                print("NewTabMapView Location UPDATED | \(CurrentUser.currentLocation)")
+                self.filterSortFetchedPosts()
+            }
+        }
+    }
+    
+    @objc func locationDenied() {
+        if self.isPresented {
+            self.missingLocAlert()
+            self.mapFilter.filterSort = sortNew
+            self.filterSortFetchedPosts()
+            print("NewTabMapView Location Denied Function")
+        }
+    }
 
     
     func filterSortFetchedPosts(){
         
         updateNoFilterCounts()
         
-        // Filter Posts
-        Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.mapFilter) { (filteredPosts) in
-                        
-            // NEED TO DO FILTERING SINGLE POST BEFORE SORTING
-            
-            // Sort Posts
-            Database.sortPosts(inputPosts: self.additionalMapFilter(posts: filteredPosts) ?? [], selectedSort: self.mapFilter.filterSort, selectedLocation: self.mapFilter.filterLocation, completion: { (filteredPosts) in
-            
+        Database.checkLocationForSort(filter: self.mapFilter) {
+            // Filter Posts
+            Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.mapFilter) { (filteredPosts) in
+                            
+                // NEED TO DO FILTERING SINGLE POST BEFORE SORTING
+                // Sort Posts
+                Database.sortPosts(inputPosts: self.additionalMapFilter(posts: filteredPosts) ?? [], selectedSort: self.mapFilter.filterSort, selectedLocation: self.mapFilter.filterLocation, completion: { (filteredPosts) in
                 
-            // FILTER POSTS FOR ONE POST PER LOCATION TO AVOID CLUSTERING
-                self.fetchedPosts = filteredPosts ?? []
-                print("   ~ Database | \(filteredPosts!.count ?? 0) Posts | After Sort/Filter")
+                // FILTER POSTS FOR ONE POST PER LOCATION TO AVOID CLUSTERING
+                    self.fetchedPosts = filteredPosts ?? []
+                    print("   ~ Database | \(filteredPosts!.count ?? 0) Posts | After Sort/Filter")
 
-                if (self.mapFilter.isFiltering) {
-                    // IF SELECTED SPECIFIC POST ID
-                    if let filterPostId = self.mapFilter.filterPostId {
-                        self.selectedMapPost = self.fetchedPosts.filter({ (post) -> Bool in
-                            post.id == filterPostId
-                        }).first
-                        self.showSelectedPost()
-                        print("Filter Sort | Is Filtering | Specific post | \(self.selectedMapPost?.id)")
+                    if (self.mapFilter.isFiltering) {
+                        // IF SELECTED SPECIFIC POST ID
+                        if let filterPostId = self.mapFilter.filterPostId {
+                            self.selectedMapPost = self.fetchedPosts.filter({ (post) -> Bool in
+                                post.id == filterPostId
+                            }).first
+                            self.showSelectedPost()
+                            print("Filter Sort | Is Filtering | Specific post | \(self.selectedMapPost?.id)")
+                        }
+                            
+                        else if self.fetchedPosts.count > 0 {
+                            print("Filter Sort | Is Filtering | Auto selected post | \(self.selectedMapPost?.id)")
+                            self.selectedMapPost = self.fetchedPosts[0]
+                            
+                        } else if self.fetchedPosts.count == 0 {
+                            print("Filter Sort | Is Filtering | No Post")
+                            self.hidePost()
+                        }
                     }
-                        
-                    else if self.fetchedPosts.count > 0 {
-                        print("Filter Sort | Is Filtering | Auto selected post | \(self.selectedMapPost?.id)")
-                        self.selectedMapPost = self.fetchedPosts[0]
-                        
-                    } else if self.fetchedPosts.count == 0 {
-                        print("Filter Sort | Is Filtering | No Post")
-                        self.hidePost()
+                    
+                    self.isFetching = false
+                    self.refreshButton.isHidden = !self.mapFilter.isFiltering
+                    self.refreshMap()
+                    self.refreshBottomEmojiBar()
+                    self.refreshPostCollectionView()
+                    self.topSearchBar.filteredPostCount = self.fetchedPosts.count
+                    self.topSearchBar.viewFilter = self.mapFilter
+
+                    print("NewMapViewController | Filter Sorted Post: \(self.fetchedPosts.count) | Selected | \(self.selectedMapPost?.id) ")
+
+                    
+                    if self.isRefreshing {
+                        if CurrentUser.currentLocation == nil {
+                            self.showGlobe()
+                        } else {
+                            self.centerMapOnLocation(location: CurrentUser.currentLocation)
+                        }
+                        self.isRefreshing = false
+                        print(" Go to Current Location | Refreshing")
                     }
-                }
-                
-                self.isFetching = false
-                self.refreshButton.isHidden = !self.mapFilter.isFiltering
-                self.refreshMap()
-                self.refreshBottomEmojiBar()
-                self.refreshPostCollectionView()
-                self.topSearchBar.filteredPostCount = self.fetchedPosts.count
-                self.topSearchBar.viewFilter = self.mapFilter
-
-                print("NewMapViewController | Filter Sorted Post: \(self.fetchedPosts.count) | Selected | \(self.selectedMapPost?.id) ")
-
-                
-                if self.isRefreshing {
-                    self.centerMapOnLocation(location: CurrentUser.currentLocation)
-                    self.isRefreshing = false
-                    print(" Go to Current Location | Refreshing")
-                }
-                
-                
-            })
+                })
+            }
         }
     }
     
@@ -1450,11 +1472,19 @@ extension NewTabMapViewController : MKMapViewDelegate {
 
     
     @objc func showGlobe(){
-        guard let location = CurrentUser.currentLocation else {
-            return
+
+        var location: CLLocation?
+        
+        if CurrentUser.currentLocation == nil {
+            location = defaultLocation
+            print("showGlobe | No Current User Location | Default Location")
+        } else {
+            location = CurrentUser.currentLocation
+            print("showGlobe | Current User Location | CurrentUser.currentLocation")
         }
         
-        print("showGlobe | \(location.coordinate)")
+        guard let location = location else {return}
+        
         let coordinateRegion = MKCoordinateRegion.init(center: location.coordinate,
                                                                   latitudinalMeters: regionRadius*1000, longitudinalMeters: regionRadius*1000)
         mapView.setRegion(coordinateRegion, animated: true)

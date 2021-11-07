@@ -2974,7 +2974,7 @@ class MainViewController: UIViewController, MKMapViewDelegate, EmptyDataSetSourc
     @objc func paginatePosts(){
         let paginateFetchPostSize = 4
         self.paginatePostsCount = min(self.paginatePostsCount + paginateFetchPostSize, self.fetchedPosts.count)
-        print("Home Paginate \(self.paginatePostsCount) : \(self.fetchedPosts.count)")
+        print("Map Paginate \(self.paginatePostsCount) : \(self.fetchedPosts.count)")
         NotificationCenter.default.post(name: MainViewController.finishPaginationNotificationName, object: nil)
     }
     

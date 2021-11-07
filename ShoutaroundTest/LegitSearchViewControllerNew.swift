@@ -24,6 +24,14 @@ import EmptyDataSet_Swift
 //}
 
 
+
+protocol LegitSearchViewControllerDelegate {
+    func filterControllerSelected(filter: Filter?)
+    func refreshAll()
+}
+
+
+
 class LegitSearchViewControllerNew: UIViewController {
 
     

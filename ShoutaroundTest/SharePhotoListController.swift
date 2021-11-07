@@ -1061,7 +1061,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     @objc func handleAddPostToList(){
         
         navigationItem.rightBarButtonItem?.isEnabled = false
-        SVProgressHUD.show(withStatus: "Adding To List")
+//        SVProgressHUD.show(withStatus: "Adding To List")
 
         if (Auth.auth().currentUser?.isAnonymous)!{
             print("Guest User Adding Post to List")
@@ -1103,14 +1103,14 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
                 uploadPost?.selectedListId = tempNewList
                 guard let uploadPost = uploadPost else {return}
                 self.delegate?.refreshPost(post: uploadPost)
-                self.navigationController?.popViewController(animated: true)
+                self.handleBack()
             } else {
                 Database.updateListforPost(post: uploadPost, newList: tempNewList, prevList: preExistingList) { (newPost) in
                     guard let newPost = newPost else {return}
                     self.delegate?.refreshPost(post: newPost)
                     self.navigationItem.rightBarButtonItem?.isEnabled = true
                     SVProgressHUD.dismiss()
-                    self.navigationController?.popViewController(animated: true)
+                    self.handleBack()
                     NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
     //                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
                 }
@@ -1135,7 +1135,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         
         NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
         self.navigationItem.rightBarButtonItem?.isEnabled = true
-        self.navigationController?.popViewController(animated: true)
+        self.handleBack()
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

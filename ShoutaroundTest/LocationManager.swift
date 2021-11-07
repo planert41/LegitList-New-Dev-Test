@@ -15,6 +15,7 @@ import SwiftLocation
 class LocationSingleton: NSObject,CLLocationManagerDelegate {
 
     var locationManager: CLLocationManager?
+    var authStatus: CLAuthorizationStatus = .notDetermined
     
     static let sharedInstance:LocationSingleton = {
         let instance = LocationSingleton()
@@ -35,8 +36,7 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
         locationManager.distanceFilter = 0.1
 
         if CLLocationManager.authorizationStatus() == .notDetermined {
-            locationManager.requestAlwaysAuthorization()
-            locationManager.requestWhenInUseAuthorization()
+//            locationManager.requestWhenInUseAuthorization()
         }
         if #available(iOS 9.0, *) {
             //            locationManagers.allowsBackgroundLocationUpdates = true
@@ -60,6 +60,7 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
             DispatchQueue.main.asyncAfter(deadline: when) {
                 //Delay for 1 second to dismiss loading button after finding location
 //                SVProgressHUD.dismiss()
+                NotificationCenter.default.post(name: AppDelegate.LocationUpdatedNotificationName, object: nil)
             }
         } else {
             print("Location Manager: Update Location: ERROR, No Location")
@@ -70,31 +71,54 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
         print("Location Manager: Update Location: ERROR, No Location")
     }
     
+    func requestLocationAuth() {
+        locationManager?.requestWhenInUseAuthorization()
+    }
+    
+    func goToSettings() {
+        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+    }
+    
+    func displayLocationAuth() {
+        NotificationCenter.default.post(name: AppDelegate.RequestLocationNotificationName, object: nil)
+    }
+    
     func determineCurrentLocation(){
-        
-        print("Location Manager | FINDING LOCATION")
-        
         guard let locationManager = locationManager else{
             print("Location Manager: Update Location: ERROR, No Location Manager")
             return
         }
-        
         CurrentUser.currentLocation = nil
-        locationManager.requestWhenInUseAuthorization()
-        if SwiftLocation.authorizationStatus != CLAuthorizationStatus.authorizedAlways && SwiftLocation.authorizationStatus != CLAuthorizationStatus.authorizedWhenInUse {
-            SwiftLocation.requestAuthorization(.onlyInUse) { newStatus in
-                print("New status \(newStatus.description)")
-            }
-            return
-        }
+        let locationAuthApproved = (locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse)
         
-        if CLLocationManager.locationServicesEnabled() {
+        print("Location Manager | FINDING LOCATION || \(locationManager.authorizationStatus)")
+        
+        if CLLocationManager.locationServicesEnabled() && locationAuthApproved {
             locationManager.startUpdatingLocation()
 //            SVProgressHUD.show(withStatus: "Finding Your Location")
         } else {
-            print("Requesting User Location")
-            locationManager.requestWhenInUseAuthorization()
+            self.displayLocationAuth()
+//            print("Requesting User Location")
+//            locationManager.requestWhenInUseAuthorization()
         }
+//
+
+//
+//        locationManager.requestWhenInUseAuthorization()
+//        if SwiftLocation.authorizationStatus != CLAuthorizationStatus.authorizedAlways && SwiftLocation.authorizationStatus != CLAuthorizationStatus.authorizedWhenInUse {
+//            SwiftLocation.requestAuthorization(.onlyInUse) { newStatus in
+//                print("New status \(newStatus.description)")
+//            }
+//            return
+//        }
+//
+//        if CLLocationManager.locationServicesEnabled() {
+//            locationManager.startUpdatingLocation()
+////            SVProgressHUD.show(withStatus: "Finding Your Location")
+//        } else {
+//            print("Requesting User Location")
+//            locationManager.requestWhenInUseAuthorization()
+//        }
     }
     
     // MARK: - CLLocationManagerDelegate
@@ -102,7 +126,10 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
         switch status {
         case .notDetermined:
             print("notDetermined")
-            manager.requestWhenInUseAuthorization()
+            self.displayLocationAuth()
+        case .denied:
+            NotificationCenter.default.post(name: AppDelegate.LocationDeniedNotificationName, object: nil)
+            print("Location Manager Auth Denied")
         default:
             self.determineCurrentLocation()
         }

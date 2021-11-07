@@ -56,6 +56,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let NewEmojiDic = NSNotification.Name(rawValue: "NewEmojiDic")
     static let ShowCityNotificationName = NSNotification.Name(rawValue: "ShowCity")
     static let refreshPostNotificationName = NSNotification.Name(rawValue: "Refresh Post")
+    static let RequestLocationNotificationName = NSNotification.Name(rawValue: "Request Location")
+    static let LocationUpdatedNotificationName = NSNotification.Name(rawValue: "Location Updated")
+    static let LocationDeniedNotificationName = NSNotification.Name(rawValue: "Location Denied")
+
+    
+//    let LocationAuthview = LocationRequestViewController()
 
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -193,6 +199,45 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         setupRevenueCat()
         return true
     }
+    
+//    @objc func requestLocation() {
+//        if LocationSingleton.sharedInstance.locationManager?.authorizationStatus == .denied || !CLLocationManager.locationServicesEnabled() {
+//            let alert = UIAlertController(title: "Need Authorization", message: "Legit needs your location to find food posts nearest to you on your feed and map. Please enable location services on your settings.", preferredStyle: .alert)
+//            
+//            let settingsAction = UIAlertAction(title: "OK", style: .default) { (_) -> Void in
+//
+//                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+//                    return
+//                }
+//
+//                if UIApplication.shared.canOpenURL(settingsUrl) {
+//                    UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+//                        print("Settings opened: \(success)") // Prints true
+//                    })
+//                }
+//            }
+//            alert.addAction(settingsAction)
+//            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+//            
+//            if let tabBarController = self.window?.rootViewController as? UITabBarController {
+//                tabBarController.present(alert, animated: true) {
+//                    print("DISPLAY requestLocation settings alert")
+//                }
+//            }
+//            
+//        } else if !LocationAuthview.isBeingPresented {
+//            if  let tabBarController = self.window?.rootViewController as? UITabBarController,
+//                let navController = tabBarController.selectedViewController as? UINavigationController {
+//                tabBarController.present(LocationAuthview, animated: true) {
+//                    print("DISPLAY requestLocation")
+//                }
+//            }
+//        } else {
+//            print("requestLocation already being displayed")
+//        }
+//        
+//    }
+//    
     
     func setupRevenueCat() {
         Purchases.debugLogsEnabled = true

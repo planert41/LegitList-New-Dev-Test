@@ -63,6 +63,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     var selectedTime: Date? = nil
     var selectedPhotoLocation: CLLocation? = nil
     
+    let LocationAuthview = LocationRequestViewController()
+    
     func refreshPhotoVariables(){
         self.selectedImagesMult = []
         self.selectedPhotoLocation = nil
@@ -324,6 +326,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         NotificationCenter.default.addObserver(self, selector: #selector(presentMultImagePicker), name: MainTabBarController.OpenAddNewPhoto, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentLogin), name: MainTabBarController.showLoginScreen, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(showOnboarding), name: MainTabBarController.showOnboarding, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestLocation), name: AppDelegate.RequestLocationNotificationName, object: nil)
 
         
         
@@ -1646,6 +1649,47 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
                 }
             })
         })   { (err) in print ("Failed to fetch users for search", err) }
+    }
+    
+    
+// LOCATION AUTH FUNCTIONS
+    
+    @objc func requestLocation() {
+        if LocationSingleton.sharedInstance.locationManager?.authorizationStatus == .denied || !CLLocationManager.locationServicesEnabled() {
+            let alert = UIAlertController(title: "Location Access", message: "Legit needs your current location to sort food posts nearest to you. Please enable location services on your settings.", preferredStyle: .alert)
+            
+            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+
+                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                    return
+                }
+
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                        print("Settings opened: \(success)") // Prints true
+                    })
+                }
+            }
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) -> Void in
+                NotificationCenter.default.post(name: AppDelegate.LocationDeniedNotificationName, object: nil)
+                print("Location Denied")
+            }
+            alert.addAction(settingsAction)
+            alert.addAction(cancelAction)
+
+            self.present(alert, animated: true) {
+                print("DISPLAY requestLocation settings alert")
+            }
+            
+        } else if !LocationAuthview.isBeingPresented {
+            self.present(LocationAuthview, animated: true) {
+                print("DISPLAY requestLocation")
+            }
+        } else {
+            print("requestLocation already being displayed")
+        }
+        
     }
         
         

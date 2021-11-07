@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreLocation
 
 var premiumActivated = false
 
@@ -103,6 +104,7 @@ var sortTrending = "Trending"
 var sortNearest = "Near"
 var sortRank = "User"
 var sortRating = "Rating"
+var sortListed = "Listed"
 
 var listAll = "All"
 var listFollowed = "Followed Lists"
@@ -115,6 +117,12 @@ var UID_mayn = "srHzEjoRYKcKGqAgiyG4E660amQ2"
 var UID_ernie = "VeG6VZOAvmcJ08AnBRTtO8JkSP12"
 var UID_magnus = "B6div2WhzSObg7XGJRFkKBFEQiC3"
 let UID_zm = "nWc6VAl9fUdIx0Yf05yQFdwGd5y2"
+
+var defaultLocation = CLLocation(latitude: 41.9735039, longitude: -87.66775139999999)
+
+
+var LocMissingTitle = "Location Missing"
+var LocMissingDetails = "Legit is missing your current location to sort by nearest. Will sort by recent instead."
 
 //var UID_team = [UID_wei, UID_mayn, UID_ernie, UID_magnus, UID_zm]
 var UID_team:[String] = []
