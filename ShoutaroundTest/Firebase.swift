@@ -9115,10 +9115,12 @@ extension Database{
                 var postEmojis = post.emoji + " " + post.nonRatingEmojiTags.joined(separator: " ")
                 var autoTagEmojis = post.autoTagEmoji.joined() + " " + post.autoTagEmojiTags.joined(separator: " ")
                 
-                var allCaption = post.caption.lowercased() + " " + postEmojis + " " + autoTagEmojis + " " + post.locationName.lowercased() + " " + post.locationAdress.lowercased() + " " + (post.locationSummaryID ?? "").lowercased()
+                var caption: [String] = post.caption.lowercased().words()
+                
+                var allOtherCaption = postEmojis + " " + autoTagEmojis + " " + post.locationName.lowercased() + " " + post.locationAdress.lowercased() + " " + (post.locationSummaryID ?? "").lowercased()
                 // Loops through all search terms until one is found in all caption
                 for searchWord in searchTerms {
-                    if allCaption.lowercased().contains(searchWord){
+                    if caption.contains(searchWord) || allOtherCaption.lowercased().contains(searchWord) {
                         tempFilterPosts.append(post)
                         // If it finds a matching word it adds it to tempPost and breaks
                         break
@@ -9306,7 +9308,9 @@ extension Database{
 
                 // Search for text type : lunch, french - could also search caption
                 let tempTypeSearchPost = tempPosts.filter { (post) -> Bool in
-                    return post.caption.lowercased().contains(x) || post.locationName.lowercased().contains(x) || post.nonRatingEmoji.contains(x) || post.autoTagEmoji.contains(x) || post.nonRatingEmojiTags.contains(x) || post.autoTagEmojiTags.contains(x) || post.locationAdress.lowercased().contains(x) || ((post.locationSummaryID ?? "").lowercased() ?? "").contains(x)
+                    let captionTexts = post.caption.lowercased().words()
+                    
+                    return captionTexts.contains(x) || post.locationName.lowercased().contains(x) || post.nonRatingEmoji.contains(x) || post.autoTagEmoji.contains(x) || post.nonRatingEmojiTags.contains(x) || post.autoTagEmojiTags.contains(x) || post.locationAdress.lowercased().contains(x) || ((post.locationSummaryID ?? "").lowercased() ?? "").contains(x)
                 }
                 tempFilterPosts += (tempTypeSearchPost)
 

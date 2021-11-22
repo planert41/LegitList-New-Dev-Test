@@ -49,7 +49,7 @@ var allDefaultEmojis: [String] = []
 var smileyEmojis: [String] = ["😍","😋","🤤","👍","😀","😝","😂","😎","😮","🤔","🤑","😴","😢","😭","🤥","😑","😡","😤","🤒","💩","😩"]
 
 //var extraRatingEmojis: [String] = ["💯", "👑", "🥇", "🔥","👌", "💪", "👺", "💩","☠️"]
-var extraRatingEmojis: [String] = ["💯","👌","🔥","🌟","🏆"]
+var extraRatingEmojis: [String] = ["👌","💯","🔥","🌟","🏆"]
 var extraRatingEmojisForList: [String] = ["👌","💯","🔥","🌟","🥇"]
 
 

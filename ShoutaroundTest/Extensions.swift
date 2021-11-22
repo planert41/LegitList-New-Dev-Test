@@ -416,10 +416,17 @@ extension StringProtocol where Self: RangeReplaceableCollection {
     var removingAllWhitespaces: Self {
         filter(\.isWhitespace.negated)
     }
+    
     mutating func removeAllWhitespaces() {
         removeAll(where: \.isWhitespace)
     }
+    
+    var words: [SubSequence] {
+        split(whereSeparator: \.isLetter.negated)
+    }
 }
+
+
 extension Bool {
     var negated: Bool { !self }
 }

@@ -1155,13 +1155,11 @@ First emoji will displayed on map.
             // Extra Rating Emoji Info
             self.alert(title: "Ratings Emojis", message: """
 Rating Emojis help you describe your experience beyond just star ratings
-🥇 : Best
-💯 : 100%
+🏆 : Best
+🌟 : Special
 🔥 : Fire
+💯 : 100%
 👌 : Legit
-😍 : Awesome
-😡 : Angry
-💩 : Poop
 """)
         }
     }
@@ -2233,16 +2231,6 @@ Rating Emojis help you describe your experience beyond just star ratings
         extraRatingEmojiCollectionView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
         extraRatingEmojiCollectionView.isScrollEnabled = false
         
-        var layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        let itemWidth: CGFloat = max(CGFloat((Int(UIScreen.main.bounds.width) - (extraRatingEmojis.count * 40) - 10) / extraRatingEmojis.count), 5)
-        print("WIDTH ",itemWidth, UIScreen.main.bounds.width, extraRatingEmojis.count)
-        layout.itemSize = CGSize(width: 40, height: 40)
-        layout.minimumInteritemSpacing = 20
-        
-        //        layout.offse
-        extraRatingEmojiCollectionView.collectionViewLayout = layout
-        extraRatingEmojiCollectionView.collectionViewLayout.invalidateLayout()
         
         
         //
@@ -2680,7 +2668,9 @@ Rating Emojis help you describe your experience beyond just star ratings
     
     var extraRatingEmojiCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 10
+        layout.minimumInteritemSpacing = 20
+        layout.itemSize = CGSize(width: 40, height: 40)
+        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.tag = 9
         cv.layer.borderWidth = 0
@@ -2688,6 +2678,8 @@ Rating Emojis help you describe your experience beyond just star ratings
         cv.backgroundColor = UIColor.lightSelectedColor()
         return cv
     }()
+    
+    
     
     let captionEmojiCollectionView: UICollectionView = {
         let uploadEmojiList = UICollectionViewFlowLayout()

@@ -239,6 +239,13 @@ struct Post: Hashable, Equatable  {
         self.nonRatingEmoji = dictionary["nonratingEmoji"] as? [String] ?? []
         self.nonRatingEmojiTags = dictionary["nonratingEmojiTags"] as? [String] ?? []
         self.ratingEmoji = dictionary["ratingEmoji"] as? String ?? nil
+        
+        // CHANGE THE BEST RATING EMOJI
+        if self.ratingEmoji == "🥇" {
+            self.ratingEmoji = "🏆"
+        }
+        
+        
         self.emoji = (self.nonRatingEmoji.joined())
         
         self.autoTagEmoji = dictionary["autoTagEmojis"] as? [String] ?? []
