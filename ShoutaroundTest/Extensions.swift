@@ -412,6 +412,17 @@ extension Dictionary where Value: Equatable {
     
 }
 
+extension StringProtocol where Self: RangeReplaceableCollection {
+    var removingAllWhitespaces: Self {
+        filter(\.isWhitespace.negated)
+    }
+    mutating func removeAllWhitespaces() {
+        removeAll(where: \.isWhitespace)
+    }
+}
+extension Bool {
+    var negated: Bool { !self }
+}
 
 
 extension String {
@@ -648,6 +659,12 @@ extension UIViewController {
             print("Show Subscription")
         }
     }
+    
+    func extOpenNotifications() {
+        let note = UserEventViewController()
+        self.navigationController?.pushViewController(note, animated: true)
+    }
+    
     
     func extCreateNewPhoto(){
         if Auth.auth().currentUser?.isAnonymous ?? true {

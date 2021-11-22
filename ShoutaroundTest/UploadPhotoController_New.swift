@@ -518,6 +518,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
                 self.extraRatingButton.sizeToFit()
                 
             }
+            self.showRatingEmojiContainer()
         }
     }
     
@@ -566,9 +567,13 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
         if rating >= 4 {
             starRating.settings.filledImage = #imageLiteral(resourceName: "ian_fullstar").withRenderingMode(.alwaysTemplate)
             starRating.tintColor = UIColor.red
+            if ratingEmojiContainer.isHidden {
+                self.showRatingEmojiContainer()
+            }
         } else {
             starRating.settings.filledImage = #imageLiteral(resourceName: "ian_fullstar").withRenderingMode(.alwaysTemplate)
             starRating.tintColor = UIColor.ianLegitColor()
+            self.hideRatingEmoji()
         }
         
         self.selectPostStarRating = rating
@@ -1486,7 +1491,7 @@ Rating Emojis help you describe your experience beyond just star ratings
 
 // ADDITIONAL TAGS
         view.addSubview(additionalTagHeader)
-        additionalTagHeader.anchor(top: starRatingContainerView.bottomAnchor, left: starRatingContainerView.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 100, height: 0)
+        additionalTagHeader.anchor(top: ratingEmojiContainer.bottomAnchor, left: starRatingContainerView.leftAnchor, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 100, height: 0)
         additionalTagHeader.sizeToFit()
         additionalTagHeader.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openAddTagSearch)))
         additionalTagHeader.isUserInteractionEnabled = true
@@ -1570,18 +1575,74 @@ Rating Emojis help you describe your experience beyond just star ratings
         
     }
     
-    func setupRatingEmojiView(){
-//         RATING EMOJI
-        
+    var ratingEmojiContainer = UIView()
+    var hideRatingEmojiContainer: NSLayoutConstraint?
+    
+    func showRatingEmojiContainer() {
+        UIView.animate(withDuration: 1, delay: TimeInterval(0), options: UIView.AnimationOptions.curveLinear, animations: {
+            self.ratingEmojiContainer.isHidden = false
+            self.hideRatingEmojiContainer?.isActive = false
+        }, completion: { (finished: Bool) in
+        })
+    }
+    
+    func hideRatingEmoji() {
+        ratingEmojiContainer.isHidden = true
+        hideRatingEmojiContainer?.isActive = true
+    }
 
+    func setupRatingEmojiView(){
+        
+        
+    // STAR RATING VIEW
+        
+            view.addSubview(starRatingHeaderLabel)
+            starRatingHeaderLabel.anchor(top: LocationContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20 * screenAdjustedScale, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+            ratingHeaderLabel.sizeToFit()
+        
+            view.addSubview(starRatingContainerView)
+            starRatingContainerView.anchor(top: starRatingHeaderLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50 * screenAdjustedScale)
+            starRatingContainerView.layer.borderColor = UIColor.lightGray.cgColor
+            starRatingContainerView.layer.borderWidth = 0
+            starRatingContainerView.layer.applySketchShadow()
+            
+            let starRatingView = UIView()
+            view.addSubview(starRatingView)
+            starRatingView.anchor(top: starRatingContainerView.topAnchor, left: starRatingContainerView.leftAnchor, bottom: starRatingContainerView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
+            
+            let starRatingViewDoubleTap = UITapGestureRecognizer(target: self, action: #selector(clearRating))
+            starRatingViewDoubleTap.numberOfTapsRequired = 2
+            starRatingViewDoubleTap.delegate = self
+            starRatingView.addGestureRecognizer(starRatingViewDoubleTap)
+            starRatingView.isUserInteractionEnabled = true
+            
+            view.addSubview(starRating)
+            starRating.anchor(top: nil, left: starRatingView.leftAnchor, bottom: nil, right: starRatingView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+            starRating.centerYAnchor.constraint(equalTo: starRatingView.centerYAnchor).isActive = true
+    //        starRating.centerXAnchor.constraint(equalTo: starRatingView.centerXAnchor).isActive = true
+            
+            starRating.didFinishTouchingCosmos = starRatingSelectFunction
+            starRating.sizeToFit()
+
+        
+//         RATING EMOJI
+   
+        
+        view.addSubview(ratingEmojiContainer)
+        ratingEmojiContainer.anchor(top: starRatingContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        hideRatingEmojiContainer = ratingEmojiContainer.heightAnchor.constraint(equalToConstant: 0)
+        self.hideRatingEmoji()
+
+
+        
 // RATING HEADER LABEL
-        view.addSubview(ratingHeaderLabel)
-        ratingHeaderLabel.anchor(top: LocationContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20 * screenAdjustedScale, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        ratingEmojiContainer.addSubview(ratingHeaderLabel)
+        ratingHeaderLabel.anchor(top: ratingEmojiContainer.topAnchor, left: ratingEmojiContainer.leftAnchor, bottom: nil, right: nil, paddingTop: 20 * screenAdjustedScale, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         ratingHeaderLabel.sizeToFit()
         
         
-        view.addSubview(ratingEmojiDescLabel)
-        ratingEmojiDescLabel.anchor(top: ratingHeaderLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 3, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        ratingEmojiContainer.addSubview(ratingEmojiDescLabel)
+        ratingEmojiDescLabel.anchor(top: ratingHeaderLabel.bottomAnchor, left: ratingEmojiContainer.leftAnchor, bottom: nil, right: ratingEmojiContainer.rightAnchor, paddingTop: 3, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         ratingEmojiDescLabel.sizeToFit()
 
 
@@ -1591,55 +1652,25 @@ Rating Emojis help you describe your experience beyond just star ratings
         extraRatingButton.addGestureRecognizer(extraRatingViewDoubleTap)
         
         
-        view.addSubview(extraRatingButton)
-        extraRatingButton.anchor(top: nil, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 10, width: 0, height: 35)
+        ratingEmojiContainer.addSubview(extraRatingButton)
+        extraRatingButton.anchor(top: nil, left: nil, bottom: nil, right: ratingEmojiContainer.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 10, width: 0, height: 35)
         extraRatingButton.widthAnchor.constraint(greaterThanOrEqualTo: extraRatingButton.heightAnchor, multiplier: 1).isActive = true
         extraRatingButton.centerYAnchor.constraint(equalTo: ratingHeaderLabel.centerYAnchor).isActive = true
         
         
         
         // EXTRA RATING EMOJI
-        view.addSubview(ratingEmojiContainerView)
-        ratingEmojiContainerView.anchor(top: ratingEmojiDescLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50 * screenAdjustedScale)
+        ratingEmojiContainer.addSubview(ratingEmojiContainerView)
+        ratingEmojiContainerView.anchor(top: ratingEmojiDescLabel.bottomAnchor, left: ratingEmojiContainer.leftAnchor, bottom: ratingEmojiContainer.bottomAnchor, right: ratingEmojiContainer.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50 * screenAdjustedScale)
         ratingEmojiContainerView.backgroundColor = UIColor.white
         ratingEmojiContainerView.layer.applySketchShadow(alpha: 0.1)
+
         
-        view.addSubview(extraRatingEmojiCollectionView)
-        extraRatingEmojiCollectionView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 350, height: 40 * screenAdjustedScale)
+        ratingEmojiContainerView.addSubview(extraRatingEmojiCollectionView)
+        extraRatingEmojiCollectionView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: CGFloat(extraRatingEmojis.count * 60), height: 40 * screenAdjustedScale)
         extraRatingEmojiCollectionView.centerYAnchor.constraint(equalTo: ratingEmojiContainerView.centerYAnchor).isActive = true
         extraRatingEmojiCollectionView.centerXAnchor.constraint(equalTo: ratingEmojiContainerView.centerXAnchor).isActive = true
         extraRatingEmojiCollectionView.sizeToFit()
-
-        
-        view.addSubview(starRatingHeaderLabel)
-        starRatingHeaderLabel.anchor(top: ratingEmojiContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 20 * screenAdjustedScale, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        ratingHeaderLabel.sizeToFit()
-
-        
-// STAR RATING VIEW
-        view.addSubview(starRatingContainerView)
-        starRatingContainerView.anchor(top: starRatingHeaderLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50 * screenAdjustedScale)
-        starRatingContainerView.layer.borderColor = UIColor.lightGray.cgColor
-        starRatingContainerView.layer.borderWidth = 0
-        starRatingContainerView.layer.applySketchShadow()
-        
-        let starRatingView = UIView()
-        view.addSubview(starRatingView)
-        starRatingView.anchor(top: starRatingContainerView.topAnchor, left: starRatingContainerView.leftAnchor, bottom: starRatingContainerView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
-        
-        let starRatingViewDoubleTap = UITapGestureRecognizer(target: self, action: #selector(clearRating))
-        starRatingViewDoubleTap.numberOfTapsRequired = 2
-        starRatingViewDoubleTap.delegate = self
-        starRatingView.addGestureRecognizer(starRatingViewDoubleTap)
-        starRatingView.isUserInteractionEnabled = true
-        
-        view.addSubview(starRating)
-        starRating.anchor(top: nil, left: starRatingView.leftAnchor, bottom: nil, right: starRatingView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        starRating.centerYAnchor.constraint(equalTo: starRatingView.centerYAnchor).isActive = true
-//        starRating.centerXAnchor.constraint(equalTo: starRatingView.centerXAnchor).isActive = true
-        
-        starRating.didFinishTouchingCosmos = starRatingSelectFunction
-        starRating.sizeToFit()
 
         
         
@@ -2204,10 +2235,14 @@ Rating Emojis help you describe your experience beyond just star ratings
         
         var layout = UICollectionViewFlowLayout()
         layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
+        let itemWidth: CGFloat = max(CGFloat((Int(UIScreen.main.bounds.width) - (extraRatingEmojis.count * 40) - 10) / extraRatingEmojis.count), 5)
+        print("WIDTH ",itemWidth, UIScreen.main.bounds.width, extraRatingEmojis.count)
         layout.itemSize = CGSize(width: 40, height: 40)
-        layout.minimumInteritemSpacing = 5
+        layout.minimumInteritemSpacing = 20
+        
         //        layout.offse
         extraRatingEmojiCollectionView.collectionViewLayout = layout
+        extraRatingEmojiCollectionView.collectionViewLayout.invalidateLayout()
         
         
         //

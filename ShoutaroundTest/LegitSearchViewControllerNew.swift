@@ -736,7 +736,8 @@ extension LegitSearchViewControllerNew: UISearchBarDelegate {
         if self.selectedSearchSegmentIndex == nil {
             filteredAllSearchItems = allSearchItems.filter({ (string) -> Bool in
                 let emojiName = EmojiDictionary[string[0]]?.lowercased() ?? ""
-                return string[0].lowercased().contains(searchCaption.lowercased()) || emojiName.contains(searchCaption.lowercased()) || searchCaptionEmojis.contains(string[0])
+                let noSpaceString = string[0].removingAllWhitespaces
+                return string[0].lowercased().contains(searchCaption.lowercased()) || emojiName.contains(searchCaption.lowercased()) || searchCaptionEmojis.contains(string[0]) || noSpaceString.lowercased().contains(searchCaption.lowercased()) || noSpaceString.lowercased().contains(searchCaption.lowercased().removingWhitespaces())
             })
             filteredAllSearchItems = Array(Set(filteredAllSearchItems))
             filteredAllSearchItems.sort { (p1, p2) -> Bool in

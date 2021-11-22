@@ -141,14 +141,28 @@ var PostFormatOptions:[String] = [postGrid, postList]
 
 // Home Header Sort Defaults
 var HeaderSortOptions:[String] = [sortNew, sortNearest]
+
 //var HeaderSortOptions:[String] = [sortNew, sortNearest, sortTrending]
 //
 let HeaderSortDefault:String = HeaderSortOptions[0]
 
 var headerSortDictionary: [String: String] = [
-    sortNearest: "📍 NEAREST",
-    sortNew: "🛎 NEWEST",
+    sortNearest: "🚶‍♀️ NEAREST",
+    sortNew: "🌟⏰⏳⌛️💈🛎🔔 NEWEST",
     sortTrending: "🔥 TRENDING"
+]
+
+var bottomSortDic: [String: String] = [
+    sortNearest: "Near 🚶‍♀️ ",
+    sortNew: "New 🌟 ",
+    sortTrending: "Trend 🔥 "
+    //    sortNew: "🌟⏰⏳⌛️💈🛎🔔 NEWEST",
+]
+
+var bottomSelectedSortDic: [String: String] = [
+    sortNearest: "NEAREST",
+    sortNew: "NEWEST",
+    sortTrending: "TRENDING"
 ]
 
 var ItemSortOptions:[String] = [sortPost, sortNew, sortNearest]

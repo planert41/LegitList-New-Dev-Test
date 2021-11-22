@@ -113,6 +113,7 @@ class UserEventViewController : UIViewController, UITableViewDelegate, UITableVi
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
         setupNavigationItems()
+        SharedFunctions.checkNotificationAccess()
 
         NotificationCenter.default.addObserver(self, selector: #selector(refreshAll), name: UserEventViewController.refreshNotificationName, object: nil)
 
@@ -211,9 +212,9 @@ class UserEventViewController : UIViewController, UITableViewDelegate, UITableVi
     func refreshSegmentCounts(){
         var segmentString = ["Following", "Self"]
         if CurrentUser.unreadEventCount > 0 {
-            self.navigationItem.title = "Alerts (\(CurrentUser.unreadEventCount))"
+            self.navigationItem.title = "Notifications (\(CurrentUser.unreadEventCount))"
         } else {
-            self.navigationItem.title = "Alerts"
+            self.navigationItem.title = "Notifications"
         }
         
 //        filterSegment.setTitle(segmentString[1] , forSegmentAt: 1)

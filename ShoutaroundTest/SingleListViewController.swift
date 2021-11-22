@@ -67,6 +67,8 @@ class SingleListViewController: UIViewController {
         }
     }
     
+    var bottomSortBar = BottomSortBar()
+
 
     //DISPLAY VARIABLES
     var fetchedPosts: [Post] = []
@@ -316,20 +318,27 @@ class SingleListViewController: UIViewController {
 //        bottomEmojiBarHide = bottomEmojiBar.heightAnchor.constraint(equalToConstant: 0)
 //        bottomEmojiBarHide?.isActive = true
 //        refreshBottomEmojiBar()
+        
+        view.addSubview(bottomSortBar)
+        bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        bottomSortBar.delegate = self
+        bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+        
+        
         self.view.addSubview(imageCollectionView)
-        imageCollectionView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        imageCollectionView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
-
-        postSortFormatBar.delegate = self
-        self.view.addSubview(postSortFormatBar)
-        postSortFormatBar.anchor(top: nil, left: view.leftAnchor, bottom: imageCollectionView.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 40)
-//        postSortFormatBar.navGridToggleButton.isHidden = true
-        postSortFormatBar.navMapButton.isHidden = false
-        postSortFormatBar.navMapButton.setTitle(" Map List", for: .normal)
-        postSortFormatBar.navMapButtonWidth?.constant = 120
+//
+//        postSortFormatBar.delegate = self
+//        self.view.addSubview(postSortFormatBar)
+//        postSortFormatBar.anchor(top: nil, left: view.leftAnchor, bottom: imageCollectionView.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 40)
+////        postSortFormatBar.navGridToggleButton.isHidden = true
+//        postSortFormatBar.navMapButton.isHidden = false
+//        postSortFormatBar.navMapButton.setTitle(" Map List", for: .normal)
+//        postSortFormatBar.navMapButtonWidth?.constant = 120
         
 //        self.view.addSubview(navMapButton)
 //        navMapButton.anchor(top: nil, left: postSortFormatBar.rightAnchor, bottom: imageCollectionView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
@@ -949,7 +958,7 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
     
 }
 
-extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCellDelegateObjc, NewListPhotoCellDelegate, SharePhotoListControllerDelegate, LegitListViewHeaderDelegate, FullPictureCellDelegate, SingleListViewHeaderDelegate, BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, SKPhotoBrowserDelegate, EmptyCellDelegate, ListOptionsTableViewControllerDelegate, PostSortFormatBarDelegate, UITextViewDelegate, ListGridCellDelegate {
+extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCellDelegateObjc, NewListPhotoCellDelegate, SharePhotoListControllerDelegate, LegitListViewHeaderDelegate, FullPictureCellDelegate, SingleListViewHeaderDelegate, BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, SKPhotoBrowserDelegate, EmptyCellDelegate, ListOptionsTableViewControllerDelegate, PostSortFormatBarDelegate, UITextViewDelegate, ListGridCellDelegate, BottomSortBarDelegate {
     
     func didTapLike(post: Post) {
         

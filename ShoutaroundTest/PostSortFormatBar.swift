@@ -51,7 +51,7 @@ class PostSortFormatBar: UIView{
         button.setImage(icon, for: .normal)
         button.layer.borderColor = UIColor.ianLegitColor().cgColor
         button.layer.borderWidth = 1
-        button.layer.cornerRadius = 30/2
+        button.layer.cornerRadius = 10/2
         button.layer.masksToBounds = true
         button.clipsToBounds = true
         button.contentHorizontalAlignment = .center
@@ -86,7 +86,7 @@ class PostSortFormatBar: UIView{
         
         sortSegmentControl.layer.borderWidth = 1
         barView.addSubview(sortSegmentControl)
-        sortSegmentControl.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 0, height: 40)
+        sortSegmentControl.anchor(top: nil, left: leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 10, width: 0, height: 35)
         sortSegmentControl.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
 //        sortSegmentControl.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 15).isActive = true
 
@@ -96,7 +96,7 @@ class PostSortFormatBar: UIView{
                 
         barView.addSubview(navMapButton)
         navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
-        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 25, width: 0, height: 40)
+        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 0, paddingRight: 25, width: 0, height: 35)
         navMapButtonWidth = navMapButton.widthAnchor.constraint(equalToConstant: 90)
         navMapButtonWidth?.isActive = true
         navMapButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true

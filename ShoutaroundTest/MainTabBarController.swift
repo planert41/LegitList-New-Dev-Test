@@ -19,6 +19,7 @@ import SVProgressHUD
 import GeoFire
 import FirebaseDatabase
 import FirebaseAuth
+import UserNotifications
 
 class TabBar: UITabBar {
     private var cachedSafeAreaInsets = UIEdgeInsets.zero
@@ -327,6 +328,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         NotificationCenter.default.addObserver(self, selector: #selector(presentLogin), name: MainTabBarController.showLoginScreen, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(showOnboarding), name: MainTabBarController.showOnboarding, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestLocation), name: AppDelegate.RequestLocationNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(requestNotification), name: AppDelegate.NotificationAccessRequest, object: nil)
 
         
         
@@ -352,6 +354,39 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //        print("FONT BLASTER | LOADED FONTS : ")
         FontBlaster.blast() { (fonts) in
 //            print(fonts) // fonts is an array of Strings containing font names
+        }
+
+    }
+    
+
+    
+    @objc func requestNotification(){
+        let alert = UIAlertController(title: "Notification Access", message: "Legit needs permission to send you notifications when users like your posts or follow you", preferredStyle: .alert)
+        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+            let center = UNUserNotificationCenter.current()
+            center.getNotificationSettings { settings in
+                let status = settings.authorizationStatus
+                if status == .denied {
+                    print("requestNotification - Status Denied so Open Settings")
+                    SharedFunctions.openSettings()
+                } else {
+                    print("requestNotification - Requesting Notification")
+                    SharedFunctions.registerForPushNotifications()
+                }
+
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) -> Void in
+            print("Notification Denied")
+        }
+        alert.addAction(settingsAction)
+        alert.addAction(cancelAction)
+
+        DispatchQueue.main.async {
+            self.present(alert, animated: true) {
+                print("DISPLAY requestNotification settings alert")
+            }
         }
 
     }

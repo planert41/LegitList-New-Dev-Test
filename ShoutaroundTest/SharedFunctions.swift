@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import CoreLocation
 import MapKit
+import UserNotifications
 
 class SharedFunctions {
     
@@ -223,6 +224,51 @@ class SharedFunctions {
             NSLog("Can't use comgooglemaps://")
             completion(false)
         }
+    }
+    
+    static func openSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
+                print("Settings opened: \(success)") // Prints true
+            })
+        }
+    }
+    
+    static func checkNotificationAccess() {
+        let center = UNUserNotificationCenter.current()
+        center.getNotificationSettings { settings in
+            let status = settings.authorizationStatus
+            if status != .authorized && status != .provisional {
+                print("Requesting Notification Authorization | \(status)")
+                NotificationCenter.default.post(name: AppDelegate.NotificationAccessRequest, object: nil)
+            } else {
+                SharedFunctions.getNotificationSettings()
+            }
+        }
+    }
+    
+    static func getNotificationSettings() {
+      UNUserNotificationCenter.current().getNotificationSettings { settings in
+        print("Notification settings: \(settings)")
+        guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else { return }
+        DispatchQueue.main.async {
+          UIApplication.shared.registerForRemoteNotifications()
+        }
+      }
+    }
+    
+    static func registerForPushNotifications() {
+        UNUserNotificationCenter.current()
+          .requestAuthorization(
+            options: [.alert, .sound, .badge, .provisional]) { [self] granted, _ in
+            print("Permission granted: \(granted)")
+            guard granted else { return }
+            self.getNotificationSettings()
+          }
     }
     
 }

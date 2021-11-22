@@ -14,6 +14,7 @@ import SVProgressHUD
 import FirebaseStorage
 import FirebaseDatabase
 import FirebaseAuth
+import UserNotifications
 
 import CoreLocation
 
@@ -265,6 +266,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         self.addPhotoButton.isHidden = !self.navMapButton.isHidden
     }
     
+    var bottomSortBar = BottomSortBar()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
@@ -276,7 +279,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         setupNavigationItems()
         setupCollectionView()
         fetchPostIds()
-        
+        SharedFunctions.checkNotificationAccess()
+
         NotificationCenter.default.addObserver(self, selector: #selector(fetchSortFilterPosts), name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: SharePhotoListController.updateFeedNotificationName, object: nil)
@@ -383,21 +387,53 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 //        searchButton.alpha = 0.7
 //        searchButton.alpha = 0
 //
+////
+//        setupSegmentControl()
 //
-        setupSegmentControl()
-        
-        sortSegmentControl.layer.borderWidth = 1
-        view.addSubview(sortSegmentControl)
-        sortSegmentControl.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 10, paddingRight: 10, width: 0, height: 40)
-        sortSegmentControl.alpha = 0.9
-//        sortSegmentControl.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 15).isActive = true
+//        sortSegmentControl.layer.borderWidth = 1
+//        view.addSubview(sortSegmentControl)
+//        sortSegmentControl.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 10, paddingRight: 10, width: 0, height: 40)
+//        sortSegmentControl.alpha = 0.9
+////        sortSegmentControl.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 15).isActive = true
+//
+////        sortSegmentControl.centerXAnchor.constraint(equalTo: barView.centerXAnchor).isActive = true
+//        self.selectSort(sender: sortSegmentControl)
+//
+//
+//        view.addSubview(newPostButton)
+//        newPostButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+////        newPostButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        newPostButton.setTitle("📷  Add Post", for: .normal)
+//        newPostButton.sizeToFit()
+//        newPostButton.tintColor = UIColor.ianWhiteColor()
+//        newPostButton.backgroundColor = UIColor.ianLegitColor()
+//        newPostButton.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+//        newPostButton.layer.cornerRadius = 10
+//        newPostButton.layer.masksToBounds = true
+//        newPostButton.layer.borderWidth = 1
+//        newPostButton.layer.borderColor = UIColor.ianLegitColor().cgColor
+//        let headerTitle = NSAttributedString(string: "📷  New Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
+//
+//        newPostButton.setAttributedTitle(headerTitle, for: .normal)
+//
+//        view.addSubview(navMapButton)
+////        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+//        navMapButton.anchor(top: nil, left: newPostButton.leftAnchor, bottom: newPostButton.topAnchor, right: newPostButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 40)
+//
+//        navMapButton.layer.cornerRadius = 30/2
+//        navMapButton.layer.masksToBounds = true
+//        navMapButton.clipsToBounds = true
+//        navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
+//        navMapButton.isHidden = true
+//        toggleNavMapButton()
+//
+        view.addSubview(bottomSortBar)
+        bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        bottomSortBar.delegate = self
+        bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
 
-//        sortSegmentControl.centerXAnchor.constraint(equalTo: barView.centerXAnchor).isActive = true
-        self.selectSort(sender: sortSegmentControl)
-        
-        
         view.addSubview(newPostButton)
-        newPostButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+        newPostButton.anchor(top: nil, left: nil, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
 //        newPostButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         newPostButton.setTitle("📷  Add Post", for: .normal)
         newPostButton.sizeToFit()
@@ -411,18 +447,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         let headerTitle = NSAttributedString(string: "📷  New Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
 
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
-
-        view.addSubview(navMapButton)
-//        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
-        navMapButton.anchor(top: nil, left: newPostButton.leftAnchor, bottom: newPostButton.topAnchor, right: newPostButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 40)
-
-        navMapButton.layer.cornerRadius = 30/2
-        navMapButton.layer.masksToBounds = true
-        navMapButton.clipsToBounds = true
-        navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
-        navMapButton.isHidden = true
-        toggleNavMapButton()
-
+        
         
         self.view.addSubview(searchViewController.view)
         searchViewController.view.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
@@ -968,7 +993,7 @@ extension LegitHomeView {
     
 }
 
-extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, BottomEmojiBarDelegate, PostSortFormatBarDelegate {
+extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, BottomEmojiBarDelegate, PostSortFormatBarDelegate, BottomSortBarDelegate {
     @objc func toggleMapFunction() {
         var tempFilter = self.viewFilter ?? Filter.init()
         print("toggleMapFunction | Legit Home View | \(tempFilter.filterCaptionArray) IsFiltering: \(tempFilter.isFiltering)")
@@ -1112,6 +1137,7 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
         
     func headerSortSelected(sort: String) {
         self.viewFilter.filterSort = sort
+        self.bottomSortBar.selectSort(sort: sort)
         if self.viewFilter.isFiltering {
             self.refreshPostsForSort()
         } else {
@@ -1315,8 +1341,9 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     }
     
     func openNotifications() {
-        let note = UserEventViewController()
-        self.navigationController?.pushViewController(note, animated: true)
+        self.extOpenNotifications()
+//        let note = UserEventViewController()
+//        self.navigationController?.pushViewController(note, animated: true)
     }
 
     

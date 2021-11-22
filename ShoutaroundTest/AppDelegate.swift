@@ -59,6 +59,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let RequestLocationNotificationName = NSNotification.Name(rawValue: "Request Location")
     static let LocationUpdatedNotificationName = NSNotification.Name(rawValue: "Location Updated")
     static let LocationDeniedNotificationName = NSNotification.Name(rawValue: "Location Denied")
+    static let NotificationAccessRequest = NSNotification.Name(rawValue: "Request Notifications")
 
     
 //    let LocationAuthview = LocationRequestViewController()
@@ -82,11 +83,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         GMSPlacesClient.provideAPIKey(googlePlacesApiKey)
         GMSServices.provideAPIKey(googlePlacesApiKey)
         
-        UNUserNotificationCenter.current().requestAuthorization(options: .badge) { (granted, error) in
-            if error != nil {
-                // success!
-            }
-        }
+//        UNUserNotificationCenter.current().requestAuthorization(options: .badge) { (granted, error) in
+//            if error != nil {
+//                // success!
+//            }
+//        }
         
 //        do {
 //            try Auth.auth().signOut()
@@ -96,7 +97,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
 //            print("Failed to sign out guest user:", signOutErr)
 //        }
         
-        registerForPushNotifications()
 
         
         // Logout Annonymous
@@ -189,11 +189,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         //        }
         
         UNUserNotificationCenter.current().delegate = self
-        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        UNUserNotificationCenter.current().requestAuthorization(
-          options: authOptions) { _, _ in }
-        application.registerForRemoteNotifications()
-
         Messaging.messaging().delegate = self
         
         setupRevenueCat()
@@ -238,7 +233,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
 //        
 //    }
 //    
-    
     func setupRevenueCat() {
         Purchases.debugLogsEnabled = true
         Purchases.configure(withAPIKey: "VTQZpUjVgCeIIesuEAJAVVXUXBbPuRCF")
@@ -247,7 +241,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     func getNotificationSettings() {
       UNUserNotificationCenter.current().getNotificationSettings { settings in
         print("Notification settings: \(settings)")
-        guard settings.authorizationStatus == .authorized else { return }
+        guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else { return }
         DispatchQueue.main.async {
           UIApplication.shared.registerForRemoteNotifications()
         }
@@ -257,7 +251,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     func registerForPushNotifications() {
         UNUserNotificationCenter.current()
           .requestAuthorization(
-            options: [.alert, .sound, .badge]) { [weak self] granted, _ in
+            options: [.alert, .sound, .badge, .provisional]) { [weak self] granted, _ in
             print("Permission granted: \(granted)")
             guard granted else { return }
             self?.getNotificationSettings()

@@ -76,7 +76,7 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
     }
     
     func goToSettings() {
-        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+        SharedFunctions.openSettings()
     }
     
     func displayLocationAuth() {

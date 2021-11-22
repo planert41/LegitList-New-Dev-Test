@@ -371,6 +371,9 @@ class SingleUserProfileViewController: UIViewController {
         imageCollectionView.collectionViewLayout.invalidateLayout()
     }
     
+    var bottomSortBar = BottomSortBar()
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
@@ -383,8 +386,13 @@ class SingleUserProfileViewController: UIViewController {
         self.view.backgroundColor = UIColor.white
         
         
+        view.addSubview(bottomSortBar)
+        bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        bottomSortBar.delegate = self
+        bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+        
         self.view.addSubview(imageCollectionView)
-        imageCollectionView.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        imageCollectionView.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
 //        postSortFormatBar.delegate = self
 //        self.view.addSubview(postSortFormatBar)
@@ -404,19 +412,19 @@ class SingleUserProfileViewController: UIViewController {
         
 
 
-        setupSegmentControl()
-        
-        sortSegmentControl.layer.borderWidth = 1
-        view.addSubview(sortSegmentControl)
-        sortSegmentControl.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 10, paddingRight: 15, width: 0, height: 40)
-        sortSegmentControl.alpha = 0.9
-//        sortSegmentControl.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 15).isActive = true
-
-//        sortSegmentControl.centerXAnchor.constraint(equalTo: barView.centerXAnchor).isActive = true
-        self.selectSort(sender: sortSegmentControl)
+//        setupSegmentControl()
+//
+//        sortSegmentControl.layer.borderWidth = 1
+//        view.addSubview(sortSegmentControl)
+//        sortSegmentControl.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 10, paddingRight: 15, width: 0, height: 40)
+//        sortSegmentControl.alpha = 0.9
+////        sortSegmentControl.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 15).isActive = true
+//
+////        sortSegmentControl.centerXAnchor.constraint(equalTo: barView.centerXAnchor).isActive = true
+//        self.selectSort(sender: sortSegmentControl)
         
         view.addSubview(newPostButton)
-        newPostButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: bottomLayoutGuide.topAnchor, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 10, width: 120, height: 40)
+        newPostButton.anchor(top: nil, left: nil, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
 //        newPostButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         newPostButton.setTitle("📷  Add Post", for: .normal)
         newPostButton.sizeToFit()
@@ -435,16 +443,16 @@ class SingleUserProfileViewController: UIViewController {
 
  
         
-        view.addSubview(navMapButton)
-        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 10, width: 120, height: 40)
-        navMapButton.layer.cornerRadius = 30/2
-        navMapButton.layer.masksToBounds = true
-        navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
-//        navMapButton.isHidden = true
-        navMapButtonPosition = navMapButton.bottomAnchor.constraint(equalTo: sortSegmentControl.bottomAnchor, constant: 0)
-//        navMapButtonWithNewPostPosition = navMapButton.bottomAnchor.constraint(equalTo: sortSegmentControl.bottomAnchor, constant: 60)
-//        toggleNewPostButton()
-        navMapButtonPosition?.isActive = true
+//        view.addSubview(navMapButton)
+//        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 10, width: 120, height: 40)
+//        navMapButton.layer.cornerRadius = 30/2
+//        navMapButton.layer.masksToBounds = true
+//        navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
+////        navMapButton.isHidden = true
+//        navMapButtonPosition = navMapButton.bottomAnchor.constraint(equalTo: sortSegmentControl.bottomAnchor, constant: 0)
+////        navMapButtonWithNewPostPosition = navMapButton.bottomAnchor.constraint(equalTo: sortSegmentControl.bottomAnchor, constant: 60)
+////        toggleNewPostButton()
+//        navMapButtonPosition?.isActive = true
 
 
         
@@ -1001,7 +1009,7 @@ extension SingleUserProfileViewController {
     }
 }
 
-extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, TestGridPhotoCellDelegate, FullPictureCellDelegate, SharePhotoListControllerDelegate, SingleUserProfileHeaderDelegate, SignUpControllerDelegate, SKPhotoBrowserDelegate, UserSearchBarDelegate, PostSortFormatBarDelegate {
+extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, TestGridPhotoCellDelegate, FullPictureCellDelegate, SharePhotoListControllerDelegate, SingleUserProfileHeaderDelegate, SignUpControllerDelegate, SKPhotoBrowserDelegate, UserSearchBarDelegate, PostSortFormatBarDelegate, BottomSortBarDelegate {
 
     func displayAllLists() {
         let sharePhotoListController = SharePhotoListController()
