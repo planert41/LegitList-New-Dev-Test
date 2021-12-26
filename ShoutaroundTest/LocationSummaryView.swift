@@ -446,7 +446,7 @@ class LocationSummaryView: UIView {
 
         setupCollectionView()
         addSubview(photoCollectionView)
-        photoCollectionView.anchor(top: friendFilterSegment.bottomAnchor, left: leftAnchor, bottom: photoView.bottomAnchor, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 150)
+        photoCollectionView.anchor(top: friendFilterSegment.bottomAnchor, left: leftAnchor, bottom: photoView.bottomAnchor, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 250)
         
         
     }
@@ -609,7 +609,7 @@ class LocationSummaryView: UIView {
 
 }
 
-extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, LocationOtherPostCellDelegate {
+extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, LocationOtherPostCellDelegate, TestGridPhotoCellDelegate {
    
     
     func fetchPostForPostLocation(placeId:String){
@@ -751,17 +751,19 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
         layout.minimumInteritemSpacing = 5
         layout.minimumLineSpacing = 5
         layout.scrollDirection = .horizontal
-        layout.estimatedItemSize = CGSize(width: 100, height: 140)
+//        layout.estimatedItemSize = CGSize(width: 100, height: 140)
         photoCollectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         photoCollectionView.backgroundColor = UIColor.legitColor().withAlphaComponent(0.8)
         photoCollectionView.backgroundColor = UIColor.clear
         photoCollectionView.backgroundColor = UIColor.ianWhiteColor()
-        photoCollectionView.register(LocationOtherPostCell.self, forCellWithReuseIdentifier: locationCellId)
+//        photoCollectionView.register(LocationOtherPostCell.self, forCellWithReuseIdentifier: locationCellId)
+        photoCollectionView.register(TestHomePhotoCell.self, forCellWithReuseIdentifier: locationCellId)
         photoCollectionView.register(EmptyPhotoGridCell.self, forCellWithReuseIdentifier: emptyCellId)
         photoCollectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         photoCollectionView.delegate = self
         photoCollectionView.dataSource = self
         photoCollectionView.showsHorizontalScrollIndicator = false
+        photoCollectionView.isScrollEnabled = true
         
     }
     
@@ -791,16 +793,35 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
 //            print("Empty Cell - \(isEmptyCell) | cellForItemAt | LocationSummaryView")
             return cell
         } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: locationCellId, for: indexPath) as! LocationOtherPostCell
+            
             if indexPath.row >= (isFilteringFriends ? friendPosts.count : otherPosts.count) {
                 displayPost = nil
                 print("NO POST | ")
             } else {
                 displayPost = (isFilteringFriends ? friendPosts[indexPath.row] : otherPosts[indexPath.row])
             }
-            cell.post = displayPost
-            cell.backgroundColor = UIColor.ianWhiteColor()
+            
+//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: locationCellId, for: indexPath) as! LocationOtherPostCell
+//            cell.post = displayPost
+//            cell.backgroundColor = UIColor.ianWhiteColor()
+//            cell.delegate = self
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: locationCellId, for: indexPath) as! TestHomePhotoCell
             cell.delegate = self
+            cell.showDistance = false
+            cell.loadFirstPicOnly = true
+            cell.post = displayPost
+            cell.enableCancel = false
+            cell.showUserProfileImage = true
+            cell.layer.cornerRadius = 1
+            cell.layer.masksToBounds = true
+            cell.layer.backgroundColor = UIColor.clear.cgColor
+            cell.layer.shadowColor = UIColor.lightGray.cgColor
+            cell.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+            cell.layer.shadowRadius = 2.0
+            cell.layer.shadowOpacity = 0.5
+            cell.layer.masksToBounds = false
+            cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: 14).cgPath
             return cell
         }
 
@@ -816,7 +837,11 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
             return CGSize(width: self.frame.width, height: 140)
 
         } else {
-            return CGSize(width: 100, height: 140)
+//            return CGSize(width: 100, height: 140)
+            let width = (self.frame.width - 30 - 15) / 2
+
+            let height = (width + 40)
+            return CGSize(width: width, height: height)
         }
     }
     
@@ -831,6 +856,18 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
     
     
     func didTapPost(post: Post?) {
+        self.delegate?.didTapPost(post: post)
+    }
+    
+    func didTapPicture(post:Post) {
+        self.delegate?.didTapPost(post: post)
+    }
+    
+    func didTapListCancel(post:Post) {
+        
+    }
+    
+    func didTapUser(post: Post) {
         self.delegate?.didTapPost(post: post)
     }
 

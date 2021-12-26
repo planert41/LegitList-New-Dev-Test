@@ -514,7 +514,7 @@ class NewSinglePostView: UIViewController {
 //        bottomActionBar.delegate = self
         
         scrollview.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height - 40)
-        scrollview.contentSize = CGSize(width: view.frame.width, height: view.frame.height + 400)
+        scrollview.contentSize = CGSize(width: view.frame.width, height: view.frame.height + 750)
         view.addSubview(scrollview)
         scrollview.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         scrollview.contentInsetAdjustmentBehavior = .never

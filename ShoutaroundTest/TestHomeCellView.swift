@@ -31,7 +31,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         }
     }
     
-    
+    var loadFirstPicOnly: Bool = false
 
     
     var delegate: TestGridPhotoCellDelegate?
@@ -186,6 +186,10 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
     var imageCount = 0
     
     func setupImageCountLabel(){
+        if loadFirstPicOnly {
+            imageCount = 1
+
+        }
         imageCount = (self.post?.imageCount) ?? 1
         
         if imageCount == 1 {
@@ -426,7 +430,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
     
     
     func setupPageControl(){
-        guard let imageCount = self.post?.imageCount else {return}
+        guard let imageCount = loadFirstPicOnly ? 1 : self.post?.imageCount else {return}
         self.pageControl.numberOfPages = imageCount
         self.pageControl.currentPage = 0
         self.pageControl.tintColor = UIColor.red
@@ -789,6 +793,7 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
     func setupPicturesScroll() {
         
         guard let _ = post?.imageUrls else {return}
+        if loadFirstPicOnly {return}
         
         photoImageScrollView.contentSize.width = photoImageScrollView.frame.width * CGFloat((post?.imageCount)!)
         
