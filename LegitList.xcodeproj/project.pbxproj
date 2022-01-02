@@ -334,6 +334,8 @@
 		A5FE41DB2276040800607088 /* EmojiFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FE41DA2276040800607088 /* EmojiFilterCell.swift */; };
 		A5FE41DD22767BF000607088 /* FilterEmojiLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FE41DC22767BF000607088 /* FilterEmojiLayout.swift */; };
 		B674E408270A17F000AF4346 /* ProfileHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */; };
+		B6A0C54D2737883B000BFB7B /* BottomSortBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */; };
+		B6AD476C27265107006D362E /* LocationRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AD476B27265107006D362E /* LocationRequestViewController.swift */; };
 		B6B2DEF526D7F1BF00529535 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = B6B2DEF426D7F1BF00529535 /* StoreKitTestCertificate.cer */; };
 		B6D6BC61DC9FED3DE77D5BC1 /* Pods_ShoutaroundTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38997BAB7974A49B9973967F /* Pods_ShoutaroundTest.framework */; };
 		B6D98C2926D7EAA2002F6CEF /* CameraController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D98C2626D7EAA2002F6CEF /* CameraController.swift */; };
@@ -702,6 +704,8 @@
 		A5FE41DA2276040800607088 /* EmojiFilterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiFilterCell.swift; sourceTree = "<group>"; };
 		A5FE41DC22767BF000607088 /* FilterEmojiLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterEmojiLayout.swift; sourceTree = "<group>"; };
 		B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderLayout.swift; sourceTree = "<group>"; };
+		B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSortBar.swift; sourceTree = "<group>"; };
+		B6AD476B27265107006D362E /* LocationRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationRequestViewController.swift; sourceTree = "<group>"; };
 		B6B2DEF426D7F1BF00529535 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		B6D98C2626D7EAA2002F6CEF /* CameraController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraController.swift; sourceTree = "<group>"; };
 		B6D98C2726D7EAA2002F6CEF /* CustomAnimationDismisser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnimationDismisser.swift; sourceTree = "<group>"; };
@@ -792,6 +796,7 @@
 				A5F46C401FC6057100D69945 /* SMSegmentViewConstants.swift */,
 				A5F9FE211FED6A7700AF9542 /* ReselectableSegmentControl.swift */,
 				A5A2E5D6200415C100D7E8F5 /* LocationManager.swift */,
+				B6AD476B27265107006D362E /* LocationRequestViewController.swift */,
 				A5DCE4F42018F037001DBD3E /* Titillium_Web */,
 			);
 			name = Utils;
@@ -1193,6 +1198,7 @@
 				A5BA175D248DC997000D355E /* PostSortFormatBar.swift */,
 				A52156AB24AA18F20026ADEF /* PostSummaryCellView.swift */,
 				A5D74E08258679080085D876 /* LocationOptionsBar.swift */,
+				B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -1741,6 +1747,7 @@
 				A5A2E5D52002E6F800D7E8F5 /* ListController.swift in Sources */,
 				A5C5D461218610E7002266C5 /* MainListViewHeader.swift in Sources */,
 				A5814697227D15E5009AEED2 /* SinglePostView.swift in Sources */,
+				B6A0C54D2737883B000BFB7B /* BottomSortBar.swift in Sources */,
 				A5516BC21F8ED0D5003C3E22 /* LocationController.swift in Sources */,
 				A57941C41F6A2092004EC40D /* UploadEmojiFlowLayout.swift in Sources */,
 				A5F670DD24E8850800858720 /* NewUserOnboardView3.swift in Sources */,
@@ -1875,6 +1882,7 @@
 				A5177B44263E5DEB00BE2445 /* PurchaseService.swift in Sources */,
 				A5F670E124E88CC600858720 /* NewUserOnboardView5.swift in Sources */,
 				A5B3D39625791FFC00CC76E0 /* NewLocationController.swift in Sources */,
+				B6AD476C27265107006D362E /* LocationRequestViewController.swift in Sources */,
 				A5F5E4222362534A00AD9562 /* LegitPostViewController.swift in Sources */,
 				A57089D624E6903C00312318 /* NewUserOnboardView1.swift in Sources */,
 				A51C134A22E3BEDE003A7FC1 /* NewListCollectionView.swift in Sources */,
@@ -2007,6 +2015,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				EXCLUDED_ARCHS = "";
 				"EXCLUDED_ARCHS[sdk=*]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2077,6 +2086,8 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXCLUDED_ARCHS = "";
+				"EXCLUDED_ARCHS[sdk=*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2111,7 +2122,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2143,7 +2154,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				ENABLE_ONLY_ACTIVE_RESOURCES = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2179,7 +2190,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2210,7 +2221,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationService/Info.plist;

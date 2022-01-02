@@ -9204,7 +9204,7 @@ extension Database{
         if filterLegit == true {
             var tempFilterPosts: [Post] = []
             tempFilterPosts = tempPosts.filter { (post) -> Bool in
-                return post.isLegit
+                return !(post.ratingEmoji?.isEmptyOrWhitespace() ?? true)
             }
             print("Filtered Post By Legit: \(filterLegit), Pre: \(tempPosts.count), Post: \(tempFilterPosts.count)")
             tempPosts = tempFilterPosts

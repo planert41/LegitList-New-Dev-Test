@@ -1464,7 +1464,8 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     func setupTaggedList() {
         taggedListView.refreshAll()
         taggedListView.delegate = self
-        taggedListView.sortListByDate = false
+        // Default Sort List By Date
+        taggedListView.sortListByDate = true
         taggedListView.enableSelection = true
         taggedListView.sortSelectedListFirst = true
         taggedListView.listHeaderLabel.font = UIFont(name: "Poppins-Bold", size: 20)

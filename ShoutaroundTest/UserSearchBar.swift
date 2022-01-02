@@ -345,7 +345,7 @@ class UserSearchBar: UIView, UISearchBarDelegate {
         fullSearchBar.tintColor = UIColor.ianBlackColor()
         fullSearchBar.tintColor = UIColor.ianWhiteColor()
 
-        fullSearchBar.placeholder = "Filter Posts By Food, Location or Type"
+        fullSearchBar.placeholder = "Search Posts By Food, Location or Type"
         fullSearchBar.showsCancelButton = false
         fullSearchBar.sizeToFit()
         fullSearchBar.clipsToBounds = true
@@ -360,7 +360,8 @@ class UserSearchBar: UIView, UISearchBarDelegate {
 //            UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
         
         
-        let filterImage = #imageLiteral(resourceName: "filter_alt").withRenderingMode(.alwaysTemplate)
+//        let filterImage = #imageLiteral(resourceName: "filter_alt").withRenderingMode(.alwaysTemplate)
+        let filterImage = #imageLiteral(resourceName: "search_selected").withRenderingMode(.alwaysTemplate)
         fullSearchBar.setImage(filterImage, for: .search, state: .normal)
         
 //        let cancelImage = #imageLiteral(resourceName: "cancel_red").withRenderingMode(.alwaysTemplate)

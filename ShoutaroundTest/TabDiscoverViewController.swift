@@ -58,7 +58,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
 //    var TabSearchOptions:[String] = [DiscoverUser, DiscoverList, DiscoverPlaces, DiscoverCities]
 
     
-    var searchType: String = DiscoverUser {
+    var searchType: String = DiscoverList {
         didSet {
             self.refreshItems()
         }

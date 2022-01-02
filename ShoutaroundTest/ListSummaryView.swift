@@ -120,6 +120,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         didSet {
             self.fetchUserLists()
             self.refreshHeaderLabels()
+            self.refreshListSortButton()
         }
     }
 
@@ -174,7 +175,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     }
     
     func refreshListSortButton() {
-        let title = self.sortListByDate ? " Date " : " Posts "
+        let title = self.sortListByDate ? " Recent " : " Posts "
         self.listSortButton.setTitle(title, for: .normal)
         self.listSortButton.sizeToFit()
     }

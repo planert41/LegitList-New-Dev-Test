@@ -268,7 +268,7 @@ var DiscoverCities = "Cities"
 var DiscoverOptions:[String] = [DiscoverList, DiscoverUser]
 var DiscoverDefault:String = DiscoverList
 
-var TabSearchOptions:[String] = [DiscoverUser, DiscoverList, DiscoverPlaces, DiscoverCities]
+var TabSearchOptions:[String] = [DiscoverList, DiscoverUser, DiscoverPlaces, DiscoverCities]
 var TabSearchDefault:String = ListYours
 
 // LIST OPTIONS

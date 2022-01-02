@@ -442,6 +442,28 @@ class NewTabMapViewController: UIViewController {
         }
     }
     
+    func updateDetailLabel() {
+        if let filteredUser = self.filteredUser {
+            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )Posts from \(filteredUser.username.capitalizingFirstLetter())"
+            detailLabel.sizeToFit()
+            detailLabel.isHidden = false
+        } else if let filteredList = self.filteredList {
+            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )Posts in \(filteredList.name.capitalizingFirstLetter())"
+            detailLabel.sizeToFit()
+            detailLabel.isHidden = false
+        } else if self.mapFilter.filterLegit {
+            detailLabel.text = "Filtering Top Posts"
+            detailLabel.sizeToFit()
+            detailLabel.isHidden = false
+        }
+        else {
+            detailLabel.isHidden = true
+        }
+        
+        detailLabel.textColor = self.mapFilter.filterLegit ? UIColor.customRedColor() : UIColor.gray
+    }
+    
+    
     func updateUserButtonImage(){
         filterUserButton.layer.borderWidth = 1
         let temp = CustomImageView()
@@ -450,7 +472,7 @@ class NewTabMapViewController: UIViewController {
             filterUserButton.setImage(temp.image, for: .normal)
             
             filterUserLabel.text = filteredUser.username.capitalizingFirstLetter()
-            filterUserButton.alpha = (filterUserLabel.text == "") ? 0.8 : 1
+            filterUserButton.alpha = (filterUserLabel.text == "") ? buttonSemiAlpha : 1
             print("NewTabMapView | updateUserButtonImage | filteredUser Loaded| \(filteredUser.username)")
         }
         
@@ -473,13 +495,15 @@ class NewTabMapViewController: UIViewController {
             }
             
             filterUserLabel.text = filteredList.name.capitalizingFirstLetter()
-            filterUserButton.alpha = (filterUserLabel.text == "") ? 0.8 : 1
+            filterUserButton.alpha = (filterUserLabel.text == "") ? buttonSemiAlpha : 1
         }
         
         else {
             // NO FILTERED USER OR LIST. DISPLAY CURRENT USER IMAGE
             clearUserButton()
         }
+        updateFilterLegitButton()
+        updateDetailLabel()
     }
     
     func clearUserButton() {
@@ -490,14 +514,19 @@ class NewTabMapViewController: UIViewController {
         if filteredUser == nil && filteredList == nil {
 //            let defaultImage = #imageLiteral(resourceName: "Globe").withRenderingMode(.alwaysOriginal)
             let defaultImage = #imageLiteral(resourceName: "filter").withRenderingMode(.alwaysOriginal)
-            filterUserButton.setImage(defaultImage, for: .normal)
+//            let defaultImage = #imageLiteral(resourceName: "filter").withRenderingMode(.alwaysOriginal)
+//            let homeIcon = #imageLiteral(resourceName: "home").withRenderingMode(.alwaysTemplate)
+            let homeIcon = #imageLiteral(resourceName: "home_tab_filled").withRenderingMode(.alwaysOriginal)
+
+            filterUserButton.setImage(homeIcon, for: .normal)
             
             filterUserLabel.text = ""
-            filterUserButton.alpha = (filterUserLabel.text == "") ? 0.5 : 1
+            filterUserButton.alpha = (filterUserLabel.text == "") ? buttonSemiAlpha : 1
             filterUserButton.layer.borderWidth = 0
         } else {
             updateUserButtonImage()
         }
+        updateFilterLegitButton()
     }
     
     func resetButtons() {
@@ -513,6 +542,8 @@ class NewTabMapViewController: UIViewController {
 
         filterSuggestionButton.setTitle(suggestedEmoji, for: .normal)
         filterSuggestionLabel.text = ""
+        
+        updateFilterLegitButton()
         
         updateFilterSuggestedButtons()
         
@@ -530,6 +561,8 @@ class NewTabMapViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = true
         return button
     }()
+    
+    let buttonSemiAlpha = 0.8
     
     lazy var filterUserLabel: UILabel = {
         let ul = UILabel()
@@ -557,6 +590,33 @@ class NewTabMapViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = true
         return button
     }()
+    
+    let filterLegitButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        button.setImage(#imageLiteral(resourceName: "legit_icon"), for: .normal)
+        button.addTarget(self, action: #selector(filterLegitPosts), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.lightGray.cgColor
+        button.layer.borderWidth = 0
+        button.translatesAutoresizingMaskIntoConstraints = true
+        return button
+    }()
+    
+    func updateFilterLegitButton() {
+        filterLegitButton.backgroundColor = self.mapFilter.filterLegit ? UIColor.lightSelectedColor() : UIColor.ianWhiteColor()
+        filterLegitButton.alpha = self.mapFilter.filterLegit ? 1 : buttonSemiAlpha
+
+    }
+    
+    @objc func filterLegitPosts() {
+        self.mapFilter.filterLegit = !self.mapFilter.filterLegit
+        print("NewTabMapView | filterLegitPosts - \(self.mapFilter.filterLegit)")
+        self.updateFilterLegitButton()
+        self.updateDetailLabel()
+        self.refreshPostsForFilter()
+    }
     
     
     lazy var filterListLabel: UILabel = {
@@ -627,6 +687,21 @@ class NewTabMapViewController: UIViewController {
         ul.textAlignment = NSTextAlignment.right
         ul.font = UIFont(name: "Poppins-Bold", size: 15)
         ul.textColor = UIColor.ianBlackColor()
+        return ul
+    }()
+    
+    
+    lazy var detailLabel: PaddedUILabel = {
+        let ul = PaddedUILabel()
+        ul.isUserInteractionEnabled = false
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.center
+        ul.font = UIFont(name: "Poppins-Bold", size: 12)
+        ul.textColor = UIColor.darkGray
+        ul.backgroundColor = UIColor.lightSelectedColor()
+        ul.alpha = 0.9
+        ul.layer.cornerRadius = 10
+        ul.clipsToBounds = true
         return ul
     }()
     
@@ -718,7 +793,7 @@ class NewTabMapViewController: UIViewController {
 //        timer = Timer(timeInterval: 1.0, target: self, selector: "blinkMoreButton", userInfo: nil, repeats: true)
         timer = Timer(timeInterval: 1.0, target: self, selector: "blinkMoreButton", userInfo: nil, repeats: true)
         RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
-        
+
         
     //CURRENT USER LOCATION BUTTON
         view.addSubview(trackingButton)
@@ -733,23 +808,33 @@ class NewTabMapViewController: UIViewController {
         globeButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
 
         
+// FILTER LEGIT BUTTON
+        view.addSubview(filterLegitButton)
+        filterLegitButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+        filterLegitButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
+        filterLegitButton.layer.cornerRadius = 40/2
+        updateFilterLegitButton()
+        
+    
+        
+        
 //    // FILTER USER BUTTON
-//        view.addSubview(filterUserButton)
-//        filterUserButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
-//        filterUserButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
-//        filterUserButton.layer.cornerRadius = 40/2
-//        userListSearchView.inputUser = CurrentUser.user
-//        userListSearchView.delegate = self
-//        clearUserButton()
-//
+        view.addSubview(filterUserButton)
+        filterUserButton.anchor(top: nil, left: nil, bottom: filterLegitButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+        filterUserButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
+        filterUserButton.layer.cornerRadius = 40/2
+        userListSearchView.inputUser = CurrentUser.user
+        userListSearchView.delegate = self
+        clearUserButton()
+
 //        view.addSubview(filterUserLabel)
 //        filterUserLabel.anchor(top: nil, left: nil, bottom: nil, right: filterUserButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 2, width: 0, height: 0)
 //        filterUserLabel.centerYAnchor.constraint(equalTo: filterUserButton.centerYAnchor).isActive = true
         
-    
+
     // REFRESH BUTTON
         view.addSubview(refreshButton)
-        refreshButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 15, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+        refreshButton.anchor(top: nil, left: nil, bottom: filterUserButton.topAnchor, right: nil, paddingTop: 15, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
         refreshButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
         refreshButton.layer.cornerRadius = 40/2
         refreshButton.setTitle("", for: .normal)
@@ -786,14 +871,14 @@ class NewTabMapViewController: UIViewController {
     // TOP SEARCH BAR
         view.addSubview(topSearchBar)
         topSearchBar.delegate = self
-        topSearchBar.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
+        topSearchBar.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
         topSearchBar.searchBarView.backgroundColor = UIColor.clear
         topSearchBar.navSearchButton.backgroundColor = UIColor.backgroundGrayColor()
-        topSearchBar.navEmojiButton.backgroundColor = UIColor.white.withAlphaComponent(0.6)
+        topSearchBar.navEmojiButton.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         topSearchBar.navEmojiButton.setTitleColor(UIColor.darkGray, for: .normal)
-        topSearchBar.fullSearchBar.tintColor = UIColor.white.withAlphaComponent(0.6)
-        topSearchBar.fullSearchBar.barTintColor = UIColor.white.withAlphaComponent(0.6)
-        topSearchBar.filteringLabel.backgroundColor = UIColor.white.withAlphaComponent(0.6)
+        topSearchBar.fullSearchBar.tintColor = UIColor.white.withAlphaComponent(0.9)
+        topSearchBar.fullSearchBar.barTintColor = UIColor.white.withAlphaComponent(0.9)
+        topSearchBar.filteringLabel.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         topSearchBar.fullSearchBar.searchBarStyle = .minimal
         topSearchBar.showEmoji = true
         topSearchBar.navGridToggleButton.isHidden = true
@@ -804,22 +889,30 @@ class NewTabMapViewController: UIViewController {
         setupFilterSuggestedButtons()
         resetButtons()
         
+        
+    // DETAIL LABEL
+        view.addSubview(detailLabel)
+        detailLabel.anchor(top: topSearchBar.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
+        detailLabel.centerXAnchor.constraint(equalTo: postContainer.centerXAnchor).isActive = true
+        detailLabel.isHidden = true
 
-        // FILTER USER BUTTON
-            view.addSubview(filterUserButton)
-            filterUserButton.anchor(top: nil, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 12, paddingLeft: 0, paddingBottom: 0, paddingRight: 20, width: 40, height: 40)
-            filterUserButton.centerYAnchor.constraint(equalTo: topSearchBar.centerYAnchor).isActive = true
-        topSearchBar.rightAnchor.constraint(equalTo: filterUserButton.leftAnchor).isActive = true
-//            filterUserButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
-//            filterUserButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
-            filterUserButton.layer.cornerRadius = 40/2
-            userListSearchView.inputUser = CurrentUser.user
-            userListSearchView.delegate = self
-            clearUserButton()
-            
-            view.addSubview(filterUserLabel)
-        filterUserLabel.anchor(top: filterUserButton.bottomAnchor, left: nil, bottom: nil, right: filterUserButton.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 2, width: 0, height: 0)
-//            filterUserLabel.centerYAnchor.constraint(equalTo: filterUserButton.centerYAnchor).isActive = true
+        
+
+//        // FILTER USER BUTTON
+//            view.addSubview(filterUserButton)
+//            filterUserButton.anchor(top: nil, left: nil, bottom: nil, right: view.rightAnchor, paddingTop: 12, paddingLeft: 0, paddingBottom: 0, paddingRight: 20, width: 40, height: 40)
+//            filterUserButton.centerYAnchor.constraint(equalTo: topSearchBar.centerYAnchor).isActive = true
+//        topSearchBar.rightAnchor.constraint(equalTo: filterUserButton.leftAnchor).isActive = true
+////            filterUserButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+////            filterUserButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
+//            filterUserButton.layer.cornerRadius = 40/2
+//            userListSearchView.inputUser = CurrentUser.user
+//            userListSearchView.delegate = self
+//            clearUserButton()
+//
+//            view.addSubview(filterUserLabel)
+//        filterUserLabel.anchor(top: filterUserButton.bottomAnchor, left: nil, bottom: nil, right: filterUserButton.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 2, width: 0, height: 0)
+////            filterUserLabel.centerYAnchor.constraint(equalTo: filterUserButton.centerYAnchor).isActive = true
             
 
 
@@ -1411,6 +1504,7 @@ class NewTabMapViewController: UIViewController {
         self.fetchAllPostIds()
         self.refreshSearchBar()
         self.resetButtons()
+        self.updateDetailLabel()
         //        self.postCollectionView.reloadData()
         //        self.collectionView?.reloadData()
     }
@@ -1475,6 +1569,15 @@ extension NewTabMapViewController : MKMapViewDelegate {
 
         var location: CLLocation?
         
+        UIView.animate(withDuration: 2, delay: 0, options: UIView.AnimationOptions.curveLinear, animations: {
+            self.detailLabel.text = "Zooming Out"
+            self.detailLabel.sizeToFit()
+            self.detailLabel.isHidden = false
+
+        }, completion: { (finished: Bool) in
+            self.updateDetailLabel()
+        })
+        
         if CurrentUser.currentLocation == nil {
             location = defaultLocation
             print("showGlobe | No Current User Location | Default Location")
@@ -1488,6 +1591,9 @@ extension NewTabMapViewController : MKMapViewDelegate {
         let coordinateRegion = MKCoordinateRegion.init(center: location.coordinate,
                                                                   latitudinalMeters: regionRadius*1000, longitudinalMeters: regionRadius*1000)
         mapView.setRegion(coordinateRegion, animated: true)
+
+
+        
     }
 
     
