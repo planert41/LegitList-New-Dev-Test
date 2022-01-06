@@ -26,6 +26,8 @@ protocol LegitHomeHeaderDelegate {
     func openNotifications()
     func goToUser(uid: String?)
     func goToList(listId: String?)
+    func didTapFilterLegit()
+
     
 }
 
@@ -49,7 +51,6 @@ class NewLegitHomeHeader: UICollectionViewCell {
 //            self.navGridToggleButton.setTitle(isGridView ? "Grid " : "List ", for: .normal)
             self.topSearchBar.isGridView = self.isGridView
         }
-        
     }
     
     lazy var navFeedTypeLabel: UILabel = {
@@ -94,6 +95,7 @@ class NewLegitHomeHeader: UICollectionViewCell {
             self.refreshSegmentValues()
             self.refreshSearchButton()
             self.refreshNotifications()
+            self.topSearchBar.isFilteringLegit = viewFilter.filterLegit
         }
     }
     
@@ -252,6 +254,8 @@ class NewLegitHomeHeader: UICollectionViewCell {
     let emojiSearchBar = UserSearchBar()
     let headerLabelView = UIView()
 
+    
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -678,6 +682,10 @@ extension NewLegitHomeHeader: postSortSegmentControlDelegate, postViewFormatSegm
 //        self.navFeedTypeLabel.isHidden = true
 //        self.navFeedTypeButton.isHidden = true
 //        self.bringSubviewToFront(self.emojiSearchBar)
+    }
+    
+    func didTapFilterLegit() {
+        self.delegate?.didTapFilterLegit()
     }
     
     

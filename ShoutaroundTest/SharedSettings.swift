@@ -210,6 +210,7 @@ var SearchPlace = "Rest"
 var SearchCity = "City"
 var SearchCaption = "Caption"
 var SearchRating = "Rating"
+var SearchFilterLegit = "Legit"
 
 var LegitSearchBarOptions:[String] = [SearchFoodImage, SearchCuisineImage, SearchRestaurantImage, SearchCityImage, SearchRatingImage]
 let SearchAllImage = "🔍"

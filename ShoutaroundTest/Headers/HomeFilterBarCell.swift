@@ -180,12 +180,19 @@ class SelectedFilterBarCell: UICollectionViewCell {
         {
             displayColor = .ianWhiteColor()
         }
+        else if searchTermType == SearchFilterLegit {
+            displayTerm = "Top Posts"
+            displayColor = .customRedColor()
+        }
 
 //        uploadLocations.text = displayTerm
         
         uploadLocations.textColor = displayColor // isFiltering ? UIColor.white : displayColor
         
-        if (searchTermType == SearchPlace || searchTermType == SearchCity) {
+        if searchTermType == SearchFilterLegit {
+            self.backgroundColor = UIColor.selectedColor().withAlphaComponent(0.6)
+        }
+        else if (searchTermType == SearchPlace || searchTermType == SearchCity) {
             self.backgroundColor = UIColor.mainBlue().withAlphaComponent(0.6)
         } else if self.isFiltering {
             self.backgroundColor = UIColor.lightLegitColor().withAlphaComponent(0.6)

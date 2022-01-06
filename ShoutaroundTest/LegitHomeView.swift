@@ -72,10 +72,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 
     
     let headerHeight = /*180*/ 80 + UIApplication.shared.statusBarFrame.height
-    var isPostView: Bool = false {
+    var isGridView: Bool = true {
         didSet {
 //            SVProgressHUD.show(withStatus: "Updating Post Format")
-            self.postSortFormatBar.isGridView = !self.isPostView
+            self.postSortFormatBar.isGridView = isGridView
+            self.bottomSortBar.isGridView = isGridView
 //            self.collectionView.reloadItems(at: self.collectionView.indexPathsForVisibleItems)
             self.collectionView.reloadData()
         }
@@ -95,6 +96,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     let searchViewController = LegitSearchViewControllerNew()
     var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort) {
         didSet {
+            self.updateFilterLegitButton()
             print("Home viewFilter Check: ", viewFilter.searchTerms)
         }
     }
@@ -266,7 +268,41 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         self.addPhotoButton.isHidden = !self.navMapButton.isHidden
     }
     
+    lazy var detailLabel: PaddedUILabel = {
+        let ul = PaddedUILabel()
+        ul.isUserInteractionEnabled = false
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.center
+        ul.font = UIFont(name: "Poppins-Bold", size: 12)
+        ul.textColor = UIColor.darkGray
+        ul.backgroundColor = UIColor.lightSelectedColor()
+        ul.alpha = 1
+        ul.layer.cornerRadius = 10
+        ul.clipsToBounds = true
+        return ul
+    }()
+    
     var bottomSortBar = BottomSortBar()
+    
+    let filterLegitButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        button.setImage(#imageLiteral(resourceName: "legit_icon"), for: .normal)
+        button.addTarget(self, action: #selector(didTapFilterLegit), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.selectedColor().cgColor
+        button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = true
+        return button
+    }()
+    
+    func updateFilterLegitButton() {
+        filterLegitButton.backgroundColor = self.viewFilter.filterLegit ? UIColor.lightSelectedColor() : UIColor.ianWhiteColor()
+        filterLegitButton.alpha = self.viewFilter.filterLegit ? 1 : buttonSemiAlpha
+    }
+    
+    let buttonSemiAlpha: CGFloat = 0.8
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -431,7 +467,14 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         bottomSortBar.delegate = self
         bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+        bottomSortBar.sideButtonType = .Grid
 
+//    // DETAIL LABEL
+//        view.addSubview(detailLabel)
+//        detailLabel.anchor(top: nil, left: nil, bottom: (bottomSortBar).topAnchor, right: nil, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
+//        detailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        detailLabel.isHidden = true
+        
         view.addSubview(newPostButton)
         newPostButton.anchor(top: nil, left: nil, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
 //        newPostButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -449,12 +492,50 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
         
         
+        view.addSubview(filterLegitButton)
+        filterLegitButton.anchor(top: nil, left: nil, bottom: newPostButton.topAnchor, right: newPostButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 40, height: 40)
+        filterLegitButton.layer.cornerRadius = 40/2
+        filterLegitButton.clipsToBounds = true
+
+    // DETAIL LABEL
+        view.addSubview(detailLabel)
+        detailLabel.anchor(top: nil, left: nil, bottom: nil, right: filterLegitButton.leftAnchor, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 2, width: 0, height: 0)
+        detailLabel.centerYAnchor.constraint(equalTo: filterLegitButton.centerYAnchor).isActive = true
+        detailLabel.isHidden = true
+        
+        
         self.view.addSubview(searchViewController.view)
         searchViewController.view.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         searchViewController.view.alpha = 0
         setupSearchView()
 
 
+    }
+    
+    func updateDetailLabel() {
+        var postCount = self.displayedPosts.count
+        
+//        if let filteredUser = self.viewFilter.filteredUser {
+//            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount) Posts from \(filteredUser.username.capitalizingFirstLetter())"
+//            detailLabel.sizeToFit()
+//            detailLabel.isHidden = false
+//        } else if let filteredList = self.viewFilter.filteredList {
+//            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount)Posts in \(filteredList.name.capitalizingFirstLetter()) List"
+//            detailLabel.sizeToFit()
+//            detailLabel.isHidden = false
+//        } else
+        if self.viewFilter.filterLegit {
+            detailLabel.text = "Top Posts"
+            detailLabel.sizeToFit()
+            detailLabel.isHidden = false
+        }
+        else {
+            detailLabel.isHidden = true
+        }
+        
+        detailLabel.textColor = self.viewFilter.filterLegit ? UIColor.customRedColor() : UIColor.gray
+        updateFilterLegitButton()
+        
     }
     
     @objc func postEdited(_ notification: NSNotification) {
@@ -738,7 +819,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
                 displayPost.distance = Double((displayPost.locationGPS?.distance(from: (self.viewFilter.filterLocation!)))!)
             }
             
-            if isPostView {
+            if !isGridView {
                 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeFullCellId, for: indexPath) as! FullPictureCell
                 cell.post = displayPost
@@ -794,7 +875,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == self.collectionView {
-            if isPostView {
+            if !isGridView {
                 var displayPost = displayedPosts[indexPath.item]
 
                 var height: CGFloat = 35 //headerview = username userprofileimageview
@@ -854,7 +935,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 //            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeHeaderId, for: indexPath) as! LegitHomeHeader
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HomeHeaderId, for: indexPath) as! NewLegitHomeHeader
 
-            header.isGridView = !self.isPostView
+            header.isGridView = self.isGridView
             header.viewFilter = self.viewFilter
             header.fetchUser = self.fetchUser
             header.fetchTypeInd = self.fetchTypeInd
@@ -1006,6 +1087,13 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     }
     
 
+    @objc func didTapFilterLegit() {
+        self.viewFilter.filterLegit = !self.viewFilter.filterLegit
+        self.updateFilterLegitButton()
+//        self.bottomSortBar.isFilteringLegit = self.viewFilter.filterLegit
+        self.refreshPostsForSearch()
+    }
+    
     func goToUser(uid: String?) {
         print("goToUser  \(uid)")
         guard let uid = uid else {return}
@@ -1298,13 +1386,13 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     func didTapGridButton() {
 //        NotificationCenter.default.post(name: MainTabBarController.showOnboarding, object: nil)
 
-        self.isPostView = !self.isPostView
+        self.isGridView = !self.isGridView
 //        SVProgressHUD.showProgress(status: "Updating Post Format")
-        if self.isPostView {
+        if !self.isGridView {
             SVProgressHUD.show(withStatus: "Loading Full Posts")
         }
         
-        print("didTapGridButton | Legit Home View | \(self.isPostView) self.isPostView")
+        print("didTapGridButton | Legit Home View | \(self.isGridView) self.isGridView")
     }
     
     func didTapMapButton() {
@@ -2170,6 +2258,8 @@ extension LegitHomeView {
                     print("Filter Sort Post: Success: \(self.displayedPosts.count) Posts")
                     self.updateNoFilterCounts()
                     self.paginatePosts()
+                    self.updateDetailLabel()
+
     //                self.showFilterView()
                     
                 })

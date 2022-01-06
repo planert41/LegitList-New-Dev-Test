@@ -41,6 +41,7 @@ protocol SingleUserProfileHeaderDelegate {
     func didTapCreateNewList()
     
     func displayAllLists()
+    func didTapFilterLegit()
     
 
 }
@@ -72,6 +73,8 @@ class SingleUserProfileHeader: UICollectionViewCell {
     var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort){
         didSet {
             self.emojiSummary.viewFilter = viewFilter
+            self.searchBar.isFilteringLegit = viewFilter.filterLegit
+            self.setupSocialLabels()
             print("SingleProfileHeader | ViewFilter Updated | Refresh Segment | \(self.viewFilter.filterSort) | CUR: \(self.sortSegmentControl.selectedSegmentIndex)")
 //            self.refreshButton.isHidden = !viewFilter.isFiltering
 //            guard let sort = self.viewFilter.filterSort else {return}
@@ -393,6 +396,13 @@ class SingleUserProfileHeader: UICollectionViewCell {
     var userEmojiCounts:[String: Int] = [:] {
         didSet {
             self.emojiSummary.displayedEmojisCounts = self.userEmojiCounts
+        }
+    }
+    
+    
+    var displayPostCount: Int = 0 {
+        didSet {
+            self.setupSocialLabels()
         }
     }
     
@@ -857,6 +867,15 @@ extension SingleUserProfileHeader: UISearchBarDelegate, ListSummaryDelegate, Emo
     }
     
     
+    @objc func didTapMapButton() {
+        self.delegate?.toggleMapFunction()
+    }
+    
+    func didTapFilterLegit() {
+        self.delegate?.didTapFilterLegit()
+    }
+    
+    
     func didTapEmojiBackButton() {
         
     }
@@ -1137,11 +1156,7 @@ extension SingleUserProfileHeader {
         
         navGridToggleButton.backgroundColor = UIColor.clear
     }
-    
-    @objc func didTapMapButton() {
-        self.delegate?.toggleMapFunction()
-    }
-    
+
     func setupSegmentControl(){
         
         sortSegmentControl.backgroundColor = UIColor.white
@@ -1302,7 +1317,10 @@ extension SingleUserProfileHeader {
         attributedMetric.append(attributedLabel)
         self.postsLabel.attributedText = attributedMetric
         self.postsLabel.sizeToFit()
-        self.postHeaderLabel.text = "\(String(postCount)) Posts"
+        self.postHeaderLabel.text = self.viewFilter.filterLegit ? "Top \(String(self.displayPostCount)) Posts" : "\(String(postCount)) Posts"
+        self.postHeaderLabel.textColor = self.viewFilter.filterLegit ? UIColor.customRedColor() : UIColor.ianBlackColor()
+
+        UIColor.customRedColor()
         self.postHeaderLabel.sizeToFit()
 
         

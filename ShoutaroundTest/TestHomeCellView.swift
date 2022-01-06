@@ -579,7 +579,8 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         ratingEmojiLabel.layer.cornerRadius = 25/2
         ratingEmojiLabel.layer.masksToBounds = true
         ratingEmojiLabel.isUserInteractionEnabled = true
-        ratingEmojiLabel.backgroundColor = UIColor.white.withAlphaComponent(0.8)
+//        ratingEmojiLabel.backgroundColor = UIColor.white.withAlphaComponent(0.8)
+        ratingEmojiLabel.backgroundColor = UIColor.selectedColor().withAlphaComponent(0.8)
         ratingEmojiLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapRatingEmoji)))
 
         
@@ -609,13 +610,13 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         
         
         // EMOJI ARRAY
-        emojiArray.alignment = .right
+        emojiArray.alignment = .left
         emojiArray.delegate = self
         emojiArray.emojiLimit = 4
         emojiArray.alpha = 0.7
         addSubview(emojiArray)
         //        emojiArray.anchor(top: nil, left: nil, bottom: nil, right: userProfileView.rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 25)
-        emojiArray.anchor(top: nil, left: nil, bottom: nil, right: userProfileImageView.leftAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: emojiFontSize + 5)
+        emojiArray.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: emojiFontSize + 5)
         emojiArray.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
 //        emojiArrayWidth = emojiArray.widthAnchor.constraint(equalToConstant: 0)
         emojiArrayWidth = emojiArray.widthAnchor.constraint(lessThanOrEqualToConstant: 0)
@@ -640,6 +641,63 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
         pageControl.isHidden = false
         
+
+                
+        addSubview(locationDistanceLabel)
+        locationDistanceLabel.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 20)
+        //        locationDistanceLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.8)
+        locationDistanceLabel.layer.cornerRadius = 5
+        locationDistanceLabel.layer.masksToBounds = true
+        //        locationDistanceLabel.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
+
+
+        addSubview(emojiDetailLabel)
+        emojiDetailLabel.anchor(top: photoImageScrollView.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+
+        //        emojiDetailLabel.centerYAnchor.constraint(equalTo: photoImageScrollView.centerYAnchor).isActive = true
+        emojiDetailLabel.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
+        emojiDetailLabel.sizeToFit()
+        emojiDetailLabel.alpha = 0
+
+        
+        addSubview(socialCount)
+        socialCount.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 2, paddingRight: 2, width: 0, height: 15)
+        socialCount.alpha = 0
+        
+        addSubview(locationNameFade)
+        locationNameFade.anchor(top: locationDistanceLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 15, paddingBottom: 10, paddingRight: 15, width: 0, height: 0)
+        locationNameFade.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor).isActive = true
+        locationNameFade.alpha = 0
+
+
+        addSubview(cancelPostButton)
+        cancelPostButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 30, height: 30)
+        cancelPostButton.isHidden = true
+        
+        addSubview(photoCheckMark)
+        photoCheckMark.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 25, height: 25)
+        photoCheckMark.isHidden = true
+        
+        
+        
+        
+        //        addSubview(emojiLabel)
+        ////        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 3, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        //        emojiLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        //
+        //        //emojiLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.5)
+        //        emojiLabel.sizeToFit()
+                
+        //        addSubview(ratingEmojiLabel)
+        //        ratingEmojiLabel.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: rightAnchor, paddingTop: 5, paddingLeft: 8, paddingBottom: 5, paddingRight: 8, width: 0, height: 25)
+        //        ratingEmojiWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
+        //        ratingEmojiWidth?.isActive = true
+
+
+                // IMAGE COUNT
+        //        addSubview(pageControlMini)
+        //        pageControlMini.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 20, height: 20)
+
         
 //        addSubview(likeCountButton)
 //        likeCountButton.anchor(top: nil, left: nil, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 0, height: 15)
@@ -681,22 +739,6 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
     
 
         
-                
-        addSubview(locationDistanceLabel)
-        locationDistanceLabel.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 20)
-//        locationDistanceLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.8)
-        locationDistanceLabel.layer.cornerRadius = 5
-        locationDistanceLabel.layer.masksToBounds = true
-//        locationDistanceLabel.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
-
-
-        addSubview(emojiDetailLabel)
-        emojiDetailLabel.anchor(top: photoImageScrollView.topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-
-//        emojiDetailLabel.centerYAnchor.constraint(equalTo: photoImageScrollView.centerYAnchor).isActive = true
-        emojiDetailLabel.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
-        emojiDetailLabel.sizeToFit()
-        emojiDetailLabel.alpha = 0
 
                 
 //        addSubview(userProfileImageView)
@@ -722,47 +764,6 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
 //        rankLabel.anchor(top: photoImageScrollView.topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
 
 
-
-        
-        addSubview(socialCount)
-        socialCount.anchor(top: nil, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 2, paddingRight: 2, width: 0, height: 15)
-        socialCount.alpha = 0
-        
-        addSubview(locationNameFade)
-        locationNameFade.anchor(top: locationDistanceLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 15, paddingBottom: 10, paddingRight: 15, width: 0, height: 0)
-        locationNameFade.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor).isActive = true
-        locationNameFade.alpha = 0
-
-        
-        
-//        addSubview(emojiLabel)
-////        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 3, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-//        emojiLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-//
-//        //emojiLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.5)
-//        emojiLabel.sizeToFit()
-        
-//        addSubview(ratingEmojiLabel)
-//        ratingEmojiLabel.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: rightAnchor, paddingTop: 5, paddingLeft: 8, paddingBottom: 5, paddingRight: 8, width: 0, height: 25)
-//        ratingEmojiWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
-//        ratingEmojiWidth?.isActive = true
-
-
-        // IMAGE COUNT
-//        addSubview(pageControlMini)
-//        pageControlMini.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: rightAnchor, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 20, height: 20)
-
-
-
-        addSubview(cancelPostButton)
-        cancelPostButton.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 30, height: 30)
-        cancelPostButton.isHidden = true
-        
-        addSubview(photoCheckMark)
-        photoCheckMark.anchor(top: topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 25, height: 25)
-        photoCheckMark.isHidden = true
-        
-        
 
         
         

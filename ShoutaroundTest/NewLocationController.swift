@@ -567,6 +567,14 @@ extension NewLocationController: EmptyCellDelegate, TestGridPhotoCellDelegate, F
         self.handleRefresh()
     }
     
+    func didTapMapButton() {
+        self.toggleMapFunction()
+    }
+    
+    func didTapFilterLegit() {
+        self.viewFilter.filterLegit = !self.viewFilter.filterLegit
+        self.filterSortFetchedPosts()
+    }
 
     
     func didTapLocationHours(hours: [JSON]?){

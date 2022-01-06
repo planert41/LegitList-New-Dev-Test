@@ -187,6 +187,7 @@ class Filter {
         self.isFiltering = false
         self.filterCaptionArray = []
         self.filterTypeArray = []
+        self.filterLegit = false
         if sort != nil {
             self.filterSort = sort
         }
@@ -210,7 +211,7 @@ class Filter {
     }
     
     func checkIsFiltering(){
-        if (self.filterCaption != nil && self.filterCaption?.removingWhitespaces() != "") || (self.filterRange != nil) || (self.filterRange == nil && self.filterGoogleLocationID != nil) || (self.filterMinRating != 0) || (self.filterType != nil) || (self.filterMaxPrice != nil) || (self.filterLegit == true) ||  (self.filterUser != nil) || (self.filterList != nil) || (self.filterTime! > 0) || (self.filterLocationSummaryID != nil) || self.filterPostId != nil || self.filterCaptionArray.count > 0 || self.filterTypeArray.count > 0 || self.filterRatingEmoji != nil
+        if (self.filterCaption != nil && self.filterCaption?.removingWhitespaces() != "") || (self.filterRange != nil) || (self.filterRange == nil && self.filterGoogleLocationID != nil) || (self.filterMinRating != 0) || (self.filterType != nil) || (self.filterMaxPrice != nil) || (self.filterLegit == true) ||  (self.filterUser != nil) || (self.filterList != nil) || (self.filterTime! > 0) || (self.filterLocationSummaryID != nil) || self.filterPostId != nil || self.filterCaptionArray.count > 0 || self.filterTypeArray.count > 0 || self.filterRatingEmoji != nil || self.filterLegit
         
         {
             self.isFiltering = true
@@ -224,8 +225,7 @@ class Filter {
         self.searchTerms = []
         self.searchTermsType = []
         self.searchTermsTypeDic = [:]
-        
-        
+              
         // CAPTION
         if self.filterCaptionArray.count > 0 {
             for x in self.filterCaptionArray {
@@ -279,6 +279,13 @@ class Filter {
             searchTerms.append(location)
             searchTermsType.append(SearchCity)
         }
+        
+//        // FILTER LEGIT
+//        if self.filterLegit {
+//            searchTerms.append(SearchFilterLegit)
+//            searchTermsType.append(SearchFilterLegit)
+//            searchTermsTypeDic[SearchFilterLegit] = SearchFilterLegit
+//        }
         
 //        searchTerms = Array(Set(searchTerms))
     }

@@ -13,8 +13,15 @@ protocol BottomSortBarDelegate {
     func headerSortSelected(sort: String)
     func didTapGridButton()
     func toggleMapFunction()
+    func didTapFilterLegit()
 }
 
+
+enum SideBarButton {
+    case Map
+    case Grid
+    case None
+}
 
 class BottomSortBar: UIView{
 
@@ -70,6 +77,51 @@ class BottomSortBar: UIView{
         return button
     }()
     
+    var navGridToggleButton: UIButton = TemplateObjects.gridFormatButton()
+    var isGridView = true {
+        didSet {
+            self.refreshGridButton()
+        }
+    }
+    
+    func refreshGridButton() {
+        var image = isGridView ? #imageLiteral(resourceName: "grid") : #imageLiteral(resourceName: "listFormat")
+        self.navGridToggleButton.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+        self.navGridToggleButton.setTitle(isGridView ? "Grid " : "List ", for: .normal)
+    }
+    
+    var navGridButtonWidth: NSLayoutConstraint?
+    
+    var showGridButton: Bool = true
+    
+    var sideButtonType: SideBarButton = .None {
+        didSet {
+            updateSideButton()
+        }
+    }
+    
+    func updateSideButton() {
+        if self.sideButtonType == .None {
+            self.navMapButton.isHidden = true
+            self.navGridToggleButton.isHidden = true
+        } else {
+            self.navMapButton.isHidden = !(self.sideButtonType == .Map)
+            self.navGridToggleButton.isHidden = !(self.sideButtonType == .Grid)
+        }
+    }
+    
+
+    
+    let buttonSemiAlpha:CGFloat = 0.8
+
+    
+//    @objc func filterLegitPosts() {
+//        self.isFilteringLegit = !self.isFilteringLegit
+//        self.updateFilterLegitButton()
+//        self.delegate?.didTapFilterLegit()
+//    }
+
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.scalar = min(1, UIScreen.main.nativeBounds.width / defaultWidth)
@@ -94,12 +146,53 @@ class BottomSortBar: UIView{
         sortSegmentControl.anchor(top: nil, left: sortButton.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
         sortSegmentControl.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
 
+//        
+//// FILTER LEGIT BUTTON
+//        barView.addSubview(filterLegitButton)
+//        filterLegitButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 12, paddingLeft: 10, paddingBottom: 10, paddingRight: 15, width: 40, height: 40)
+//        filterLegitButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
+//        filterLegitButton.layer.cornerRadius = 40/2
+//        updateFilterLegitButton()
+//
+//
         barView.addSubview(navMapButton)
         navMapButton.anchor(top: nil, left: nil, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 80 * scalar, height: 40)
         navMapButton.sizeToFit()
         navMapButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
         navMapButton.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
+        
+        barView.addSubview(navGridToggleButton)
+        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 60, height: 40)
+        navGridButtonWidth = navGridToggleButton.widthAnchor.constraint(equalToConstant: 60)
+        navGridButtonWidth?.isActive = true
+        navGridToggleButton.centerYAnchor.constraint(equalTo: barView.centerYAnchor).isActive = true
+//        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        setupnavGridToggleButton()
+        
+        self.updateSideButton()
 
+    }
+    
+    func setupnavGridToggleButton() {
+        navGridToggleButton.tintColor = UIColor.ianBlackColor()
+        navGridToggleButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
+        navGridToggleButton.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 12)
+        navGridToggleButton.backgroundColor = UIColor.white
+        navGridToggleButton.isUserInteractionEnabled = true
+        navGridToggleButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleView)))
+        navGridToggleButton.semanticContentAttribute  = .forceLeftToRight
+        navGridToggleButton.layer.cornerRadius = 5
+        navGridToggleButton.layer.masksToBounds = true
+        navGridToggleButton.layer.borderColor = navGridToggleButton.tintColor.cgColor
+        navGridToggleButton.layer.borderWidth = 0
+        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        
+        navGridToggleButton.backgroundColor = UIColor.clear
+        refreshGridButton()
+    }
+    
+    @objc func toggleView(){
+        self.delegate?.didTapGridButton()
     }
     
     required init?(coder: NSCoder) {

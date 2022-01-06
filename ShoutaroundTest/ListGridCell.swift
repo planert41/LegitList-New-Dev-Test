@@ -46,9 +46,9 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
 //            emojiLabel.text = tempExtraRatingEmoji.replacingOccurrences(of: tempRatingEmoji, with: "")
             emojiLabel.text = emojiText
             emojiLabel.sizeToFit()
-
-//            ratingEmojiWidth?.constant = ratingEmojiLabel.text == "" ? 0 : 20
+            
             ratingEmojiLabel.text = tempRatingEmoji
+            ratingEmojiWidth?.constant = ratingEmojiLabel.text == "" ? 0 : ratingEmojiLabelSize
             ratingEmojiLabel.isHidden = ratingEmojiLabel.text == ""
             ratingEmojiLabel.sizeToFit()
             setupStarRating()
@@ -349,19 +349,20 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
     let ratingEmojiLabel: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont.boldSystemFont(ofSize: 12)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         label.textColor = UIColor.black
         label.isUserInteractionEnabled = true
         label.textAlignment = NSTextAlignment.center
-        label.backgroundColor = UIColor.white.withAlphaComponent(0.8)
-        label.backgroundColor = UIColor.clear
-//        label.layer.cornerRadius = 22/2
-//        label.layer.masksToBounds = true
+        label.backgroundColor = UIColor.selectedColor().withAlphaComponent(0.8)
+//        label.backgroundColor = UIColor.clear
+        label.clipsToBounds = true
         label.layer.borderWidth = 0
         label.layer.borderColor = UIColor.ianLegitColor().cgColor
         
         return label
     }()
+    
+    let ratingEmojiLabelSize: CGFloat = 25
     
     let locationDistanceLabel: LightPaddedUILabel = {
         let label = LightPaddedUILabel()
@@ -499,9 +500,19 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         photoImageScrollView.addGestureRecognizer(longPress)
         
         
+        
+        addSubview(ratingEmojiLabel)
+        ratingEmojiLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: ratingEmojiLabelSize)
+//        ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
+        ratingEmojiLabel.layer.cornerRadius = ratingEmojiLabelSize / 2
+        ratingEmojiLabel.sizeToFit()
+
+        ratingEmojiWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: ratingEmojiLabelSize)
+        ratingEmojiWidth?.isActive = true
+        
         addSubview(emojiLabel)
 //        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 3, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-        emojiLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
 
         //emojiLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.5)
         emojiLabel.sizeToFit()
@@ -539,14 +550,7 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         starRating.anchor(top: nil, left: headerView.leftAnchor, bottom: headerView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 0, width: 0, height: 0)
         starRatingHide = starRating.widthAnchor.constraint(equalToConstant: 0)
 
-        
-        addSubview(ratingEmojiLabel)
-        ratingEmojiLabel.anchor(top: nil, left: starRating.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 2, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-        ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
 
-//        ratingEmojiWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
-//        ratingEmojiWidth?.isActive = true
-        ratingEmojiLabel.sizeToFit()
         
         
         addSubview(locationDistanceLabel)

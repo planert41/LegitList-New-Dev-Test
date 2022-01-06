@@ -141,6 +141,7 @@ class SingleUserProfileViewController: UIViewController {
     func toggleNewPostButton() {
         if self.showNewPostButton && displayUser?.uid == Auth.auth().currentUser?.uid {
             self.newPostButton.isHidden = false
+            self.newPostButtonHeight?.constant = 40
             self.navMapButtonPosition?.constant = 50
 //            self.navMapButtonWithNewPostPosition?.isActive = true
             
@@ -148,6 +149,7 @@ class SingleUserProfileViewController: UIViewController {
 //            self.navMapButtonPosition = self.navMapButton.bottomAnchor.constraint(equalTo: self.newPostButton.topAnchor, constant: 10)
         } else {
             self.newPostButton.isHidden = true
+            self.newPostButtonHeight?.constant = 0
             self.navMapButtonPosition?.constant = 0
 //            self.navMapButtonPosition?.isActive = true
 //            self.navMapButtonWithNewPostPosition?.isActive = false
@@ -184,6 +186,7 @@ class SingleUserProfileViewController: UIViewController {
     var postFormatInd: Int = gridFormat {
         didSet {
             self.postSortFormatBar.isGridView == (self.postFormatInd == gridFormat)
+            self.bottomSortBar.isGridView == (self.postFormatInd == gridFormat)
             self.imageCollectionView.reloadData()
         }
     }
@@ -276,6 +279,8 @@ class SingleUserProfileViewController: UIViewController {
     var segmentWidth_selected: CGFloat = 110.0
     var segmentWidth_unselected: CGFloat = 80.0
     
+    var newPostButtonHeight: NSLayoutConstraint?
+
     
     let newPostButton: UIButton = {
         let button = UIButton(type: .system)
@@ -330,6 +335,43 @@ class SingleUserProfileViewController: UIViewController {
     
     var navMapButtonPosition: NSLayoutConstraint?
     var navMapButtonWithNewPostPosition: NSLayoutConstraint?
+    
+    
+    lazy var detailLabel: PaddedUILabel = {
+        let ul = PaddedUILabel()
+        ul.isUserInteractionEnabled = false
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.center
+        ul.font = UIFont(name: "Poppins-Bold", size: 12)
+        ul.textColor = UIColor.darkGray
+        ul.backgroundColor = UIColor.lightSelectedColor()
+        ul.alpha = 1
+        ul.layer.cornerRadius = 10
+        ul.clipsToBounds = true
+        return ul
+    }()
+    
+    // FILTER LEGIT BUTTON
+    
+    let filterLegitButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        button.setImage(#imageLiteral(resourceName: "legit_icon"), for: .normal)
+        button.addTarget(self, action: #selector(didTapFilterLegit), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.selectedColor().cgColor
+        button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = true
+        return button
+    }()
+    
+    func updateFilterLegitButton() {
+        filterLegitButton.backgroundColor = self.viewFilter.filterLegit ? UIColor.lightSelectedColor() : UIColor.ianWhiteColor()
+        filterLegitButton.alpha = self.viewFilter.filterLegit ? 1 : buttonSemiAlpha
+    }
+    
+    let buttonSemiAlpha: CGFloat = 0.8
 
     
     // MARK: - VIEWDIDLOAD
@@ -390,9 +432,20 @@ class SingleUserProfileViewController: UIViewController {
         bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         bottomSortBar.delegate = self
         bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+        bottomSortBar.sideButtonType = .Grid
+        bottomSortBar.isGridView = (self.postFormatInd == 0)
         
         self.view.addSubview(imageCollectionView)
         imageCollectionView.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        
+//    // DETAIL LABEL
+//        view.addSubview(detailLabel)
+//        detailLabel.anchor(top: nil, left: nil, bottom: (bottomSortBar).topAnchor, right: nil, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 0)
+//        detailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        detailLabel.isHidden = true
+            
+        
         
 //        postSortFormatBar.delegate = self
 //        self.view.addSubview(postSortFormatBar)
@@ -424,8 +477,10 @@ class SingleUserProfileViewController: UIViewController {
 //        self.selectSort(sender: sortSegmentControl)
         
         view.addSubview(newPostButton)
-        newPostButton.anchor(top: nil, left: nil, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+        newPostButton.anchor(top: nil, left: nil, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 0)
 //        newPostButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        newPostButtonHeight = newPostButton.heightAnchor.constraint(equalToConstant: 40)
+        newPostButtonHeight?.isActive = true
         newPostButton.setTitle("📷  Add Post", for: .normal)
         newPostButton.sizeToFit()
         newPostButton.tintColor = UIColor.ianWhiteColor()
@@ -441,7 +496,18 @@ class SingleUserProfileViewController: UIViewController {
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
 //        toggleNewPostButton()
 
- 
+        view.addSubview(filterLegitButton)
+        filterLegitButton.anchor(top: nil, left: nil, bottom: newPostButton.topAnchor, right: newPostButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 40, height: 40)
+        filterLegitButton.layer.cornerRadius = 40/2
+        filterLegitButton.clipsToBounds = true
+        
+        
+    // DETAIL LABEL
+        view.addSubview(detailLabel)
+        detailLabel.anchor(top: nil, left: nil, bottom: nil, right: filterLegitButton.leftAnchor, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 2, width: 0, height: 0)
+        detailLabel.centerYAnchor.constraint(equalTo: filterLegitButton.centerYAnchor).isActive = true
+        detailLabel.isHidden = true
+        
         
 //        view.addSubview(navMapButton)
 //        navMapButton.anchor(top: nil, left: sortSegmentControl.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 10, width: 120, height: 40)
@@ -486,6 +552,31 @@ class SingleUserProfileViewController: UIViewController {
 
         print("  END |  NewListCollectionView | ViewdidLoad")
 
+    }
+    
+    func updateDetailLabel() {
+        var postCount = self.displayedPosts.count
+        
+//        if let filteredUser = self.viewFilter.filteredUser {
+//            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount) Posts from \(filteredUser.username.capitalizingFirstLetter())"
+//            detailLabel.sizeToFit()
+//            detailLabel.isHidden = false
+//        } else if let filteredList = self.viewFilter.filteredList {
+//            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount)Posts in \(filteredList.name.capitalizingFirstLetter()) List"
+//            detailLabel.sizeToFit()
+//            detailLabel.isHidden = false
+//        } else
+        if self.viewFilter.filterLegit {
+            detailLabel.text = "Top Posts"
+            detailLabel.sizeToFit()
+            detailLabel.isHidden = false
+        }
+        else {
+            detailLabel.isHidden = true
+        }
+        
+        detailLabel.textColor = self.viewFilter.filterLegit ? UIColor.customRedColor() : UIColor.gray
+        updateFilterLegitButton()
     }
     
     
@@ -843,6 +934,7 @@ extension SingleUserProfileViewController {
     
     func filterSortFetchedPosts(){
         
+        
         self.isFiltering = self.viewFilter.isFiltering
      
         Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
@@ -851,6 +943,8 @@ extension SingleUserProfileViewController {
          Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
                 
                 self.displayedPosts = filteredPosts ?? []
+                self.updateDetailLabel()
+
                 print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
              
                 self.updateNoFilterCounts()
@@ -1025,12 +1119,26 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         
     }
     
+    
+    @objc func didTapFilterLegit() {
+        self.viewFilter.filterLegit = !self.viewFilter.filterLegit
+        self.isFiltering = self.viewFilter.isFiltering
+        self.updateFilterLegitButton()
+//        self.bottomSortBar.isFilteringLegit = self.viewFilter.filterLegit
+        self.refreshPostsForFilter()
+    }
+    
+    
     func didTapEmojiBackButton() {
         
     }
     
     func didTapEmojiButton() {
         
+    }
+    
+    func didTapMapButton() {
+        self.toggleMapFunction()
     }
     
     
@@ -1916,6 +2024,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
             }
             
             header.user = self.displayUser
+            header.displayPostCount = displayedPosts.count
             header.viewFilter = self.viewFilter
             header.postFormatInd = self.postFormatInd
             header.userEmojiCounts = self.noFilterTagCounts.captionCounts

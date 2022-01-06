@@ -75,7 +75,11 @@ class SingleListViewController: UIViewController {
     var displayedPosts: [Post] = []
     var tempRank:[String:Int]? = [:]
     
-    var postFormatInd: Int = 0
+    var postFormatInd: Int = 0 {
+        didSet {
+            self.bottomSortBar.isGridView = (postFormatInd == 0)
+        }
+    }
     // 0 Grid View
     // 1 List View
     // 2 Full View
@@ -285,6 +289,47 @@ class SingleListViewController: UIViewController {
          }
     }
     
+    
+    
+    lazy var detailLabel: PaddedUILabel = {
+        let ul = PaddedUILabel()
+        ul.isUserInteractionEnabled = false
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.center
+        ul.font = UIFont(name: "Poppins-Bold", size: 12)
+        ul.textColor = UIColor.darkGray
+        ul.backgroundColor = UIColor.lightSelectedColor()
+        ul.alpha = 1
+        ul.layer.cornerRadius = 10
+        ul.clipsToBounds = true
+        return ul
+    }()
+    
+    
+    // FILTER LEGIT BUTTON
+    
+    let filterLegitButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        button.setImage(#imageLiteral(resourceName: "legit_icon"), for: .normal)
+        button.addTarget(self, action: #selector(didTapFilterLegit), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.selectedColor().cgColor
+        button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = true
+        return button
+    }()
+    
+    func updateFilterLegitButton() {
+        filterLegitButton.backgroundColor = self.viewFilter.filterLegit ? UIColor.lightSelectedColor() : UIColor.ianWhiteColor()
+        filterLegitButton.alpha = self.viewFilter.filterLegit ? 1 : buttonSemiAlpha
+    }
+    
+    let buttonSemiAlpha: CGFloat = 0.8
+
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         if #available(iOS 13.0, *) {
@@ -323,10 +368,25 @@ class SingleListViewController: UIViewController {
         bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         bottomSortBar.delegate = self
         bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
-        
+        bottomSortBar.sideButtonType = .Grid
         
         self.view.addSubview(imageCollectionView)
         imageCollectionView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        
+        view.addSubview(filterLegitButton)
+        filterLegitButton.anchor(top: nil, left: nil, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 40, height: 40)
+        filterLegitButton.layer.cornerRadius = 40/2
+        filterLegitButton.clipsToBounds = true
+
+        
+        
+        // DETAIL LABEL
+        view.addSubview(detailLabel)
+        detailLabel.anchor(top: nil, left: nil, bottom: nil, right: filterLegitButton.leftAnchor, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 2, width: 0, height: 0)
+        detailLabel.centerYAnchor.constraint(equalTo: filterLegitButton.centerYAnchor).isActive = true
+        detailLabel.isHidden = true
+            
         
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
@@ -380,6 +440,32 @@ class SingleListViewController: UIViewController {
 //        let contentInset:UIEdgeInsets = UIEdgeInsets.zero
 //        imageCollectionView.contentInset = contentInset
 //    }
+    
+    
+    func updateDetailLabel() {
+//        var postCount = self.displayedPosts.count
+        var postCount = displayedPosts.count
+//        if let filteredUser = self.viewFilter.filteredUser {
+//            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount) Posts from \(filteredUser.username.capitalizingFirstLetter())"
+//            detailLabel.sizeToFit()
+//            detailLabel.isHidden = false
+//        } else if let filteredList = self.viewFilter.filteredList {
+//            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount)Posts in \(filteredList.name.capitalizingFirstLetter()) List"
+//            detailLabel.sizeToFit()
+//            detailLabel.isHidden = false
+//        } else
+        if self.viewFilter.filterLegit {
+            detailLabel.text = "Top Posts"
+            detailLabel.sizeToFit()
+            detailLabel.isHidden = false
+        }
+        else {
+            detailLabel.isHidden = true
+        }
+        
+        detailLabel.textColor = self.viewFilter.filterLegit ? UIColor.customRedColor() : UIColor.gray
+        updateFilterLegitButton()
+    }
     
     
     // MARK: - FETCHING OBJECTS
@@ -487,6 +573,8 @@ class SingleListViewController: UIViewController {
        
        func filterSortFetchedPosts(){
            
+        
+        
            self.isFiltering = self.viewFilter.isFiltering
 
            // Sort Recent Post By Listed Date
@@ -505,6 +593,7 @@ class SingleListViewController: UIViewController {
              Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
                     
                     self.displayedPosts = filteredPosts ?? []
+                    self.updateDetailLabel()
                     print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
                  
                      self.updateNoFilterCounts()
@@ -719,7 +808,7 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
             }
             else if self.postFormatInd == 1
             {
-                return CGSize(width: view.frame.width, height: 110)
+                return CGSize(width: view.frame.width, height: 120)
 //
 //
 //                 GRID VIEW
@@ -894,6 +983,7 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
             
             header.currentDisplayList = self.currentDisplayList
             header.displayUser = self.displayUser
+            header.displayPostCount = self.displayedPosts.count
             header.viewFilter = self.viewFilter
             header.isFilteringText = self.tempSearchBarText
             header.postFormatInd = self.postFormatInd
@@ -971,6 +1061,14 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
 
     func didTapCell(tag: String) {
         print("SingleListViewController | didTapCell \(tag)")
+    }
+    
+    @objc func didTapFilterLegit() {
+        self.viewFilter.filterLegit = !self.viewFilter.filterLegit
+        self.isFiltering = self.viewFilter.isFiltering
+        self.updateFilterLegitButton()
+//        self.bottomSortBar.isFilteringLegit = self.viewFilter.filterLegit
+        self.refreshPostsForFilter()
     }
     
     

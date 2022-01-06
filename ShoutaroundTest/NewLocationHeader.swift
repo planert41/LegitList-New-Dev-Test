@@ -31,6 +31,8 @@ protocol NewLocationHeaderDelegate {
     func didChangeToPostView()
     func didTapFilterFriends(filteringFriends: Bool)
     func extShowGoogleRating(rating: Double?, location: String?)
+    func didTapMapButton()
+    func didTapFilterLegit()
 
     //    func listSelected(list: List?)
 //    func resizeContainer(size: CGFloat)
@@ -481,6 +483,14 @@ class NewLocationHeader: UICollectionViewCell, EmojiSummaryCVDelegate, MKMapView
         mapView.register(ClusterMapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
     }
     
+    func didTapFilterLegit() {
+        self.delegate?.didTapFilterLegit()
+    }
+    
+    
+    func didTapMapButton() {
+        self.delegate?.didTapMapButton()
+    }
     
     @objc func resetLocation(){
         guard let location = selectedLocation else {

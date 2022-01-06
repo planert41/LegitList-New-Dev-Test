@@ -1720,7 +1720,7 @@ Rating Emojis help you describe your experience beyond just star ratings
         commentStackView.anchor(top: postDateLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width - 20, height: 0)
 //        commentStackView.layer.borderWidth = 3
 //        commentStackView.layer.borderColor = UIColor.yellow.cgColor
-        commentStackView.backgroundColor = UIColor.yellow
+//        commentStackView.backgroundColor = UIColor.white
 
         scrollview.addSubview(viewCommentLabel)
         viewCommentLabel.anchor(top: commentStackView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 3, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 35)

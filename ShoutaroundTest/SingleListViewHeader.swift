@@ -41,6 +41,7 @@ protocol SingleListViewHeaderDelegate {
     func extCreateNewList()
     func editListDesc()
     func confirmListDesc(text: String?)
+    func didTapFilterLegit()
 }
 
 class SingleListViewHeader: UICollectionViewCell {
@@ -168,6 +169,7 @@ class SingleListViewHeader: UICollectionViewCell {
             didSet {
                 print("SingleListHeader | ViewFilter Updated | Refresh Segment | \(self.viewFilter.filterSort) | CUR: \(self.currentSort) , \(self.sortSegmentControl.selectedSegmentIndex)")
                 self.refreshButton.isHidden = !viewFilter.isFiltering
+                self.updateListLabels()
             }
     }
     
@@ -296,7 +298,7 @@ class SingleListViewHeader: UICollectionViewCell {
     // FOLLOW UNFOLLOW BUTTON
     lazy var listFollowButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Follow List", for: .normal)
+//        button.setTitle("Follow List", for: .normal)
         button.titleLabel?.font =  UIFont(name: "Poppins-Bold", size: 12)
         button.layer.borderColor = UIColor.ianLegitColor().cgColor
         button.layer.borderWidth = 1
@@ -464,6 +466,13 @@ class SingleListViewHeader: UICollectionViewCell {
         button.translatesAutoresizingMaskIntoConstraints = true
         return button
     }()
+    
+    
+    var displayPostCount: Int = 0 {
+        didSet {
+            self.updateListLabels()
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame:frame)
@@ -746,8 +755,12 @@ class SingleListViewHeader: UICollectionViewCell {
 
         let listPostCountHeader = NSMutableAttributedString()
 
+
+        
         if let postCount = self.currentDisplayList?.postIds?.count {
-            listPostCountHeader.append(NSAttributedString(string:"\(postCount) Posts", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor(), NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 25)]))
+            var postCountColor = self.viewFilter.filterLegit ? UIColor.customRedColor() : UIColor.ianBlackColor()
+            var postCountText = self.viewFilter.filterLegit ? "Top \(String(self.displayPostCount)) Posts" : "\(String(postCount)) Posts"
+            listPostCountHeader.append(NSAttributedString(string:postCountText, attributes: [NSAttributedString.Key.foregroundColor: postCountColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 25)]))
 //            listPostCountLabel.text = "\(postCount) Posts"
         }
         
@@ -804,11 +817,7 @@ class SingleListViewHeader: UICollectionViewCell {
         
         listFollowButton.isHidden = (currentDisplayList?.isRatingList ?? false)
     }
-    
-    @objc func didTapMapButton() {
-        self.delegate?.toggleMapFunction()
-    }
-    
+
     @objc func showListFollowingUser() {
         guard let list = self.currentDisplayList else {return}
         self.delegate?.displayListFollowingUsers(list: list, following: true)
@@ -841,6 +850,10 @@ extension SingleListViewHeader: UISearchBarDelegate, postSortSegmentControlDeleg
     
     func didTapEmojiButton() {
         
+    }
+    
+    func didTapFilterLegit() {
+        self.delegate?.didTapFilterLegit()
     }
     
     
@@ -883,6 +896,11 @@ extension SingleListViewHeader: UISearchBarDelegate, postSortSegmentControlDeleg
     
     func didActivateSearchBar() {
         self.delegate?.didActivateSearchBar()
+    }
+    
+    
+    @objc func didTapMapButton() {
+        self.delegate?.toggleMapFunction()
     }
     
     

@@ -156,6 +156,17 @@ class NewTabMapViewController: UIViewController {
         return ul
     }()
     
+    lazy var postCountLabel: UILabel = {
+        let ul = UILabel()
+        ul.isUserInteractionEnabled = true
+        ul.text = ""
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.right
+        ul.font = UIFont(name: "Poppins-Regular", size: 11)
+        ul.textColor = UIColor.darkGray
+        return ul
+    }()
+    
     lazy var hideLabel: UILabel = {
         let ul = UILabel()
         ul.isUserInteractionEnabled = true
@@ -443,16 +454,18 @@ class NewTabMapViewController: UIViewController {
     }
     
     func updateDetailLabel() {
+        var postCount = self.fetchedPosts.count
+        
         if let filteredUser = self.filteredUser {
-            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )Posts from \(filteredUser.username.capitalizingFirstLetter())"
+            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount) Posts from \(filteredUser.username.capitalizingFirstLetter())"
             detailLabel.sizeToFit()
             detailLabel.isHidden = false
         } else if let filteredList = self.filteredList {
-            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )Posts in \(filteredList.name.capitalizingFirstLetter())"
+            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount)Posts in \(filteredList.name.capitalizingFirstLetter()) List"
             detailLabel.sizeToFit()
             detailLabel.isHidden = false
         } else if self.mapFilter.filterLegit {
-            detailLabel.text = "Filtering Top Posts"
+            detailLabel.text = "Filtering Top \(postCount) Posts"
             detailLabel.sizeToFit()
             detailLabel.isHidden = false
         }
@@ -556,13 +569,13 @@ class NewTabMapViewController: UIViewController {
         button.layer.backgroundColor = UIColor.white.cgColor
         button.layer.cornerRadius = button.frame.width/2
         button.layer.masksToBounds = true
-        button.layer.borderColor = UIColor.gray.cgColor
+        button.layer.borderColor = UIColor.ianLegitColor().cgColor
         button.layer.borderWidth = 1
         button.translatesAutoresizingMaskIntoConstraints = true
         return button
     }()
     
-    let buttonSemiAlpha = 0.8
+    let buttonSemiAlpha:CGFloat = 0.8
     
     lazy var filterUserLabel: UILabel = {
         let ul = UILabel()
@@ -598,8 +611,8 @@ class NewTabMapViewController: UIViewController {
         button.layer.backgroundColor = UIColor.white.cgColor
         button.layer.cornerRadius = button.frame.width/2
         button.layer.masksToBounds = true
-        button.layer.borderColor = UIColor.lightGray.cgColor
-        button.layer.borderWidth = 0
+        button.layer.borderColor = UIColor.selectedColor().cgColor
+        button.layer.borderWidth = 1
         button.translatesAutoresizingMaskIntoConstraints = true
         return button
     }()
@@ -795,6 +808,11 @@ class NewTabMapViewController: UIViewController {
         RunLoop.current.add(timer, forMode: RunLoop.Mode.common)
 
         
+        view.addSubview(postCountLabel)
+        postCountLabel.anchor(top: nil, left: nil, bottom: nil, right: morePostLabel.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 3, width: 0, height: 0)
+        postCountLabel.centerYAnchor.constraint(equalTo: morePostLabel.centerYAnchor).isActive = true
+        postCountLabel.sizeToFit()
+        
     //CURRENT USER LOCATION BUTTON
         view.addSubview(trackingButton)
         trackingButton.anchor(top: nil, left: nil, bottom: morePostLabel.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 35, height: 35)
@@ -883,6 +901,10 @@ class NewTabMapViewController: UIViewController {
         topSearchBar.showEmoji = true
         topSearchBar.navGridToggleButton.isHidden = true
         topSearchBar.navGridButtonWidth?.constant = 0
+        topSearchBar.navMapButton.isHidden = true
+        topSearchBar.navMapButtonWidth?.constant = 0
+        topSearchBar.filterLegitButton.isHidden = true
+        topSearchBar.hideFilterLegitButtonWidth?.isActive = true
         topSearchBar.layoutIfNeeded()
 
 
@@ -2021,6 +2043,8 @@ extension NewTabMapViewController : UICollectionViewDelegate, UICollectionViewDa
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 //        print("NewMapViewController | CollectionView \(fetchedPosts.count) Posts")
+        self.showCurrentPostCount()
+        self.updateDetailLabel()
         return fetchedPosts.count
 
     }
@@ -2090,9 +2114,15 @@ extension NewTabMapViewController : UICollectionViewDelegate, UICollectionViewDa
         {
             let currentIndex = Int(self.postCollectionView.contentOffset.x / self.postCollectionView.frame.size.width)
             self.selectedMapPost = self.fetchedPosts[currentIndex]
+            self.showCurrentPostCount()
             print("  ~ Show Post on Map |  \(self.selectedMapPost?.locationName) | scrollViewDidEndDecelerating")
             self.showSelectedPostOnMap()
         }
+    }
+    
+    func showCurrentPostCount() {
+        let currentIndex = Int(self.postCollectionView.contentOffset.x / self.postCollectionView.frame.size.width)
+        self.postCountLabel.text = "\(currentIndex + 1) / \(self.fetchedPosts.count)"
     }
     
     
@@ -2438,6 +2468,15 @@ extension NewTabMapViewController: UserListSearchViewDelegate {
 
 
 extension NewTabMapViewController : NewListPhotoCellDelegate, MessageControllerDelegate, SharePhotoListControllerDelegate, ListViewControllerDelegate, LegitSearchViewControllerDelegate, RefreshFilterBarCellDelegate, SelectedFilterBarCellDelegate, BottomEmojiBarDelegate, UserSearchBarDelegate {
+    
+    func didTapFilterLegit() {
+        
+    }
+
+    
+    func didTapMapButton() {
+        
+    }
     
     func didTapEmojiBackButton() {
         

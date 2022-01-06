@@ -23,6 +23,8 @@ protocol UserSearchBarDelegate {
     func didTapGridButton()
     func didTapEmojiButton()
     func didTapEmojiBackButton()
+    func didTapMapButton()
+    func didTapFilterLegit()
 }
 
 
@@ -62,6 +64,13 @@ class UserSearchBar: UIView, UISearchBarDelegate {
             updateFilteringLabel()
             updateSearchTerms()
             toggleBarView()
+            self.isFilteringLegit = viewFilter.filterLegit
+        }
+    }
+    
+    var showMapButton: Bool = true {
+        didSet {
+            
         }
     }
     
@@ -156,8 +165,8 @@ class UserSearchBar: UIView, UISearchBarDelegate {
             self.navGridToggleButton.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
             self.navGridToggleButton.setTitle(isGridView ? "Grid " : "List ", for: .normal)
         }
-        
     }
+    
     var navGridButtonWidth: NSLayoutConstraint?
     
     var showEmoji: Bool = false {
@@ -193,6 +202,69 @@ class UserSearchBar: UIView, UISearchBarDelegate {
     }()
     
     
+    
+    lazy var navMapButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        let icon = #imageLiteral(resourceName: "map").withRenderingMode(.alwaysTemplate)
+        button.setImage(icon, for: .normal)
+        button.layer.backgroundColor = UIColor.clear.cgColor
+        button.layer.borderColor = UIColor.ianLegitColor().cgColor
+        button.layer.borderWidth = 0
+        button.layer.cornerRadius = 2
+        button.clipsToBounds = true
+        button.contentHorizontalAlignment = .center
+        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+        button.tintColor = UIColor.ianBlackColor()
+        button.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMapButton)))
+        button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+        return button
+    }()
+    
+    var navMapButtonWidth: NSLayoutConstraint?
+
+    
+    @objc func didTapMapButton() {
+        self.delegate?.didTapMapButton()
+    }
+    
+    let filterLegitButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        button.setImage(#imageLiteral(resourceName: "legit_small"), for: .normal)
+        button.addTarget(self, action: #selector(filterLegitPosts), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.selectedColor().cgColor
+        button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = true
+        return button
+    }()
+    
+    var hideFilterLegitButtonWidth: NSLayoutConstraint?
+
+    
+    var isFilteringLegit: Bool = false {
+        didSet {
+            self.updateFilterLegitButton()
+        }
+    }
+    
+    let buttonSemiAlpha:CGFloat = 0.6
+
+    
+    func updateFilterLegitButton() {
+        filterLegitButton.backgroundColor = self.isFilteringLegit ? UIColor.lightSelectedColor() : UIColor.ianWhiteColor()
+        filterLegitButton.alpha = self.isFilteringLegit ? 1 : buttonSemiAlpha
+
+    }
+    
+        @objc func filterLegitPosts() {
+            self.isFilteringLegit = !self.isFilteringLegit
+            self.updateFilterLegitButton()
+            self.delegate?.didTapFilterLegit()
+        }
+    
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -213,15 +285,19 @@ class UserSearchBar: UIView, UISearchBarDelegate {
 //        navEmojiButton.isHidden = true
 //        updateEmojiButton()
         
-        addSubview(navGridToggleButton)
-        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
-        navGridButtonWidth = navGridToggleButton.widthAnchor.constraint(equalToConstant: 60)
-        navGridButtonWidth?.isActive = true
-        navGridToggleButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
-//        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-        setupnavGridToggleButton()
+//        addSubview(navGridToggleButton)
+//        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
+//        navGridButtonWidth = navGridToggleButton.widthAnchor.constraint(equalToConstant: 60)
+//        navGridButtonWidth?.isActive = true
+//        navGridToggleButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
+////        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+//        setupnavGridToggleButton()
         
-        
+        addSubview(navMapButton)
+        navMapButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
+        navMapButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
+        navMapButtonWidth = navMapButton.widthAnchor.constraint(equalToConstant: 35)
+        navMapButtonWidth?.isActive = true
 //        searchBarView.addSubview(filteringLabel)
 //        filteringLabel.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
 //        filteringLabel.textAlignment = .left
@@ -229,14 +305,25 @@ class UserSearchBar: UIView, UISearchBarDelegate {
 //        filteringLabel.layer.masksToBounds = true
 //        filteringLabel.backgroundColor = UIColor.clear
         
+//        addSubview(filterLegitButton)
+//        filterLegitButton.anchor(top: nil, left: nil, bottom: nil, right: navMapButton.leftAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 35, height: 35)
+//        filterLegitButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
+//        filterLegitButton.layer.cornerRadius = 35/2
+//        filterLegitButton.clipsToBounds = true
+//        filterLegitButton.alpha = buttonSemiAlpha
+//        updateFilterLegitButton()
+//        hideFilterLegitButtonWidth = filterLegitButton.widthAnchor.constraint(equalToConstant: 0)
+//        hideFilterLegitButtonWidth?.isActive = true
+        
+        
         setupSearchBar()
         searchBarView.addSubview(fullSearchBar)
-        fullSearchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: navGridToggleButton.leftAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        fullSearchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: navMapButton.leftAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
 //        fullSearchBar.rightAnchor.constraint(equalTo: navGridToggleButton.leftAnchor, constant: 5).isActive = true
 //        fullSearchBar.rightAnchor.constraint(equalTo: navEmojiButton.leftAnchor, constant: 5).isActive = false
 
         addSubview(filteringView)
-        filteringView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: navGridToggleButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        filteringView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: navMapButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         
 //        filteringView.addSubview(navSearchButton)
@@ -545,6 +632,10 @@ extension UserSearchBar: UICollectionViewDelegate, UICollectionViewDataSource {
         
             if self.viewFilter.isFiltering {
                 displayText = "\(filteredPostCount) \nPosts"
+
+//                if self.viewFilter.filterLegit {
+//                    displayText = "Top \(filteredPostCount) \nPosts"
+//                }
             } else if self.viewFilter.filterSort == sortNew {
                 displayText = "Newest\nEmojis"
             } else if self.viewFilter.filterSort == sortNearest {
@@ -559,7 +650,7 @@ extension UserSearchBar: UICollectionViewDelegate, UICollectionViewDataSource {
             
             refreshCell.emojiTitle.text = displayText
             refreshCell.emojiTitle.sizeToFit()
-            refreshCell.backgroundColor = .clear
+            refreshCell.backgroundColor = /*self.viewFilter.filterLegit ? UIColor.selectedColor() : */.clear
             refreshCell.emojiTitle.backgroundColor = .clear
             refreshCell.sizeToFit()
             refreshCell.layoutIfNeeded()

@@ -197,10 +197,13 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 
             self.ratingEmojiLabel.text = ""
             self.ratingEmojiLabelWidth?.isActive = true
+            self.ratingEmojiLabel.isHidden = true
+            self.ratingEmojiLabelWidth?.constant = 0
             if let ratingEmoji = self.post?.ratingEmoji {
                 if extraRatingEmojis.contains(ratingEmoji) {
                     self.ratingEmojiLabel.text = ratingEmoji
-                    self.ratingEmojiLabelWidth?.isActive = false
+                    self.ratingEmojiLabel.isHidden = false
+                    self.ratingEmojiLabelWidth?.constant = ratingEmojiSize
                 }
             }
             
@@ -351,10 +354,15 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     let ratingEmojiLabel: UILabel = {
         let label = UILabel()
         label.text = "😍"
-        label.font = UIFont.boldSystemFont(ofSize: 25)
+        label.backgroundColor = UIColor.selectedColor().withAlphaComponent(0.8)
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textAlignment = NSTextAlignment.center
         label.sizeToFit()
         return label
     }()
+    
+    let ratingEmojiSize: CGFloat = 30
+    
     var ratingEmojiLabelWidth:NSLayoutConstraint?
 
     //  EMOJIS
@@ -1014,11 +1022,11 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         
         // Photo Image View
         addSubview(photoImageScrollView)
-        photoImageScrollView.anchor(top: topAnchor, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 3, paddingLeft: 10, paddingBottom: 3, paddingRight: 4, width: 0, height: 0)
+        photoImageScrollView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 1, paddingLeft: 1, paddingBottom: 1, paddingRight: 4, width: 0, height: 0)
         photoImageScrollView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         photoImageScrollView.isPagingEnabled = true
         photoImageScrollView.delegate = self
-        photoImageScrollView.layer.cornerRadius = 10
+        photoImageScrollView.layer.cornerRadius = 5
         photoImageScrollView.clipsToBounds = true
         photoImageScrollView.layer.borderWidth = 0.5
         photoImageScrollView.layer.borderColor = UIColor.lightGray.cgColor
@@ -1037,9 +1045,10 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         photoImageView.frame = CGRect(x: 0, y: 0, width: self.frame.height, height: self.frame.height)
         photoImageScrollView.addSubview(photoImageView)
         photoImageView.tag = 0
+
         
         addSubview(userProfileImageView)
-        userProfileImageView.anchor(top: photoImageScrollView.topAnchor, left: nil, bottom: nil, right: photoImageScrollView.rightAnchor, paddingTop: 5, paddingLeft: 2, paddingBottom: 5, paddingRight: 5, width: userProfileImageHeight, height: userProfileImageHeight)
+        userProfileImageView.anchor(top: photoImageScrollView.topAnchor, left: nil, bottom: nil, right: rightAnchor, paddingTop: 8, paddingLeft: 2, paddingBottom: 5, paddingRight: 8, width: userProfileImageHeight, height: userProfileImageHeight)
         userProfileImageView.layer.cornerRadius = userProfileImageHeight/2
         userProfileImageView.clipsToBounds = true
         userProfileImageView.layer.borderWidth = 0.25
@@ -1058,7 +1067,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 
         // Location Data
         addSubview(locationNameLabel)
-        locationNameLabel.anchor(top: photoImageScrollView.topAnchor, left: leftAnchor, bottom: nil, right: photoImageScrollView.leftAnchor, paddingTop: 10, paddingLeft: 20, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
+        locationNameLabel.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.rightAnchor, bottom: nil, right: userProfileImageView.leftAnchor, paddingTop: 10, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
         locationNameLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 35).isActive = true
 //        locationNameLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 30).isActive = true
         
@@ -1076,51 +1085,60 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         
         let postdetailView = UIView()
         addSubview(postdetailView)
-        postdetailView.anchor(top: locationNameLabel.bottomAnchor, left: leftAnchor, bottom: photoImageScrollView.bottomAnchor, right: photoImageScrollView.leftAnchor, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        postdetailView.anchor(top: locationNameLabel.bottomAnchor, left: locationNameLabel.leftAnchor, bottom: photoImageScrollView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
         postdetailView.isUserInteractionEnabled = true
         postdetailView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ListPhotoCell.handlePictureTap)))
 
         
 
+
+//        addSubview(ratingEmojiLabel)
+//        ratingEmojiLabel.anchor(top: nil, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 3, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+//        ratingEmojiLabelWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
+//        ratingEmojiLabelWidth?.isActive = true
+//
+
         
         // ADD STAR RATING
         addSubview(starRating)
-        starRating.anchor(top: postdetailView.topAnchor, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        starRating.anchor(top: postdetailView.topAnchor, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 4, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
 //        starRating.centerYAnchor.constraint(equalTo: userProfileImageView.centerYAnchor).isActive = true
 //        hideStarRatingWidth = starRating.heightAnchor.constraint(equalToConstant: 0)
         
+//        ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
+
+
+        
+
+
         
         addSubview(ratingEmojiLabel)
-        ratingEmojiLabel.anchor(top: nil, left: starRating.rightAnchor, bottom: nil, right: nil, paddingTop: 3, paddingLeft: 4, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        ratingEmojiLabel.anchor(top: nil, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 3, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: ratingEmojiSize)
         ratingEmojiLabelWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: 0)
+        ratingEmojiLabel.layer.cornerRadius = ratingEmojiSize / 2
+        ratingEmojiLabel.clipsToBounds = true
         ratingEmojiLabelWidth?.isActive = true
         
-        ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
-
-
-        
-
-
-
 
 
     // ADD EMOJIS
         addSubview(emojiArray)
-        emojiArray.anchor(top: starRating.bottomAnchor, left: postdetailView.leftAnchor, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 2, paddingBottom: 5, paddingRight: 5, width: 0, height: 20)
+        emojiArray.anchor(top: starRating.bottomAnchor, left: ratingEmojiLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 2, paddingBottom: 5, paddingRight: 5, width: 0, height: 20)
 //        emojiArray.centerYAnchor.constraint(equalTo: userProfileImageView.centerYAnchor).isActive = true
         emojiArray.delegate = self
         emojiArray.alignment = .left
+        ratingEmojiLabel.centerYAnchor.constraint(equalTo: emojiArray.centerYAnchor).isActive = true
         
         
         addSubview(emojiDetailLabel)
-        emojiDetailLabel.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: photoImageScrollView.rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 35)
+        emojiDetailLabel.anchor(top: nil, left: photoImageScrollView.leftAnchor, bottom: photoImageScrollView.bottomAnchor, right: photoImageScrollView.rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 35)
         self.hideEmojiDetailLabel()
         
         
     // DATE
         addSubview(dateLabel)
           dateLabel.textAlignment = NSTextAlignment.right
-        dateLabel.anchor(top: nil, left: nil, bottom: postdetailView.bottomAnchor, right: photoImageScrollView.leftAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 3, paddingRight: 15, width: 0, height: 0)
+        dateLabel.anchor(top: nil, left: nil, bottom: postdetailView.bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 3, paddingRight: 15, width: 0, height: 0)
           dateLabel.sizeToFit()
         
         
