@@ -587,21 +587,19 @@ class SingleListViewController: UIViewController {
            
 
         Database.checkLocationForSort(filter: self.viewFilter) {
-            Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: listSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-                self.fetchedPosts = sortedPosts ?? []
-
-             Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-                    
-                    self.displayedPosts = filteredPosts ?? []
-                    self.updateDetailLabel()
-                    print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
-                 
-                     self.updateNoFilterCounts()
-                    if self.imageCollectionView.isDescendant(of: self.view) {
-                        self.imageCollectionView.reloadData()
-                    }
+            Database.filterSortPosts(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { finalPosts in
+                self.displayedPosts = finalPosts ?? []
+                if !self.viewFilter.isFiltering {
+                    self.fetchedPosts = finalPosts ?? []
                 }
-            })
+                self.updateDetailLabel()
+                print("  ~ FINISH | Filter and Sorting Post | \(finalPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
+             
+                 self.updateNoFilterCounts()
+                if self.imageCollectionView.isDescendant(of: self.view) {
+                    self.imageCollectionView.reloadData()
+                }
+            }
         }
 
        }
@@ -1264,10 +1262,6 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
             listSort = (self.viewFilter.filterSort)!
         }
         
-        
-        Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: listSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-            self.fetchedPosts = sortedPosts ?? []
-
         let tempFilter = self.viewFilter.copy() as! Filter
             self.isFiltering = self.viewFilter.isFiltering
             
@@ -1277,27 +1271,22 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
                 self.isFiltering = true
             }
          }
-            
-
-            Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: tempFilter) { (filteredPosts) in
-                
-                self.displayedPosts = filteredPosts ?? []
-                
-                print("  ~ FINISH | Filter and Sorting Post | Post \(filteredPosts?.count) Posts | Pre \(self.fetchedPosts.count) | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id) | \(tempFilter.filterCaptionArray)")
-                if (filteredPosts?.count ?? 0) > 0 {
-                    let temp = filteredPosts![0] as Post
-                    print(temp.locationName)
-                }
-                
-                self.imageCollectionView.reloadSections(IndexSet(integer: 1))
-
+        
+        Database.filterSortPosts(inputPosts: self.fetchedPosts, postFilter: tempFilter) { finalPosts in
+            self.displayedPosts = finalPosts ?? []
+            if !tempFilter.isFiltering {
+                self.fetchedPosts = finalPosts ?? []
             }
-        })
+            
+            print("  ~ FINISH | filterContentForSearchText Post | Post \(finalPosts?.count) Posts | Pre \(self.fetchedPosts.count) | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id) | \(tempFilter.filterCaptionArray)")
+            if (finalPosts?.count ?? 0) > 0 {
+                let temp = finalPosts![0] as Post
+                print(temp.locationName)
+            }
+            
+            self.imageCollectionView.reloadSections(IndexSet(integer: 1))
+        }
         
-        
-//        self.filterSortFetchedPosts()
-//        self.viewFilter.filterCaptionArray.
-//        self.searchTableView.filterContentForSearchText(searchText)
     }
     
     func handleFilter() {

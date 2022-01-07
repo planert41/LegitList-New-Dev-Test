@@ -9025,6 +9025,18 @@ extension Database{
         
     }
     
+    static func filterSortPosts(inputPosts: [Post]?, postFilter: Filter, completion: @escaping ([Post]?) -> ()){
+            
+            // Filter Posts
+            Database.filterPostsNew(inputPosts: inputPosts, postFilter: postFilter) { (filteredPosts) in
+                // Sort Posts
+                Database.sortPosts(inputPosts: filteredPosts, selectedSort: postFilter.filterSort, selectedLocation: postFilter.filterLocation, completion: { (filteredSortedPosts) in
+                    completion(filteredSortedPosts)
+                    
+                })
+            }
+    }
+    
     static func filterPostsNew(inputPosts: [Post]?, postFilter: Filter?, completion: @escaping ([Post]?) -> ()){
         guard let inputPosts = inputPosts else {
             print("Filter Posts: ERROR, No Post")

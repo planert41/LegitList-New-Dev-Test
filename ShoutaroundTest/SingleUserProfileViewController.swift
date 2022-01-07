@@ -936,29 +936,24 @@ extension SingleUserProfileViewController {
         
         
         self.isFiltering = self.viewFilter.isFiltering
-     
-        Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-            self.fetchedPosts = sortedPosts ?? []
-
-         Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-                
-                self.displayedPosts = filteredPosts ?? []
-                self.updateDetailLabel()
-
-                print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
-             
-                self.updateNoFilterCounts()
-                self.updateBottomSearchBar()
-            // Reload Data here to reload header, because only update the pics everywhere else
-                self.imageCollectionView.reloadData()
-                self.imageCollectionView.refreshControl?.endRefreshing()
-                self.paginatePosts()
-
-//                if self.imageCollectionView.isDescendant(of: self.view) {
-//                    self.imageCollectionView.reloadData()
-//                }
+        
+        Database.filterSortPosts(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { finalPosts in
+            self.displayedPosts = finalPosts ?? []
+            if !self.viewFilter.isFiltering {
+                self.fetchedPosts = finalPosts ?? []
             }
-        })
+            self.updateDetailLabel()
+
+            print("  ~ FINISH | Filter and Sorting Post | \(self.fetchedPosts.count ?? 0) Fetched | \(finalPosts?.count ?? 0) Filtered | \(self.displayUser?.username) - \(self.displayUserId)")
+         
+            self.updateNoFilterCounts()
+            self.updateBottomSearchBar()
+        // Reload Data here to reload header, because only update the pics everywhere else
+            self.imageCollectionView.reloadData()
+            self.imageCollectionView.refreshControl?.endRefreshing()
+            self.paginatePosts()
+            
+        }
     }
     
     func updateNoFilterCounts(){
@@ -1045,28 +1040,19 @@ extension SingleUserProfileViewController {
     @objc func refreshPostsForSort(){
        self.isFiltering = self.viewFilter.isFiltering
         Database.checkLocationForSort(filter: self.viewFilter) {
-            Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-                self.fetchedPosts = sortedPosts ?? []
-
-             Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { (filteredPosts) in
-                    
-                    self.displayedPosts = filteredPosts ?? []
-                    print("  ~ FINISH | Filter and Sorting Post | \(filteredPosts?.count) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
-                 
-                    self.updateNoFilterCounts()
-                    self.imageCollectionView.reloadSections(IndexSet(integer: 0))
-
-                // Reload Data here to reload header, because only update the pics everywhere else
-     //               self.imageCollectionView.reloadData()
-     //               self.paginatePosts()
-
-     //                if self.imageCollectionView.isDescendant(of: self.view) {
-     //                    self.imageCollectionView.reloadData()
-     //                }
+            Database.sortPosts(inputPosts: self.displayedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
+                self.displayedPosts = sortedPosts ?? []
+                if !self.viewFilter.isFiltering {
+                    self.fetchedPosts = sortedPosts ?? []
                 }
+                print("  ~ FINISH | Sorting Post | \(sortedPosts?.count ?? 0) Posts | \(self.displayUser?.username) - \(self.displayUserId)")
+             
+                self.updateNoFilterCounts()
+                self.imageCollectionView.reloadSections(IndexSet(integer: 0))
             })
         }
     }
+    
     
     @objc func locationUpdated() {
         if self.isPresented  {
@@ -1199,10 +1185,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     func filterCaptionSelected(searchedText: String?) {
         self.tempSearchBarText = searchedText
         print("filterContentForSearchText | \(searchedText)")
-
-        Database.sortPosts(inputPosts: self.fetchedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
-            self.fetchedPosts = sortedPosts ?? []
-
+        
         let tempFilter = self.viewFilter.copy() as! Filter
             self.isFiltering = self.viewFilter.isFiltering
             
@@ -1212,27 +1195,23 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
                 self.isFiltering = true
             }
          }
-            
-
-            Database.filterPostsNew(inputPosts: self.fetchedPosts, postFilter: tempFilter) { (filteredPosts) in
-                
-                self.displayedPosts = filteredPosts ?? []
-                
-                print("  ~ FINISH | filterContentForSearchText | Post \(filteredPosts?.count) Posts | Pre \(self.fetchedPosts.count) | \(self.displayUser?.username) | \(tempFilter.filterCaptionArray)")
-                if (filteredPosts?.count ?? 0) > 0 {
-                    let temp = filteredPosts![0] as Post
-                    print(temp.locationName)
-                }
-                
-                self.paginatePostsCount = (self.isFiltering) ? self.displayedPosts.count : self.fetchedPosts.count
-                self.imageCollectionView.reloadSections(IndexSet(integer: 0))
-//
-//                self.refreshPagination()
-//                self.paginatePosts()
-//                self.imageCollectionView.reloadSections(IndexSet(integer: 1))
-
+        
+        Database.filterSortPosts(inputPosts: self.fetchedPosts, postFilter: tempFilter) { finalPosts in
+            self.displayedPosts = finalPosts ?? []
+            if !tempFilter.isFiltering {
+                self.fetchedPosts = finalPosts ?? []
             }
-        })
+            
+            print("  ~ FINISH | filterContentForSearchText | Post \(finalPosts?.count) Posts | Pre \(self.fetchedPosts.count) | \(self.displayUser?.username) | \(tempFilter.filterCaptionArray)")
+            if (finalPosts?.count ?? 0) > 0 {
+                let temp = finalPosts![0] as Post
+                print(temp.locationName)
+            }
+            
+            self.paginatePostsCount = (self.isFiltering) ? self.displayedPosts.count : self.fetchedPosts.count
+            self.imageCollectionView.reloadSections(IndexSet(integer: 0))
+            
+        }
 
     }
 
@@ -1466,7 +1445,20 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
             
             let filteredindexpath = IndexPath(row:index!, section: 0)
             self.displayedPosts.remove(at: index!)
-            self.imageCollectionView.deleteItems(at: [filteredindexpath])
+            
+            // Remove from Fetched View
+            let fetchedIndex = self.fetchedPosts.firstIndex { (filteredpost) -> Bool in
+                filteredpost.id  == post.id
+            }
+            
+            let fetchedindexpath = IndexPath(row:fetchedIndex!, section: 0)
+            self.fetchedPosts.remove(at: fetchedIndex!)
+            
+            if self.isFiltering {
+                self.imageCollectionView.deleteItems(at: [filteredindexpath])
+            } else {
+                self.imageCollectionView.deleteItems(at: [fetchedindexpath])
+            }
             Database.deletePost(post: post)
         }))
         
