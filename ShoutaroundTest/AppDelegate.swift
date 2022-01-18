@@ -791,6 +791,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         allNonCuisineEmojis = allEmojis.filter({ (emoji) -> Bool in
             return !cuisineExclude.contains(emoji.emoji)
         })
+        print("compileEmojis Complete : \(allEmojis.count) AllEmojis , \(EmojiDictionaryEmojis.count) EmojiDictionaryEmojis, \(allNonCuisineEmojis.count) allNonCuisineEmojis")
         
     }
     

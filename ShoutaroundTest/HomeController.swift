@@ -493,7 +493,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         self.viewFilter?.filterSort = sort
         self.viewFilter?.defaultSort = sort
 
-        if (self.viewFilter?.filterSort == HeaderSortOptions[1] && self.viewFilter?.filterLocation == nil){
+        if (self.viewFilter?.filterSort == sortNearest && self.viewFilter?.filterLocation == nil){
                 print("Sort by Nearest, No Location, Look up Current Location")
                 LocationSingleton.sharedInstance.determineCurrentLocation()
                 let when = DispatchTime.now() + defaultGeoWaitTime // change 2 to desired number of seconds
@@ -1090,9 +1090,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                     
                     try Auth.auth().signOut()
                     CurrentUser.clear()
-                    let loginController = LoginController()
-                    let navController = UINavigationController( rootViewController: loginController)
-                    self.present(navController, animated: true, completion: nil)
+                    self.extShowLogin()
                     
                 } catch let signOutErr {
                     print("Failed to sign out:", signOutErr)

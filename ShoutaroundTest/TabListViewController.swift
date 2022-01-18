@@ -1198,11 +1198,7 @@ class TabListViewController: UIViewController, UITableViewDelegate, UITableViewD
             alert.addAction(UIAlertAction(title: "Sign Up", style: UIAlertAction.Style.cancel, handler: { (action: UIAlertAction!) in
                 
                 DispatchQueue.main.async {
-                    let signUpController = SignUpController()
-                    let loginController = LoginController()
-                    let navController = UINavigationController(rootViewController: loginController)
-                    navController.pushViewController(signUpController, animated: false)
-                    self.present(navController, animated: true, completion: nil)
+                    self.extShowSignUp()
                 }
             }))
             
@@ -1233,11 +1229,7 @@ class TabListViewController: UIViewController, UITableViewDelegate, UITableViewD
             alert.addAction(UIAlertAction(title: "Sign Up", style: UIAlertAction.Style.cancel, handler: { (action: UIAlertAction!) in
                 
                 DispatchQueue.main.async {
-                    let signUpController = SignUpController()
-                    let loginController = LoginController()
-                    let navController = UINavigationController(rootViewController: loginController)
-                    navController.pushViewController(signUpController, animated: false)
-                    self.present(navController, animated: true, completion: nil)
+                    self.extShowSignUp()
                 }
             }))
             

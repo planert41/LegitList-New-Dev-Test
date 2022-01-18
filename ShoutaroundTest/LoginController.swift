@@ -217,7 +217,7 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     
     let resetPassword: UIButton = {
         let button = UIButton(type: .system)
-        let attributedTitle = NSMutableAttributedString(string: "Forgot Your Password? ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.lightGray]))
+        let attributedTitle = NSMutableAttributedString(string: "Forgot Password? ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.lightGray]))
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         
@@ -227,7 +227,7 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     
     let guestSignIn: UIButton = {
         let button = UIButton(type: .system)
-        let attributedTitle = NSMutableAttributedString(string: "Skip For Now", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.darkGray]))
+        let attributedTitle = NSMutableAttributedString(string: "Guest Sign In", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.darkGray]))
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         
@@ -237,7 +237,9 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
 
     
     @objc func handleGuestSignIn(){
-     
+        self.dismiss(animated: true, completion: nil)
+        return
+
             Auth.auth().signInAnonymously { (authResult, err) in
                 if let err = err {
                     self.alert(title: "Sign In Error", message: "Guest Sign In Error: \(err)")

@@ -190,6 +190,9 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         
         
         NotificationCenter.default.addObserver(self, selector: #selector(didCreateNewList), name:TabListViewController.refreshListNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
+
         
         setupNavigationItems()
         setupSortButton()
@@ -258,6 +261,23 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
             var displayFilter = (isSelected) ? "Sort \(sortOptions)" : sortOptions
             sender.setTitle(displayFilter, forSegmentAt: index)
             sender.setWidth((isSelected) ? 90 : 60, forSegmentAt: index)
+        }
+    }
+    
+    @objc func locationUpdated() {
+        if self.isPresented  {
+            if self.selectedSort  == sortNearest && (CurrentUser.currentLocation != nil){
+                self.sortItems()
+            }
+        }
+    }
+    
+    @objc func locationDenied() {
+        if self.isPresented {
+            self.missingLocAlert()
+            self.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
+            self.selectedSort = sortNew
+            print("LegitHomeView Location Denied Function")
         }
     }
 

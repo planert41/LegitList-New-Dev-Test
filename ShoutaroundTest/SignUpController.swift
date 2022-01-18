@@ -1091,6 +1091,42 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 //        }
     }
     
+    let legitTermsLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.clear
+//        label.font = UIFont(font: .avenirBlack, size: 30)
+        label.font = UIFont(name: "Poppins-Regular", size: 14)
+        label.text = "Terms & Conditions"
+        label.textColor = UIColor.mainBlue()
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.textAlignment = .center
+        return label
+    }()
+    
+    let legitPrivacyLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.clear
+//        label.font = UIFont(font: .avenirBlack, size: 30)
+        label.font = UIFont(name: "Poppins-Regular", size: 14)
+        label.text = "Privacy Policy"
+        label.textColor = UIColor.mainBlue()
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.textAlignment = .center
+        return label
+    }()
+    
+    @objc func tapLegitTerms() {
+        self.extOpenLegitTerms()
+    }
+    
+    @objc func tapLegitPrivacy() {
+        self.extOpenLegitPrivacy()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -1135,9 +1171,23 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 //
         setupInputFields()
         
+        view.addSubview(legitTermsLabel)
+        legitTermsLabel.anchor(top: stackView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        legitTermsLabel.sizeToFit()
+        legitTermsLabel.isUserInteractionEnabled = true
+        legitTermsLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapLegitTerms)))
+        
+        view.addSubview(legitPrivacyLabel)
+        legitPrivacyLabel.anchor(top: legitTermsLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        legitPrivacyLabel.sizeToFit()
+        legitPrivacyLabel.isUserInteractionEnabled = true
+        legitPrivacyLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapLegitPrivacy)))
+        
         view.addSubview(alreadyHaveAccountButton)
         alreadyHaveAccountButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
 //        alreadyHaveAccountButton.backgroundColor = UIColor.yellow
+
+
 
         
         if (appleUid?.count ?? 0) > 0 {
@@ -1204,6 +1254,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
     }
     
+    var stackView = UIStackView()
+
+    
     fileprivate func setupInputFields()
     {
 
@@ -1228,7 +1281,6 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
         self.signUpButton.isEnabled = false
         
-        var stackView = UIStackView()
         if self.editUserInd {
             stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, updatePasswordButton, signUpButton, cancelButton])
         } else {

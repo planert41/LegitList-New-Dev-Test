@@ -1067,39 +1067,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
 
 
     func handleLogOut() {
-        
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alertController.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (_) in
-            
-            do {
-                if Auth.auth().currentUser?.isAnonymous == true {
-                    let user = Auth.auth().currentUser
-                    user?.delete { error in
-                        if let error = error {
-                            print("Error Deleting Guest User")
-                        } else {
-                            print("Guest User Deleted")
-                        }
-                    }
-                }
-                
-                
-                try Auth.auth().signOut()
-                CurrentUser.clear()
-                let manager = LoginManager()
-                try manager.logOut()
-                let loginController = LoginController()
-                let navController = UINavigationController( rootViewController: loginController)
-                self.present(navController, animated: true, completion: nil)
-                
-            } catch let signOutErr {
-                print("Failed to sign out:", signOutErr)
-            }
-
-        }))
-        
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        present(alertController, animated: true, completion: nil)
+        self.extSignOutUser()
     }
     
     

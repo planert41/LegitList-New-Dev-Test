@@ -9880,20 +9880,21 @@ extension Database{
             
             var filterLocation: CLLocation? = nil
             
-            if selectedLocation != nil {
+            if let selectedLocation = selectedLocation {
+                print("User Sort Nearest: Provided Location")
                 filterLocation = selectedLocation
-            }
-                
-            else if selectedLocation == nil {
-                print("Sort Nearest: Default Current Location")
+            } else {
+                print("User Sort Nearest: Default Current Location")
                 filterLocation = CurrentUser.currentLocation
             }
             
             if filterLocation == nil {
-                print("Sort Nearest: ERROR, No Location")
-                completion(nil)
+                print("User Posts Error - Sort Nearest With No Location")
+                LocationSingleton.sharedInstance.determineCurrentLocation()
+                completion(inputUsers)
                 return
             }
+
             
             //Update Posts for distances
             for (index,user) in tempUsers.enumerated() {

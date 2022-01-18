@@ -150,6 +150,11 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         
         let index = viewControllers?.firstIndex(of: viewController)
         
+        guard let curUser = Auth.auth().currentUser else {
+            self.extShowLogin()
+            return false
+        }
+        
         if (Auth.auth().currentUser?.isAnonymous)! && (index == 4 || index == 3){
             print("Guest User")
             var message = ""
@@ -458,8 +463,10 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     
     @objc func presentLogin(){
         print("MainTabBar | No User | Display Login")
-        let loginController = LoginController()
-        loginController.delegate = self
+//        let loginController = LoginController()
+//        loginController.delegate = self
+        let loginController = OpenAppViewController()
+
         let navController = UINavigationController(rootViewController: loginController)
         self.present(navController, animated: true, completion: nil)
     }

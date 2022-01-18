@@ -1275,9 +1275,7 @@ extension UIViewController {
                 
                 let manager = LoginManager()
                 try manager.logOut()
-                let loginController = LoginController()
-                let navController = UINavigationController( rootViewController: loginController)
-                self.present(navController, animated: true, completion: nil)
+                self.extShowLogin()
                 
             } catch let signOutErr {
                 print("Failed to sign out:", signOutErr)
@@ -1287,6 +1285,20 @@ extension UIViewController {
         
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alertController, animated: true, completion: nil)
+    }
+    
+    func extShowLogin() {
+        let loginController = LoginController()
+        let navController = UINavigationController( rootViewController: loginController)
+        self.present(navController, animated: true, completion: nil)
+    }
+    
+    func extShowSignUp() {
+        let signUpController = SignUpController()
+        let loginController = LoginController()
+        let navController = UINavigationController(rootViewController: loginController)
+        navController.pushViewController(signUpController, animated: false)
+        self.present(navController, animated: true, completion: nil)
     }
     
     func extShowUserLikesForPost(inputPost: Post?, displayFollowing: Bool = true) {
@@ -1401,6 +1413,15 @@ extension UIViewController {
             
         }
     
+    func extOpenLegitTerms() {
+        guard let url = URL(string: "https://pages.flycricket.io/legit/terms.html") else { return }
+        UIApplication.shared.open(url)
+    }
+    
+    func extOpenLegitPrivacy() {
+        guard let url = URL(string: "https://pages.flycricket.io/legit/privacy.html") else { return }
+        UIApplication.shared.open(url)
+    }
         
     
 //    
@@ -2048,6 +2069,24 @@ extension UISearchBar {
         sc.layer.borderWidth = 0
         sc.layer.cornerRadius = 10
         sc.layer.masksToBounds = true
+    }
+    
+    func getTextField() -> UITextField? { return value(forKey: "searchField") as? UITextField }
+    func setTextFieldBackground(color: UIColor) {
+        guard let textField = getTextField() else { return }
+        switch searchBarStyle {
+        case .minimal:
+            textField.layer.backgroundColor = color.cgColor
+            textField.layer.cornerRadius = 10
+            textField.clipsToBounds = true
+            if let backgroundview = textField.subviews.first {
+                // Rounded corner
+                backgroundview.layer.cornerRadius = 10;
+                backgroundview.clipsToBounds = true;
+            }
+        case .prominent, .default: textField.backgroundColor = color
+        @unknown default: break
+        }
     }
 }
 
