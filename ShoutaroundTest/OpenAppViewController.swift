@@ -54,6 +54,20 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         return button
     }()
     
+    let findOutMoreButton: UIButton = {
+        
+        let button = UIButton(type: .system)
+        button.setTitle("Find Out More", for: .normal)
+        button.backgroundColor = UIColor.clear
+        button.layer.cornerRadius = 15
+        button.titleLabel?.font = UIFont(font: .avenirNextDemiBold, size: 12)
+        button.setTitleColor(.lightGray, for: .normal)
+        button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+//        button.addTarget(self, action: #selector(handleLogIn), for: .touchUpInside)
+        button.isEnabled = true
+        return button
+    }()
+    
     var LegitImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.image = #imageLiteral(resourceName: "Legit_Vector").withRenderingMode(.alwaysOriginal)
@@ -90,12 +104,25 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     
     let infoText =
     """
-    The friend-sourcing app to share and discover good food wherever you are
+    Find 🍔 You ♥️ From Your 🙋‍♂️🙋‍♀️
+    Discover great food from your friends
     """
     
+    let LegitSubImageLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.layer.masksToBounds = true
+        label.font = UIFont(name: "Poppins-Regular", size: 11)
+        label.backgroundColor = UIColor.clear
+        label.text = "Find 🍔 You ♥️ From Your 🙋‍♂️🙋‍♀️"
+        label.textColor = UIColor.darkGray
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    
 //    """
-//    Friend-sourcing unique food recommendations anywhere you are
-//
+//    Find 🍔 You ♥️ From Your 🙋‍♂️🙋‍♀️//
 //    Tap to learn more
 //    """
     
@@ -137,9 +164,13 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         infoView.backgroundColor = UIColor.backgroundGrayColor()
 
+        infoView.addSubview(findOutMoreButton)
+        findOutMoreButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 30, paddingRight: 50, width: 0, height: 0)
+        findOutMoreButton.sizeToFit()
+//        findOutMoreButton.isHidden = true
         
         infoView.addSubview(signUpButton)
-        signUpButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 100, paddingRight: 50, width: 0, height: 50)
+        signUpButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 80, paddingRight: 50, width: 0, height: 50)
         signUpButton.addTarget(self, action: #selector(tapSignup), for: .touchUpInside)
         
         infoView.addSubview(loginButton)
@@ -147,20 +178,27 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         loginButton.addTarget(self, action: #selector(tapLogin), for: .touchUpInside)
 
         infoView.addSubview(infoTextView)
-        infoTextView.anchor(top: nil, left: infoView.leftAnchor, bottom: loginButton.topAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 30, paddingBottom: 30, paddingRight: 30, width: 0, height: 0)
+        infoTextView.anchor(top: nil, left: infoView.leftAnchor, bottom: loginButton.topAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 30, paddingBottom: 25, paddingRight: 30, width: 0, height: 0)
         infoTextView.text = infoText
-        infoTextView.font = UIFont(font: .avenirNextRegular, size: 16)
+        infoTextView.font = UIFont(font: .avenirNextRegular, size: 17)
+//        infoTextView.font = UIFont(name: "Poppins-SemiBold", size: 18)
+        
         infoTextView.textColor = UIColor.darkGray
         infoTextView.sizeToFit()
         
+//        infoView.addSubview(LegitSubImageLabel)
+//        LegitSubImageLabel.anchor(top: nil, left: infoView.leftAnchor, bottom: infoTextView.topAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 30, paddingBottom: 10, paddingRight: 30, width: 0, height: 0)
+//        LegitSubImageLabel.sizeToFit()
+//        LegitSubImageLabel.isHidden = true
+
         infoView.addSubview(LegitImageView)
-        LegitImageView.anchor(top: infoView.topAnchor, left: nil, bottom: infoTextView.topAnchor, right: nil, paddingTop: 30, paddingLeft: 25, paddingBottom: 15, paddingRight: 25, width: 0, height: 45)
+        LegitImageView.anchor(top: nil, left: nil, bottom: infoTextView.topAnchor, right: nil, paddingTop: 30, paddingLeft: 25, paddingBottom: 15, paddingRight: 25, width: 0, height: 45)
         LegitImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 
         
         view.addSubview(pageControl)
         setupPageControl()
-        pageControl.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.topAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 0, height: 40)
+        pageControl.anchor(top: infoView.topAnchor, left: infoView.leftAnchor, bottom: LegitImageView.topAnchor, right: infoView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 15, paddingRight: 0, width: 0, height: 20)
         pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 //        pageControl.backgroundColor = UIColor.yellow
         startTimer()
@@ -206,11 +244,11 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func setupPageControl(){
-        let imageCount = 4
+        let imageCount = self.backgroundImgs.count
         self.pageControl.numberOfPages = imageCount
         self.pageControl.currentPage = self.currentImage
         self.pageControl.tintColor = UIColor.red
-        self.pageControl.pageIndicatorTintColor = UIColor.white
+        self.pageControl.pageIndicatorTintColor = UIColor.lightGray
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
         self.pageControl.sizeToFit()
     }
@@ -218,7 +256,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     
     func setupBackgroundImageView() {
 
-        self.backgroundImgs = [self.fullIMapImg, self.fullIFeedImg, self.fullIPostImg, self.fullIProfileImg]
+        self.backgroundImgs = [self.fullIMapImg, self.fullIFeedImg, self.fullIPostImg, self.fullIProfileImg, self.fullIListImg]
         var imgCount = backgroundImgs.count
         backgroundImageView.contentSize.width = backgroundImageView.frame.width * CGFloat((imgCount))
 
