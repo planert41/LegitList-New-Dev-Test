@@ -158,12 +158,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     
     
     
-    let emailTextField: UITextField = {
-        let tf = UITextField()
+    let emailTextField: PaddedTextField = {
+        let tf = PaddedTextField()
         tf.placeholder = "Email"
 //        tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
-        tf.font = UIFont.systemFont(ofSize: 14)
+        tf.font = UIFont.boldSystemFont(ofSize: 15)
         tf.backgroundColor = UIColor.white
 
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
@@ -204,14 +204,14 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }
     
     
-    let usernameTextField: UITextField = {
-        let tf = UITextField()
+    let usernameTextField: PaddedTextField = {
+        let tf = PaddedTextField()
         tf.placeholder = "Username"
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.backgroundColor = UIColor.white
 
         tf.borderStyle = .roundedRect
-        tf.font = UIFont.systemFont(ofSize: 14)
+        tf.font = UIFont.boldSystemFont(ofSize: 15)
 
         
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
@@ -220,12 +220,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         
     }()
     
-    let passwordTextField: UITextField = {
-        let tf = UITextField()
+    let passwordTextField: PaddedTextField = {
+        let tf = PaddedTextField()
         tf.placeholder = "Password"
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.borderStyle = .roundedRect
-        tf.font = UIFont.systemFont(ofSize: 14)
+        tf.font = UIFont.boldSystemFont(ofSize: 15)
         tf.isSecureTextEntry = true
         tf.backgroundColor = UIColor.white
 
@@ -303,14 +303,13 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         
-        button.addTarget(self, action: #selector(handleAlreadyHaveAccount), for: .touchUpInside)
+        button.addTarget(self, action: #selector(signIn), for: .touchUpInside)
         return button
     }()
     
-    @objc func handleAlreadyHaveAccount() {
-        
-        navigationController?.popViewController(animated: true)
-        
+    @objc func signIn() {
+        let login = LoginController()
+        self.navigationController?.pushViewController(login, animated: true)
     }
     
     var updateImage: Bool = false
@@ -1183,28 +1182,62 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         legitPrivacyLabel.isUserInteractionEnabled = true
         legitPrivacyLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapLegitPrivacy)))
         
-        view.addSubview(alreadyHaveAccountButton)
-        alreadyHaveAccountButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
-//        alreadyHaveAccountButton.backgroundColor = UIColor.yellow
-
-
+        setupBottomFields()
+        
+//        view.addSubview(alreadyHaveAccountButton)
+//        alreadyHaveAccountButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+////        alreadyHaveAccountButton.backgroundColor = UIColor.yellow
 
         
-        if (appleUid?.count ?? 0) > 0 {
-            self.signUpButton.isEnabled = true
-            self.signUpButton.backgroundColor = UIColor.ianBlueColor()
-            print("ViewDidLoad | Appld UID: \(appleUid)")
-        } else {
-            signUpButton.isEnabled = false
-            signUpButton.backgroundColor = UIColor.ianBlueColor().withAlphaComponent(0.2)
-        }
+
+//        
+//        if (appleUid?.count ?? 0) > 0 {
+//            self.signUpButton.isEnabled = true
+//            self.signUpButton.backgroundColor = UIColor.ianBlueColor()
+//            print("ViewDidLoad | Appld UID: \(appleUid)")
+//        } else {
+//            signUpButton.isEnabled = false
+//            signUpButton.backgroundColor = UIColor.ianBlueColor().withAlphaComponent(0.2)
+//        }
         
 
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(handleAlreadyHaveAccount))
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(signIn))
         swipeLeft.direction = .left
         self.view.addGestureRecognizer(swipeLeft)
 
 
+    }
+    
+    let signInButton: UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString()
+        attributedTitle.append(NSAttributedString(string: "Sign In", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont(name: "Poppins-Bold", size: 20), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.ianLegitColor()])))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+     //   button.setTitle("Don't have an account? Sign Up.", for: .normal)
+        button.addTarget(self, action: #selector(signIn), for: .touchUpInside)
+        return button
+    }()
+
+    
+    let backButton: UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString()
+        attributedTitle.append(NSAttributedString(string: "Back", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont(name: "Poppins-Bold", size: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.lightGray])))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+     //   button.setTitle("Don't have an account? Sign Up.", for: .normal)
+        button.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
+        return button
+    }()
+    
+    fileprivate func setupBottomFields() {
+        let stackView = UIStackView(arrangedSubviews: [backButton, signInButton])
+        stackView.axis = .horizontal
+        stackView.spacing = 50
+        stackView.distribution = .fillEqually
+        
+        view.addSubview(stackView)
+        stackView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 25, paddingRight: 0, width: 0, height: 50)
+    
     }
     
     @objc func updatePhoto(image: UIImage?){

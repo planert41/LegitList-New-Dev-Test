@@ -104,10 +104,10 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     
     let infoText =
     """
-    Find 🍔 You ♥️ From Your 🙋‍♂️🙋‍♀️
     Discover great food from your friends
     """
-    
+//    Find 🍔 You ♥️ From Your 🙋‍♂️🙋‍♀️
+
     let LegitSubImageLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -167,10 +167,11 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoView.addSubview(findOutMoreButton)
         findOutMoreButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 30, paddingRight: 50, width: 0, height: 0)
         findOutMoreButton.sizeToFit()
+        findOutMoreButton.addTarget(self, action: #selector(extShowOnboarding), for: .touchUpInside)
 //        findOutMoreButton.isHidden = true
         
         infoView.addSubview(signUpButton)
-        signUpButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 80, paddingRight: 50, width: 0, height: 50)
+        signUpButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 70, paddingRight: 50, width: 0, height: 50)
         signUpButton.addTarget(self, action: #selector(tapSignup), for: .touchUpInside)
         
         infoView.addSubview(loginButton)
@@ -198,7 +199,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         
         view.addSubview(pageControl)
         setupPageControl()
-        pageControl.anchor(top: infoView.topAnchor, left: infoView.leftAnchor, bottom: LegitImageView.topAnchor, right: infoView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 15, paddingRight: 0, width: 0, height: 20)
+        pageControl.anchor(top: infoView.topAnchor, left: infoView.leftAnchor, bottom: LegitImageView.topAnchor, right: infoView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 0, height: 20)
         pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
 //        pageControl.backgroundColor = UIColor.yellow
         startTimer()

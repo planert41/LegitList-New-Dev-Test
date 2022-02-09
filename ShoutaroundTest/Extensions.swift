@@ -1293,6 +1293,14 @@ extension UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+    @objc func extShowOnboarding() {
+        print("showOnboarding")
+        let welcomeView = NewUserOnboardView()
+        let testNav = UINavigationController(rootViewController: welcomeView)
+        self.present(testNav, animated: true, completion: nil)
+//        NotificationCenter.default.post(name: MainTabBarController.showOnboarding, object: nil)
+    }
+    
     func extShowSignUp() {
         let signUpController = SignUpController()
         let loginController = LoginController()

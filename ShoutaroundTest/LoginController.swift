@@ -227,11 +227,12 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     
     let guestSignIn: UIButton = {
         let button = UIButton(type: .system)
-        let attributedTitle = NSMutableAttributedString(string: "Guest Sign In", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.darkGray]))
+        let attributedTitle = NSMutableAttributedString(string: "Sign In As Guest", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 16), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.gray]))
         
         button.setAttributedTitle(attributedTitle, for: .normal)
         
         button.addTarget(self, action: #selector(handleGuestSignIn), for: .touchUpInside)
+        button.isHidden = true
         return button
     }()
 
@@ -284,19 +285,11 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     }
     
     
-    let dontHaveAccountButton: UIButton = {
+    let signUpButton: UIButton = {
         let button = UIButton(type: .system)
-        
-//        let attributedTitle = NSMutableAttributedString(string: "Don't have an account? ", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 14), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.lightGray]))
-        
         let attributedTitle = NSMutableAttributedString()
-
-        
-        attributedTitle.append(NSAttributedString(string: "Sign Up For An Account 👈", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont(name: "Poppins-Bold", size: 22), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.ianLegitColor()])))
-        
+        attributedTitle.append(NSAttributedString(string: "Sign Up", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont(name: "Poppins-Bold", size: 20), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.ianLegitColor()])))
         button.setAttributedTitle(attributedTitle, for: .normal)
-        
-        
      //   button.setTitle("Don't have an account? Sign Up.", for: .normal)
         button.addTarget(self, action: #selector(handleShowSignUp), for: .touchUpInside)
         return button
@@ -346,7 +339,7 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     lazy var appleLogInButton : ASAuthorizationAppleIDButton = {
         let button = ASAuthorizationAppleIDButton()
         button.addTarget(self, action: #selector(handleAppleIdRequest), for: .touchUpInside)
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         return button
     }()
@@ -355,7 +348,16 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     var appleUid: String?
     var appleUsername: String?
     
-
+    let backButton: UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString()
+        attributedTitle.append(NSAttributedString(string: "Back", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont(name: "Poppins-Bold", size: 18), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.lightGray])))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+     //   button.setTitle("Don't have an account? Sign Up.", for: .normal)
+        button.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -381,19 +383,22 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
         
         setupInputFields()
         
-        view.addSubview(legitOnboardingLabel)
-        legitOnboardingLabel.anchor(top: dontHaveAccountButton.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        legitOnboardingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        legitOnboardingLabel.sizeToFit()
-        legitOnboardingLabel.isUserInteractionEnabled = true
-        legitOnboardingLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showOnboarding)))
+        setupBottomFields()
         
-
-        
-        view.addSubview(guestSignIn)
-        guestSignIn.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 25, paddingRight: 0, width: 0, height: 50)
-
-        
+//        view.addSubview(legitOnboardingLabel)
+//        legitOnboardingLabel.anchor(top: dontHaveAccountButton.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+//        legitOnboardingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        legitOnboardingLabel.sizeToFit()
+//        legitOnboardingLabel.isUserInteractionEnabled = true
+//        legitOnboardingLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showOnboarding)))
+    
+//        view.addSubview(backButton)
+//        backButton.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 25, paddingRight: 0, width: 0, height: 50)
+//
+//        view.addSubview(signUpButton)
+//        signUpButton.anchor(top: nil, left: view.leftAnchor, bottom: backButton.topAnchor, right: view.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+//
+//
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -717,6 +722,17 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
         
     }
 
+    
+    fileprivate func setupBottomFields() {
+        let stackView = UIStackView(arrangedSubviews: [backButton, signUpButton])
+        stackView.axis = .horizontal
+        stackView.spacing = 50
+        stackView.distribution = .fillEqually
+        
+        view.addSubview(stackView)
+        stackView.anchor(top: nil, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 25, paddingRight: 0, width: 0, height: 50)
+    
+    }
 
     
     fileprivate func setupInputFields() {
@@ -758,8 +774,13 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
             resetPassword.anchor(top: stackView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         }
         
-        view.addSubview(dontHaveAccountButton)
-        dontHaveAccountButton.anchor(top: resetPassword.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
+        
+        view.addSubview(guestSignIn)
+        guestSignIn.anchor(top: resetPassword.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 25, paddingRight: 0, width: 0, height: 50)
+
+//
+//        view.addSubview(dontHaveAccountButton)
+//        dontHaveAccountButton.anchor(top: resetPassword.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
 
         // ADD APPLE SIGN IN
 //        appleLoginButton()
@@ -819,7 +840,7 @@ extension LoginController: ASAuthorizationControllerDelegate, ASAuthorizationCon
     @available(iOS 13, *)
     func addAppleSignIn(){
         view.addSubview(appleLogInButton)
-        appleLogInButton.anchor(top: dontHaveAccountButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15, paddingLeft: 40, paddingBottom: 0, paddingRight: 40, width: 0, height: 50)
+        appleLogInButton.anchor(top: signUpButton.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15, paddingLeft: 40, paddingBottom: 0, paddingRight: 40, width: 0, height: 50)
         appleLogInButton.isUserInteractionEnabled = true
         
         appleLogInButton.addTarget(self, action: #selector(handleAppleIdRequest), for: .touchDown)
