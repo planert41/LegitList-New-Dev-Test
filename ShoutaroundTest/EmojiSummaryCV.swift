@@ -209,9 +209,11 @@ extension EmojiSummaryCV: UICollectionViewDelegate, UICollectionViewDataSource, 
          // EMOJI CELLS
                 var tempEmoji = displayedEmojis[indexPath.row - badgeCount]
                 var displayTerm = tempEmoji.capitalizingFirstLetter()
+                var tempWord = ""
                 
                 if let text = EmojiDictionary[displayTerm] {
-                    displayTerm += " \(text.capitalizingFirstLetter())"
+                    tempWord = text
+                    displayTerm += " \(tempWord.capitalizingFirstLetter())"
                 }
                 
                 let attributedString = NSMutableAttributedString(string: displayTerm, attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Regular", size: 12), NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor()])
@@ -231,7 +233,7 @@ extension EmojiSummaryCV: UICollectionViewDelegate, UICollectionViewDataSource, 
                     print("EMOJI CV - FILTERING ",tempEmoji)
                 }
 //                filterCell.backgroundColor = filterCell.isFiltering ? UIColor.mainBlue().withAlphaComponent(0.6) : UIColor.ianWhiteColor()
-//                filterCell.uploadLocations.attributedText = attributedString
+                filterCell.uploadLocations.attributedText = attributedString
                 filterCell.uploadLocations.sizeToFit()
                 filterCell.layer.borderColor =  UIColor.lightGray.cgColor
                 filterCell.layer.borderWidth = 1
