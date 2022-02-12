@@ -15,7 +15,7 @@ import FirebaseDatabase
 import FirebaseStorage
 
 
-class NewUserOnboardView3: UIViewController {
+class NewUserOnboardView5: UIViewController {
 
     
     @objc func animateLabels(){
@@ -55,10 +55,12 @@ class NewUserOnboardView3: UIViewController {
     
     
     @objc func handleNext(){
-//        let listView = UserWelcome2View()
-        let listView = NewUserOnboardView4()
-        self.navigationController?.pushViewController(listView, animated: true)
-        //        self.navigationController?.present(listView, animated: true, completion: nil)
+//        self.dismiss(animated: true) {
+//        }
+////        let listView = UserWelcome2View()
+        let lastView = NewUserOnboardViewLast()
+        self.navigationController?.pushViewController(lastView, animated: true)
+//                self.navigationController?.present(listView, animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -115,16 +117,72 @@ class NewUserOnboardView3: UIViewController {
     
     let infoText =
     """
-    See a map of all your food photos
+    Use the map function to see posts or lists on a map and find
 
     Filter your map by emoji, food, user or lists
-    to find Legit food around you
+    to find Legit food around you.
     """
 
 //    No more endlessly scrolling through your photos to find a specific food picture
 //    No more forgetting the name of that awesome restaurant from 3 years ago
 //    Remember all the food you tried on your last trip and share your recommendations
     
+    var marginScale: CGFloat = 1
+    
+    func updateTextView(){
+        // start with our text data
+        let fontSize = 16 * marginScale
+        let font = UIFont(font: .avenirNextRegular, size: 16 * marginScale)
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.darkGray,
+            .paragraphStyle: paragraph
+            ]
+        
+        let myString = NSMutableAttributedString(string: "Tap  ",
+                                                 attributes: attributes)
+        
+        // A text attachment object contains either an NSData object or an FileWrapper object,
+        // which in turn holds the contents of the attached file.
+        let mapImageAttachment = NSTextAttachment()
+        var tempMapImg = #imageLiteral(resourceName: "map").colorImage(with: UIColor.darkGray)
+        
+        mapImageAttachment.image = tempMapImg
+        var imageSize = mapImageAttachment.image!.size.width;
+        var scaleFactor = CGFloat(mapImageAttachment.image!.size.width/fontSize)
+        print("SCALE", scaleFactor, fontSize, mapImageAttachment.image!.size.height, mapImageAttachment.image!.size.width)
+
+        // scale the image down
+        mapImageAttachment.image = UIImage(cgImage: mapImageAttachment.image!.cgImage!, scale: 1, orientation: .up)
+        
+        // create attributed string from image so we can append it
+        let mapImageString = NSAttributedString(attachment: mapImageAttachment)
+        
+        // add the NSTextAttachment wrapper to our original string, then add some more text.
+        myString.append(mapImageString)
+        myString.append(NSAttributedString(string: " to display posts on a map and quickly see what's nearby.", attributes: attributes))
+        
+        let myString2 = NSMutableAttributedString(string: "\n\nTap ",
+                                                 attributes: attributes)
+        myString.append(myString2)
+        
+        let legitImageAttachment = NSTextAttachment()
+        var tempLegitImg = #imageLiteral(resourceName: "legit_icon")
+        legitImageAttachment.image = tempLegitImg
+        imageSize = legitImageAttachment.image!.size.width;
+        scaleFactor = CGFloat(legitImageAttachment.image!.size.width/fontSize)
+        legitImageAttachment.image = UIImage(cgImage: legitImageAttachment.image!.cgImage!, scale: scaleFactor, orientation: .up)
+        
+        let legitImageString = NSAttributedString(attachment: legitImageAttachment)
+        myString.append(legitImageString)
+        myString.append(NSAttributedString(string: " to filter for top rated posts.", attributes: attributes))
+        
+        // set the text for the UITextView
+        infoTextView.attributedText = myString;
+    }
         
     let nextButton: UIButton = {
         let button = UIButton()
@@ -197,7 +255,7 @@ class NewUserOnboardView3: UIViewController {
         button.titleLabel?.textAlignment = NSTextAlignment.left
         button.setTitleColor(UIColor.darkGray, for: .normal)
         
-        button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleTransitionBack), for: .touchUpInside)
         return button
     } ()
     
@@ -210,7 +268,7 @@ class NewUserOnboardView3: UIViewController {
         transition.subtype = CATransitionSubtype.fromLeft
         transition.timingFunction = CAMediaTimingFunction(name:CAMediaTimingFunctionName.easeInEaseOut)
         view.window!.layer.add(transition, forKey: kCATransition)
-        let welcomeView = NewUserOnboardView2()
+        let welcomeView = NewUserOnboardView4()
         self.navigationController?.pushViewController(welcomeView, animated: true)
         print("handleBack")
 
@@ -219,7 +277,7 @@ class NewUserOnboardView3: UIViewController {
     
     override func viewDidLoad() {
         
-        let marginScale = CGFloat(UIScreen.main.bounds.height > 750 ? 1 : 0.8)
+        marginScale = CGFloat(UIScreen.main.bounds.height > 750 ? 1 : 0.8)
         let topMargin = CGFloat(UIScreen.main.bounds.height > 750 ? 30 : 25)
         let sideMargin = CGFloat(UIScreen.main.bounds.height > 750 ? 15 : 10)
 
@@ -238,6 +296,10 @@ class NewUserOnboardView3: UIViewController {
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(handleNext))
         swipeLeft.direction = .left
         self.view.addGestureRecognizer(swipeLeft)
+        
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleBack))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleNext))
         self.view.addGestureRecognizer(tapGesture)
@@ -285,6 +347,7 @@ class NewUserOnboardView3: UIViewController {
         infoTextView.font = UIFont(font: .avenirNextRegular, size: 16 * marginScale)
         infoTextView.textColor = UIColor.darkGray
         infoTextView.sizeToFit()
+        updateTextView()
         
         self.view.bringSubviewToFront(nextButton)
 
@@ -313,7 +376,7 @@ class NewUserOnboardView3: UIViewController {
     
     func setupPageControl(){
         self.pageControl.numberOfPages = 6
-        self.pageControl.currentPage = 3
+        self.pageControl.currentPage = 5
         self.pageControl.tintColor = UIColor.lightGray
         self.pageControl.pageIndicatorTintColor = UIColor.lightGray
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()

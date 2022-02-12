@@ -1175,6 +1175,11 @@ extension UIViewController {
         }
     }
     
+    @objc func handleTransitionBack(){
+        print("Handle Transition Back")
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     func showMessagingOptions(post: Post?){
         guard let post = post else {return}
 
@@ -1288,8 +1293,8 @@ extension UIViewController {
     }
     
     func extShowLogin() {
-        let loginController = LoginController()
-        let navController = UINavigationController( rootViewController: loginController)
+        let openAppController = OpenAppViewController()
+        let navController = UINavigationController( rootViewController: openAppController)
         self.present(navController, animated: true, completion: nil)
     }
     
@@ -1868,7 +1873,7 @@ class RightButtonPaddedUILabel: UILabel {
 
 extension UIImage{
 
-    class func imageWithColor(color: UIColor) -> UIImage {
+    func imageWithColor(color: UIColor) -> UIImage {
         let rect: CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 1, height: 1), false, 0)
         color.setFill()
@@ -1970,6 +1975,26 @@ extension UIImage{
             UIGraphicsEndImageContext()
             return newImage!
         }
+    
+    func colorImage(with color: UIColor) -> UIImage? {
+        guard let cgImage = self.cgImage else { return nil }
+        UIGraphicsBeginImageContext(self.size)
+        let contextRef = UIGraphicsGetCurrentContext()
+
+        contextRef?.translateBy(x: 0, y: self.size.height)
+        contextRef?.scaleBy(x: 1.0, y: -1.0)
+        let rect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
+
+        contextRef?.setBlendMode(CGBlendMode.normal)
+        contextRef?.draw(cgImage, in: rect)
+        contextRef?.setBlendMode(CGBlendMode.sourceIn)
+        color.setFill()
+        contextRef?.fill(rect)
+
+        let coloredImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return coloredImage
+    }
     
 }
 

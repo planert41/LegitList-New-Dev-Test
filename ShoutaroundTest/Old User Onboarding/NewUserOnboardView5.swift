@@ -15,7 +15,7 @@ import FirebaseDatabase
 import FirebaseStorage
 
 
-class NewUserOnboardView4: UIViewController {
+class NewUserOnboardView6: UIViewController {
 
     
     @objc func animateLabels(){
@@ -55,9 +55,13 @@ class NewUserOnboardView4: UIViewController {
     
     
     @objc func handleNext(){
+        self.dismiss(animated: true) {
+            print("handleBack")
+        }
+        
 //        let listView = UserWelcome2View()
-        let listView = NewUserOnboardView5()
-        self.navigationController?.pushViewController(listView, animated: true)
+//        let listView = NewUserOnboardingView2()
+//        self.navigationController?.pushViewController(listView, animated: true)
         //        self.navigationController?.present(listView, animated: true, completion: nil)
     }
     
@@ -77,8 +81,9 @@ class NewUserOnboardView4: UIViewController {
     
     var infoImageView: UIImageView = {
         let img = UIImageView()
-        img.image = #imageLiteral(resourceName: "Example_list").withRenderingMode(.alwaysOriginal)
-        img.contentMode = .scaleAspectFit
+//        img.image = #imageLiteral(resourceName: "Example_feed").withRenderingMode(.alwaysOriginal)
+        img.image = #imageLiteral(resourceName: "Example_feed_full").withRenderingMode(.alwaysOriginal)
+        img.contentMode = .scaleToFill
         img.alpha = 1
         return img
     }()
@@ -89,7 +94,7 @@ class NewUserOnboardView4: UIViewController {
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
         label.font = UIFont(name: "Poppins-Bold", size: 30)
-        label.text = "Create and Share Lists"
+        label.text = "Friend-Sourcing Food"
         label.textColor = UIColor.ianBlackColor()
         label.numberOfLines = 0
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -111,17 +116,20 @@ class NewUserOnboardView4: UIViewController {
         return tv
     }()
     
-    let headerText = "Tag By Emoji"
     
     let infoText =
     """
-    Curate lists of your top restaurants
-    for your favorite foods, city or recent trip
-    Ex: Ramen, Chicago, Tokyo Vacation
+    Your Home Feed is the collective food brain 🧠
+    of your friends' experiences
 
-    Share your lists with a friend or follow a friend's list
+    Follow their latest foodie adventures
+
+    Search your network for awesome food around the world. Don't Crowd-Source, Friend-Source.
     """
+    
 
+//    We believe in friend-sourcing not crowd-sourcing.
+//    Your friends have better taste and are more credible than unknown elite reviewers
 //    No more endlessly scrolling through your photos to find a specific food picture
 //    No more forgetting the name of that awesome restaurant from 3 years ago
 //    Remember all the food you tried on your last trip and share your recommendations
@@ -129,7 +137,7 @@ class NewUserOnboardView4: UIViewController {
         
     let nextButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Next", for: .normal)
+        button.setTitle("Welcome! 🥳", for: .normal)
 
         button.titleLabel?.textColor = UIColor.white
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
@@ -211,7 +219,7 @@ class NewUserOnboardView4: UIViewController {
         transition.subtype = CATransitionSubtype.fromLeft
         transition.timingFunction = CAMediaTimingFunction(name:CAMediaTimingFunctionName.easeInEaseOut)
         view.window!.layer.add(transition, forKey: kCATransition)
-        let welcomeView = NewUserOnboardView3()
+        let welcomeView = NewUserOnboardView4()
         self.navigationController?.pushViewController(welcomeView, animated: true)
         print("handleBack")
 
@@ -267,7 +275,7 @@ class NewUserOnboardView4: UIViewController {
         infoImageView.layer.borderColor = UIColor.lightGray.cgColor
         infoImageView.layer.borderWidth = 1
         infoImageView.backgroundColor = UIColor.backgroundGrayColor()
-        infoImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: topMargin, paddingLeft: 50, paddingBottom: 0, paddingRight: 50, width: 0, height: 0)
+        infoImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: topMargin, paddingLeft: 70, paddingBottom: 0, paddingRight: 70, width: 0, height: 0)
         infoImageView.layer.applySketchShadow()
 
         infoImageView.heightAnchor.constraint(equalTo: infoImageView.widthAnchor, multiplier: 1.5).isActive = true
@@ -314,7 +322,7 @@ class NewUserOnboardView4: UIViewController {
     
     func setupPageControl(){
         self.pageControl.numberOfPages = 6
-        self.pageControl.currentPage = 4
+        self.pageControl.currentPage = 5
         self.pageControl.tintColor = UIColor.lightGray
         self.pageControl.pageIndicatorTintColor = UIColor.lightGray
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()

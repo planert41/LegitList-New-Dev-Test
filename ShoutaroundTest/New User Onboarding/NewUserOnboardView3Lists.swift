@@ -15,7 +15,7 @@ import FirebaseDatabase
 import FirebaseStorage
 
 
-class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UploadEmojiCellDelegate {
+class NewUserOnboardView3: UIViewController {
 
     
     @objc func animateLabels(){
@@ -56,7 +56,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
     
     @objc func handleNext(){
 //        let listView = UserWelcome2View()
-        let listView = NewUserOnboardView2()
+        let listView = NewUserOnboardView4()
         self.navigationController?.pushViewController(listView, animated: true)
         //        self.navigationController?.present(listView, animated: true, completion: nil)
     }
@@ -77,7 +77,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
     
     var infoImageView: UIImageView = {
         let img = UIImageView()
-        img.image = #imageLiteral(resourceName: "Example_post").withRenderingMode(.alwaysOriginal)
+        img.image = #imageLiteral(resourceName: "Example_list").withRenderingMode(.alwaysOriginal)
         img.contentMode = .scaleAspectFit
         img.alpha = 1
         return img
@@ -89,7 +89,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
         label.font = UIFont(name: "Poppins-Bold", size: 30)
-        label.text = "Emoji Tags"
+        label.text = "Personal Lists"
         label.textColor = UIColor.ianBlackColor()
         label.numberOfLines = 0
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -111,18 +111,16 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         return tv
     }()
     
+    let headerText = "Tag By Emoji"
     
     let infoText =
     """
-    Tag your posts with food emojis like 🥞 (pancakes)
-
-    Express yourself with one of these 7 emojis:
-    """
-//    🍔 Food, 🐮 Ingredients, 🍳 Meal or 🇺🇸 Cuisine
-//     Rate more than 5 ⭐️s with these rating emojis like 👌 or 🔥
-//    Use food emojis to tag and index your posts for easy search later, like 🥞 pancakes
-
+    Create and share curated lists of your favorite foods. Ex: Ramen, Chicago, Tokyo trip.
     
+    Remember all the places from your vacation or curate recommendation lists for your friends.
+    
+    """
+
 //    No more endlessly scrolling through your photos to find a specific food picture
 //    No more forgetting the name of that awesome restaurant from 3 years ago
 //    Remember all the food you tried on your last trip and share your recommendations
@@ -199,7 +197,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         button.titleLabel?.textAlignment = NSTextAlignment.left
         button.setTitleColor(UIColor.darkGray, for: .normal)
         
-        button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleTransitionBack), for: .touchUpInside)
         return button
     } ()
     
@@ -212,22 +210,11 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         transition.subtype = CATransitionSubtype.fromLeft
         transition.timingFunction = CAMediaTimingFunction(name:CAMediaTimingFunctionName.easeInEaseOut)
         view.window!.layer.add(transition, forKey: kCATransition)
-        let welcomeView = NewUserOnboardView()
+        let welcomeView = NewUserOnboardView3()
         self.navigationController?.pushViewController(welcomeView, animated: true)
         print("handleBack")
 
     }
-    
-    var ratingEmojiCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.minimumInteritemSpacing = 10
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.tag = 9
-        cv.layer.borderWidth = 0
-        cv.allowsMultipleSelection = false
-        cv.backgroundColor = UIColor.lightSelectedColor()
-        return cv
-    }()
     
     
     override func viewDidLoad() {
@@ -252,6 +239,10 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         swipeLeft.direction = .left
         self.view.addGestureRecognizer(swipeLeft)
         
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleBack))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleNext))
         self.view.addGestureRecognizer(tapGesture)
 
@@ -270,12 +261,6 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         backButton.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         backButton.centerYAnchor.constraint(equalTo: nextButton.centerYAnchor).isActive = true
         backButton.sizeToFit()
-        
-//        self.view.addSubview(foodEmojiLabel)
-//        foodEmojiLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-//        foodEmojiLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//        foodEmojiLabel.font = UIFont(name: "Poppins-Bold", size: CGFloat(20))
-//        scheduledTimerWithTimeInterval()
 
         view.addSubview(infoImageView)
 //        infoImageView.heightAnchor.constraint(equalTo: infoImageView.widthAnchor, multiplier: 1.2).isActive = true
@@ -284,7 +269,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         infoImageView.layer.cornerRadius = 10
         infoImageView.layer.borderColor = UIColor.lightGray.cgColor
         infoImageView.layer.borderWidth = 1
-        infoImageView.backgroundColor = UIColor.white
+        infoImageView.backgroundColor = UIColor.backgroundGrayColor()
         infoImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: topMargin, paddingLeft: 50, paddingBottom: 0, paddingRight: 50, width: 0, height: 0)
         infoImageView.layer.applySketchShadow()
 
@@ -305,21 +290,16 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         infoTextView.textColor = UIColor.darkGray
         infoTextView.sizeToFit()
         
-        
-        view.addSubview(ratingEmojiCollectionView)
-        ratingEmojiCollectionView.anchor(top: infoTextView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 15, paddingBottom: 0, paddingRight: 15, width: 300, height: 35)
-        ratingEmojiCollectionView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        setupEmojiCollectionView()
-        
-        view.addSubview(emojiDetailLabel)
-        emojiDetailLabel.anchor(top: nil, left: nil, bottom: ratingEmojiCollectionView.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 0, width: 0, height: 0)
-        emojiDetailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        self.hideEmojiDetailLabel()
-        
-        
-
         self.view.bringSubviewToFront(nextButton)
 
+                        
+//        self.view.addSubview(foodEmojiLabel)
+//        foodEmojiLabel.anchor(top: infoTextView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+//        foodEmojiLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        foodEmojiLabel.font = UIFont(name: "Poppins-Bold", size: CGFloat(20))
+////        foodEmojiLabel.textColor = UIColor.darkGray
+////        foodEmojiLabel.sizeToFit()
+//        scheduledTimerWithTimeInterval()
         
 //        var swipeView = UIView()
 //        swipeView.backgroundColor = UIColor.clear
@@ -337,7 +317,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
     
     func setupPageControl(){
         self.pageControl.numberOfPages = 6
-        self.pageControl.currentPage = 1
+        self.pageControl.currentPage = 3
         self.pageControl.tintColor = UIColor.lightGray
         self.pageControl.pageIndicatorTintColor = UIColor.lightGray
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
@@ -376,110 +356,5 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
         
         
     }
-    
-    let emojiView = UIView()
-    let emojiLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.backgroundColor = UIColor.clear
-//        label.font = UIFont(font: .avenirBlack, size: 30)
-        label.font = UIFont(name: "Poppins-Bold", size: 25)
-        label.text = "Emoji Tags"
-        label.textColor = UIColor.ianLegitColor()
-        label.numberOfLines = 0
-        label.lineBreakMode = NSLineBreakMode.byWordWrapping
-
-        return label
-    }()
-    
-    func setupEmojiCollectionView(){
-
-        ratingEmojiCollectionView.backgroundColor = UIColor.white
-        ratingEmojiCollectionView.register(UploadEmojiCell.self, forCellWithReuseIdentifier: testemojiCellID)
-        
-        ratingEmojiCollectionView.delegate = self
-        ratingEmojiCollectionView.dataSource = self
-        ratingEmojiCollectionView.allowsMultipleSelection = false
-        ratingEmojiCollectionView.showsHorizontalScrollIndicator = false
-        ratingEmojiCollectionView.isPagingEnabled = true
-        ratingEmojiCollectionView.contentInset = UIEdgeInsets.init(top: 0, left: 0, bottom: 0, right: 0)
-        ratingEmojiCollectionView.isScrollEnabled = false
-        ratingEmojiCollectionView.backgroundColor = UIColor.backgroundGrayColor()
-        
-        var layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = UICollectionView.ScrollDirection.horizontal
-        layout.itemSize = CGSize(width: 35, height: 35)
-        layout.minimumInteritemSpacing = 5
-        ratingEmojiCollectionView.collectionViewLayout = layout
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return extraRatingEmojis.count
-    }
-    
-    let testemojiCellID = "testemojiCellID"
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: testemojiCellID, for: indexPath) as! UploadEmojiCell
-        cell.uploadEmojis.text = extraRatingEmojis[indexPath.item]
-        cell.backgroundColor = UIColor.white
-        cell.isSelected = false
-        cell.layer.borderColor = UIColor.clear.cgColor
-//            cell.alpha = isSelected ? 1 : 0.7
-        cell.isRatingEmoji = true
-        cell.turnOffSelection = true
-        cell.delegate = self
-        cell.layer.cornerRadius = cell.frame.width / 2
-        cell.sizeToFit()
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-    }
-    
-
-    func didTapNonRatingEmoji(emoji: String) {
-        
-    }
-    
-    
-    func didTapRatingEmoji(emoji: String) {
-        
-        guard let  displayEmojiTag = extraRatingEmojisDic[emoji]?.capitalizingFirstLetter() else {return}
-        
-        print("Selected Emoji \(index) | \(emoji) | \(displayEmojiTag)")
-        
-        var captionDelay = 3
-        emojiDetailLabel.text = "\(emoji)  \(displayEmojiTag)"
-        emojiDetailLabel.alpha = 1
-        emojiDetailLabel.sizeToFit()
-        
-        UIView.animate(withDuration: 0.5, delay: TimeInterval(captionDelay), options: UIView.AnimationOptions.curveEaseOut, animations: {
-            self.hideEmojiDetailLabel()
-        }, completion: { (finished: Bool) in
-        })
-    }
-    
-    func hideEmojiDetailLabel(){
-        self.emojiDetailLabel.alpha = 0
-    }
-    
-    let emojiDetailLabel: PaddedUILabel = {
-        let label = PaddedUILabel()
-        label.text = "Emojis"
-        label.font = UIFont.boldSystemFont(ofSize: 25)
-        label.textAlignment = NSTextAlignment.center
-        label.backgroundColor = UIColor.rgb(red: 255, green: 242, blue: 230)
-        label.layer.cornerRadius = 30/2
-        label.layer.borderWidth = 0.25
-        label.layer.borderColor = UIColor.black.cgColor
-        label.layer.masksToBounds = true
-        return label
-    }()
-
-    
-    
     
 }

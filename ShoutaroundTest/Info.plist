@@ -73,7 +73,11 @@
 	<string>Bluetooth functionality is used in one of the packages we used but never activated. But we should never ask you access for it. This is for Apple IOS security purposes</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We would like to access the camera to take photos.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Legit uses your current location to sort for posts nearest to you on your Feed and Map</string>
 	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Legit uses your current location to sort for posts nearest to you on your Feed and Map</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Legit uses your current location to sort for posts nearest to you on your Feed and Map</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We would like to access your microphone</string>
@@ -113,9 +117,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Legit uses your current location to sort for posts nearest to you on your Feed and Map</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Legit uses your current location to sort for posts nearest to you on your Feed and Map</string>
 </dict>
 </plist>

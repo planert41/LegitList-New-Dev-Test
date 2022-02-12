@@ -60,7 +60,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         button.setTitle("Find Out More", for: .normal)
         button.backgroundColor = UIColor.clear
         button.layer.cornerRadius = 15
-        button.titleLabel?.font = UIFont(font: .avenirNextDemiBold, size: 12)
+        button.titleLabel?.font = UIFont(font: .avenirNextDemiBold, size: 13)
         button.setTitleColor(.lightGray, for: .normal)
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
 //        button.addTarget(self, action: #selector(handleLogIn), for: .touchUpInside)
@@ -182,6 +182,8 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoTextView.anchor(top: nil, left: infoView.leftAnchor, bottom: loginButton.topAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 30, paddingBottom: 25, paddingRight: 30, width: 0, height: 0)
         infoTextView.text = infoText
         infoTextView.font = UIFont(font: .avenirNextRegular, size: 17)
+        infoTextView.isUserInteractionEnabled = true
+        infoTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(extShowOnboarding)))
 //        infoTextView.font = UIFont(name: "Poppins-SemiBold", size: 18)
         
         infoTextView.textColor = UIColor.darkGray
@@ -195,6 +197,8 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoView.addSubview(LegitImageView)
         LegitImageView.anchor(top: nil, left: nil, bottom: infoTextView.topAnchor, right: nil, paddingTop: 30, paddingLeft: 25, paddingBottom: 15, paddingRight: 25, width: 0, height: 45)
         LegitImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        LegitImageView.isUserInteractionEnabled = true
+        LegitImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(extShowOnboarding)))
 
         
         view.addSubview(pageControl)

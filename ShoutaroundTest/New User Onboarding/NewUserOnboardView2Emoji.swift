@@ -91,7 +91,7 @@ class NewUserOnboardView2: UIViewController {
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
         label.font = UIFont(name: "Poppins-Bold", size: 30)
-        label.text = "Search By Emoji"
+        label.text = "Emoji Search"
         label.textColor = UIColor.ianBlackColor()
         label.numberOfLines = 0
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -117,11 +117,43 @@ class NewUserOnboardView2: UIViewController {
     
     let infoText =
     """
-    Search posts by food emojis like
-    🍔 (Food), 🐮 (Content), 🍳 (Meal) or 🇺🇸 (Cuisine)
-
-    No more furiously scrolling through your album to find that one picture
+    Quickly search for posts by emoji tags.
+    🍔 Food
+    🐮 Ingredients
+    🍳 Meal
+    🇺🇸 Cuisine
     """
+    
+    func updateTextView(){
+        let marginScale = CGFloat(UIScreen.main.bounds.height > 750 ? 1 : 0.8)
+
+        // start with our text data
+        let fontSize = 16 * marginScale
+        let font = UIFont(font: .avenirNextRegular, size: 16 * marginScale)
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: UIColor.darkGray,
+            .paragraphStyle: paragraph
+            ]
+        
+        let myString = NSMutableAttributedString(string: "Quickly search for posts by its emoji tags.",
+                                                 attributes: attributes)
+        
+        let boldFont = UIFont(font: .avenirNextDemiBold, size: 17 * marginScale)
+        let boldAttributes: [NSAttributedString.Key: Any] = [
+            .font: boldFont,
+            .foregroundColor: UIColor.darkGray,
+            .paragraphStyle: paragraph
+            ]
+        let myString2 = NSMutableAttributedString(string: "\n🍔 Food\n🐮 Ingredients\n🍳 Meal\n🇺🇸 Cuisine ",
+                                                 attributes: boldAttributes)
+        myString.append(myString2)
+        
+        infoTextView.attributedText = myString;
+    }
 
 //    No more endlessly scrolling through your photos to find a specific food picture
 //    No more forgetting the name of that awesome restaurant from 3 years ago
@@ -199,7 +231,7 @@ class NewUserOnboardView2: UIViewController {
         button.titleLabel?.textAlignment = NSTextAlignment.left
         button.setTitleColor(UIColor.darkGray, for: .normal)
         
-        button.addTarget(self, action: #selector(handleBackButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleTransitionBack), for: .touchUpInside)
         return button
     } ()
     
@@ -217,6 +249,8 @@ class NewUserOnboardView2: UIViewController {
         print("handleBack")
 
     }
+    
+    
     
     
     override func viewDidLoad() {
@@ -240,6 +274,10 @@ class NewUserOnboardView2: UIViewController {
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(handleNext))
         swipeLeft.direction = .left
         self.view.addGestureRecognizer(swipeLeft)
+        
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(handleBack))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleNext))
         self.view.addGestureRecognizer(tapGesture)
@@ -287,6 +325,7 @@ class NewUserOnboardView2: UIViewController {
         infoTextView.font = UIFont(font: .avenirNextRegular, size: 16 * marginScale)
         infoTextView.textColor = UIColor.darkGray
         infoTextView.sizeToFit()
+        updateTextView()
         
         self.view.bringSubviewToFront(nextButton)
 

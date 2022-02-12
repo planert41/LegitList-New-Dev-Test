@@ -76,7 +76,7 @@ class NewUserOnboardView: UIViewController {
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
         label.font = UIFont(name: "Poppins-Bold", size: 30)
-        label.text = "Welcome, Foodie  🥳"
+        label.text = "Hello!"
         label.textColor = UIColor.ianLegitColor()
         label.numberOfLines = 0
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -117,6 +117,17 @@ class NewUserOnboardView: UIViewController {
     
     let infoText =
     """
+    We are foodies who love exploring new places through food.
+        
+    Whenever we travel, the first thing we would do is ask our friends and foodie network for recommendations.
+        
+    But the text messages, shared docs and pinned maps would quickly get messy.
+
+    So we build Legit to help us journal, share and discover our favorite foods.
+    """
+    
+    let oldinfoText =
+    """
     Your phone is a treasure trove of info on the food you have tried and loved.
 
     Legit creates a Social Food Journal with your food photos 📷 to:
@@ -126,6 +137,9 @@ class NewUserOnboardView: UIViewController {
     📫  Share food recommendations
     🔍  Find legit food from friends
     🙋‍♂️🙋‍♀️  Meet foodies with similar taste
+    
+        Crowdsource the internet to eat like a tourist, but ask your friends to eat like a local 🙋‍♂️🙋‍♀️
+
 
     """
 
@@ -164,7 +178,7 @@ class NewUserOnboardView: UIViewController {
     
     let backButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Dismiss", for: .normal)
+        button.setTitle("Back", for: .normal)
 
         button.titleLabel?.textColor = UIColor.darkGray
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
@@ -249,12 +263,12 @@ class NewUserOnboardView: UIViewController {
         view.addSubview(LegitLogo)
         LegitLogo.contentMode = .scaleAspectFit
         LegitLogo.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50 * marginScale, paddingLeft: 20 * marginScale, paddingBottom: 0, paddingRight: 20 * marginScale, width: 0, height: 0)
-        LegitLogo.alpha = 1
+        LegitLogo.alpha = 0
 
         
         
         view.addSubview(LegitLabel)
-        LegitLabel.anchor(top: LegitLogo.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50 * marginScale, paddingLeft: 20 * marginScale, paddingBottom: 40 * marginScale, paddingRight: 20 * marginScale, width: 0, height: 0)
+        LegitLabel.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50 * marginScale, paddingLeft: 20 * marginScale, paddingBottom: 40 * marginScale, paddingRight: 20 * marginScale, width: 0, height: 0)
         LegitLabel.sizeToFit()
         
         
@@ -263,6 +277,9 @@ class NewUserOnboardView: UIViewController {
 //        infoTextView.bottomAnchor.constraint(lessThanOrEqualTo: nextButton.topAnchor, constant: 10).isActive = true
         infoTextView.text = infoText
         infoTextView.font = UIFont(font: .avenirNextDemiBold, size: 20 * marginScale)
+        infoTextView.font = UIFont(name: "Poppins-Regular", size: 20 * marginScale)
+        infoTextView.font = UIFont(font: .avenirMedium, size: 20 * marginScale)
+
         infoTextView.textColor = UIColor.ianBlackColor()
         infoTextView.sizeToFit()
         
