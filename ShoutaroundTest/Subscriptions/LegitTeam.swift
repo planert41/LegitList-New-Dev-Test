@@ -30,7 +30,7 @@ class LegitTeamView : UITableViewController {
     let UserCellId = "UserCellId"
     let ListCellId = "ListCellId"
     
-    var teamUIDs = [UID_wei, UID_mayn, UID_ernie, UID_magnus]
+    var teamUIDs = [UID_wei, UID_mayn, UID_zm, UID_magnus, UID_ernie]
     var teamUsers: [User] = []
 
     
@@ -218,6 +218,7 @@ extension LegitTeamView {
     
     func userSelected(user: User?) {
         guard let user = user else {return}
+        print("USER SELECTED \(user.username)")
         self.extTapUser(userId: user.uid)
 //        self.delegate?.userSelected(user: user)
 //        self.dismiss(animated: true) {

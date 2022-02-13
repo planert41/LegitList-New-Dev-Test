@@ -54,9 +54,28 @@ class NewUserOnboardViewLast: UIViewController {
     var timer = Timer()
     
     
+    @objc func didTapMeetTheTeam() {
+        print("Meet The Team")
+        let postSocialController = LegitTeamView()
+        let nav = UINavigationController(rootViewController: postSocialController)
+        self.present(nav, animated: true) {
+        }
+    }
+    
     @objc func handleNext(){
         self.dismiss(animated: true) {
-        }//        let listView = UserWelcome2View()
+        }
+        
+//        if newUser {
+//            let userView = NewUserOnboardViewFollowing()
+//            self.navigationController?.pushViewController(userView, animated: true)
+//        } else {
+//            self.dismiss(animated: true) {
+//            }
+//        }
+        
+        
+//        let listView = UserWelcome2View()
 //        let listView = NewUserOnboardView4()
 //        self.navigationController?.pushViewController(listView, animated: true)
         //        self.navigationController?.present(listView, animated: true, completion: nil)
@@ -92,6 +111,20 @@ class NewUserOnboardViewLast: UIViewController {
         label.font = UIFont(name: "Poppins-Bold", size: 30)
         label.text = "Curate Lists"
         label.textColor = UIColor.ianBlackColor()
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+
+        return label
+    }()
+    
+    let teamLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.clear
+//        label.font = UIFont(font: .avenirBlack, size: 30)
+        label.font = UIFont(name: "Poppins-Regular", size: 20)
+        label.text = "Meet The Legit Team"
+        label.textColor = UIColor.ianLegitColor()
         label.numberOfLines = 0
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
 
@@ -237,6 +270,8 @@ class NewUserOnboardViewLast: UIViewController {
     
     override func viewDidLoad() {
         
+//        newUser = true
+        
         let marginScale = CGFloat(UIScreen.main.bounds.height > 750 ? 1 : 0.8)
         let topMargin = CGFloat(UIScreen.main.bounds.height > 750 ? 30 : 25)
         let sideMargin = CGFloat(UIScreen.main.bounds.height > 750 ? 15 : 10)
@@ -277,6 +312,9 @@ class NewUserOnboardViewLast: UIViewController {
         view.addSubview(nextButton)
         nextButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 50 * marginScale, paddingRight: 50 * marginScale, width: 200, height: 50 * marginScale)
         nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        nextButton.setTitle(newUser ? "Suggested Users" : "Welcome!", for: .normal)
+
+        
         nextButton.sizeToFit()
         
         view.addSubview(backButton)
@@ -292,6 +330,13 @@ class NewUserOnboardViewLast: UIViewController {
         infoTextView.font = UIFont(font: .avenirNextBold, size: 20 * marginScale)
         infoTextView.textColor = UIColor.darkGray
         infoTextView.sizeToFit()
+        
+        view.addSubview(teamLabel)
+        teamLabel.anchor(top: infoTextView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        teamLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        teamLabel.isUserInteractionEnabled = true
+        teamLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMeetTheTeam)))
+        
         
         self.view.bringSubviewToFront(nextButton)
 
@@ -314,7 +359,6 @@ class NewUserOnboardViewLast: UIViewController {
 //        swipeView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nextButton.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
 //
 
-        
         
     }
     

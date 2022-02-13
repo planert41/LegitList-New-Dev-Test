@@ -214,6 +214,13 @@ class NewUserOnboardView: UIViewController {
     
     override func viewDidLoad() {
         
+//        newUser = true
+//        if newUser {
+//            Database.fetchALLUsers { users in
+//                print("Prelim Fetch All Users | \(allUsersFetched.count)")
+//            }
+//        }
+        
         let marginScale = CGFloat(UIScreen.main.bounds.height > 750 ? 1 : 0.8)
         let topMargin = UIScreen.main.bounds.height > 750 ? 25 : 18
         let topGap = UIScreen.main.bounds.height > 750 ? 30 : 25

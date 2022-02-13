@@ -38,6 +38,7 @@ var appDelegatePostID: String? = nil {
 var appDelegateViewPage: Int = 0
 var appDelegateMapViewInd: Bool = false
 var newUser: Bool = false
+var allUsersFetched: [User] = []
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate{

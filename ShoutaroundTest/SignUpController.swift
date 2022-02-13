@@ -1056,7 +1056,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         mainTabBarController.selectedIndex = 0
         
         if newUser {
-//            self.showOnboarding()
+            self.showOnboarding()
         }
 
 //        if (Auth.auth().currentUser?.isAnonymous)! {

@@ -282,7 +282,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
             let xPosition = self.backgroundImageView.frame.width * CGFloat(i)
             imageView.frame = CGRect(x: xPosition, y: 0, width: backgroundImageView.frame.width, height: backgroundImageView.frame.height)
             backgroundImageView.addSubview(imageView)
-            print("adding Subview \(i), \(xPosition) | \(backgroundImageView.frame.width) | \(backgroundImageView.contentSize.width)")
+//            print("adding Subview \(i), \(xPosition) | \(backgroundImageView.frame.width) | \(backgroundImageView.contentSize.width)")
 
         }
         

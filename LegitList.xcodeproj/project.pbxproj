@@ -346,6 +346,7 @@
 		B6D98C2D26D7EB02002F6CEF /* PreviewPhotoContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D98C2C26D7EB02002F6CEF /* PreviewPhotoContainerView.swift */; };
 		B6E9201D27B75D7500A6B303 /* NewUserOnboardView4Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9201C27B75D7500A6B303 /* NewUserOnboardView4Feed.swift */; };
 		B6E9201F27B8513300A6B303 /* NewUserOnboardViewLast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */; };
+		B6E9202127B8647400A6B303 /* NewUserOnboardFollowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -720,6 +721,7 @@
 		B6D98C2C26D7EB02002F6CEF /* PreviewPhotoContainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewPhotoContainerView.swift; sourceTree = "<group>"; };
 		B6E9201C27B75D7500A6B303 /* NewUserOnboardView4Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardView4Feed.swift; sourceTree = "<group>"; };
 		B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardViewLast.swift; sourceTree = "<group>"; };
+		B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardFollowing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1432,6 +1434,7 @@
 				B6E9201C27B75D7500A6B303 /* NewUserOnboardView4Feed.swift */,
 				A5F670DC24E8850800858720 /* NewUserOnboardView5Map.swift */,
 				B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */,
+				B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */,
 			);
 			path = "New User Onboarding";
 			sourceTree = "<group>";
@@ -1758,6 +1761,7 @@
 				A598CFC92561D8D8005A7035 /* ListViewControllerNew.swift in Sources */,
 				A552EA5F1F997973005A0977 /* Message.swift in Sources */,
 				A5A2E5D92005CB9000D7E8F5 /* TabListViewController.swift in Sources */,
+				B6E9202127B8647400A6B303 /* NewUserOnboardFollowing.swift in Sources */,
 				A5BA175E248DC997000D355E /* PostSortFormatBar.swift in Sources */,
 				A5A2E5D52002E6F800D7E8F5 /* ListController.swift in Sources */,
 				A5C5D461218610E7002266C5 /* MainListViewHeader.swift in Sources */,

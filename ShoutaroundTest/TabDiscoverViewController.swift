@@ -324,7 +324,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         }
         
         else if searchType == DiscoverUser {
-            if self.allUsers.count == 0  {
+            if allUsersFetched.count == 0  {
                 SVProgressHUD.show(withStatus: "Fetching Users")
                 Database.fetchALLUsers { (users) in
                     self.allUsers = users
@@ -333,6 +333,8 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
                     print("Fetched \(self.allUsers.count) Users | Fetch All Items - TabSearchViewController")
                 }
             } else {
+                self.allUsers = allUsersFetched
+                self.filteredUsers = allUsersFetched
                 self.filterUsers()
             }
         }

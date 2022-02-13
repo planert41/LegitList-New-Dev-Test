@@ -12,6 +12,7 @@ pod 'Firebase/Database’
 pod 'Firebase/Storage’
 pod ‘Firebase/Messaging’
 pod ‘FirebaseAnalytics’
+pod 'Firebase'
 pod 'GooglePlaces'
 pod 'GoogleMaps'
 pod 'SwiftyJSON', '~> 4.0'
