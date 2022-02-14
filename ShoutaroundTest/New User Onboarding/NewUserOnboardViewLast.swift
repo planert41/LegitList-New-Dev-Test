@@ -122,7 +122,7 @@ class NewUserOnboardViewLast: UIViewController {
         label.textAlignment = .center
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
-        label.font = UIFont(name: "Poppins-Regular", size: 20)
+        label.font = UIFont(name: "Poppins-Bold", size: 25)
         label.text = "Meet The Legit Team"
         label.textColor = UIColor.ianLegitColor()
         label.numberOfLines = 0
@@ -159,8 +159,6 @@ class NewUserOnboardViewLast: UIViewController {
     We hope you will find this social food diary as useful as we do.
     
     Email us at weizouang@gmail.com.
-    
-
     """
 
 //    No more endlessly scrolling through your photos to find a specific food picture
@@ -300,19 +298,19 @@ class NewUserOnboardViewLast: UIViewController {
         self.view.addGestureRecognizer(tapGesture)
 
                 
-//        view.addSubview(LegitLogo)
-//        LegitLogo.contentMode = .scaleAspectFit
-//        LegitLogo.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 50 * marginScale, paddingLeft: 20 * marginScale, paddingBottom: 0, paddingRight: 20 * marginScale, width: 0, height: 0)
-//        LegitLogo.alpha = 1
+        view.addSubview(pageControl)
+        pageControl.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 20 * marginScale, paddingRight: 0, width: 0, height: 0)
+        pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        setupPageControl()
+        
+        view.addSubview(nextButton)
+        nextButton.anchor(top: nil, left: nil, bottom: pageControl.topAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 5 * marginScale, paddingRight: 50 * marginScale, width: 200, height: 50 * marginScale)
+        nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        nextButton.sizeToFit()
         
         view.addSubview(LegitImageView)
         LegitImageView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 100, paddingLeft: 25, paddingBottom: 15, paddingRight: 25, width: 0, height: 60)
         LegitImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        
-        view.addSubview(nextButton)
-        nextButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 50 * marginScale, paddingRight: 50 * marginScale, width: 200, height: 50 * marginScale)
-        nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//        nextButton.setTitle(newUser ? "Suggested Users" : "Welcome!", for: .normal)
 
         
         nextButton.sizeToFit()
@@ -332,7 +330,7 @@ class NewUserOnboardViewLast: UIViewController {
         infoTextView.sizeToFit()
         
         view.addSubview(teamLabel)
-        teamLabel.anchor(top: infoTextView.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 5, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        teamLabel.anchor(top: infoTextView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 20, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 30 * marginScale, width: 0, height: 40)
         teamLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         teamLabel.isUserInteractionEnabled = true
         teamLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapMeetTheTeam)))
@@ -363,8 +361,8 @@ class NewUserOnboardViewLast: UIViewController {
     }
     
     func setupPageControl(){
-        self.pageControl.numberOfPages = 6
-        self.pageControl.currentPage = 3
+        self.pageControl.numberOfPages = 7
+        self.pageControl.currentPage = 6
         self.pageControl.tintColor = UIColor.lightGray
         self.pageControl.pageIndicatorTintColor = UIColor.lightGray
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()

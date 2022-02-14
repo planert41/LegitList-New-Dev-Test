@@ -341,7 +341,7 @@ class NewUserOnboardView1: UIViewController, UICollectionViewDataSource, UIColle
     }
     
     func setupPageControl(){
-        self.pageControl.numberOfPages = 6
+        self.pageControl.numberOfPages = 7
         self.pageControl.currentPage = 1
         self.pageControl.tintColor = UIColor.lightGray
         self.pageControl.pageIndicatorTintColor = UIColor.lightGray

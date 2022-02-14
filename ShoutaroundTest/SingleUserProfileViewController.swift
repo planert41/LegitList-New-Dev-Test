@@ -778,7 +778,9 @@ class SingleUserProfileViewController: UIViewController {
         navShareButton.addTarget(self, action: #selector(didTapNavShare), for: .touchUpInside)
         let shareBarButton = UIBarButtonItem.init(customView: navShareButton)
         
-        self.navigationItem.rightBarButtonItem = (self.displayUser?.uid == Auth.auth().currentUser?.uid) ? inboxButton : shareBarButton
+        if Auth.auth().currentUser != nil {
+            self.navigationItem.rightBarButtonItem = (self.displayUser?.uid == Auth.auth().currentUser?.uid) ? inboxButton : shareBarButton
+        }
         refreshInboxNotifications()
     }
     
@@ -1124,6 +1126,10 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     }
     
     func didTapMapButton() {
+        if Auth.auth().currentUser == nil {
+            self.alert(title: "Invalid Action", message: "Please Sign In")
+            return
+        }
         self.toggleMapFunction()
     }
     

@@ -783,6 +783,8 @@ class SingleListViewHeader: UICollectionViewCell {
         
         guard let listId = self.currentDisplayList?.id else {return}
         
+        listFollowButton.isHidden = Auth.auth().currentUser == nil
+
         if (currentDisplayList?.creatorUID == Auth.auth().currentUser?.uid)
         {
             listFollowButton.setTitle("Options", for: .normal)

@@ -893,7 +893,8 @@ extension Database{
                 tempUsers.sort(by: { (u1, u2) -> Bool in
                     return u1.username.compare(u2.username) == .orderedAscending
                 })
-                print("   ~ Database | Fetch All Users | \(tempUsers.count) Users")
+                allUsersFetched = tempUsers
+                print("   ~ Database | Fetch All Users | \(tempUsers.count) Users | \(allUsersFetched.count) allUsersFetched-MEMORY")
                 completion(tempUsers)
             }
         })   { (err) in print ("Failed to fetch users for search", err) }
@@ -3014,7 +3015,7 @@ extension Database{
     
     static func fetchPostWithPostID( postId: String, force:Bool? = false, completion: @escaping (Post?, Error?) -> ()) {
         
-        guard let uid = Auth.auth().currentUser?.uid else {return}
+//        guard let uid = Auth.auth().currentUser?.uid else {return}
         if postId.isEmptyOrWhitespace() {return}
         var tempPost: Post? = nil
 
@@ -3062,7 +3063,7 @@ extension Database{
                 
                 // - SELECTED AND CREATOR LIST IDS ARE [LISTID: LISTNAME]
                 for (key,value) in cachePost.allList {
-                    if value == uid {
+                    if value == Auth.auth().currentUser?.uid {
                         if let selectedList = CurrentUser.lists.filter({ (list) -> Bool in
                             list.id == key
                         }).first {
@@ -3394,7 +3395,7 @@ extension Database{
     
 // MARK: - CHECK SOCIAL ITEMS
 
-// NEW LIST NOTIFICATIONS
+// NEW LIST NOTIFICATIONS - Check for new posts in lists
 
     static func checkListForNewEvent(list: List, completion: @escaping (List) -> ()){
         
@@ -3403,6 +3404,12 @@ extension Database{
             completion(list)
             return
         }
+        
+        if Auth.auth().currentUser == nil {
+            completion(list)
+            return
+        }
+        
         
         if list.creatorUID == Auth.auth().currentUser!.uid {
             // NO NEW NOTIFICATIONS IF LIST CREATOR IS USER
@@ -4021,6 +4028,10 @@ extension Database{
 
         
     static func checkPostForSocial(post: Post, completion: @escaping (Post) -> ()){
+        if Auth.auth().currentUser == nil {
+            completion(post)
+            return
+        }
         
         Database.checkPostForVotes(post: post) { (post) in
             Database.checkPostForLists(post: post, completion: { (post) in
@@ -4037,6 +4048,11 @@ extension Database{
     }
     
     static func checkPostIntegrity(post: Post, completion: @escaping (Post) -> ()){
+        if Auth.auth().currentUser == nil {
+            completion(post)
+            return
+        }
+        
 //        Database.checkPostIsLegit(post: post) { (post) in
             Database.checkLocationSummaryID(post: post, completion: { (post) in
                 if let postId = post.id {
@@ -8713,9 +8729,14 @@ extension Database{
     
     static func checkUserIsFollowed(user: User, completion: @escaping (User) ->()){
         
-        guard let uid = Auth.auth().currentUser?.uid else {return}
-        let followingUid = user.uid
         var tempUser = user
+
+        guard let uid = Auth.auth().currentUser?.uid else {
+            tempUser.isFollowing = false
+            completion(tempUser)
+            return}
+        let followingUid = user.uid
+
         
         if CurrentUser.followingUids.count > 0 {
             

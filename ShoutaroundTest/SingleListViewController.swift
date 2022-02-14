@@ -1586,6 +1586,10 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
     }
     
     @objc func toggleMapFunction(){
+        if Auth.auth().currentUser == nil {
+            self.alert(title: "Invalid Action", message: "Please Sign In")
+            return
+        }
         //        appDelegateFilter = self.viewFilter
         if appDelegateMapViewInd {
             // List Opened while on Map View

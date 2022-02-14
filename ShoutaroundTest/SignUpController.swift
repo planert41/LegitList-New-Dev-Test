@@ -739,6 +739,15 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     return
                 }
                 
+                Auth.auth().signIn(withEmail: email, password: password) { (user, err) in
+                
+                    if let err = err {
+                        print("Failed to sign in new user email:", user , err)
+                    }
+                
+                print("Successfully sign in new user:", email ?? "")
+                }
+                
                 print("FirebaseAuth | Successfully created user: ", user?.user.uid ?? "")
                 self.processUser(userID: user?.user.uid)
             }
@@ -979,7 +988,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 print("Successfully saved user info to db")
                 
                 // Auto Follow Users
-                let newFollowUids = [weizouID, meimeiID, maynardID, magnusID]
+                let newFollowUids = [weizouID, meimeiID, maynardID, magnusID, UID_ernie]
                 
                 Database.handleFollowingMultipleUids(userUids: newFollowUids, hideAlert: true, forceFollow: true) {
                     print("SUCCESS New User Followed Starting Users")

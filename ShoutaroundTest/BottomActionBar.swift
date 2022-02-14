@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 protocol BottomActionBarDelegate {
     func handleComment()
     func handleLike()
     func handleTagList()
+    func alert(title: String, message: String)
 }
 
 class BottomActionBar: UIView {
@@ -183,6 +185,11 @@ class BottomActionBar: UIView {
 extension BottomActionBar {
     
     @objc func handleLike(){
+        if Auth.auth().currentUser == nil {
+            self.delegate?.alert(title: "Invalid Action", message: "Please Sign In")
+            return
+        }
+        
         if (self.post?.hasLiked)! {
             // Unselect Upvote
             self.post?.hasLiked = false
@@ -217,10 +224,20 @@ extension BottomActionBar {
     }
 
     @objc func handleComment(){
+        if Auth.auth().currentUser == nil {
+            self.delegate?.alert(title: "Invalid Action", message: "Please Sign In")
+            return
+        }
+
         self.delegate?.handleComment()
     }
 
     @objc func handleBookmark(){
+        if Auth.auth().currentUser == nil {
+            self.delegate?.alert(title: "Invalid Action", message: "Please Sign In")
+            return
+        }
+
         self.delegate?.handleTagList()
     }
     

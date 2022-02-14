@@ -270,7 +270,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     
     
     func EmojiSetup() {
-        guard let uid = Auth.auth().currentUser?.uid else {return}
+        guard let uid = Auth.auth().currentUser?.uid else {
+            self.compileEmojis()
+            return}
         let ref = Database.database().reference().child("emojiDic").child(uid)
         ref.observeSingleEvent(of: .value, with: {(snapshot) in
 
@@ -360,6 +362,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         window?.rootViewController = tabBarController
     }
     
+    func showAlert(title: String?, message: String?) {
+//        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        
+//        var rootViewController = UIApplication.shared.keyWindow?.rootViewController
+//        if let navigationController = rootViewController as? UINavigationController {
+//            rootViewController = navigationController.viewControllers.first
+//        }
+//        if let tabBarController = rootViewController as? UITabBarController {
+//            rootViewController = tabBarController.selectedViewController
+//        }
+//        //...
+//        rootViewController?.present(alert, animated: true, completion: nil)
+//        print("DISPLAY showAlert - \(title) - \(title)")
+
+        if let tabBarController = self.window?.rootViewController as? UITabBarController {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            tabBarController.selectedViewController?.present(alert, animated: true) {
+                print("DISPLAY showAlert - \(title) - \(title)")
+            }
+        }
+    }
+    
     
     @objc func toggleMapView(){
         
@@ -368,7 +393,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         }
         
         if let tab = self.window!.rootViewController as! MainTabBarController? {
-            let nav = tab.viewControllers?[1] as! UINavigationController
+            if let nav = tab.viewControllers?[1] as? UINavigationController  {
                 do {
     //                let mapView = nav.viewControllers.first as! MainViewController
 //                    print(nav.viewC   ontrollers)
@@ -384,6 +409,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
                 } catch let error {
                     print(error.localizedDescription)
                 }
+            } else {
+                self.showAlert(title: "Can't Open Map", message: "Please sign in to access map.")
+            }
 
         }
 //

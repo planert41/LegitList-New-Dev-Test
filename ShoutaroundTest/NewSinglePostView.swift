@@ -912,7 +912,9 @@ class NewSinglePostView: UIViewController {
         let shareBarButton = UIBarButtonItem.init(customView: navShareButton)
         let backBarButton = UIBarButtonItem.init(customView: navBackButton)
 
-        self.navigationItem.rightBarButtonItem = shareBarButton
+        if Auth.auth().currentUser != nil {
+            self.navigationItem.rightBarButtonItem = shareBarButton
+        }
         self.navigationItem.leftBarButtonItem = backBarButton
         
 //        userHeaderView.user = post?.user

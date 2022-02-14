@@ -315,7 +315,7 @@ class NewUserOnboardView4: UIViewController {
     }
     
     func setupPageControl(){
-        self.pageControl.numberOfPages = 6
+        self.pageControl.numberOfPages = 7
         self.pageControl.currentPage = 4
         self.pageControl.tintColor = UIColor.lightGray
         self.pageControl.pageIndicatorTintColor = UIColor.lightGray

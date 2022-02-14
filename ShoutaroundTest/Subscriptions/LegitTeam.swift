@@ -21,6 +21,7 @@ import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
 import GooglePlaces
+import SVProgressHUD
 
 
 class LegitTeamView : UITableViewController {
@@ -35,6 +36,8 @@ class LegitTeamView : UITableViewController {
 
     
     func fetchUserInfo() {
+        SVProgressHUD.show(withStatus: "Fetching Users")
+
         self.teamUsers = []
         let myGroup = DispatchGroup()
 
@@ -49,6 +52,8 @@ class LegitTeamView : UITableViewController {
         }
         
         myGroup.notify(queue: .main) {
+            print("Legit Team - Fetched \(self.teamUsers.count) Users")
+            SVProgressHUD.dismiss()
             self.tableView.reloadData()
         }
     }
@@ -177,6 +182,8 @@ extension LegitTeamView {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.delegate = self
         tableView.alwaysBounceVertical = true
+        tableView.separatorStyle = .none
+
         let adjustForTabbarInsets: UIEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 30, right: 0)
         tableView.contentInset = adjustForTabbarInsets
         tableView.scrollIndicatorInsets = adjustForTabbarInsets
@@ -203,6 +210,7 @@ extension LegitTeamView {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: UserCellId, for: indexPath) as! UserAndListCell
         cell.user = teamUsers[indexPath.item]
+        cell.followButton.isHidden = Auth.auth().currentUser == nil
         return cell
     }
     
