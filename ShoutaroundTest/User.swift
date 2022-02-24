@@ -253,7 +253,16 @@ struct CurrentUser {
     static var bookmarkListId: String? = nil
     
     
-    static var mostUsedEmojis: [String] = []
+    static var mostUsedEmojis: [String] = [] {
+        didSet {
+            NotificationCenter.default.post(name: ListViewControllerNew.CurrentUserLoadedNotificationName, object: nil)
+        }
+    }
+    static var mostUsedCities: [String] = [] {
+        didSet {
+            NotificationCenter.default.post(name: ListViewControllerNew.CurrentUserLoadedNotificationName, object: nil)
+        }
+    }
     static var mostTaggedLocations: [String] = []
     
     static var userTaggedEmojiCounts: [String: Int] = [:] {

@@ -245,6 +245,17 @@ struct Post: Hashable, Equatable  {
             self.ratingEmoji = "🏆"
         }
         
+        // ADJUST All emojis like chicken dup emoji
+        var tempEmoji:[String] = []
+        for emoji in self.nonRatingEmoji {
+            if let replace = AdjustEmojiDictionary[emoji] {
+                tempEmoji.append(replace)
+            } else {
+                tempEmoji.append(emoji)
+            }
+        }
+        self.nonRatingEmoji = tempEmoji
+        
         
         self.emoji = (self.nonRatingEmoji.joined())
         

@@ -18,6 +18,36 @@ import SVProgressHUD
 
 class NewUserOnboardViewFollowing: UIViewController {
 
+    var teamUIDs = [UID_wei, UID_mayn, UID_zm, UID_magnus, UID_ernie]
+    var teamUsers: [User] = []
+
+    
+    func fetchUserInfo() {
+        SVProgressHUD.show(withStatus: "Fetching Users")
+
+        self.teamUsers = []
+        let myGroup = DispatchGroup()
+
+        for uid in teamUIDs {
+            myGroup.enter()
+            Database.fetchUserWithUID(uid: uid) { (user) in
+                if let user = user {
+                    self.teamUsers.append(user)
+                }
+                myGroup.leave()
+            }
+        }
+        
+        myGroup.notify(queue: .main) {
+            print("Legit Team - Fetched \(self.teamUsers.count) Users")
+            SVProgressHUD.dismiss()
+            self.allUsers = self.teamUsers
+            self.filteredUsers = self.teamUsers
+            self.tableView.reloadData()
+        }
+    }
+    
+    
     
     @objc func animateLabels(){
         
@@ -104,7 +134,7 @@ class NewUserOnboardViewFollowing: UIViewController {
     
     let infoText =
     """
-    To start off, we recommend these users for you to follow who are based in Chicago, Denver and Kuala Lumpur.
+    To start off, we recommend new Legit users follow the Legit team for content based in Chicago, Denver and Kuala Lumpur.
     """
 
 //    No more endlessly scrolling through your photos to find a specific food picture
@@ -236,7 +266,7 @@ class NewUserOnboardViewFollowing: UIViewController {
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
         label.font = UIFont(name: "Poppins-Bold", size: 30)
-        label.text = "Suggested Users"
+        label.text = "Welcome!"
         label.textColor = UIColor.ianLegitColor()
         label.numberOfLines = 0
         label.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -263,7 +293,7 @@ class NewUserOnboardViewFollowing: UIViewController {
     var filteredUsers: [User] = []
     
     override func viewDidLoad() {
-        self.fetchAllItems()
+        self.fetchUserInfo()
         
         let marginScale = CGFloat(UIScreen.main.bounds.height > 750 ? 1 : 0.8)
         let topMargin = CGFloat(UIScreen.main.bounds.height > 750 ? 30 : 25)
@@ -301,6 +331,7 @@ class NewUserOnboardViewFollowing: UIViewController {
         backButton.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         backButton.centerYAnchor.constraint(equalTo: nextButton.centerYAnchor).isActive = true
         backButton.sizeToFit()
+        backButton.isHidden = true
 
         
         view.addSubview(headerLabel)
@@ -316,12 +347,12 @@ class NewUserOnboardViewFollowing: UIViewController {
         infoTextView.textColor = UIColor.darkGray
         infoTextView.sizeToFit()
         
-        view.addSubview(searchBar)
-        searchBar.anchor(top: (infoTextView).bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15 * marginScale, paddingLeft: sideMargin, paddingBottom: 20 * marginScale, paddingRight: sideMargin, width: 0, height: 35)
-        setupSearchBar()
+//        view.addSubview(searchBar)
+//        searchBar.anchor(top: (infoTextView).bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 15 * marginScale, paddingLeft: sideMargin, paddingBottom: 20 * marginScale, paddingRight: sideMargin, width: 0, height: 35)
+//        setupSearchBar()
         
         view.addSubview(tableView)
-        tableView.anchor(top: (searchBar).bottomAnchor, left: view.leftAnchor, bottom: nextButton.topAnchor, right: view.rightAnchor, paddingTop: 15 * marginScale, paddingLeft: sideMargin, paddingBottom: 20 * marginScale, paddingRight: sideMargin, width: 0, height: 0)
+        tableView.anchor(top: (infoTextView).bottomAnchor, left: view.leftAnchor, bottom: nextButton.topAnchor, right: view.rightAnchor, paddingTop: 15 * marginScale, paddingLeft: sideMargin, paddingBottom: 20 * marginScale, paddingRight: sideMargin, width: 0, height: 0)
         setupTableView()
         
         setupSegmentControl()
@@ -329,6 +360,7 @@ class NewUserOnboardViewFollowing: UIViewController {
         sortSegmentControl.anchor(top: nil, left: nil, bottom: tableView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 10, width: 0, height: 40)
         sortSegmentControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         sortSegmentControl.alpha = 0.9
+        sortSegmentControl.isHidden = true
 
 //        sortSegmentControl.rightAnchor.constraint(lessThanOrEqualTo: navMapButton.leftAnchor, constant: 15).isActive = true
 

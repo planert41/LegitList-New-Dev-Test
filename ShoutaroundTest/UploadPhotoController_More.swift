@@ -3161,21 +3161,26 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
     func didTapNonRatingEmoji(emoji: String) {
         print("Non Rating Emoji Cell Selected", emoji)
         
-        var noDic = EmojiDictionary[emoji] == nil
-        if noDic && self.nonRatingEmojiTags.contains(emoji) == false {
-            suggestEmojiDic(emoji: emoji)
+        var tempEmoji = emoji
+        if let replace = AdjustEmojiDictionary[tempEmoji] {
+            tempEmoji = replace
+        }
+        
+        var noDic = EmojiDictionary[tempEmoji] == nil
+        if noDic && self.nonRatingEmojiTags.contains(tempEmoji) == false {
+            suggestEmojiDic(emoji: tempEmoji)
             return
         }
 
         
-        if self.nonRatingEmojiTags.contains(emoji) == false {
-            if let emojiTagLookup = EmojiDictionary[emoji] {
-                self.displayEmojiDetailLabel(emoji: emoji, name: emojiTagLookup)
+        if self.nonRatingEmojiTags.contains(tempEmoji) == false {
+            if let emojiTagLookup = EmojiDictionary[tempEmoji] {
+                self.displayEmojiDetailLabel(emoji: tempEmoji, name: emojiTagLookup)
             } else {
-                print("No Emoji Detail Text For:", emoji)
+                print("No Emoji Detail Text For:", tempEmoji)
             }
         }
-        self.addRemoveEmojiTags(emojiInput: emoji, emojiInputTag: EmojiDictionary[emoji] ?? "")
+        self.addRemoveEmojiTags(emojiInput: tempEmoji, emojiInputTag: EmojiDictionary[tempEmoji] ?? "")
     }
     
     func displayEmojiDetailLabel(emoji: String?, name: String?) {

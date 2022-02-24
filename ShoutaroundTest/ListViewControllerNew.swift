@@ -13,11 +13,13 @@ import DropDown
 import FirebaseStorage
 import FirebaseDatabase
 import FirebaseAuth
+import SVProgressHUD
 
 class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UISearchBarDelegate, DiscoverListCellDelegate, UIScrollViewDelegate, DiscoverUserCellDelegate, DiscoverListCellNewDelegate {
    
     static let refreshListNotificationName = NSNotification.Name(rawValue: "RefreshList")
-    
+    static let CurrentUserLoadedNotificationName = NSNotification.Name(rawValue: "LoadUser")
+
 // FETCH INPUTS
     
     var allLists: [List] = []
@@ -26,43 +28,128 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     var userPosts:[Post] = [] {
         didSet {
-            self.updateUserPostFavCounts()
+//            self.updateUserPostFavCounts()
         }
     }
     
-    var userPostsFavCounts:[String:Int] = [:]
+//    var userPostsFavCounts:[String:Int] = [:]
     var userFavs = extraRatingEmojisForList
-    var userFavsLists:[String: List] = [:]
     var filteredUserFavs: [String] = []
+    var userFavsLists:[String: List] = [:]
 
-    func loadCurrentUserEmojis() {
-        self.userFavs = extraRatingEmojisForList + CurrentUser.mostUsedEmojis
-        self.loadCurrentUserPosts()
-    }
+    
+//    var userPostsCityCounts:[String:Int] = [:]
+    var userCity: [String] = []
+    var filteredUserCity: [String] = []
+    var userCityLists:[String: List] = [:]
+
     
     func loadCurrentUserPosts(){
         if CurrentUser.posts.count == 0 {
             print("No Current User Posts. Fetch Posts | ListViewControllerNew")
+            SVProgressHUD.show(withStatus: "Refreshing Lists")
             guard let uid = Auth.auth().currentUser?.uid else {
                 print("No Current User UID")
+                SVProgressHUD.dismiss()
                 return
             }
             Database.fetchAllPostWithUID(creatoruid: uid) { fetchedPosts in
-                self.createTempListsForUserFavs()
+                self.userPosts = fetchedPosts
+                
+                Database.refreshCurrentUserMostUsed(posts: fetchedPosts) {
+                    self.createUserAutoLists()
+                }
             }
         } else {
-            self.createTempListsForUserFavs()
+            self.createUserAutoLists()
         }
     }
     
-    func updateUserPostFavCounts() {
-        var tempCounts:[String:Int] = [:]
-        for post in userPosts {
-            if let x = post.ratingEmoji {
-                tempCounts[x] = (tempCounts[x] ?? 0) + 1
+    func createUserAutoLists() {
+        self.userFavs = extraRatingEmojisForList + CurrentUser.mostUsedEmojis
+        self.userCity = CurrentUser.mostUsedCities
+        print("ListViewControllerNew - Most Used Emojis: \(CurrentUser.mostUsedEmojis.count) | Most Used Cities \(CurrentUser.mostUsedCities.count)")
+        self.createTempListsForUserFavs()
+        self.createTempListsForUserCities()
+        SVProgressHUD.dismiss()
+        self.tableView.reloadData()
+    }
+    
+//    func updateUserPostFavCounts() {
+//        var tempCounts:[String:Int] = [:]
+//        var tempCityCounts:[String:Int] = [:]
+//
+//        for post in userPosts {
+//            if let x = post.ratingEmoji {
+//                tempCounts[x] = (tempCounts[x] ?? 0) + 1
+//            }
+//            if let x = post.locationSummaryID {
+//                tempCityCounts[x] = (tempCityCounts[x] ?? 0) + 1
+//            }
+//        }
+//        self.userPostsFavCounts = tempCounts
+//        self.userPostsCityCounts = tempCityCounts
+//    }
+    
+    
+    func createTempListsForUserCities() {
+        print("Creating Temp Location Lists \(CurrentUser.posts.count) User Posts | ListViewControllerNew")
+
+        var tempListPostIds:[String:[String: Double]] = [:]
+        var tempLocations:[String] = []
+        var tempLists:[String: List] = [:]
+
+        // Loop through posts for Locations
+        for (id, post) in CurrentUser.posts {
+            if post.locationSummaryID != nil {
+                guard let city = post.locationSummaryID else {return}
+                if !tempLocations.contains(city) {
+                    tempLocations.append(city)
+                    tempListPostIds[city] = [:]
+                }
+                
+                // Update Post ID to temp City
+                var temp = tempListPostIds[city]
+                temp?[id] = post.creationSecondsFrom1970 ?? 0
+                tempListPostIds[city] = temp
             }
         }
-        self.userPostsFavCounts = tempCounts
+        
+        // LOOP through city names to create default lists
+        for city in tempLocations {
+            var temp = List.init(id: city, name: city.capitalizingFirstLetter(), publicList: 0)
+            var postIds = tempListPostIds[city]
+            temp.postIds = postIds ?? [:]
+            
+            if (postIds?.count) ?? 0 > 0 {
+                let latestPost = postIds!.max { a, b in a.value < b.value }
+                if let post = CurrentUser.posts[(latestPost?.key)!] {
+                    var imageUrl = post.imageUrls.first
+                    temp.heroImageUrl = imageUrl
+                }
+            }
+            tempLists[city] = temp
+//            print(name, temp.postIds?.count, "Posts")
+        }
+
+        // SORT BY NUMBER OF POSTS
+        var allLists: [List] = []
+        var sortedCities:[String] = []
+        for (city, list) in tempLists {
+            allLists.append(list)
+        }
+        
+        
+        allLists.sort { p1, p2 in
+            return p1.postIds?.count ?? 0 > p2.postIds?.count ?? 0
+        }
+        
+        for list in allLists {
+            sortedCities.append(list.id ?? "")
+        }
+                
+        self.userCity = sortedCities
+        self.userCityLists = tempLists
     }
     
     
@@ -139,8 +226,8 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         didSet {
             if self.fetchType == ListAll {
                 self.fetchAllLists()
-            } else if self.fetchType == ListFav {
-                self.loadCurrentUserEmojis()
+            } else if self.fetchType == ListFav || self.fetchType == ListCities {
+                self.loadCurrentUserPosts()
             } else {
                 self.sortDisplayLists()
             }
@@ -284,6 +371,11 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
          }
     }
     
+    @objc func autoLoadUser(){
+        print("ListViewControllerNew - Auto Load User | \(CurrentUser.mostUsedEmojis.count) Emojis | \(CurrentUser.mostUsedCities.count) Cities")
+        self.createUserAutoLists()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
@@ -298,13 +390,15 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(deletedList), name:MainTabBarController.deleteList, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(autoLoadUser), name:ListViewControllerNew.CurrentUserLoadedNotificationName, object: nil)
+
         setupNavigationItems()
         setupTypeSegment()
         setupSortButton()
         setupDropDown()
         setupTableView()
         fetchLists()
+        loadCurrentUserPosts()
         
         view.addSubview(actionView)
         actionView.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
@@ -525,7 +619,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     @objc func selectFetchType(sender: UISegmentedControl) {
         self.fetchType = self.fetchTypeOptions[sender.selectedSegmentIndex]
         self.underlineSegment(segment: sender.selectedSegmentIndex)
-        self.sortSegmentControl.isHidden = (self.fetchType == ListFav)
+        self.sortSegmentControl.isHidden = (self.fetchType == ListFav || self.fetchType == ListCities)
         print("DiscoverController | Type Selected | \(self.fetchType)")
     }
     
@@ -699,6 +793,13 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         
+        if self.fetchType == ListCities {
+            self.filteredUserCity = userCity.filter({ (city) -> Bool in
+                return city.lowercased().contains(searchText.lowercased())
+            })
+//            print(searchText.lowercased(), filteredUserCity.count, filteredUserCity)
+        }
+        
         // FILTER LIST TABLE VIEW
                 
         self.filteredDisplayList = fetchedList.filter({ (list) -> Bool in
@@ -830,8 +931,12 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if self.fetchType == ListFav {
-            return max(1, self.isFiltering ? self.filteredUserFavs.count : self.userFavs.count)
-        } else {
+            return self.isFiltering ? self.filteredUserFavs.count : self.userFavs.count
+        }
+        else if self.fetchType == ListCities {
+            return self.isFiltering ? self.filteredUserCity.count : self.userCity.count
+        }
+        else {
             return max(1, self.isFiltering ? self.filteredDisplayList.count : self.fetchedList.count)
         }
     }
@@ -840,27 +945,36 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
     // LISTS
-        
-        if self.isFiltering && filteredDisplayList.count == 0 {
+        if self.fetchType == ListFav {
+            var emoji = isFiltering ? filteredUserFavs[indexPath.row] : userFavs[indexPath.row]
+            let currentList = self.userFavsLists[emoji]
+            let cell = tableView.dequeueReusableCell(withIdentifier: newCellId, for: indexPath) as! MainTabListCell
+            cell.cellHeight?.constant = 100
+            cell.list = currentList
+            return cell
+        }
+        else if self.fetchType == ListCities {
+            var city = isFiltering ? filteredUserCity[indexPath.row] : userCity[indexPath.row]
+            let currentList = self.userCityLists[city]
+            let cell = tableView.dequeueReusableCell(withIdentifier: newCellId, for: indexPath) as! MainTabListCell
+            cell.cellHeight?.constant = 100
+            cell.list = currentList
+            return cell
+        }
+        else if self.isFiltering && filteredDisplayList.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: listCellId, for: indexPath) as! SearchResultsCell
             cell.emojiTextLabel.textAlignment = .center
             cell.locationName = "No Lists Available"
             cell.selectionStyle = .none
             cell.postCountLabel.isHidden = true
             return cell
-        } else if !self.isFiltering && fetchedList.count == 0 {
+        }
+        else if !self.isFiltering && fetchedList.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: listCellId, for: indexPath) as! SearchResultsCell
             cell.emojiTextLabel.textAlignment = .center
             cell.locationName =  self.fetchType == ListYours ? "You Have No Lists. Tap To Create A List" :  "You Are Not Following Any Lists"
             cell.selectionStyle = .none
             cell.postCountLabel.isHidden = true
-            return cell
-        } else if self.fetchType == ListFav {
-            var emoji = isFiltering ? filteredUserFavs[indexPath.row] : userFavs[indexPath.row]
-            let currentList = self.userFavsLists[emoji]
-            let cell = tableView.dequeueReusableCell(withIdentifier: newCellId, for: indexPath) as! MainTabListCell
-            cell.cellHeight?.constant = 100
-            cell.list = currentList
             return cell
         }
         else {
@@ -883,7 +997,13 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
                 let emoji = self.isFiltering ? filteredUserFavs[indexPath.row] : userFavs[indexPath.row]
                 let list = userFavsLists[emoji]!
                 self.extTapList(list: list)
-            } else {
+            }
+            else if self.fetchType == ListCities {
+                let city = self.isFiltering ? filteredUserCity[indexPath.row] : userCity[indexPath.row]
+                let list = userCityLists[city]!
+                self.extTapList(list: list)
+            }
+            else {
                 let selectedList = self.isFiltering ? filteredDisplayList[indexPath.row] : fetchedList[indexPath.row]
                 self.extTapList(list: selectedList)
             }

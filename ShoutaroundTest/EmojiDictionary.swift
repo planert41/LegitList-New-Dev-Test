@@ -93,7 +93,9 @@ var Ratings: [String] = [
 //😍😀😅😋😝🤑🙁😩😤😡😵🤤😭🤤😑😷
 
 
-
+var AdjustEmojiDictionary: [String:String] = [
+    "🐓":"🐔"
+    ]
 
 var Emote1Init: [String] = [
     "😍","😋","🤤","👍",

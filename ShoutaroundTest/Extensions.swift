@@ -1314,6 +1314,13 @@ extension UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
+    func extShowNewUserFollowing() {
+        print("extShowNewUserFollowing")
+        let followingController = NewUserOnboardViewFollowing()
+        let navController = UINavigationController(rootViewController: followingController)
+        self.present(navController, animated: true, completion: nil)
+    }
+    
     func extShowUserLikesForPost(inputPost: Post?, displayFollowing: Bool = true) {
         print("ext Show Users Liking Post | \(inputPost?.id) | \(displayFollowing)")
         

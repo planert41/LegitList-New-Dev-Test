@@ -819,6 +819,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
                 displayPost.distance = Double((displayPost.locationGPS?.distance(from: (self.viewFilter.filterLocation!)))!)
             }
             
+            if newUser {
+                self.extShowNewUserFollowing()
+                newUser = false
+            }
+            
             if !isGridView {
                 
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeFullCellId, for: indexPath) as! FullPictureCell

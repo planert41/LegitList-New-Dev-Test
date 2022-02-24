@@ -117,6 +117,7 @@ var UID_mayn = "srHzEjoRYKcKGqAgiyG4E660amQ2"
 var UID_ernie = "VeG6VZOAvmcJ08AnBRTtO8JkSP12"
 var UID_magnus = "B6div2WhzSObg7XGJRFkKBFEQiC3"
 let UID_zm = "nWc6VAl9fUdIx0Yf05yQFdwGd5y2"
+let UID_weiren = "bWRsX8940oQ0oBhSBVog4rACoFF2"
 
 var defaultLocation = CLLocation(latitude: 41.9735039, longitude: -87.66775139999999)
 
@@ -277,7 +278,8 @@ var ListYours = "Yours"
 var ListFollowing = "Following"
 var ListAll = "All Lists"
 var ListFav = "Favorites"
-var ListOptions:[String] = [ListYours, ListFollowing, ListFav]
+var ListCities = "Cities"
+var ListOptions:[String] = [ListYours, ListFollowing, ListFav, ListCities]
 var ListDefault:String = ListYours
 
 var DiscoverSortOptions:[String] = [sortPost, sortNew, sortNearest, sortTrending]

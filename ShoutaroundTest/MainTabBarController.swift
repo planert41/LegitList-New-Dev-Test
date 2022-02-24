@@ -334,7 +334,6 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         NotificationCenter.default.addObserver(self, selector: #selector(showOnboarding), name: MainTabBarController.showOnboarding, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestLocation), name: AppDelegate.RequestLocationNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestNotification), name: AppDelegate.NotificationAccessRequest, object: nil)
-
         
         
 //        NotificationCenter.default.addObserver(self, selector: #selector(updateUnreadNotifications), name: MainTabBarController.NewListNotificationName, object: nil)

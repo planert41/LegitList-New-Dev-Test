@@ -1033,6 +1033,21 @@ extension Database{
         }
     }
     
+//  Update Current User Most Used
+    static func refreshCurrentUserMostUsed(posts: [Post], completion: @escaping () -> ()){
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        var tempPost = posts.filter { post in
+            return post.creatorUID == uid
+        }
+        self.countMostUsedEmojis(posts: tempPost) { emojis in
+            CurrentUser.mostUsedEmojis = emojis
+        }
+        self.countMostUsedCities(posts: tempPost) { cities in
+            CurrentUser.mostUsedCities = cities
+        }
+        completion()
+    }
+
     
 //    Most Used Emojis
     static func countMostUsedEmojis(posts: [Post], completion: ([String]) -> ()) {
@@ -1056,6 +1071,30 @@ extension Database{
         }
         
         completion(mostUsedEmojis)
+    }
+
+//    Most Used Cities
+    static func countMostUsedCities(posts: [Post], completion: ([String]) -> ()) {
+        
+        var tempCities:[String] = []
+        var mostUsedCities: [String] = []
+        
+        for post in posts {
+            if let city = post.locationSummaryID {
+                if !city.isEmptyOrWhitespace() {
+                    tempCities.append(city)
+                }
+            }
+        }
+        
+        var cityCount = tempCities.reduce(into: [:]) { $0[$1, default: 0] += 1 }
+        
+        //        print("EMOJI COUNT: ", emojiCount.sorted(by: { $0.value > $1.value }))
+        for (key,value) in cityCount.sorted(by: { $0.value > $1.value }) {
+            mostUsedCities.append(key)
+        }
+        
+        completion(mostUsedCities)
     }
     
     static func averageRating(posts: [Post]?) -> (Double) {
@@ -2882,6 +2921,13 @@ extension Database{
                 if creatoruid == Auth.auth().currentUser?.uid {
                     countEmojis(posts: posts) { counts in
                         CurrentUser.userTaggedEmojiCounts = counts
+                    }
+                    for post in posts {
+                        if let postId = post.id {
+                            if CurrentUser.posts[postId] == nil {
+                                CurrentUser.posts[postId] = post
+                            }
+                        }
                     }
                 }
                 

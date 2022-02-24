@@ -910,6 +910,10 @@ extension SingleUserProfileViewController {
                 self.countMostUsedEmojis(posts: posts.filter({ (post) -> Bool in
                     post.creatorUID == uid
                 }))
+                self.countMostUsedCities(posts: posts.filter({ (post) -> Bool in
+                    post.creatorUID == uid
+                }))
+                NotificationCenter.default.post(name: ListViewControllerNew.CurrentUserLoadedNotificationName, object: nil)
             }
             
             self.fetchedPosts = posts
@@ -931,6 +935,13 @@ extension SingleUserProfileViewController {
                 }
             }
             print(" Updated Current User Most Used Emojis \(emojis.count) | SingleUserProfileViewController")
+        }
+    }
+    
+    func countMostUsedCities(posts: [Post]) {
+        Database.countMostUsedCities(posts: posts) { (cities) in
+            CurrentUser.mostUsedCities = cities
+            print(" Updated Current User Most Used Cities \(CurrentUser.mostUsedCities.count) | SingleUserProfileViewController")
         }
     }
     
