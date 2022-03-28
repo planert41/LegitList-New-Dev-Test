@@ -3362,9 +3362,9 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
             }
             self.selectedListIdTimes.removeValue(forKey: listId)
         }
-        self.taggedListView.selectedListIds = self.selectedListIds
-        self.taggedListView.selectedListIdTimes = self.selectedListIdTimes
-        self.taggedListView.fetchUserLists()
+//        self.taggedListView.selectedListIds = self.selectedListIds
+//        self.taggedListView.selectedListIdTimes = self.selectedListIdTimes
+//        self.taggedListView.fetchUserLists()
     }
     
     func didTapUser(user: User?) {

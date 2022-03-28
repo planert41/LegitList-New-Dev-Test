@@ -713,7 +713,8 @@ var OtherEmojiDictionary:[String:String] = [
     "🧲":"chain",
     "🎖":"honor",
     "🎗":"charity",
-    "🎃":"seasonal"
+    "🎃":"seasonal",
+    "🤑":"pricey"
 
 ]
 

@@ -149,16 +149,20 @@ class ListSummaryCell: UICollectionViewCell {
 
     }
     
-    override var isSelected: Bool {
+    var isListSelected: Bool = false {
         didSet {
-            self.cellView.backgroundColor = self.isSelected ? UIColor.ianLegitColor().withAlphaComponent(0.6) : UIColor.clear
-            self.layer.borderColor = self.isSelected ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
+            self.refreshCell()
 //            self.listNameLabel.textColor = self.isSelected ? UIColor.white : UIColor.ianBlackColor()
 //            self.listDetailLabel.textColor = self.isSelected ? UIColor.white : UIColor.darkGray
 //            self.cellView.backgroundColor = self.isSelected ? UIColor.ianLegitColor() : UIColor.clear
 //            self.layer.borderColor = self.isSelected ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
 
         }
+    }
+    
+    func refreshCell(){
+        self.cellView.backgroundColor = self.isListSelected ? UIColor.ianLegitColor().withAlphaComponent(0.6) : UIColor.clear
+        self.layer.borderColor = self.isListSelected ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
     }
     
 //    var listSelected: Bool = false {
@@ -276,6 +280,7 @@ class ListSummaryCell: UICollectionViewCell {
     
     @objc func tapList() {
         guard let list = list else {return}
+        self.isListSelected = !self.isListSelected
         self.delegate?.didTapList(list: list)
     }
     
@@ -289,7 +294,7 @@ class ListSummaryCell: UICollectionViewCell {
         self.listNameLabel.text = ""
         self.listDetailLabel.text = ""
         addNewListViewShow = false
-        self.isSelected = false
+        self.isListSelected = false
     }
     
     

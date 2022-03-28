@@ -9080,8 +9080,20 @@ extension Database{
                 return p1Count >= p2Count
             })
         } else if sortInput == sortNearest {
+            // Check for distance
+            var tempCheckedList:[List] = []
+            for list in inputList {
+                if list.listDistance != nil {
+                    tempCheckedList.append(list)
+                } else if list.listGPS != nil {
+                    if let loc = CurrentUser.currentLocation {
+                        list.listDistance = list.listGPS?.distance(from: loc)
+                        tempCheckedList.append(list)
+                    }
+                }
+            }
             // Sort by Location - Most Cred likely also has the most posts
-            tempList = inputList.sorted(by: { (p1, p2) -> Bool in
+            tempList = tempCheckedList.sorted(by: { (p1, p2) -> Bool in
                 let p1Count = p1.listDistance ?? 999999
                 let p2Count = p2.listDistance ?? 999999
                 return p1Count <= p2Count

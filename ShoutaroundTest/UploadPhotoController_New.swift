@@ -3987,7 +3987,15 @@ Rating Emojis help you describe your experience beyond just star ratings
             print("Remove \(emoji) Tag, Current: \(self.nonRatingEmojiTags.joined())")
         } else {
             self.nonRatingEmojiTags.append(emoji)
-            self.nonRatingEmojiTagsDict.append(EmojiDictionary[emoji]!)
+            if let dic = EmojiDictionary[emoji] {
+                self.nonRatingEmojiTagsDict.append(dic)
+            } else if let revdic = ReverseEmojiDictionary.key(forValue: emoji) {
+                self.nonRatingEmojiTagsDict.append(revdic)
+            } else {
+                self.nonRatingEmojiTagsDict.append(emoji)
+                print("NO EMOJI DIC FOR \(emoji)")
+            }
+            
             print("ADD \(emoji) Tag, Current: \(self.nonRatingEmojiTags.joined())")
         }
         self.captionEmojiCollectionView.reloadData()

@@ -103,13 +103,13 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     var enableSelection = false
     var selectedListIds:[String] = [] {
         didSet {
-            self.sortLists()
+//            self.sortLists()
 //            self.collectionView.reloadData()
         }
     }
     var selectedListIdTimes:[String: Date] = [:] {
         didSet {
-            self.sortLists()
+//            self.sortLists()
         }
     }
     var preExistingListIds:[String] = []
@@ -337,6 +337,25 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     
 
     func didTapList(list: List?) {
+        guard let list = list else {return}
+        guard let listId = list.id else {return}
+        if !self.selectedListIds.contains(listId) {
+            self.selectedListIds.append(listId)
+            self.selectedListIdTimes[listId] = Date()
+            print("Add Selected List | \(list.name) | \(self.selectedListIds.count) Lists")
+        } else {
+            self.selectedListIds.removeAll { $0 == listId }
+            self.selectedListIdTimes.removeValue(forKey: listId)
+            print("Remove Selected List | \(list.name) | \(self.selectedListIds.count) Lists")
+        }
+        
+        
+        if let index = self.userLists.firstIndex { (tlist) -> Bool in
+            tlist.id  == list.id
+        } {
+            let filteredindexpath = IndexPath(row:index + (showAddListButton ? 1 : 0) , section: 0)
+            self.collectionView.reloadItems(at: [filteredindexpath])
+        }
         self.delegate?.didTapList(list: list)
     }
     
@@ -580,7 +599,7 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         
         let tempList = showAddListButton ? self.userLists[indexPath.item - 1] : self.userLists[indexPath.item]
         cell.list = tempList
-        cell.isSelected = false
+//        cell.isSelected = false
         cell.delegate = self
         
         var listSelected = (selectedListIds.contains(tempList.id ?? "")) && enableSelection
@@ -600,8 +619,11 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
         cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: 14).cgPath
         cell.layer.cornerRadius = 10
         cell.layer.masksToBounds = true
-        
-        cell.isSelected = listSelected
+
+        cell.isListSelected = listSelected
+        cell.cellView.backgroundColor = listSelected ? UIColor.ianLegitColor().withAlphaComponent(0.6) : UIColor.clear
+        cell.layer.borderColor = listSelected ? UIColor.ianLegitColor().cgColor : UIColor.gray.cgColor
+//        cell.refreshCell()
         
         return cell
     }

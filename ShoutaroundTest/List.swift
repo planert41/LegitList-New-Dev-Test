@@ -89,7 +89,13 @@ class List {
     var locationCounts: [String: Int] = [:]
 
     
-    var listGPS: CLLocation?
+    var listGPS: CLLocation? {
+        didSet {
+            if let location = CurrentUser.currentLocation {
+                self.listDistance = self.listGPS?.distance(from: location)
+            }
+        }
+    }
     var listDistance: Double? = nil
     var newNotificationsCount: Int = 0
     var newNotifications: [Event] = [] {

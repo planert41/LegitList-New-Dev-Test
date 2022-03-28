@@ -14,6 +14,7 @@ import FirebaseStorage
 import FirebaseDatabase
 import FirebaseAuth
 import SVProgressHUD
+import CoreLocation
 
 class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UISearchBarDelegate, DiscoverListCellDelegate, UIScrollViewDelegate, DiscoverUserCellDelegate, DiscoverListCellNewDelegate {
    
@@ -98,14 +99,30 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         var tempListPostIds:[String:[String: Double]] = [:]
         var tempLocations:[String] = []
         var tempLists:[String: List] = [:]
+        var tempListsLocation:[String: CLLocation] = [:]
+        var tempListsDates:[String: Date] = [:]
 
+        
         // Loop through posts for Locations
         for (id, post) in CurrentUser.posts {
             if post.locationSummaryID != nil {
                 guard let city = post.locationSummaryID else {return}
                 if !tempLocations.contains(city) {
                     tempLocations.append(city)
+                    if let loc = post.locationGPS {
+                        tempListsLocation[city] = loc
+                    }
                     tempListPostIds[city] = [:]
+                }
+                
+                if let loc = post.locationGPS {
+                    if tempListsLocation[city] == nil {
+                        tempListsLocation[city] = loc
+                    }
+                }
+                
+                if post.creationDate > (tempListsDates[city] ?? Date.distantPast) {
+                    tempListsDates[city] = post.creationDate
                 }
                 
                 // Update Post ID to temp City
@@ -120,6 +137,12 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             var temp = List.init(id: city, name: city.capitalizingFirstLetter(), publicList: 0)
             var postIds = tempListPostIds[city]
             temp.postIds = postIds ?? [:]
+            temp.listGPS = tempListsLocation[city]
+
+            if let location = CurrentUser.currentLocation {
+                temp.listDistance = temp.listGPS?.distance(from: location)
+            }
+            temp.mostRecentDate = tempListsDates[city] ?? Date.distantPast
             
             if (postIds?.count) ?? 0 > 0 {
                 let latestPost = postIds!.max { a, b in a.value < b.value }
@@ -521,12 +544,15 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func sortDisplayLists() {
+        var tempLists: [List] = []
         if self.fetchType == ListYours {
-            self.fetchedList = self.yourLists
+            tempLists = self.yourLists
         } else if self.fetchType == ListFollowing {
-            self.fetchedList = self.followingLists
+            tempLists = self.followingLists
         } else if self.fetchType == ListAll {
-            self.fetchedList = self.allLists
+            tempLists = self.allLists
+        } else if self.fetchType == ListCities {
+            tempLists = Array(self.userCityLists.values)
         }
         
         if self.selectedSort == sortNearest && CurrentUser.currentLocation == nil {
@@ -535,10 +561,22 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             return
         }
         
-        Database.sortList(inputList: self.fetchedList, sortInput: self.selectedSort, completion: { (lists) in
+        Database.sortList(inputList: tempLists, sortInput: self.selectedSort, completion: { (lists) in
             print("\(self.fetchType) : \(lists.count) Lists : \(self.selectedSort) | sortDisplayLists")
-            self.fetchedList = lists
-            self.filteredDisplayList = lists
+            if self.fetchType == ListYours || self.fetchType == ListFollowing {
+                self.fetchedList = lists
+                self.filteredDisplayList = lists
+            } else if self.fetchType == ListCities {
+                var tempCities: [String] = []
+                for list in lists {
+                    if let id = list.id {
+                        tempCities.append(id)
+                    }
+                }
+                self.userCity = tempCities
+                self.filteredUserCity = tempCities
+            }
+
             self.tableView.refreshControl?.endRefreshing()
             self.tableView.reloadData()
         })
@@ -619,7 +657,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     @objc func selectFetchType(sender: UISegmentedControl) {
         self.fetchType = self.fetchTypeOptions[sender.selectedSegmentIndex]
         self.underlineSegment(segment: sender.selectedSegmentIndex)
-        self.sortSegmentControl.isHidden = (self.fetchType == ListFav || self.fetchType == ListCities)
+        self.sortSegmentControl.isHidden = (self.fetchType == ListFav /*|| self.fetchType == ListCities*/)
         print("DiscoverController | Type Selected | \(self.fetchType)")
     }
     
