@@ -13,12 +13,13 @@ import FirebaseStorage
 import FBSDKLoginKit
 import IQKeyboardManagerSwift
 import SVProgressHUD
+import GooglePlaces
 
 protocol SignUpControllerDelegate {
     func successSignUp()
 }
 
-class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate {
+class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, AppleSearchDelegate {
 
     var FBCredentials: AuthCredential?
     var delegate: SignUpControllerDelegate?
@@ -36,6 +37,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 //            photoTopPadding.constant = self.editUserInd ? 60 : 40
         }
     }
+    
+    var defaultPassword = "XXXXXX"
     var editUser: User? {
         didSet{
             if editUserInd {
@@ -45,26 +48,46 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     self.usernameTextField.text = editUser?.username
                     
                     // Disable Password
-                    self.passwordTextField.text = "XXXXXX"
-                    self.confirmPasswordTextField.text = "XXXXXX"
-                    self.passwordTextField.isEnabled = false
+                    self.passwordTextField.text = defaultPassword
+                    self.confirmPasswordTextField.text = defaultPassword
+//                    self.passwordTextField.isEnabled = false
                     self.confirmPasswordTextField.isEnabled = false
+                    self.userCityTextField.text = editUser?.userCity
 
                     
                     // Load Edit User Photo
-                    if let imageUrl = editUser?.profileImageUrl {
-                        self.updatePhoto(image: imageCache[imageUrl])
-                        if let imageData = imageCache[imageUrl]?.pngData() {
-                            self.originalImageData = imageData
-                        } else {
-                            self.originalImageData = nil
-                        }
-                    }
+                    loadCurrentUserPhoto()
                 }
             }
         }
     }
     
+    @objc func loadCurrentUserPhoto() {
+        // Load Edit User Photo
+        if let imageUrl = editUser?.profileImageUrl {
+            if let cache = imageCache[imageUrl] {
+                self.updatePhoto(image: cache)
+                self.originalImageData = cache.pngData()
+                self.originalImage = cache
+                self.updateImage = false
+            }
+            else
+            {
+                let profileImageView = CustomImageView()
+                profileImageView.loadImage(urlString: imageUrl)
+                self.updatePhoto(image: profileImageView.image)
+                self.originalImageData = profileImageView.image?.pngData()
+                self.originalImage = profileImageView.image
+                self.updateImage = false
+            }
+        } else {
+            self.originalImageData = nil
+            self.originalImage = nil
+        }
+    }
+    
+    
+    var originalImage: UIImage?
     var originalImageData: Data?
     
 //    let cancelButton: UIButton = {
@@ -116,13 +139,22 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(handlePlusPhoto), for: .touchUpInside)
         button.backgroundColor = UIColor.white
-        
+        button.layer.borderColor = UIColor.ianLegitColor().cgColor
+
         return button
         
     } ()
     
     let photoDisplayHeight = 150 as CGFloat
-    var profileImageUpdated = false
+    
+    lazy var photoCancelButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        button.setImage(#imageLiteral(resourceName: "cancel_red").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.backgroundColor = UIColor.clear
+        button.addTarget(self, action: #selector(loadCurrentUserPhoto), for: .touchUpInside)
+        return button
+    }()
+
     
     @objc func handlePlusPhoto(){
         
@@ -165,42 +197,43 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         tf.borderStyle = .roundedRect
         tf.font = UIFont.boldSystemFont(ofSize: 15)
         tf.backgroundColor = UIColor.white
+        tf.layer.borderColor = UIColor.ianLegitColor().cgColor
+        tf.layer.borderWidth = 0
 
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         
         return tf
     }()
-    
+        
     @objc func handleTextInputChange(){
 
         var isFormValid: Bool = false
         
         if self.editUserInd {
             self.checkUpdate()
-            isFormValid = updateUsername||updateImage||updateEmail
+            isFormValid = updateUsername||updateImage||updateEmail||updateCity
         } else {
-            isFormValid = emailTextField.text?.count ?? 0 > 0 && usernameTextField.text?.count ?? 0 > 0 && (appleUid != nil ? true : passwordTextField.text?.count ?? 0 > 0)
-        }
+            isFormValid = emailTextField.text?.count ?? 0 > 0 && usernameTextField.text?.count ?? 0 > 0 && userCityTextField.text?.count ?? 0 > 0 && (appleUid != nil ? true : passwordTextField.text?.count ?? 0 > 0)
         
-        if passwordTextField.text != confirmPasswordTextField.text {
-            confirmPasswordTextField.backgroundColor = UIColor.red
-        } else {
-            confirmPasswordTextField.backgroundColor = UIColor(white: 0, alpha: 0.03)
-        }
-        
+            if passwordTextField.text != confirmPasswordTextField.text {
+                confirmPasswordTextField.backgroundColor = UIColor.red
+            } else {
+                confirmPasswordTextField.backgroundColor = UIColor(white: 0, alpha: 0.03)
+            }
+            
+            if isFormValid {
+                signUpButton.isEnabled = true
+                signUpButton.backgroundColor = UIColor.ianBlueColor()
 
-        if isFormValid {
-            signUpButton.isEnabled = true
-            signUpButton.backgroundColor = UIColor.ianBlueColor()
-
-//            signUpButton.backgroundColor = UIColor.rgb(red: 17, green: 154, blue: 237)
-        } else {
-            signUpButton.isEnabled = false
-            signUpButton.backgroundColor = UIColor.ianBlueColor().withAlphaComponent(0.2)
-//            signUpButton.backgroundColor = UIColor.rgb(red: 149, green: 204, blue: 244)
-        }
-        print("handleTextInputChange: \(isFormValid)")
+    //            signUpButton.backgroundColor = UIColor.rgb(red: 17, green: 154, blue: 237)
+            } else {
+                signUpButton.isEnabled = false
+                signUpButton.backgroundColor = UIColor.ianBlueColor().withAlphaComponent(0.2)
+    //            signUpButton.backgroundColor = UIColor.rgb(red: 149, green: 204, blue: 244)
+            }
+            print("handleTextInputChange: \(isFormValid)")
         
+        }
     }
     
     
@@ -212,6 +245,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 
         tf.borderStyle = .roundedRect
         tf.font = UIFont.boldSystemFont(ofSize: 15)
+        tf.layer.borderColor = UIColor.ianLegitColor().cgColor
+        tf.layer.borderWidth = 0
 
         
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
@@ -228,7 +263,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         tf.font = UIFont.boldSystemFont(ofSize: 15)
         tf.isSecureTextEntry = true
         tf.backgroundColor = UIColor.white
-
+        tf.layer.borderColor = UIColor.ianLegitColor().cgColor
+        tf.layer.borderWidth = 0
+        
         tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
         return tf
         
@@ -261,6 +298,80 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         
     }()
     
+    let userCityTextField: PaddedTextField = {
+        let tf = PaddedTextField()
+        tf.placeholder = "Current City"
+//        tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
+        tf.borderStyle = .roundedRect
+        tf.font = UIFont.boldSystemFont(ofSize: 15)
+        tf.backgroundColor = UIColor.white
+        tf.layer.borderColor = UIColor.ianLegitColor().cgColor
+        tf.layer.borderWidth = 0
+        
+        tf.addTarget(self, action: #selector(handleTextInputChange), for: .editingChanged)
+        
+        return tf
+    }()
+    
+    var tempUserCityLoc: CLLocation?
+    
+    func presentSearchCity() {
+        // APPLE CITY SEARCH
+        let autocompleteController = ApplePlaceSearchTableViewController()
+        autocompleteController.delegate = self
+        if let input = self.userCityTextField.text {
+            if !(input.isEmptyOrWhitespace() ?? true) {
+                autocompleteController.inputText = input
+            }
+        }
+
+
+//        // GOOGLE CITY SEARCH
+//        let autocompleteController = GMSAutocompleteViewController()
+//        autocompleteController.delegate = self
+//        
+//        let fields: GMSPlaceField = GMSPlaceField(rawValue: UInt(GMSPlaceField.name.rawValue) |
+//          UInt(GMSPlaceField.placeID.rawValue))
+//        autocompleteController.placeFields = fields
+//
+//        // Specify a filter.
+//        let filter = GMSAutocompleteFilter()
+//        filter.type = .city
+//        autocompleteController.autocompleteFilter = filter
+
+//        // Display the autocomplete view controller.
+//        let temp = UINavigationController(rootViewController: autocompleteController)
+        self.userCityTextField.resignFirstResponder()
+        autocompleteController.searchType = .city
+        present(autocompleteController, animated: true, completion: nil)
+
+//        self.navigationController?.pushViewController(autocompleteController, animated: true)
+    }
+    
+    func locationSelected(name: String, loc: CLLocation?) {
+        self.tempUserCityLoc = loc
+        self.userCityTextField.text = name
+        self.checkUpdate()
+        
+        var userCity = self.userCityTextField.text
+        var userCityLoc = self.tempUserCityLoc
+
+        var cityLatitude: String?
+        var cityLongitude: String?
+        var cityGPS: String?
+        
+        if userCityLoc == nil {
+            cityGPS = nil
+        } else {
+            cityLatitude = String(format: "%f", (userCityLoc!.coordinate.latitude))
+            cityLongitude = String(format: "%f", (userCityLoc!.coordinate.longitude))
+            cityGPS = cityLatitude! + "," + cityLongitude!
+        }
+    
+        let dictionaryValues = ["userLocation": cityGPS, "userCity": userCity] as [String : Any]
+        print("locationSelected : ", userCity, cityGPS)
+    }
+    
     
     let updatePasswordButton: UIButton = {
         let button = UIButton(type: .system)
@@ -269,7 +380,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(.white, for: .normal)
         button.setTitle("Update Password", for: .normal)
-        button.addTarget(self, action: #selector(updatePassword), for: .touchUpInside)
+        button.addTarget(self, action: #selector(updatePasswordInput), for: .touchUpInside)
 //        button.isEnabled = false
         return button
     }()
@@ -312,11 +423,21 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         self.navigationController?.pushViewController(login, animated: true)
     }
     
-    var updateImage: Bool = false
+    var updateImage: Bool = false {
+        didSet {
+            self.photoCancelButton.isHidden = !updateImage
+        }
+    }
     var updateEmail: Bool = false
     var updateUsername: Bool = false
+    var updateCity: Bool = false
+    var updatePassword: Bool = false
+
     
     func checkUpdate(){
+        if !self.editUserInd {
+            return
+        }
         // Check if Image is the same
         if let newImageData = plusPhotoButton.currentImage!.pngData() {
             if newImageData == originalImageData {
@@ -325,6 +446,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 updateImage = true
             }
         }
+        plusPhotoButton.layer.borderColor = updateImage ? UIColor.ianLegitColor().cgColor : UIColor.black.cgColor
         
         // Check if Email is the same
         if let newEmail = emailTextField.text {
@@ -334,6 +456,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 updateEmail = true
             }
         }
+        emailTextField.layer.borderWidth = updateEmail ? 2 : 0
+
         
         // Check if Username is the same
         var newUsername = self.usernameTextField.text
@@ -349,8 +473,41 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 updateUsername = true
             }
         }
+        usernameTextField.layer.borderWidth = updateUsername ? 2 : 0
         
-        print("CHECKED EDITS | updateImage \(updateImage) | updateEmail \(updateEmail) | updateUsername \(updateUsername)")
+        var newPassword = self.passwordTextField.text
+        if newPassword != defaultPassword {
+            if !(newPassword?.isEmptyOrWhitespace() ?? true) {
+                updatePassword = true
+            }
+        }
+        passwordTextField.layer.borderWidth = updatePassword ? 2 : 0
+
+        
+        var newCity = self.userCityTextField.text
+        if let newCity = newCity {
+            if newCity == editUser?.userCity {
+                updateCity = false
+            } else {
+                updateCity = true
+            }
+        }
+        userCityTextField.layer.borderWidth = updateCity ? 2 : 0
+
+        var isFormValid = updateUsername||updateImage||updateEmail||updateCity
+        
+        if isFormValid {
+            signUpButton.isEnabled = true
+            signUpButton.backgroundColor = UIColor.ianBlueColor()
+
+//            signUpButton.backgroundColor = UIColor.rgb(red: 17, green: 154, blue: 237)
+        } else {
+            signUpButton.isEnabled = false
+            signUpButton.backgroundColor = UIColor.ianBlueColor().withAlphaComponent(0.2)
+//            signUpButton.backgroundColor = UIColor.rgb(red: 149, green: 204, blue: 244)
+        }
+        
+        print("CHECKED EDITS | updateImage \(updateImage) | updateEmail \(updateEmail) | updateUsername \(updateUsername) | updateUserCity \(updateCity)")
     }
     
     
@@ -359,14 +516,23 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         self.signUpButton.isEnabled = false
         self.checkUpdate()
         
+        let fieldAttribute = [NSAttributedString.Key.font: UIFont(name: "Poppins-Regular", size: 12), NSAttributedString.Key.foregroundColor: UIColor.darkGray]
+        let changeAttribute = [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 13), NSAttributedString.Key.foregroundColor: UIColor.black]
+
+        let myString = NSMutableAttributedString(string: "", attributes: fieldAttribute)
+
+        
         var updateString: String = ""
         if updateImage {
             updateString += "New Image Update \n"
+            myString.append(NSMutableAttributedString(string: "New Image Update \n", attributes: fieldAttribute))
         }
         
         if updateEmail{
             if let newEmail = emailTextField.text {
                 updateString += "New Email Update to \(newEmail) \n"
+                myString.append(NSMutableAttributedString(string: "New Email Update to \n", attributes: fieldAttribute))
+                myString.append(NSMutableAttributedString(string: "\(newEmail) \n", attributes: changeAttribute))
             }
         }
         
@@ -377,15 +543,34 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
         
         if updateUsername{
+            myString.append(NSMutableAttributedString(string: "New Username Update to \n", attributes: fieldAttribute))
+            myString.append(NSMutableAttributedString(string: "\(newUsername) \n", attributes: changeAttribute))
             updateString += "New Username Update to \(newUsername!) \n"
         }
         
-        if !updateImage && !updateEmail && !updateUsername {
-            updateString = "No Profile Changes"
+        var newPassword = self.passwordTextField.text
+        
+        if updatePassword{
+            updateString += "New Password Update to \(newPassword!) \n"
+            myString.append(NSMutableAttributedString(string: "New Password Update to \n", attributes: fieldAttribute))
+            myString.append(NSMutableAttributedString(string: "\(newPassword) \n", attributes: changeAttribute))
+        }
+        
+        if updateCity{
+            var newCity = String(describing: self.userCityTextField.text!)
+            updateString += "New User City Update to \(newCity) \n"
+            myString.append(NSMutableAttributedString(string: "New User City Update to \n", attributes: fieldAttribute))
+            myString.append(NSMutableAttributedString(string: "\(newCity) \n", attributes: changeAttribute))
         }
         
         
+        if !updateImage && !updateEmail && !updateUsername && !updateCity {
+            updateString = "No Profile Changes"
+            myString.append(NSMutableAttributedString(string: "No Profile Changes \n", attributes: changeAttribute))
+        }
+        
         let editAlert = UIAlertController(title: "Edit User", message: updateString, preferredStyle: UIAlertController.Style.alert)
+        editAlert.setValue(myString, forKey: "attributedMessage")
         editAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             self.handleEditUser()
         }))
@@ -402,8 +587,15 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         print("handleEditUser")
         SVProgressHUD.show(withStatus: "Editing User")
         
-        let editGroup = DispatchGroup()
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("Update Username Error: No UID")
+            let message = "Update Username Error: No UID |"
+            return
+        }
         
+        let editGroup = DispatchGroup()
+        var updateValue:[String:Any] = [:]
+
         if self.updateEmail {
             editGroup.enter()
             Auth.auth().currentUser?.updateEmail(to: self.emailTextField.text!, completion: { (error) in
@@ -423,49 +615,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             })
         }
         
-        
-        if self.updateUsername {
-            editGroup.enter()
-            guard let uid = Auth.auth().currentUser?.uid else {
-                print("Update Username Error: No UID")
-                let message = "Update Username Error: No UID |"
-                return
-            }
-            
-            var newUsername = self.usernameTextField.text
-            newUsername = newUsername?.replacingOccurrences(of: " ", with: "")
-            if newUsername?.first != "@" {
-                newUsername = "@" + newUsername!
-            }
-            
-            Database.checkUsernameAvailable(username: newUsername) { (available) in
-                if available {
-                    let updateValue = ["username":newUsername]
-                    Database.database().reference().child("users").child(uid).updateChildValues(updateValue) { (err, ref) in
-                        if let err = err {
-                            print("Fail to Update Username: ", updateValue, err)
-                            let message = "Fail to Update Username |" + err.localizedDescription
-                            let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertController.Style.alert)
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
-                                self.signUpButton.isEnabled = true
-                            }))
-                            self.present(alert, animated: true, completion: nil)
-                            editGroup.leave()
-                            return
-                        }
-                            
-                        else {
-                            editGroup.leave()
-                            print("Edit User Username | SUCCESS | ", updateValue)
-                        }
-                    }
-                } else {
-                    print("User Update: New Username, \(newUsername!) already taken")
-                    self.alert(title: "Update Error", message: "\(newUsername!) already taken")
-                    self.signUpButton.isEnabled = true
-                    return
-                }
-            }
+        if self.updatePassword {
+            self.updatePasswordConfirm(newPassword: passwordTextField.text)
         }
         
         if self.updateImage {
@@ -536,33 +687,106 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             })
         }
         
+                
+        if self.updateUsername  {
+            editGroup.enter()
+
+            // USERNAME
+            var newUsername = self.usernameTextField.text
+            newUsername = newUsername?.replacingOccurrences(of: " ", with: "")
+            if newUsername?.first != "@" {
+                newUsername = "@" + newUsername!
+            }
+                        
+            Database.checkUsernameAvailable(username: newUsername) { (available) in
+                if available {
+                    updateValue["username"] = newUsername
+                    editGroup.leave()
+                } else {
+                    print("User Update: New Username, \(newUsername!) already taken")
+                    self.alert(title: "Update Error", message: "\(newUsername!) already taken")
+                    self.signUpButton.isEnabled = true
+                    return
+                }
+            }
+        }
+        
+        if self.updateCity {
+            editGroup.enter()
+            // USER CITY
+            var userCity = (self.userCityTextField.text)!
+            var userCityLoc = self.tempUserCityLoc
+
+            var cityLatitude: String?
+            var cityLongitude: String?
+            var cityGPS: String?
+            
+            if userCityLoc == nil {
+                cityGPS = nil
+            } else {
+                cityLatitude = String(format: "%f", (userCityLoc!.coordinate.latitude))
+                cityLongitude = String(format: "%f", (userCityLoc!.coordinate.longitude))
+                cityGPS = cityLatitude! + "," + cityLongitude!
+            }
+            updateValue["userLocation"] = cityGPS
+            updateValue["userCity"] = userCity
+            editGroup.leave()
+        }
+        
+
+        
         editGroup.notify(queue: .main) {
-            print("Finish Updating User | updateImage \(self.updateImage) | updateEmail \(self.updateEmail) | updateUsername \(self.updateUsername)")
+            print("Finish Updating User | updateImage \(self.updateImage) | updateEmail \(self.updateEmail) | updateUsername \(self.updateUsername) | \(updateValue)")
             
             guard let uid = Auth.auth().currentUser?.uid else {return}
             
-            Database.fetchUserWithUID(uid: uid, forceUpdate: true, completion: { (user) in
-                Database.loadCurrentUser(inputUser: user, completion: {
-//                    self.delegate?.successSignUp()
-//                    self.navigationController?.popToRootViewController(animated: true)
-                    SVProgressHUD.dismiss()
-                    self.dismiss(animated: true, completion: {
-                        self.passwordTextField.resignFirstResponder()
-                        self.delegate?.successSignUp()
-                        print("Edit User | Updated Current User with new user info")
-                    })
-                })
-            })
-            
+            if self.updateUsername || self.updateCity {
+                // UPDATE DATABASE
+                Database.database().reference().child("users").child(uid).updateChildValues(updateValue) { (err, ref) in
+                    if let err = err {
+                        print("Fail to Update User: ", updateValue, err)
+                        let message = "Fail to Update User |" + err.localizedDescription
+                        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertController.Style.alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
+                            self.signUpButton.isEnabled = true
+                        }))
+                        self.present(alert, animated: true, completion: nil)
+                        return
+                    }
+                    else {
+                        self.editComplete()
+                        print("Edit User City | SUCCESS | ", updateValue)
+                    }
+                }
+            } else {
+                self.editComplete()
+            }
         }
         
+    }
+    
+    func editComplete() {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+
+        Database.fetchUserWithUID(uid: uid, forceUpdate: true, completion: { (user) in
+            Database.loadCurrentUser(inputUser: user, completion: {
+//                    self.delegate?.successSignUp()
+//                    self.navigationController?.popToRootViewController(animated: true)
+                SVProgressHUD.dismiss()
+                self.dismiss(animated: true, completion: {
+                    self.passwordTextField.resignFirstResponder()
+                    self.delegate?.successSignUp()
+                    print("Edit User | Updated Current User with new user info")
+                })
+            })
+        })
     }
     
     override func viewWillDisappear(_ animated: Bool) {
 //        SVProgressHUD.dismiss()
     }
     
-    @objc func updatePassword(){
+    @objc func updatePasswordInput(){
         let passwordAlert = UIAlertController(title: "Update Password", message: "", preferredStyle: UIAlertController.Style.alert)
         passwordAlert.addTextField { (textField : UITextField!) -> Void in
             textField.placeholder = "Enter New Password"
@@ -581,15 +805,16 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             self.checkPassword(password: newPassword.text)
 
             if newPassword.text == confirmNewPassword.text {
-                
-                Auth.auth().currentUser?.updatePassword(to: newPassword.text!, completion: { (error) in
-                    if let error = error {
-                        print("Update New Password Error:", error)
-                    } else {
-                        print("Update New Password Successfully")
-                        self.alert(title: "Update Password", message: "Success!")
-                    }
-                })
+                self.passwordTextField.text = newPassword.text
+                self.checkUpdate()
+//                Auth.auth().currentUser?.updatePassword(to: newPassword.text!, completion: { (error) in
+//                    if let error = error {
+//                        print("Update New Password Error:", error)
+//                    } else {
+//                        print("Update New Password Successfully")
+//                        self.alert(title: "Update Password", message: "Success!")
+//                    }
+//                })
                 
             } else {
                 self.alert(title: "Update Password", message: "Passwords Don't Match")
@@ -603,6 +828,23 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         passwordAlert.addAction(cancelAction)
         
         self.present(passwordAlert, animated: true, completion: nil)
+    }
+    
+    func updatePasswordConfirm(newPassword: String?) {
+        guard let newPassword = newPassword else {
+            self.alert(title: "Password Update Error", message: "Blank Password")
+            return
+        }
+        self.checkPassword(password: newPassword)
+        Auth.auth().currentUser?.updatePassword(to: newPassword, completion: { (error) in
+            if let error = error {
+                print("Update New Password Error:", error)
+            } else {
+                print("Update New Password Successfully")
+                self.alert(title: "Update Password", message: "Success!")
+            }
+        })
+
     }
     
     func checkPassword(password: String?){
@@ -693,6 +935,10 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             return}
         guard let password = passwordTextField.text, password.count > 0 else {
                 self.alert(title: "Error", message: "Password Needs to be more than 1 letter")
+                self.signUpButton.isEnabled = true
+            return}
+        guard let city = userCityTextField.text, city.count > 0 else {
+                self.alert(title: "Error", message: "Please include a city")
                 self.signUpButton.isEnabled = true
             return}
         
@@ -813,7 +1059,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         
         SVProgressHUD.show(withStatus: "Creating User")
 
-        if self.profileImageUpdated {
+        if self.updateImage {
             let storageRef = Storage.storage().reference().child("profile_images").child(filename)
             storageRef.putData(uploadData, metadata: nil, completion: { (metadata,err) in
                 
@@ -969,9 +1215,23 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             guard let username = usernameTemp, username.count > 1 else {return}
             let userCreatedDate = Date().timeIntervalSince1970
 
+            var userCity = self.userCityTextField.text
+            var userCityLoc = self.tempUserCityLoc
+
+            var cityLatitude: String?
+            var cityLongitude: String?
+            var cityGPS: String?
             
+            if userCityLoc == nil {
+                cityGPS = nil
+            } else {
+                cityLatitude = String(format: "%f", (userCityLoc!.coordinate.latitude))
+                cityLongitude = String(format: "%f", (userCityLoc!.coordinate.longitude))
+                cityGPS = cityLatitude! + "," + cityLongitude!
+            }
+        
             let uid = userID
-            let dictionaryValues = ["username": username, "profileImageUrl": url, "creationDate": userCreatedDate] as [String : Any]
+        let dictionaryValues = ["username": username, "profileImageUrl": url, "creationDate": userCreatedDate, "userLocation": cityGPS, "userCity": userCity] as [String : Any]
             let values = [uid:dictionaryValues]
         
             Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in
@@ -1170,6 +1430,10 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         plusPhotoButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         plusPhotoButton.layer.cornerRadius = photoDisplayHeight/2
         plusPhotoButton.layer.masksToBounds = true
+
+        view.addSubview(photoCancelButton)
+        photoCancelButton.anchor(top: nil, left: plusPhotoButton.rightAnchor, bottom: plusPhotoButton.topAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 20, height: 20)
+        photoCancelButton.isHidden = true
 //
 //        if self.editUserInd {
 //            if let imageUrl = editUser?.profileImageUrl {
@@ -1226,6 +1490,16 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         button.addTarget(self, action: #selector(signIn), for: .touchUpInside)
         return button
     }()
+    
+    let confirmButton: UIButton = {
+        let button = UIButton(type: .system)
+        let attributedTitle = NSMutableAttributedString()
+        attributedTitle.append(NSAttributedString(string: "Confirm", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont(name: "Poppins-Bold", size: 20), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.ianLegitColor()])))
+        button.setAttributedTitle(attributedTitle, for: .normal)
+     //   button.setTitle("Don't have an account? Sign Up.", for: .normal)
+        button.addTarget(self, action: #selector(confirmEdit), for: .touchUpInside)
+        return button
+    }()
 
     
     let backButton: UIButton = {
@@ -1239,7 +1513,13 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }()
     
     fileprivate func setupBottomFields() {
-        let stackView = UIStackView(arrangedSubviews: [backButton, signInButton])
+        var stackView = UIStackView()
+        if self.editUserInd {
+            stackView = UIStackView(arrangedSubviews: [backButton, confirmButton])
+        } else {
+            stackView = UIStackView(arrangedSubviews: [backButton, signInButton])
+        }
+        
         stackView.axis = .horizontal
         stackView.spacing = 50
         stackView.distribution = .fillEqually
@@ -1250,7 +1530,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }
     
     @objc func updatePhoto(image: UIImage?){
-        
+        print("updatePhoto | Received Image")
         guard let image = image else {
             print("Update Image Error : No Image")
             return
@@ -1263,7 +1543,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         plusPhotoButton.layer.borderColor = UIColor.black.cgColor
         plusPhotoButton.layer.borderWidth = 3
         
-        self.profileImageUpdated = true
+        if image.pngData() != self.originalImageData {
+            self.updateImage = true
+        }
         // Checks for photo change during edit
         
     }
@@ -1305,11 +1587,13 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         emailTextField.delegate = self
         usernameTextField.delegate = self
         passwordTextField.delegate = self
+        userCityTextField.delegate = self
         confirmPasswordTextField.delegate = self
         
         emailTextField.autocapitalizationType = UITextAutocapitalizationType.none
         usernameTextField.autocapitalizationType = UITextAutocapitalizationType.none
         passwordTextField.autocapitalizationType = UITextAutocapitalizationType.none
+        userCityTextField.autocapitalizationType = UITextAutocapitalizationType.none
         confirmPasswordTextField.autocapitalizationType = UITextAutocapitalizationType.none
 
         if self.editUserInd {
@@ -1323,13 +1607,15 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
         self.signUpButton.isEnabled = false
         
-        if self.editUserInd {
-            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, updatePasswordButton, signUpButton, cancelButton])
-        } else {
-//            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, confirmPasswordTextField, signUpButton])
-            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, signUpButton])
-        }
+//        if self.editUserInd {
+//            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, updatePasswordButton, userCityTextField, signUpButton, cancelButton])
+//        } else {
+////            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, confirmPasswordTextField, signUpButton])
+//            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, userCityTextField, signUpButton])
+//        }
         
+        stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, userCityTextField, signUpButton])
+
         
         stackView.distribution = .fillEqually
         stackView.axis = .vertical
@@ -1360,8 +1646,16 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 textField.text = "@"
             }
         } else {
+            // Check for blank @
             if usernameTextField.text?.replacingOccurrences(of: " ", with: "") == "@" {
                 usernameTextField.text = ""
+            }
+            if textField == userCityTextField {
+                self.presentSearchCity()
+            }
+            
+            if textField == passwordTextField && self.editUserInd {
+                self.updatePasswordInput()
             }
         }
         return true
@@ -1386,11 +1680,15 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             }
             
         } else if textField == passwordTextField {
-            self.handleSignUp()
-
+            textField.resignFirstResponder()
+            userCityTextField.becomeFirstResponder()
 //            confirmPasswordTextField.becomeFirstResponder()
             
-        } /*else if textField == confirmPasswordTextField {
+        } else if textField == userCityTextField {
+            self.handleSignUp()
+        }
+            
+            /*else if textField == confirmPasswordTextField {
             
             if confirmPasswordTextField.text != passwordTextField.text {
                 self.alert(title: "Sign Up Error", message: "Confirm Password Does Not Match Password")
@@ -1425,6 +1723,35 @@ fileprivate func convertToOptionalNSAttributedStringKeyDictionary(_ input: [Stri
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
 	return input.rawValue
+}
+
+extension SignUpController: GMSAutocompleteViewControllerDelegate {
+    // Handle the user's selection.
+    func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+      print("Place name: \(place.name)")
+      print("Place ID: \(place.placeID)")
+      print("Place attributions: \(place.attributions)")
+      dismiss(animated: true, completion: nil)
+    }
+
+    func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+      // TODO: handle the error.
+      print("Error: ", error.localizedDescription)
+    }
+
+    // User canceled the operation.
+    func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+      dismiss(animated: true, completion: nil)
+    }
+
+    // Turn the network activity indicator on and off again.
+    func didRequestAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+      UIApplication.shared.isNetworkActivityIndicatorVisible = true
+    }
+
+    func didUpdateAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+      UIApplication.shared.isNetworkActivityIndicatorVisible = false
+    }
 }
 
                 

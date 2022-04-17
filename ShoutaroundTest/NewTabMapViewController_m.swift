@@ -531,7 +531,7 @@ class NewTabMapViewController: UIViewController {
 //            let homeIcon = #imageLiteral(resourceName: "home").withRenderingMode(.alwaysTemplate)
             let homeIcon = #imageLiteral(resourceName: "home_tab_filled").withRenderingMode(.alwaysOriginal)
 
-            filterUserButton.setImage(homeIcon, for: .normal)
+            filterUserButton.setImage(defaultImage, for: .normal)
             
             filterUserLabel.text = ""
             filterUserButton.alpha = (filterUserLabel.text == "") ? buttonSemiAlpha : 1
@@ -826,19 +826,13 @@ class NewTabMapViewController: UIViewController {
         globeButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
 
         
-// FILTER LEGIT BUTTON
-        view.addSubview(filterLegitButton)
-        filterLegitButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
-        filterLegitButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
-        filterLegitButton.layer.cornerRadius = 40/2
-        updateFilterLegitButton()
-        
+
     
         
         
 //    // FILTER USER BUTTON
         view.addSubview(filterUserButton)
-        filterUserButton.anchor(top: nil, left: nil, bottom: filterLegitButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+        filterUserButton.anchor(top: nil, left: nil, bottom: globeButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
         filterUserButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
         filterUserButton.layer.cornerRadius = 40/2
         userListSearchView.inputUser = CurrentUser.user
@@ -850,9 +844,17 @@ class NewTabMapViewController: UIViewController {
 //        filterUserLabel.centerYAnchor.constraint(equalTo: filterUserButton.centerYAnchor).isActive = true
         
 
+    // FILTER LEGIT BUTTON
+        view.addSubview(filterLegitButton)
+        filterLegitButton.anchor(top: nil, left: nil, bottom: filterUserButton.topAnchor, right: nil, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+        filterLegitButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
+        filterLegitButton.layer.cornerRadius = 40/2
+        updateFilterLegitButton()
+        
+        
     // REFRESH BUTTON
         view.addSubview(refreshButton)
-        refreshButton.anchor(top: nil, left: nil, bottom: filterUserButton.topAnchor, right: nil, paddingTop: 15, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
+        refreshButton.anchor(top: nil, left: nil, bottom: filterLegitButton.topAnchor, right: nil, paddingTop: 15, paddingLeft: 0, paddingBottom: 10, paddingRight: 20, width: 40, height: 40)
         refreshButton.centerXAnchor.constraint(equalTo: trackingButton.centerXAnchor).isActive = true
         refreshButton.layer.cornerRadius = 40/2
         refreshButton.setTitle("", for: .normal)
@@ -1920,7 +1922,7 @@ extension NewTabMapViewController : MKMapViewDelegate {
         if let markerView = view as? MapPinMarkerView {
             markerView.markerTintColor = markerView.defaultPinColor
             
-            markerView.markerTintColor = UIColor.ianLegitColor()
+            markerView.markerTintColor = markerView.defaultSelectedPinColor
             markerView.detailCalloutAccessoryView?.removeGestureRecognizer(mainCallOutViewTap)
             markerView.rightCalloutAccessoryView?.removeGestureRecognizer(rightCallOutViewTap)
             markerView.leftCalloutAccessoryView?.removeGestureRecognizer(leftCallOutViewTap)

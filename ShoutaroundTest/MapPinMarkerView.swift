@@ -15,7 +15,9 @@ class MapPinMarkerView: MKMarkerAnnotationView {
     
     var defaultPinColor = UIColor.ianBlackColor()
     var defaultSelectedPinColor = UIColor.ianLegitColor()
-
+    var defaultLegitPinColor = UIColor.lightSelectedColor()
+//    var testColor = UIColor.lightSelectedColor()
+    
     override var annotation: MKAnnotation? {
         willSet {
             guard let mapPin = newValue as? MapPin else { return }
@@ -42,7 +44,11 @@ class MapPinMarkerView: MKMarkerAnnotationView {
             }
             else
             {
-                markerTintColor = defaultPinColor
+                if (mapPin.postRatingEmoji?.count ?? 0) > 0 {
+                    markerTintColor = defaultLegitPinColor
+                } else {
+                    markerTintColor = defaultPinColor
+                }
             }
             
             

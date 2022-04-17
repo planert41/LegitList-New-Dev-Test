@@ -285,19 +285,20 @@ class UserSearchBar: UIView, UISearchBarDelegate {
 //        navEmojiButton.isHidden = true
 //        updateEmojiButton()
         
-//        addSubview(navGridToggleButton)
-//        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
-//        navGridButtonWidth = navGridToggleButton.widthAnchor.constraint(equalToConstant: 60)
-//        navGridButtonWidth?.isActive = true
-//        navGridToggleButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
-////        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-//        setupnavGridToggleButton()
+        addSubview(navGridToggleButton)
+        navGridToggleButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
+        navGridButtonWidth = navGridToggleButton.widthAnchor.constraint(equalToConstant: 60)
+        navGridButtonWidth?.isActive = true
+        navGridToggleButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
+//        navGridToggleButton.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+        setupnavGridToggleButton()
         
-        addSubview(navMapButton)
-        navMapButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
-        navMapButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
-        navMapButtonWidth = navMapButton.widthAnchor.constraint(equalToConstant: 35)
-        navMapButtonWidth?.isActive = true
+//        addSubview(navMapButton)
+//        navMapButton.anchor(top: nil, left: nil, bottom: nil, right: searchBarView.rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 5, paddingRight: 15, width: 0, height: 35)
+//        navMapButton.centerYAnchor.constraint(equalTo: searchBarView.centerYAnchor).isActive = true
+//        navMapButtonWidth = navMapButton.widthAnchor.constraint(equalToConstant: 35)
+//        navMapButtonWidth?.isActive = true
+        
 //        searchBarView.addSubview(filteringLabel)
 //        filteringLabel.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
 //        filteringLabel.textAlignment = .left
@@ -318,12 +319,12 @@ class UserSearchBar: UIView, UISearchBarDelegate {
         
         setupSearchBar()
         searchBarView.addSubview(fullSearchBar)
-        fullSearchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: navMapButton.leftAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        fullSearchBar.anchor(top: searchBarView.topAnchor, left: searchBarView.leftAnchor, bottom: searchBarView.bottomAnchor, right: navGridToggleButton.leftAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
 //        fullSearchBar.rightAnchor.constraint(equalTo: navGridToggleButton.leftAnchor, constant: 5).isActive = true
 //        fullSearchBar.rightAnchor.constraint(equalTo: navEmojiButton.leftAnchor, constant: 5).isActive = false
 
         addSubview(filteringView)
-        filteringView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: navMapButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        filteringView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: navGridToggleButton.leftAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         
         
 //        filteringView.addSubview(navSearchButton)

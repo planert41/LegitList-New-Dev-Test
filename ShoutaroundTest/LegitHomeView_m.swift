@@ -248,14 +248,16 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         button.setTitle(" Map Posts", for: .normal)
         button.setImage(icon, for: .normal)
         button.layer.borderColor = UIColor.ianLegitColor().cgColor
+        button.layer.borderColor = UIColor.darkGray.cgColor
+
         button.layer.borderWidth = 1
         button.clipsToBounds = true
         button.contentHorizontalAlignment = .center
         button.backgroundColor = UIColor.lightBackgroundGrayColor()
 //        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-        button.tintColor = UIColor.ianLegitColor()
+        button.tintColor = UIColor.darkGray
         button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 14)
-        button.setTitleColor(UIColor.ianLegitColor(), for: .normal)
+        button.setTitleColor(UIColor.darkGray, for: .normal)
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
         button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
         button.imageView?.contentMode = .scaleAspectFit
@@ -357,11 +359,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         
         let emojiContainer = UIView()
 
-        emojiContainer.addSubview(bottomEmojiBar)
-        bottomEmojiBar.delegate = self
-        bottomEmojiBar.anchor(top: emojiContainer.topAnchor, left: emojiContainer.leftAnchor, bottom: emojiContainer.bottomAnchor, right: emojiContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        bottomEmojiBar.layer.cornerRadius = 5
-        bottomEmojiBar.layer.masksToBounds = true
+//        emojiContainer.addSubview(bottomEmojiBar)
+//        bottomEmojiBar.delegate = self
+//        bottomEmojiBar.anchor(top: emojiContainer.topAnchor, left: emojiContainer.leftAnchor, bottom: emojiContainer.bottomAnchor, right: emojiContainer.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+//        bottomEmojiBar.layer.cornerRadius = 5
+//        bottomEmojiBar.layer.masksToBounds = true
 
         
         self.view.addSubview(emojiContainer)
@@ -467,7 +469,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         bottomSortBar.delegate = self
         bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
-        bottomSortBar.sideButtonType = .Grid
+        bottomSortBar.sideButtonType = .Map
 
 //    // DETAIL LABEL
 //        view.addSubview(detailLabel)
@@ -810,7 +812,14 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             }
             
             var displayPost = displayedPosts[indexPath.item]
-            if self.isPresented && !self.isFetchingPosts{
+            var inStack = false
+            if let viewControllers = self.navigationController?.viewControllers
+            {
+                inStack = viewControllers.contains(where: {return $0 is LegitHomeView
+            })
+            }
+            
+            if (self.isPresented || inStack) && !self.isFetchingPosts{
                 SVProgressHUD.dismiss()
             }
             // Can't Be Selected

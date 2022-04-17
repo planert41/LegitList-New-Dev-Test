@@ -11417,6 +11417,16 @@ extension Database{
         }
         task.resume()
     }
+    
+    static func countryName(from countryCode: String) -> String {
+        if let name = (Locale.current as NSLocale).displayName(forKey: .countryCode, value: countryCode) {
+            // Country name was found
+            return name
+        } else {
+            // Country name cannot be found
+            return countryCode
+        }
+    }
 
     
 //    static func printImageSizes(image: UIImage){

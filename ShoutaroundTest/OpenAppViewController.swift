@@ -145,6 +145,8 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.modalPresentationStyle = .fullScreen
+//        self.isModalInPresentation = true
         
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         navigationController?.isNavigationBarHidden = true

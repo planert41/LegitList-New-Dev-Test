@@ -1295,6 +1295,8 @@ extension UIViewController {
     func extShowLogin() {
         let openAppController = OpenAppViewController()
         let navController = UINavigationController( rootViewController: openAppController)
+        navController.isModalInPresentation = true
+        navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
     }
     
@@ -1383,11 +1385,16 @@ extension UIViewController {
 //        tabListController.displayUser = inputUser
 //        tabListController.displayBack = true
         
-        let postSocialController = DisplayOnlyUsersSearchView()
-        postSocialController.displayListsByUser = true
-        postSocialController.inputUser = inputUser
-        postSocialController.selectedScope = 0
-        self.navigationController?.pushViewController(postSocialController, animated: true)
+        let listViewNew = ListViewControllerNew()
+        listViewNew.inputUser = inputUser
+        listViewNew.fetchLists()
+        self.navigationController?.pushViewController(listViewNew, animated: true)
+
+//        let postSocialController = DisplayOnlyUsersSearchView()
+//        postSocialController.displayListsByUser = true
+//        postSocialController.inputUser = inputUser
+//        postSocialController.selectedScope = 0
+//        self.navigationController?.pushViewController(postSocialController, animated: true)
     }
     
         func extDisplayExtraRatingInfo(){

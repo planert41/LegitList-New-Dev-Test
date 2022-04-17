@@ -35,6 +35,7 @@ class EmojiSummaryCV: UIView{
     var displayUser: User? {
         didSet {
             self.displayUserBadges = displayUser?.userBadges ?? []
+            self.displayCity = displayUser?.userCity ?? nil
         }
     }
     var displayUserBadges: [Int] = []
@@ -65,6 +66,9 @@ class EmojiSummaryCV: UIView{
         }
     }
     
+    var displayCity: String?
+    var showCity: Bool = false
+
     func sortEmojis() {
 //        let temp = self.displayedEmojisCounts.sorted(by: {$0.value > $1.value})
         
@@ -165,25 +169,49 @@ extension EmojiSummaryCV: UICollectionViewDelegate, UICollectionViewDataSource, 
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        var cellCount = 0
+        var cellCount = displayedEmojis.count
+    
         if showBadges {
-            cellCount = displayedEmojis.count + (displayUserBadges.count ?? 0)
-        } else {
-            cellCount = displayedEmojis.count
+            cellCount += (displayUserBadges.count ?? 0)
         }
+        
+        if showCity {
+            cellCount += (displayCity != nil ? 1 : 0)
+        }
+//        else {
+//            cellCount = displayedEmojis.count
+//        }
 //        print("EmojiSummaryCV | \(cellCount) Cells")
         return cellCount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var badgeCount = showBadges ? displayUserBadges.count : 0
         let filterCell = collectionView.dequeueReusableCell(withReuseIdentifier: filterTagId, for: indexPath) as! SelectedFilterBarCell
         filterCell.showCancel = false
         filterCell.delegate = self
+
+        var cityCount = (showCity && displayCity != nil) ? 1 : 0
+        var badgeCount = showBadges ? displayUserBadges.count : 0
         
-        if indexPath.row <= badgeCount - 1 {
+        if indexPath.row <= cityCount - 1 {
             // USER BADGE
-                let userBadgeInt = displayUserBadges[indexPath.row]
+                let cityAttString = NSMutableAttributedString()
+                
+                let cityLabelFont = UIFont(name: "Poppins-Bold", size: 13)
+                let cityLabelColor = UIColor.darkGray
+                
+                let cityText = displayCity
+                let attributedLabel = NSMutableAttributedString(string: " \(cityText!)", attributes: [NSAttributedString.Key.foregroundColor: cityLabelColor, NSAttributedString.Key.font: cityLabelFont])
+                
+                cityAttString.append(attributedLabel)
+                filterCell.uploadLocations.attributedText = cityAttString
+                filterCell.layer.borderWidth = 0
+                filterCell.uploadLocations.sizeToFit()
+        }
+        
+        else if indexPath.row <= badgeCount + cityCount - 1 {
+            // USER BADGE
+                let userBadgeInt = displayUserBadges[indexPath.row - cityCount]
             
                 let badgeAttString = NSMutableAttributedString()
                 
@@ -198,7 +226,7 @@ extension EmojiSummaryCV: UICollectionViewDelegate, UICollectionViewDataSource, 
                 let image1String = NSAttributedString(attachment: image1Attachment)
                 badgeAttString.append(image1String)
                 
-                let badgeText = UserBadgesRef[indexPath.row]
+                let badgeText = UserBadgesRef[userBadgeInt]
                 let attributedLabel = NSMutableAttributedString(string: " \(badgeText)", attributes: [NSAttributedString.Key.foregroundColor: badgeLabelColor, NSAttributedString.Key.font: badgeLabelFont])
                 
                 badgeAttString.append(attributedLabel)
@@ -207,7 +235,7 @@ extension EmojiSummaryCV: UICollectionViewDelegate, UICollectionViewDataSource, 
                 filterCell.uploadLocations.sizeToFit()
         } else {
          // EMOJI CELLS
-                var tempEmoji = displayedEmojis[indexPath.row - badgeCount]
+                var tempEmoji = displayedEmojis[indexPath.row - badgeCount - cityCount]
                 var displayTerm = tempEmoji.capitalizingFirstLetter()
                 var tempWord = ""
                 

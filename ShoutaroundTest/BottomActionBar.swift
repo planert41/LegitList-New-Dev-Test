@@ -22,10 +22,29 @@ class BottomActionBar: UIView {
     
     var post: Post? {
         didSet {
+            self.updateLikeCount = post?.likeCount ?? 0
+            self.updateListCount = post?.allList.count ?? 0
+            self.updateCommentCount = post?.commentCount ?? 0
             updateButtons()
         }
     }
     
+    var updateCommentCount: Int = 0 {
+        didSet {
+            self.updateButtons()
+        }
+    }
+    var updateListCount: Int = 0 {
+        didSet {
+            self.updateButtons()
+        }
+    }
+    var updateLikeCount: Int = 0 {
+        didSet {
+            self.updateButtons()
+        }
+    }
+
     
     lazy var likeButton: UIButton = {
         let button = UIButton(type: .system)
@@ -247,7 +266,7 @@ extension BottomActionBar {
 
         var likeImage = (post.hasLiked) ? #imageLiteral(resourceName: "like_filled") : #imageLiteral(resourceName: "like_unfilled")
         self.likeButton.setImage(likeImage.withRenderingMode(.alwaysOriginal), for: .normal)
-        self.likeButtonLabel.text = post.likeCount != 0 ? String(post.likeCount) + "  LEGIT" : " LEGIT"
+        self.likeButtonLabel.text = self.updateLikeCount != 0 ? String(self.updateLikeCount) + "  LEGIT" : " LEGIT"
         self.likeButtonLabel.sizeToFit()
 
 //        let listIcon = #imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate)
@@ -256,11 +275,11 @@ extension BottomActionBar {
         bookmarkButton.setImage(listIcon, for: .normal)
         bookmarkButton.tintColor = post.hasPinned ? UIColor.ianLegitColor() : UIColor.lightGray
         let listAddedString = post.hasPinned ? "LIST TAGGED" : "TAG LIST"
-        self.bookmarkButtonLabel.text = post.allList.count != 0 ? String(post.allList.count) + "  LISTS" : listAddedString
+        self.bookmarkButtonLabel.text = self.updateListCount != 0 ? String(self.updateListCount) + "  LISTS" : listAddedString
         self.bookmarkButtonLabel.sizeToFit()
         
         commentButton.setImage(#imageLiteral(resourceName: "comment_icon_ian").withRenderingMode(.alwaysOriginal), for: .normal)
-        self.commentButtonLabel.text = post.commentCount != 0 ? String(post.commentCount) + "  COMMENT" : " COMMENT"
+        self.commentButtonLabel.text = self.updateCommentCount != 0 ? String(self.updateCommentCount) + "  COMMENT" : " COMMENT"
         self.commentButtonLabel.sizeToFit()
     }
     

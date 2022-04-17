@@ -64,7 +64,7 @@ class NewSinglePostView: UIViewController {
             updateLinkLabel()
             self.view.layoutIfNeeded()
             print("***\(post?.id) POST | New Single Picture Controller ")
-//            print("ScrollView Size | Content \(self.scrollview.contentSize) | Intrinsic \(scrollview.intrinsicContentSize)")
+            print("ScrollView Size | Content \(self.scrollview.contentSize) | Intrinsic \(scrollview.intrinsicContentSize)")
         }
     }
     
@@ -347,6 +347,86 @@ class NewSinglePostView: UIViewController {
         return tv
     }()
     
+    // COMMENTS
+    var comments = [Comment]()
+    
+    lazy var commentSummaryView = UIView()
+    var commentStackView = UIStackView()
+
+    var commentLabel1 = UILabel()
+    var commentLabel2 = UILabel()
+    var commentLabel3 = UILabel()
+    var hideCommentView: NSLayoutConstraint? = nil
+
+    func refreshComments() {
+        let commentCount = self.comments.count ?? 0
+        commentLabel.isHidden = (commentCount == 0)
+        hideComment?.isActive = (commentCount == 0)
+        
+        if commentCount > 0 {
+            commentLabel.text = "View \(commentCount) \(commentCount == 1 ? "Comment" : "Comments")"
+        } else {
+            commentLabel.text = ""
+        }
+        
+        bottomActionBar.updateCommentCount = self.comments.count
+        refreshCommentStackView()
+        
+        print("SinglePostView | Refreshing Comments | \(comments.count) Comments")
+//        self.comments = comments
+//        self.refreshCommentStackView()
+    }
+    
+    func refreshCommentStackView(){
+        let commentArray = [commentLabel1, commentLabel2, commentLabel3]
+    // CLEAR ALL COMMENTS
+        for label in commentArray {
+            label.text = ""
+            label.numberOfLines = 3
+//            label.sizeToFit()
+        }
+        
+        // SORT COMMENTS
+        self.comments.sort(by: { (p1, p2) -> Bool in
+            return p1.creationDate.compare(p2.creationDate) == .orderedAscending
+        })
+        
+        // UPDATE COMMENT COUNT
+        if self.post?.commentCount != self.comments.count {
+            self.post?.commentCount = self.comments.count
+            guard let post = self.post else {return}
+            postCache[post.id!] = post
+        }
+//        self.commentCount.text = self.comments.count != 0 ? String(self.comments.count) + "  COMMENT" : " COMMENT"
+//        self.commentCount.sizeToFit()
+    
+    // Fill with Comments
+        for (index,label) in commentArray.enumerated() {
+            if index < self.comments.count {
+                
+                let comment = self.comments[index]
+                let username = comment.user.username
+                let commentText = comment.text
+                
+                let attributedText = NSMutableAttributedString(string: username, attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+    
+                let commentAttText = NSMutableAttributedString(string: " \(commentText)", attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Regular", size: 11), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+                
+                attributedText.append(commentAttText)
+                
+                label.attributedText = attributedText
+                label.sizeToFit()
+//                label.backgroundColor = UIColor.yellow
+//                print("COMMENT \(index) | \(attributedText)")
+
+            }
+        }
+        self.commentStackView.sizeToFit()
+        
+        hideCommentView?.isActive = (self.comments.count == 0)
+    }
+    
+    
     let commentLabel: UILabel = {
         let tv = UILabel()
         tv.numberOfLines = 0
@@ -514,7 +594,7 @@ class NewSinglePostView: UIViewController {
 //        bottomActionBar.delegate = self
         
         scrollview.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height - 40)
-        scrollview.contentSize = CGSize(width: view.frame.width, height: view.frame.height + 750)
+        scrollview.contentSize = CGSize(width: view.frame.width, height: view.frame.height + 1000)
         view.addSubview(scrollview)
         scrollview.anchor(top: topLayoutGuide.bottomAnchor, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         scrollview.contentInsetAdjustmentBehavior = .never
@@ -711,8 +791,16 @@ class NewSinglePostView: UIViewController {
         updateLinkLabel()
         
     // COMMENTS
+        commentStackView = UIStackView(arrangedSubviews: [commentLabel1, commentLabel2, commentLabel3])
+        commentStackView.distribution = .equalSpacing
+        commentStackView.axis = .vertical
+        scrollview.addSubview(commentStackView)
+        commentStackView.anchor(top: linkLabel.bottomAnchor, left: captionTextView.leftAnchor, bottom: nil, right: captionTextView.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: view.frame.width - 20, height: 0)
+        hideCommentView = commentStackView.heightAnchor.constraint(equalToConstant: 0)
+
+        
         scrollview.addSubview(commentLabel)
-        commentLabel.anchor(top: linkLabel.bottomAnchor, left: captionTextView.leftAnchor, bottom: nil, right: captionTextView.rightAnchor, paddingTop: 2, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        commentLabel.anchor(top: commentStackView.bottomAnchor, left: captionTextView.leftAnchor, bottom: nil, right: captionTextView.rightAnchor, paddingTop: 4, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         commentLabel.isUserInteractionEnabled = true
         commentLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleComment)))
         
@@ -1268,17 +1356,9 @@ class NewSinglePostView: UIViewController {
         
         
     // COMMENTS
-        let commentCount = self.post?.comments.count ?? 0
-        commentLabel.isHidden = (commentCount == 0)
-        hideComment?.isActive = (commentCount == 0)
-        
-        if commentCount > 0 {
-            commentLabel.text = "View \(commentCount) Comments"
-        } else {
-            commentLabel.text = ""
-        }
-        
-        
+        self.comments = self.post?.comments ?? []
+        refreshComments()
+
         
     }
     
@@ -1317,7 +1397,7 @@ class NewSinglePostView: UIViewController {
     
 }
 
-extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, EmojiButtonArrayDelegate, LocationSummaryViewDelegate, ListSummaryDelegate, BottomActionBarDelegate, UploadPhotoListControllerDelegate, UserHeaderViewDelegate, SharePhotoListControllerDelegate {
+extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, EmojiButtonArrayDelegate, LocationSummaryViewDelegate, ListSummaryDelegate, BottomActionBarDelegate, UploadPhotoListControllerDelegate, UserHeaderViewDelegate, SharePhotoListControllerDelegate, CommentsControllerDelegate {
     func doShowListView() {
         self.taggedListHeightConstraint?.isActive = false
     }
@@ -1638,8 +1718,25 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
     
     @objc func handleComment() {
         guard let post = post else {return}
-        self.extTapComment(post: post)
-//        self.didTapComment(post: post)
+        // NEED TO DO IT MANUALLY TO ASSIGN DELEGATE
+//        self.extTapComment(post: post)
+        self.didTapComment(post: post)
+    }
+    
+    func didTapComment(post: Post) {
+        
+        let commentsController = CommentsController(collectionViewLayout: UICollectionViewFlowLayout())
+        commentsController.post = post
+        commentsController.delegate = self
+        
+        navigationController?.pushViewController(commentsController, animated: true)
+    }
+    
+    func refreshComments(comments: [Comment]) {
+        print("SinglePostView | RECEIVED Refreshing Comments | \(comments.count) Comments")
+        self.comments = comments
+        self.refreshComments()
+//        self.refreshCommentStackView()
     }
     
     @objc func handleLike() {

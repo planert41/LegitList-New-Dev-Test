@@ -161,6 +161,18 @@ class SingleUserProfileHeader: UICollectionViewCell {
         return label
     }()
     
+    let locationLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.isUserInteractionEnabled = true
+        label.font = UIFont(name: "Poppins-Bold", size: 13)
+        label.textAlignment = .left
+        label.textColor = UIColor.gray
+        label.text = ""
+        return label
+    }()
+        
     var profileCountStackView = UIStackView()
 
     
@@ -430,8 +442,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
         profileImageView.layer.borderColor = UIColor.backgroundGrayColor().cgColor
         profileImageView.layer.borderWidth = 1
 
-       
-        
+   
     // PROFILE COUNTS
         let profileCountView = UIView()
         addSubview(profileCountView)
@@ -446,7 +457,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
         profileCountStackView.anchor(top: profileCountView.topAnchor, left: profileCountView.leftAnchor, bottom: profileCountView.bottomAnchor, right: profileCountView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
 //        profileCountStackView.centerYAnchor.constraint(equalTo: profileCountView.centerYAnchor).isActive = true
 //        profileCountStackView.topAnchor.constraint(lessThanOrEqualTo: editProfileFollowButton.bottomAnchor, constant: 10).isActive = true
-    
+
     // EMOJI
         let emojiView = UIView()
         addSubview(emojiView)
@@ -458,6 +469,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
         emojiSummary.backgroundColor = UIColor.clear
         emojiSummary.centerYAnchor.constraint(equalTo: emojiView.centerYAnchor).isActive = true
         emojiSummary.showBadges = true
+//        emojiSummary.showCity = true
         emojiSummary.delegate = self
         
         
@@ -466,11 +478,18 @@ class SingleUserProfileHeader: UICollectionViewCell {
         userInfoTextView.delegate = self
         userInfoTextView.anchor(top: emojiView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 10, paddingBottom: 0, paddingRight: 10, width: 0, height: 0)
     
+        
+     // PROFILE LOCATION
+         addSubview(locationLabel)
+        locationLabel.anchor(top: userInfoTextView.bottomAnchor, left: userInfoTextView.leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 4, paddingLeft: 4, paddingBottom: 4, paddingRight: 10, width: 0, height: 20)
+         locationLabel.sizeToFit()
+         locationLabel.backgroundColor = UIColor.clear
+
                 
     // FOLLOW EDIT BUTTON
         let actionView = UIView()
         addSubview(actionView)
-        actionView.anchor(top: userInfoTextView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
+        actionView.anchor(top: locationLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
 
         setupEditFollowButton()
         actionView.addSubview(editProfileFollowButton)
@@ -847,6 +866,15 @@ extension SingleUserProfileHeader: UITextViewDelegate, UITextFieldDelegate {
             self.userInfoTextView.textColor = UIColor.black
         }
         self.userInfoTextView.sizeToFit()
+        
+        locationLabel.text = ""
+        if let city = user?.userCity {
+            if !(city.isEmptyOrWhitespace() ?? true) {
+                locationLabel.text = user?.userCity
+            }
+        }
+        locationLabel.sizeToFit()
+        
         
     }
     

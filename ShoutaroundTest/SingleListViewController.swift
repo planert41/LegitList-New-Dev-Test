@@ -368,7 +368,7 @@ class SingleListViewController: UIViewController {
         bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         bottomSortBar.delegate = self
         bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
-        bottomSortBar.sideButtonType = .Grid
+        bottomSortBar.sideButtonType = .Map
         
         self.view.addSubview(imageCollectionView)
         imageCollectionView.anchor(top: view.topAnchor, left: view.leftAnchor, bottom: bottomSortBar.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

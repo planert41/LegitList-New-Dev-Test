@@ -41,18 +41,18 @@ class BottomSortBar: UIView{
 
         button.setTitle(" Map", for: .normal)
         button.setImage(icon, for: .normal)
-        button.layer.borderColor = UIColor.customRedColor().cgColor
-        button.layer.borderWidth = 2
+        button.layer.borderColor = UIColor.darkGray.cgColor
+        button.layer.borderWidth = 0
         button.layer.cornerRadius = 20/2
         button.layer.masksToBounds = true
         button.clipsToBounds = true
         button.contentHorizontalAlignment = .center
-        button.backgroundColor = UIColor.ianWhiteColor()
+        button.backgroundColor = UIColor.clear
 //        button.backgroundColor = UIColor.whi
 //        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
-        button.tintColor = UIColor.customRedColor()
+        button.tintColor = UIColor.darkGray
         button.titleLabel?.font =  UIFont(font: .avenirNextBold, size: 14)
-        button.setTitleColor(UIColor.customRedColor(), for: .normal)
+        button.setTitleColor(UIColor.darkGray, for: .normal)
         button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
         button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 12, bottom: 5, right: 12)
         button.imageView?.contentMode = .scaleAspectFit

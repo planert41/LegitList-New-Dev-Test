@@ -39,9 +39,11 @@ struct User {
     var popularImagePostIds: [String] = []
     
     var topEmojis: [String] = []
-    var userGPS: CLLocation?
     var userDistance: Double? = nil
     
+    var userCity: String? = nil
+    var userGPS: CLLocation?
+
     
     var premiumStart: Date?
     var premiumExpiry: Date?
@@ -50,7 +52,8 @@ struct User {
     var isPremium: Bool = false
     var isPremiumFree: Bool = false
     var APNTokens: [String] = []
-
+    var mostUsedEmojis: [String] = []
+    var mostUsedCities: [String] = []
     
     
     init(uid: String, dictionary: [String:Any]) {
@@ -81,13 +84,13 @@ struct User {
         self.votes_received = social["votes_received"] as? Int ?? 0
         self.lists_created = social["lists_created"] as? Int ?? 0
         self.total_cred = self.votes_received + self.posts_created + self.lists_created
-        
-        let imageGPSText = dictionary["userlocation"] as? String ?? ""
-        let imageGPSTextArray = imageGPSText.components(separatedBy: ",")
-        if imageGPSTextArray.count == 1 {
+        self.userCity = dictionary["userCity"] as? String ?? ""
+        let userGPSText = dictionary["userLocation"] as? String ?? ""
+        let userGPSTextArray = userGPSText.components(separatedBy: ",")
+        if userGPSTextArray.count == 1 {
             self.userGPS = nil
         } else {
-            self.userGPS = CLLocation(latitude: Double(imageGPSTextArray[0])!, longitude: Double(imageGPSTextArray[1])!)
+            self.userGPS = CLLocation(latitude: Double(userGPSTextArray[0])!, longitude: Double(userGPSTextArray[1])!)
             
             if let location = CurrentUser.currentLocation {
                 self.userDistance = self.userGPS?.distance(from: location)

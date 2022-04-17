@@ -141,6 +141,7 @@ var ReverseEmojiDictionaryDups: [String:String] =
     "noodle": "🍜",
     "mee": "🍜",
     "ramen": "🍜",
+    "pho": "🍜",
     "cookie": "🍪",
     "pasta": "🍝",
     "sushi": "🍣",

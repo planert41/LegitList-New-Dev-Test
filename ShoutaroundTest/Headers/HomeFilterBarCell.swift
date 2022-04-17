@@ -388,7 +388,7 @@ class RefreshFilterBarCell: UICollectionViewCell {
         
         backgroundColor = .white
         addSubview(refreshButton)
-        refreshButton.anchor(top: nil, left: nil, bottom: nil, right: rightAnchor, paddingTop: 10, paddingLeft: 5, paddingBottom: 10, paddingRight: 5, width: 0, height: 0)
+        refreshButton.anchor(top: topAnchor, left: nil, bottom: bottomAnchor, right: rightAnchor, paddingTop: 10, paddingLeft: 5, paddingBottom: 10, paddingRight: 5, width: 0, height: 0)
 //        refreshButton.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         refreshButton.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 1).isActive = true
         refreshButton.isUserInteractionEnabled = true

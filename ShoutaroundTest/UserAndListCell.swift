@@ -504,33 +504,42 @@ class UserAndListCell: UITableViewCell, EmojiButtonArrayDelegate {
     func setupSocialStatsLabel() {
         let subheaderFont = UIFont.boldSystemFont(ofSize: 14)
         
-        if let fanCount = self.user?.followersCount {
-            if fanCount > 0 {
-                let fanCountString = NSMutableAttributedString(string: "\(fanCount) Followers ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray, NSAttributedString.Key.font: subheaderFont])
-                subHeaderLabel.attributedText = fanCountString
-                subHeaderLabel.sizeToFit()
-
-//                socialStatsLabel.attributedText = fanCountString
-//                socialStatsLabel.sizeToFit()
-                
-            }
-        }
-        
         let socialFont = UIFont.systemFont(ofSize: 13)
         let socialStats = NSMutableAttributedString()
 
+        
+        if let fanCount = self.user?.followersCount {
+            if fanCount > 0 {
+                let fanCountString = NSMutableAttributedString(string: "\(fanCount) Followers ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray, NSAttributedString.Key.font: subheaderFont])
+                socialStats.append(fanCountString)
+            }
+        }
+        
+
         if let postCount = self.user?.posts_created {
-            let postCountString = NSMutableAttributedString(string: "\(postCount) Posts ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: socialFont])
+            let postCountString = NSMutableAttributedString(string: "\(postCount) Posts ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: subheaderFont])
             socialStats.append(postCountString)
         }
         
-        if let listCount = self.user?.lists_created {
-            let listCountString = NSMutableAttributedString(string: "\(listCount) Lists ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: socialFont])
-            socialStats.append(listCountString)
+        subHeaderLabel.attributedText = socialStats
+        subHeaderLabel.sizeToFit()
+        
+//        if let listCount = self.user?.lists_created {
+//            let listCountString = NSMutableAttributedString(string: "\(listCount) Lists ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: socialFont])
+//            socialStats.append(listCountString)
+//        }
+        
+        let cityFont = UIFont.systemFont(ofSize: 13)
+        if let city = self.user?.userCity {
+            let cityString = NSMutableAttributedString(string: "\(city) ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray, NSAttributedString.Key.font: cityFont])
+            socialStatsLabel.attributedText = cityString
+            socialStatsLabel.sizeToFit()
         }
         
-        socialStatsLabel.attributedText = socialStats
-        socialStatsLabel.sizeToFit()
+
+        
+//        socialStatsLabel.attributedText = socialStats
+//        socialStatsLabel.sizeToFit()
 
         
 

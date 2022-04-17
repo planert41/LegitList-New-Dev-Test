@@ -16,6 +16,7 @@ import FirebaseAuth
 import SVProgressHUD
 import CoreLocation
 
+
 class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate, UISearchBarDelegate, DiscoverListCellDelegate, UIScrollViewDelegate, DiscoverUserCellDelegate, DiscoverListCellNewDelegate {
    
     static let refreshListNotificationName = NSNotification.Name(rawValue: "RefreshList")
@@ -23,16 +24,66 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
 
 // FETCH INPUTS
     
+    var inputUid: String? {
+        didSet {
+            if let _ = inputUid {
+                self.fetchUser()
+            }
+        }
+    }
+    
+    func fetchUser(){
+        guard let uid = inputUid else {
+            print("User Profile: Fetch Posts Error, No UID")
+            return
+        }
+        
+        Database.fetchUserWithUID(uid: uid) { (fetchedUser) in
+            self.inputUser = fetchedUser
+            print("SingleUserprofileController | Fetched User | \(uid)")
+        }
+    }
+    
+    var inputUser: User? {
+        didSet {
+            self.fetchLists()
+            self.loadCurrentUserPosts()
+            if let emojis = inputUser?.mostUsedEmojis {
+                self.mostUsedEmojis = inputUser?.mostUsedEmojis
+            }
+            
+            if let cities = inputUser?.mostUsedCities {
+                self.mostUsedCities = inputUser?.mostUsedCities
+            }
+        }
+    }
+    var mostUsedEmojis: [String]? = []
+    var mostUsedCities: [String]? = []
+    
     var allLists: [List] = []
     var followingLists: [List] = []
     var yourLists: [List] = []
     
     var userPosts:[Post] = [] {
         didSet {
+            Database.countMostUsedEmojis(posts: userPosts) { emojis in
+                self.mostUsedEmojis = emojis
+            }
+            Database.countMostUsedCities(posts: userPosts) { cities in
+                self.mostUsedCities
+            }
+            self.userPostsDic.removeAll()
+            for post in userPosts {
+                if let id = post.id {
+                    userPostsDic[id] = post
+                }
+            }
 //            self.updateUserPostFavCounts()
         }
     }
     
+    var userPostsDic: [String:Post] = [:]
+
 //    var userPostsFavCounts:[String:Int] = [:]
     var userFavs = extraRatingEmojisForList
     var filteredUserFavs: [String] = []
@@ -46,12 +97,16 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
 
     
     func loadCurrentUserPosts(){
-        if CurrentUser.posts.count == 0 {
+        if self.userPosts.count == 0 {
             print("No Current User Posts. Fetch Posts | ListViewControllerNew")
-            SVProgressHUD.show(withStatus: "Refreshing Lists")
-            guard let uid = Auth.auth().currentUser?.uid else {
+            if self.isViewLoaded && self.view.window != nil {
+                SVProgressHUD.show(withStatus: "Refreshing Lists")
+            }
+            guard let uid = self.inputUser?.uid else {
                 print("No Current User UID")
-                SVProgressHUD.dismiss()
+                if self.isViewLoaded && self.view.window != nil {
+                    SVProgressHUD.dismiss()
+                }
                 return
             }
             Database.fetchAllPostWithUID(creatoruid: uid) { fetchedPosts in
@@ -67,12 +122,14 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func createUserAutoLists() {
-        self.userFavs = extraRatingEmojisForList + CurrentUser.mostUsedEmojis
-        self.userCity = CurrentUser.mostUsedCities
+        self.userFavs = extraRatingEmojisForList + (self.mostUsedEmojis ?? [])
+        self.userCity = self.mostUsedCities ?? []
         print("ListViewControllerNew - Most Used Emojis: \(CurrentUser.mostUsedEmojis.count) | Most Used Cities \(CurrentUser.mostUsedCities.count)")
         self.createTempListsForUserFavs()
         self.createTempListsForUserCities()
-        SVProgressHUD.dismiss()
+        if self.isViewLoaded && self.view.window != nil {
+            SVProgressHUD.dismiss()
+        }
         self.tableView.reloadData()
     }
     
@@ -104,7 +161,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
 
         
         // Loop through posts for Locations
-        for (id, post) in CurrentUser.posts {
+        for (id, post) in self.userPostsDic {
             if post.locationSummaryID != nil {
                 guard let city = post.locationSummaryID else {return}
                 if !tempLocations.contains(city) {
@@ -146,7 +203,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             
             if (postIds?.count) ?? 0 > 0 {
                 let latestPost = postIds!.max { a, b in a.value < b.value }
-                if let post = CurrentUser.posts[(latestPost?.key)!] {
+                if let post = self.userPostsDic[(latestPost?.key)!] {
                     var imageUrl = post.imageUrls.first
                     temp.heroImageUrl = imageUrl
                 }
@@ -177,7 +234,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     
     func createTempListsForUserFavs() {
-        print("Creating Temp Fav Lists \(CurrentUser.posts.count) User Posts | ListViewControllerNew")
+        print("Creating Temp Fav Lists \(self.userPosts.count) User Posts | ListViewControllerNew")
 
         var tempListPostIds:[String:[String: Double]] = [:]
         var tempLists:[String: List] = [:]
@@ -197,7 +254,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         // Loop through posts for rating emojis
-        for (id, post) in CurrentUser.posts {
+        for (id, post) in self.userPostsDic {
             if post.ratingEmoji != nil {
                 guard let emoji = post.ratingEmoji else {return}
                 var temp = tempListPostIds[emoji]
@@ -222,7 +279,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
             
             if (postIds?.count) ?? 0 > 0 {
                 let latestPost = postIds!.max { a, b in a.value < b.value }
-                if let post = CurrentUser.posts[(latestPost?.key)!] {
+                if let post = self.userPostsDic[(latestPost?.key)!] {
                     var imageUrl = post.imageUrls.first
                     temp?.heroImageUrl = imageUrl
                 }
@@ -329,12 +386,12 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }()
     
     @objc func openFriends(){
-        print("Display Friends For Current User| ",CurrentUser.user?.uid)
+        print("Display Friends For Current User| ",self.inputUser?.uid)
         let postSocialController = PostSocialDisplayTableViewController()
         postSocialController.displayAllUsers = true
         postSocialController.displayUserFollowing = true
         postSocialController.displayUser = true
-        postSocialController.inputUser = CurrentUser.user
+        postSocialController.inputUser = self.inputUser
         navigationController?.pushViewController(postSocialController, animated: true)
     }
     
@@ -395,7 +452,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @objc func autoLoadUser(){
-        print("ListViewControllerNew - Auto Load User | \(CurrentUser.mostUsedEmojis.count) Emojis | \(CurrentUser.mostUsedCities.count) Cities")
+        print("ListViewControllerNew - Auto Load User | \(self.mostUsedEmojis?.count) Emojis | \(self.mostUsedCities?.count) Cities")
         self.createUserAutoLists()
     }
     
@@ -491,12 +548,14 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
 
     func fetchLists() {
         if self.fetchType != ListAll {
-            Database.fetchAllListsForUser(userUid: CurrentUser.uid) { (userLists) in
+            Database.fetchAllListsForUser(userUid: self.inputUser?.uid) { (userLists) in
                 self.yourLists = userLists.filter({ (list) -> Bool in
-                    CurrentUser.listIds.contains(list.id!)
+                    list.creatorUID == self.inputUser?.uid
+//                    CurrentUser.listIds.contains(list.id!)
                 })
                 self.followingLists = userLists.filter({ (list) -> Bool in
-                    CurrentUser.followedListIds.contains(list.id!)
+                    list.creatorUID != self.inputUser?.uid
+//                    CurrentUser.followedListIds.contains(list.id!)
                 })
                 self.updateSegmentListCount()
                 self.sortDisplayLists()
@@ -533,10 +592,13 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     @objc func sortLists() {
         self.yourLists = allLists.filter({ (list) -> Bool in
-            CurrentUser.listIds.contains(list.id!)
+            list.creatorUID == self.inputUser?.uid
+//            CurrentUser.listIds.contains(list.id!)
         })
         self.followingLists = allLists.filter({ (list) -> Bool in
-            CurrentUser.followedListIds.contains(list.id!)
+            list.creatorUID != self.inputUser?.uid
+
+//            CurrentUser.followedListIds.contains(list.id!)
         })
         print("Fetched All Lists | \(self.allLists.count) All Lists, \(self.yourLists.count) Your Lists, \(self.yourLists.count) Following Lists")
         self.updateSegmentListCount()
@@ -661,7 +723,27 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         print("DiscoverController | Type Selected | \(self.fetchType)")
     }
     
+    var displayBack: Bool = true {
+        didSet{
+            setupNavigationItems()
+        }
+    }
+    
 
+    let navBackButton = navBackButtonTemplate.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+
+    let navUserButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        button.setImage(#imageLiteral(resourceName: "profile_unselected"), for: .normal)
+//        button.addTarget(self, action: #selector(openUserListFilter), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.darkGray.cgColor
+        button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     func setupNavigationItems(){
         //        navigationItem.title = "Manage Lists"
@@ -751,14 +833,34 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         createNewListButton.layer.masksToBounds = true
         createNewListButton.sizeToFit()
         createNewListButton.addTarget(self, action: #selector(didTapCreateNewList), for: .touchUpInside)
-        let addNavButton = UIBarButtonItem.init(customView: createNewListButton)
         
-        if (fetchType == ListYours) {
+        
+        if let imgUrl = inputUser?.profileImageUrl {
+            let temp = CustomImageView()
+            temp.loadImage(urlString: imgUrl)
+            navUserButton.setImage(temp.image?.resizeVI(newSize: CGSize(width: 30, height: 30)), for: .normal)
+        }
+        
+        if (inputUser?.uid == Auth.auth().currentUser?.uid) {
+            let addNavButton = UIBarButtonItem.init(customView: createNewListButton)
             navigationItem.rightBarButtonItem = addNavButton
         } else {
-            navigationItem.rightBarButtonItem = nil
+            let addUserButton = UIBarButtonItem.init(customView: navUserButton)
+            navigationItem.rightBarButtonItem = addUserButton
         }
-
+        
+        // Nav Back Button
+        navBackButton.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
+        let backButton = UIBarButtonItem.init(customView: navBackButton)
+        if displayBack {
+            self.navigationItem.leftBarButtonItem = backButton
+//            self.navigationItem.leftBarButtonItems = [backButton, userNameButton]
+        } else {
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem()
+        }
+        
+        // NAV USER BUTTON
+//        if
 
 //        self.showHideAddListButton()
 

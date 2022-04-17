@@ -293,6 +293,14 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     
     private var cachedSafeAreaInsets = UIEdgeInsets.zero
     
+    @available(iOS 13.0, *)
+    private func setTabBarItemColors(_ itemAppearance: UITabBarItemAppearance) {
+        itemAppearance.normal.iconColor = UIColor.ianMiddleGrayColor()
+        itemAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.ianMiddleGrayColor()]
+        
+        itemAppearance.selected.iconColor = UIColor.ianLegitColor()
+        itemAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.ianLegitColor()]
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -300,6 +308,24 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         self.delegate = self
         self.tabBar.barTintColor = UIColor.white
 //        self.togglePremiumActivate()
+        
+        // REMOVE TRANSLUCENT TAB BAR INTRODUCED IN IOS15
+        
+        if #available(iOS 13.0, *) {
+            let tabBarAppearance: UITabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithDefaultBackground()
+            tabBarAppearance.backgroundColor = UIColor.white
+            tabBarAppearance.selectionIndicatorTintColor = UIColor.ianLegitColor()
+            setTabBarItemColors(tabBarAppearance.stackedLayoutAppearance)
+            setTabBarItemColors(tabBarAppearance.inlineLayoutAppearance)
+            setTabBarItemColors(tabBarAppearance.compactInlineLayoutAppearance)
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+
+            if #available(iOS 15.0, *) {
+                UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            }
+        }
+        
         
         let tabWidth = tabBar.frame.size.width
         let tabHeight = tabBar.frame.size.height
@@ -467,6 +493,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         let loginController = OpenAppViewController()
 
         let navController = UINavigationController(rootViewController: loginController)
+        navController.isModalInPresentation = true
+        navController.modalPresentationStyle = .fullScreen
         self.present(navController, animated: true, completion: nil)
     }
     
@@ -550,7 +578,9 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //        let userNotificationsNavController = templateNavController(unselectedImage: notificationIcon, selectedImage: notificationIcon, title: "Activity", rootViewController: userNotifications)
         
         let listViewNew = ListViewControllerNew()
-        listViewNew.fetchLists()
+        listViewNew.inputUid = Auth.auth().currentUser?.uid
+        listViewNew.displayBack = false
+//        listViewNew.fetchLists()
 //        listViewNew.fetchallItems()
 //        let discoverIconNew = #imageLiteral(resourceName: "listsHash").withRenderingMode(.alwaysTemplate)
 

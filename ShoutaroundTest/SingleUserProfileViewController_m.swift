@@ -432,7 +432,7 @@ class SingleUserProfileViewController: UIViewController {
         bottomSortBar.anchor(top: nil, left: view.leftAnchor, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 50)
         bottomSortBar.delegate = self
         bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
-        bottomSortBar.sideButtonType = .Grid
+        bottomSortBar.sideButtonType = .Map
         bottomSortBar.isGridView = (self.postFormatInd == 0)
         
         self.view.addSubview(imageCollectionView)
@@ -924,23 +924,31 @@ extension SingleUserProfileViewController {
     
     func countMostUsedEmojis(posts: [Post]) {
         Database.countMostUsedEmojis(posts: posts) { (emojis) in
-            CurrentUser.mostUsedEmojis = emojis
-            // Check for Top 5 Emojis
-            let top5Emoji = Array(emojis.prefix(5))
-            if let currentUserTopEmojis = CurrentUser.user?.topEmojis {
-                let dif = top5Emoji.difference(from: currentUserTopEmojis)
+            self.displayUser?.mostUsedEmojis = emojis
+            if displayUser?.uid == CurrentUser.uid {
+                CurrentUser.mostUsedEmojis = emojis
                 
-                if dif.count > 0 {
-                    Database.checkTop5Emojis(userId: CurrentUser.uid!, emojis: top5Emoji)
+                // Check for Top 5 Emojis
+                let top5Emoji = Array(emojis.prefix(5))
+                if let currentUserTopEmojis = CurrentUser.user?.topEmojis {
+                    let dif = top5Emoji.difference(from: currentUserTopEmojis)
+                    
+                    if dif.count > 0 {
+                        Database.checkTop5Emojis(userId: CurrentUser.uid!, emojis: top5Emoji)
+                    }
                 }
             }
+
             print(" Updated Current User Most Used Emojis \(emojis.count) | SingleUserProfileViewController")
         }
     }
     
     func countMostUsedCities(posts: [Post]) {
         Database.countMostUsedCities(posts: posts) { (cities) in
-            CurrentUser.mostUsedCities = cities
+            self.displayUser?.mostUsedCities = cities
+            if displayUser?.uid == CurrentUser.uid {
+                CurrentUser.mostUsedCities = cities
+            }
             print(" Updated Current User Most Used Cities \(CurrentUser.mostUsedCities.count) | SingleUserProfileViewController")
         }
     }
@@ -1105,13 +1113,14 @@ extension SingleUserProfileViewController {
 extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, TestGridPhotoCellDelegate, FullPictureCellDelegate, SharePhotoListControllerDelegate, SingleUserProfileHeaderDelegate, SignUpControllerDelegate, SKPhotoBrowserDelegate, UserSearchBarDelegate, PostSortFormatBarDelegate, BottomSortBarDelegate {
 
     func displayAllLists() {
-        let sharePhotoListController = SharePhotoListController()
-        sharePhotoListController.clearAllInfo()
-        sharePhotoListController.selectedSort = sortPost
-        sharePhotoListController.viewListMode = true
-        sharePhotoListController.delegate = self
-        sharePhotoListController.uploadUser = self.displayUser
-        navigationController?.pushViewController(sharePhotoListController, animated: true)
+        self.extShowUserLists(inputUser: self.displayUser)
+//        let sharePhotoListController = SharePhotoListController()
+//        sharePhotoListController.clearAllInfo()
+//        sharePhotoListController.selectedSort = sortPost
+//        sharePhotoListController.viewListMode = true
+//        sharePhotoListController.delegate = self
+//        sharePhotoListController.uploadUser = self.displayUser
+//        navigationController?.pushViewController(sharePhotoListController, animated: true)
     }
     
     func didTapLike(post: Post) {
@@ -1248,10 +1257,10 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
        
        let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
        
-       optionsAlert.addAction(UIAlertAction(title: "Change Profile Picture", style: .default, handler: { (action: UIAlertAction!) in
-           // Allow Editing
-           self.editUser()
-       }))
+//       optionsAlert.addAction(UIAlertAction(title: "Change Profile Picture", style: .default, handler: { (action: UIAlertAction!) in
+//           // Allow Editing
+//           self.editUser()
+//       }))
        
        optionsAlert.addAction(UIAlertAction(title: "Edit User", style: .default, handler: { (action: UIAlertAction!) in
            // Allow Editing

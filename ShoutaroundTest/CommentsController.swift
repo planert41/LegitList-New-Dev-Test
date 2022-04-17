@@ -15,6 +15,7 @@ import FirebaseStorage
 
 protocol CommentsControllerDelegate {
     func refreshComments(comments:[Comment])
+    func refreshPost(post: Post)
 }
 
 class CommentsController: UICollectionViewController, UICollectionViewDelegateFlowLayout, UITextFieldDelegate, CommentCellDelegate, UITextViewDelegate {
@@ -122,6 +123,13 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
             // REMOVE First Comment which is the caption
             var tempComments = self.comments
             tempComments.remove(at: 0)
+            
+            if let _ = self.post {
+                var tempPost = self.post
+                tempPost?.comments = tempComments
+                self.delegate?.refreshPost(post: tempPost!)
+            }
+
             self.delegate?.refreshComments(comments: tempComments)
             
             self.deleteComment(comment: comment)
@@ -426,6 +434,12 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
         var tempComments = self.comments
         tempComments.remove(at: 0)
         self.delegate?.refreshComments(comments: tempComments)
+        
+        if let _ = self.post {
+            var tempPost = self.post
+            tempPost?.comments = tempComments
+            self.delegate?.refreshPost(post: tempPost!)
+        }
 
 //        self.delegate?.refreshComments(comments: [tempComments.removeLast()])
         self.collectionView.reloadData()
@@ -457,7 +471,7 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
                 }
             }
             
-                print("Successfully saved comment:")
+            print("Successfully saved comment:", self.commentTextField.text ?? "")
             
             // Alert other users who commented
             
