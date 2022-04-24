@@ -512,9 +512,9 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
         }
         
         var listNameText = (self.list?.name ?? "").truncate(length: 20)
-        if list.topEmojis.count > 0 {
-            listNameText += "  \(list.topEmojis.prefix(3).joined())"
-        }
+//        if list.topEmojis.count > 0 {
+//            listNameText += "  \(list.topEmojis.prefix(3).joined())"
+//        }
         
         
         let listnameString = NSMutableAttributedString(string: " \((listNameText))", attributes: [NSAttributedString.Key.foregroundColor: listNameColor, NSAttributedString.Key.font: UIFont(font: .helveticaNeueBold, size: 18)])

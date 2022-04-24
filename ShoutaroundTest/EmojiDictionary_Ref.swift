@@ -51,6 +51,7 @@ var smileyEmojis: [String] = ["😍","😋","🤤","👍","😀","😝","😂","
 //var extraRatingEmojis: [String] = ["💯", "👑", "🥇", "🔥","👌", "💪", "👺", "💩","☠️"]
 var extraRatingEmojis: [String] = ["👌","💯","🔥","🌟","🏆"]
 var extraRatingEmojisForList: [String] = ["🏆","🌟","🔥","💯","👌"]
+var bestEmoji: String = "🏆"
 
 
 var extraRatingEmojisDic: [String: String] =

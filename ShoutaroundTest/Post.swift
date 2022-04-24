@@ -149,6 +149,9 @@ struct Post: Hashable, Equatable  {
     var autoTagEmoji: [String]
     var autoTagEmojiTags: [String]
     
+    var allEmojis: [String] = []
+
+    
     var rating: Double?
     var price: String?
     var type: String?
@@ -262,6 +265,21 @@ struct Post: Hashable, Equatable  {
         self.autoTagEmoji = dictionary["autoTagEmojis"] as? [String] ?? []
         self.autoTagEmojiTags = dictionary["autoTagEmojisDict"] as? [String] ?? []
         
+        self.allEmojis = []
+        if let rate = self.ratingEmoji {
+            self.allEmojis.append(rate)
+        }
+        
+        if self.nonRatingEmoji.count > 0 {
+            self.allEmojis += self.nonRatingEmoji
+        }
+        
+        if self.autoTagEmoji.count > 0 {
+            self.allEmojis += self.autoTagEmoji
+        }
+        
+        self.allEmojis = Array(Set(self.allEmojis))
+                
         
         self.creationSecondsFrom1970 = dictionary["tagTime"] as? Double ?? 0
         self.tagTime = Date(timeIntervalSince1970: self.creationSecondsFrom1970)
