@@ -499,7 +499,7 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
                 
         let listnameLabelText = NSMutableAttributedString()
         
-        var listNameColor = UIColor.black
+        var listNameColor = list.isLegitList ? UIColor.darkSelectedColor() : UIColor.black
 
         let image1Attachment = NSTextAttachment()
         let inputImage = self.list?.creatorUID == CurrentUser.uid ? #imageLiteral(resourceName: "bookmark_filled").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate)
@@ -533,16 +533,6 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
         var listAttributedString = NSMutableAttributedString()
         var listCountColor = UIColor.darkGray
 
-        
-        let usernameFont = UIFont.italicSystemFont(ofSize: 13)
-        if let username = self.listUser?.username {
-            if self.list?.creatorUID != CurrentUser.uid {
-                let listUserString = NSMutableAttributedString(string: "\(username)  ", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianLegitColor(), NSAttributedString.Key.font: usernameFont])
-                listAttributedString.append(listUserString)
-            }
-        }
-        
-        
         if let postCount = list.postIds?.count {
             if postCount > 0 {
                 let postCountString = NSMutableAttributedString(string: "\(postCount) Posts  ", attributes: [NSAttributedString.Key.foregroundColor: listCountColor, NSAttributedString.Key.font: socialFont])
@@ -561,9 +551,17 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
             let fanCountString = NSMutableAttributedString(string: "\(fanCount) Follows  ", attributes: [NSAttributedString.Key.foregroundColor: listCountColor, NSAttributedString.Key.font: followerFont])
             listAttributedString.append(fanCountString)
         }
+        
+        
+        let usernameFont = UIFont.italicSystemFont(ofSize: 13)
+        if let username = self.listUser?.username {
+            if self.list?.creatorUID != CurrentUser.uid {
+                let listUserString = NSMutableAttributedString(string: "\(username)", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianLegitColor(), NSAttributedString.Key.font: usernameFont])
+                listAttributedString.append(listUserString)
+            }
+        }
+        
 
-        
-        
         
         altTextLabel.attributedText = listAttributedString
         

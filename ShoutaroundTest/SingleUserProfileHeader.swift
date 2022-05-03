@@ -1329,9 +1329,9 @@ extension SingleUserProfileHeader {
         
         let listCountHeader = NSMutableAttributedString()
 
-        listCountHeader.append(NSAttributedString(string:"\(String(listCount)) Lists", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor(), NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 25)]))
+        listCountHeader.append(NSAttributedString(string:"See All \(String(listCount)) Lists", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ianBlackColor(), NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 25)]))
 
-        listCountHeader.append(NSAttributedString(string:"    See All Lists", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray, NSAttributedString.Key.font: UIFont(name: "Poppins-Regular", size: 12)]))
+//        listCountHeader.append(NSAttributedString(string:"    See All Lists", attributes: [NSAttributedString.Key.foregroundColor: UIColor.darkGray, NSAttributedString.Key.font: UIFont(name: "Poppins-Regular", size: 12)]))
         self.listHeaderLabel.attributedText = listCountHeader
 //        self.listHeaderLabel.text = "\(String(listCount)) Lists"
         self.listHeaderLabel.sizeToFit()

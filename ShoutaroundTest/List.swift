@@ -84,7 +84,8 @@ class List {
     var needsUpdating: Bool = false
     var listUrl: String?
     var isRatingList: Bool = false
-    
+    var isLegitList: Bool = false
+
     var tagCounts: [String: Int] = [:]
     var locationCounts: [String: Int] = [:]
 

@@ -162,6 +162,10 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         
         // Loop through posts for Locations
         for (id, post) in self.userPostsDic {
+            if self.isFilteringLegit && post.ratingEmoji == nil {
+                continue
+            }
+            
             if post.locationSummaryID != nil {
                 guard let city = post.locationSummaryID else {return}
                 if !tempLocations.contains(city) {
@@ -192,6 +196,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         // LOOP through city names to create default lists
         for city in tempLocations {
             var temp = List.init(id: city, name: city.capitalizingFirstLetter(), publicList: 0)
+            temp.creatorUID = inputUser?.uid
             var postIds = tempListPostIds[city]
             temp.postIds = postIds ?? [:]
             temp.listGPS = tempListsLocation[city]
@@ -200,6 +205,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
                 temp.listDistance = temp.listGPS?.distance(from: location)
             }
             temp.mostRecentDate = tempListsDates[city] ?? Date.distantPast
+            temp.isLegitList = self.isFilteringLegit
             
             if (postIds?.count) ?? 0 > 0 {
                 let latestPost = postIds!.max { a, b in a.value < b.value }
@@ -242,19 +248,15 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         // Create empty sets and default lists
         for emoji in userFavs {
             tempListPostIds[emoji] = [:]
-            var name: String! = ""
-            if let ratingName = extraRatingEmojisDic[emoji] {
-                name = ratingName.capitalized
-            } else if let emojiName = EmojiDictionary[emoji] {
-                name = emojiName.capitalized
-            }
-            var temp = List.init(id: emoji, name: "\(emoji) \(name!)", publicList: 0)
-            temp.isRatingList = true
-            tempLists[emoji] = temp
         }
         
         // Loop through posts for rating emojis
         for (id, post) in self.userPostsDic {
+            // SKIP NON LEGIT POSTS IF FILTERING LEGIT
+            if self.isFilteringLegit && post.ratingEmoji == nil {
+                continue
+            }
+            
             if post.ratingEmoji != nil {
                 guard let emoji = post.ratingEmoji else {return}
                 var temp = tempListPostIds[emoji]
@@ -273,19 +275,35 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         
         // Attach post ids to rating lists
         for emoji in userFavs {
-            var temp = tempLists[emoji]
+            
+            // CREATE EMPTY LIST
+            var name: String! = ""
+            if let ratingName = extraRatingEmojisDic[emoji] {
+                name = ratingName.capitalized
+            } else if let emojiName = EmojiDictionary[emoji] {
+                name = emojiName.capitalized
+            }
+            var temp = List.init(id: emoji, name: "\(emoji) \(name!)", publicList: 0)
+            temp.isRatingList = true
+            temp.creatorUID = inputUser?.uid
+            temp.isLegitList = self.isFilteringLegit || extraRatingEmojis.contains(emoji)
+
             var postIds = tempListPostIds[emoji]
-            temp?.postIds = postIds ?? [:]
             
-            if (postIds?.count) ?? 0 > 0 {
-                let latestPost = postIds!.max { a, b in a.value < b.value }
-                if let post = self.userPostsDic[(latestPost?.key)!] {
-                    var imageUrl = post.imageUrls.first
-                    temp?.heroImageUrl = imageUrl
+            // ATTACH ONLY NON ZERO LISTS
+            if (postIds?.count ?? 0) > 0 {
+                temp.postIds = postIds ?? [:]
+                
+                if (postIds?.count) ?? 0 > 0 {
+                    let latestPost = postIds!.max { a, b in a.value < b.value }
+                    if let post = self.userPostsDic[(latestPost?.key)!] {
+                        var imageUrl = post.imageUrls.first
+                        temp.heroImageUrl = imageUrl
+                    }
                 }
-            }            
-            
-            tempLists[emoji] = temp
+                
+                tempLists[emoji] = temp
+            }
         }
         self.userFavsLists = tempLists
         
@@ -304,6 +322,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     var fetchTypeOptions: [String] = ListOptions
     var fetchType: String = ListDefault {
         didSet {
+            updateFilterLegitButton()
             if self.fetchType == ListAll {
                 self.fetchAllLists()
             } else if self.fetchType == ListFav || self.fetchType == ListCities {
@@ -456,6 +475,62 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         self.createUserAutoLists()
     }
     
+    var isFilteringLegit: Bool = false {
+        didSet {
+            createUserAutoLists()
+        }
+    }
+    
+    lazy var detailLabel: PaddedUILabel = {
+        let ul = PaddedUILabel()
+        ul.isUserInteractionEnabled = false
+        ul.numberOfLines = 0
+        ul.textAlignment = NSTextAlignment.center
+        ul.font = UIFont(name: "Poppins-Bold", size: 12)
+        ul.textColor = UIColor.darkGray
+        ul.backgroundColor = UIColor.lightSelectedColor()
+        ul.alpha = 1
+        ul.layer.cornerRadius = 10
+        ul.clipsToBounds = true
+        return ul
+    }()
+    
+    let buttonSemiAlpha: CGFloat = 0.8
+    
+    let filterLegitButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        button.setImage(#imageLiteral(resourceName: "legit_icon"), for: .normal)
+        button.addTarget(self, action: #selector(filterLegitPosts), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.white.cgColor
+        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.layer.borderColor = UIColor.selectedColor().cgColor
+        button.layer.borderWidth = 1
+        button.translatesAutoresizingMaskIntoConstraints = true
+        return button
+    }()
+    
+    func updateFilterLegitButton() {
+        filterLegitButton.backgroundColor = self.isFilteringLegit ? UIColor.lightSelectedColor() : UIColor.ianWhiteColor()
+        filterLegitButton.alpha = self.isFilteringLegit ? 1 : buttonSemiAlpha
+        filterLegitButton.isHidden = (self.fetchType != ListFav)
+        detailLabel.isHidden = !(self.isFilteringLegit && !filterLegitButton.isHidden)
+        detailLabel.text = "Top Posts"
+        detailLabel.sizeToFit()
+        detailLabel.textColor = self.isFilteringLegit ? UIColor.customRedColor() : UIColor.gray
+
+    }
+    
+    @objc func filterLegitPosts() {
+        self.isFilteringLegit = !self.isFilteringLegit
+        self.updateFilterLegitButton()
+        print("Tab List View | filterLegitPosts - \(self.isFilteringLegit)")
+//
+//        self.updateDetailLabel()
+//        self.refreshPostsForFilter()
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
@@ -499,6 +574,22 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         sortSegmentControl.alpha = 0.9
         self.refreshSort(sender: sortSegmentControl)
         
+        
+    // FILTER LEGIT BUTTON
+        view.addSubview(filterLegitButton)
+        filterLegitButton.anchor(top: nil, left: nil, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 12, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 40, height: 40)
+        filterLegitButton.layer.cornerRadius = 40/2
+        filterLegitButton.isHidden = true
+
+        
+    // DETAIL LABEL
+        view.addSubview(detailLabel)
+        detailLabel.anchor(top: nil, left: nil, bottom: nil, right: filterLegitButton.leftAnchor, paddingTop: 4, paddingLeft: 10, paddingBottom: 10, paddingRight: 2, width: 0, height: 0)
+        detailLabel.centerYAnchor.constraint(equalTo: filterLegitButton.centerYAnchor).isActive = true
+        detailLabel.isHidden = true
+        
+        updateFilterLegitButton()
+
 //        let addNewListButtonWidth: CGFloat = 50
 //        view.addSubview(createNewListButton)
 //        createNewListButton.anchor(top: nil, left: nil, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 20, paddingRight: 15, width: 0, height: 40)
@@ -929,7 +1020,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         
         if self.fetchType == ListFav {
             self.filteredUserFavs = userFavs.filter({ (emoji) -> Bool in
-                return emoji.lowercased().contains(searchText.lowercased()) || extraRatingEmojisDic[emoji]!.contains(searchText.lowercased())
+                return emoji.lowercased().contains(searchText.lowercased()) || (extraRatingEmojisDic[emoji] ?? "").contains(searchText.lowercased())
             })
         }
         
@@ -1112,7 +1203,15 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         else if !self.isFiltering && fetchedList.count == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: listCellId, for: indexPath) as! SearchResultsCell
             cell.emojiTextLabel.textAlignment = .center
-            cell.locationName =  self.fetchType == ListYours ? "You Have No Lists. Tap To Create A List" :  "You Are Not Following Any Lists"
+            var noItemLabel: String = "There are no results"
+            if self.fetchType == ListYours {
+                noItemLabel = "You Have No Lists. Tap To Create A List"
+            } else if self.fetchType == ListYours {
+                noItemLabel = "You Are Not Following Any Lists"
+            } else if self.fetchType == ListCities {
+                noItemLabel = "You Have No Posts Anywhere Yet. Post a Picture!"
+            }
+            cell.locationName =  noItemLabel
             cell.selectionStyle = .none
             cell.postCountLabel.isHidden = true
             return cell
