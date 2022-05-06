@@ -41,7 +41,9 @@ class NewUserOnboardViewFollowing: UIViewController {
         myGroup.notify(queue: .main) {
             print("Legit Team - Fetched \(self.teamUsers.count) Users")
             SVProgressHUD.dismiss()
-            self.allUsers = self.teamUsers
+            self.allUsers = self.teamUsers.sorted(by: { u1, u2 in
+                return u1.posts_created > u2.posts_created
+            })
             self.filteredUsers = self.teamUsers
             self.tableView.reloadData()
         }

@@ -499,7 +499,7 @@ class MainTabListCell: UITableViewCell, EmojiButtonArrayDelegate {
                 
         let listnameLabelText = NSMutableAttributedString()
         
-        var listNameColor = list.isLegitList ? UIColor.darkSelectedColor() : UIColor.black
+        var listNameColor = list.isLegitList ? UIColor.ianLegitColor() : UIColor.black
 
         let image1Attachment = NSTextAttachment()
         let inputImage = self.list?.creatorUID == CurrentUser.uid ? #imageLiteral(resourceName: "bookmark_filled").withRenderingMode(.alwaysOriginal) : #imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate)

@@ -1354,11 +1354,18 @@ Rating Emojis help you describe your experience beyond just star ratings
     }
     
 
-    
+    @available(iOS 13.0, *)
+    private func setTabBarItemColors(_ itemAppearance: UITabBarItemAppearance) {
+        itemAppearance.normal.iconColor = UIColor.ianMiddleGrayColor()
+        itemAppearance.normal.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.ianMiddleGrayColor()]
+
+        itemAppearance.selected.iconColor = UIColor.ianLegitColor()
+        itemAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.ianLegitColor()]
+    }
     
     
     func setupNavigationItems(){
-        
+
         //        self.navigationController?.navigationBar.barStyle = UIBarStyle.blackOpaque
         self.navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.isNavigationBarHidden = false
@@ -1396,6 +1403,22 @@ Rating Emojis help you describe your experience beyond just star ratings
         navBackButton.addTarget(self, action: #selector(handleBackNav), for: .touchUpInside)
         let barButton2 = UIBarButtonItem.init(customView: navBackButton)
         navigationItem.leftBarButtonItem = barButton2
+        
+        
+        if #available(iOS 13.0, *) {
+            let tabBarAppearance: UITabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.configureWithDefaultBackground()
+            tabBarAppearance.backgroundColor = UIColor.white
+            tabBarAppearance.selectionIndicatorTintColor = UIColor.ianLegitColor()
+            setTabBarItemColors(tabBarAppearance.stackedLayoutAppearance)
+            setTabBarItemColors(tabBarAppearance.inlineLayoutAppearance)
+            setTabBarItemColors(tabBarAppearance.compactInlineLayoutAppearance)
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+
+            if #available(iOS 15.0, *) {
+                UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            }
+        }
         
         
         //        if self.editPostInd {

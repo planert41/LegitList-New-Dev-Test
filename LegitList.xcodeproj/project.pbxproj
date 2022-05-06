@@ -334,7 +334,6 @@
 		A5FE41DB2276040800607088 /* EmojiFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FE41DA2276040800607088 /* EmojiFilterCell.swift */; };
 		A5FE41DD22767BF000607088 /* FilterEmojiLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FE41DC22767BF000607088 /* FilterEmojiLayout.swift */; };
 		B674E408270A17F000AF4346 /* ProfileHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */; };
-		B69430632803041600D7251F /* Notes in Resources */ = {isa = PBXBuildFile; fileRef = B69430622803041600D7251F /* Notes */; };
 		B6968D48278A4C4B007AD520 /* OpenAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */; };
 		B6A0C54D2737883B000BFB7B /* BottomSortBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */; };
 		B6A4129227F29C750044D404 /* ApplePlaceSearchTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A4129127F29C750044D404 /* ApplePlaceSearchTableViewController.swift */; };
@@ -711,7 +710,6 @@
 		A5FE41DA2276040800607088 /* EmojiFilterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiFilterCell.swift; sourceTree = "<group>"; };
 		A5FE41DC22767BF000607088 /* FilterEmojiLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterEmojiLayout.swift; sourceTree = "<group>"; };
 		B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderLayout.swift; sourceTree = "<group>"; };
-		B69430622803041600D7251F /* Notes */ = {isa = PBXFileReference; lastKnownFileType = text; path = Notes; sourceTree = "<group>"; };
 		B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAppViewController.swift; sourceTree = "<group>"; };
 		B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSortBar.swift; sourceTree = "<group>"; };
 		B6A4129127F29C750044D404 /* ApplePlaceSearchTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePlaceSearchTableViewController.swift; sourceTree = "<group>"; };
@@ -1077,7 +1075,6 @@
 				A588662722D367E8002618B7 /* EmojiInfoView_New.swift */,
 				A56D8A9122D255C30007B355 /* EmojiInfoView.swift */,
 				B6A4129127F29C750044D404 /* ApplePlaceSearchTableViewController.swift */,
-				B69430622803041600D7251F /* Notes */,
 			);
 			name = Login;
 			sourceTree = "<group>";
@@ -1548,7 +1545,6 @@
 				A55D6436227E1DDB00AC39EC /* Poppins-ThinItalic.ttf in Resources */,
 				A55D6437227E1DDB00AC39EC /* Poppins-ExtraLightItalic.ttf in Resources */,
 				A55D6438227E1DDB00AC39EC /* Poppins-BoldItalic.ttf in Resources */,
-				B69430632803041600D7251F /* Notes in Resources */,
 				A55D6439227E1DDB00AC39EC /* Poppins-Light.ttf in Resources */,
 				A55D643A227E1DDB00AC39EC /* Poppins-Medium.ttf in Resources */,
 				A55D643B227E1DDB00AC39EC /* Poppins-SemiBoldItalic.ttf in Resources */,

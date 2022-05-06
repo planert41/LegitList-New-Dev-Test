@@ -322,7 +322,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(fetchSortFilterPosts), name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: SharePhotoListController.updateFeedNotificationName, object: nil)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: LegitHomeView.searchRefreshNotificationName, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(didTapHomeButton), name: MainTabBarController.tapHomeTabBarButtonNotificationName, object: nil)
@@ -643,6 +643,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         if self.dropDownView.alpha == 1 {
             self.hideDropDown()
         } else {
+            self.viewFilter.filterSort = self.viewFilter.defaultSort
             self.handleRefresh()
         }
     }
@@ -793,6 +794,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         // #warning Incomplete implementation, return the number of items
         if collectionView == self.collectionView
         {
+            if self.paginatePostsCount == 0 && newUser {
+                self.extShowNewUserFollowing()
+                print("SHOW extShowNewUserFollowing")
+                newUser = false
+            }
             return self.paginatePostsCount
         }
         else

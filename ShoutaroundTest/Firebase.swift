@@ -8450,7 +8450,8 @@ extension Database{
                 
                 // Update User Object
                 self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: "followingCount", final: followingCount)
-                
+                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
+
                 // Update Follower
                 handleFollower(followedUid: userUid, followedValue: followedValue){
                     completion()
@@ -8571,7 +8572,7 @@ extension Database{
                     Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
 
                 }
-                
+                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
                 
                 // Update User Object
                 self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: "followingCount", final: followingCount)

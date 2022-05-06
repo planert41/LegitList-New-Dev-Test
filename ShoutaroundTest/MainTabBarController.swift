@@ -519,6 +519,10 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
   
     @objc func setupViewControllers() {
         
+        if newUserTest {
+            newUser = true
+        }
+        
         // ONLY REQUIRES CURRENT USER UID LOADED
         
 // 1. HOME
@@ -584,7 +588,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //        listViewNew.fetchallItems()
 //        let discoverIconNew = #imageLiteral(resourceName: "listsHash").withRenderingMode(.alwaysTemplate)
 
-        let userListNavController = templateNavController(unselectedImage: listIcon, selectedImage: notificationIcon, title: "Lists", rootViewController: listViewNew)
+        let userListNavController = templateNavController(unselectedImage: listIcon, selectedImage: listIcon, title: "Lists", rootViewController: listViewNew)
 
 
 // FINAL TAB BAR

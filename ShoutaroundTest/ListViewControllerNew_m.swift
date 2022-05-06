@@ -793,8 +793,8 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     func updateSegmentListCount() {
         if self.fetchTypeSegment.numberOfSegments > 0 {
-            self.fetchTypeSegment.setTitle("\(ListYours) \(String(self.yourLists.count) ?? "")", forSegmentAt: 0)
-            self.fetchTypeSegment.setTitle("\(ListFollowing) \(String(self.followingLists.count) ?? "")", forSegmentAt: 1)
+//            self.fetchTypeSegment.setTitle("\(ListYours) \(String(self.yourLists.count) ?? "")", forSegmentAt: 0)
+//            self.fetchTypeSegment.setTitle("\(ListFollowing) \(String(self.followingLists.count) ?? "")", forSegmentAt: 1)
         }
     }
     

@@ -20,6 +20,7 @@ import FirebaseAuth
 import FirebaseStorage
 import AudioToolbox
 import SwiftyJSON
+import SVProgressHUD
 
 protocol SinglePostViewDelegate {
 //    func listSelected(list: List?)
@@ -75,6 +76,7 @@ class NewSinglePostView: UIViewController {
                print("Edited Post in SinglePostView \(editedPostId) | Refresh Post")
             Database.fetchPostWithPostID(postId: postId) { (post, error) in
                 self.post = post
+                SVProgressHUD.dismiss()
             }
            }
         }
@@ -886,8 +888,8 @@ class NewSinglePostView: UIViewController {
 
 
         
-        self.view.bringSubviewToFront(photoImageScrollView)
-        self.view.bringSubviewToFront(photoImageView)
+        self.scrollview.bringSubviewToFront(photoImageScrollView)
+        self.scrollview.bringSubviewToFront(photoImageView)
 
 
     }

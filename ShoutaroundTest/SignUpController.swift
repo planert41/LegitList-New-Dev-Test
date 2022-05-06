@@ -23,6 +23,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 
     var FBCredentials: AuthCredential?
     var delegate: SignUpControllerDelegate?
+    var newUserAutoFollow: Bool = false
     
     var editUserInd: Bool = false {
         didSet{
@@ -980,7 +981,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
             
                 if let err = error {
-                    self.failCreateUserAlert()
+                    self.failCreateUserAlert(msg: err.localizedDescription)
                     print("Failed to create user:", err)
                     return
                 }
@@ -1000,9 +1001,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
     }
     
-    func failCreateUserAlert(){
-        let message = "Failed to create user"
-        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: UIAlertController.Style.alert)
+    func failCreateUserAlert(msg: String?){
+        let message = "Error Message : \(msg)"
+        let alert = UIAlertController(title: "Fail To Create User", message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { (action: UIAlertAction!) in
             self.signUpButton.isEnabled = true
         }))
@@ -1248,12 +1249,15 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 print("Successfully saved user info to db")
                 
                 // Auto Follow Users
-                let newFollowUids = [weizouID, meimeiID, maynardID, magnusID, UID_ernie]
-                
-                Database.handleFollowingMultipleUids(userUids: newFollowUids, hideAlert: true, forceFollow: true) {
-                    print("SUCCESS New User Followed Starting Users")
+                if self.newUserAutoFollow {
+                    let newFollowUids = [weizouID, meimeiID, maynardID, magnusID, UID_ernie]
+
+                    Database.handleFollowingMultipleUids(userUids: newFollowUids, hideAlert: true, forceFollow: true) {
+                        print("SUCCESS New User Followed Starting Users")
+                    }
                 }
                 
+
                 Database.handleFollowing(followerUid: weizouID, followingUid: userID, hideAlert: true, completion: {
                     print(" New User Follow | Wei Zou Now Following \(username)")})
                 
