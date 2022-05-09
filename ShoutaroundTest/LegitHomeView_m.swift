@@ -18,7 +18,7 @@ import UserNotifications
 
 import CoreLocation
 
-class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLayout, EmptyCellDelegate {
 
     
     // POST VARIABLES
@@ -28,6 +28,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     var tempSearchBarText: String? = nil
     var isFetchingPosts = false
     var setListener = false
+    var showEmpty = false
 
     
     var fetchTypeInd: String = HomeFetchDefault {
@@ -62,7 +63,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     let HomeFullCellId = "HomeFullCellId"
     let HomeGridCellId = "HomeGridCellId"
     let HomeHeaderId = "HomeHeaderId"
-    
+    let EmptyCellId = "emptyCellId"
+
     
     let EmojiCellId = "EmojiCellId"
     let UserCellId = "UserCellId"
@@ -172,6 +174,9 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 
     override func viewWillAppear(_ animated: Bool) {
         self.setupNavigationItems()
+        if self.isFetchingPosts {
+            SVProgressHUD.show(withStatus: "Fetching Posts")
+        }
 //        self.initSearchSelections()
     }
     
@@ -331,6 +336,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onboardDismissed), name: AppDelegate.DismissOnboardNotificationName, object: nil)
 
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -512,6 +518,26 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         setupSearchView()
 
 
+    }
+    
+    @objc func onboardDismissed() {
+        print("MainTabBar Onboard Dimissed")
+        var inStack = false
+
+        if let viewControllers = self.navigationController?.viewControllers
+        {
+            inStack = viewControllers.contains(where: {return $0 is LegitHomeView
+        })
+        }
+        
+        if (self.isPresented || inStack) && !self.isFetchingPosts{
+            
+            if newUserRecommend {
+                self.extShowNewUserFollowing()
+                newUserRecommend = false
+            }
+            
+        }
     }
     
     func updateDetailLabel() {
@@ -752,7 +778,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         cv.register(TestGridPhotoCell.self, forCellWithReuseIdentifier: HomeGridCellId)
         cv.register(NewLegitHomeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HomeHeaderId)
         cv.register(TestHomePhotoCell.self, forCellWithReuseIdentifier: TestCellId)
-        
+        cv.register(EmptyCell.self, forCellWithReuseIdentifier: EmptyCellId)
         
 //        cv.register(LegitHomeHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HomeHeaderId)
         cv.backgroundColor = UIColor.backgroundGrayColor()
@@ -794,25 +820,51 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         // #warning Incomplete implementation, return the number of items
         if collectionView == self.collectionView
         {
-            if self.paginatePostsCount == 0 && newUser {
+            if self.displayedPosts.count == 0 && newUserRecommend {
                 self.extShowNewUserFollowing()
                 print("SHOW extShowNewUserFollowing")
-                newUser = false
+                newUserRecommend = false
             }
-            return self.paginatePostsCount
+            
+            self.showEmpty = displayedPosts.count == 0
+            var postCount = self.showEmpty ? 1 : self.paginatePostsCount
+            return postCount
+            
+//            if (self.displayedPosts.count == 0) {
+//                print("Nothing to show :(")
+//                self.collectionView.setEmptyMessage("Nothing to show :(")
+//            } else {
+//                self.collectionView.restore()
+//            }
+//            return self.paginatePostsCount
+
         }
         else
         {
             return 0
         }
     }
+    
+    func didTapEmptyCell() {
+        if self.viewFilter.isFiltering {
+            self.handleRefresh()
+        } else {
+            NotificationCenter.default.post(name: MainTabBarController.OpenAddNewPhoto, object: nil)
+        }
+    }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         if collectionView == self.collectionView {
-
-
-            if indexPath.item == self.paginatePostsCount - 1 && !isFinishedPaging{
+            
+            if showEmpty {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyCellId, for: indexPath) as! EmptyCell
+                cell.isFiltering = self.viewFilter.isFiltering
+                cell.delegate = self
+                return cell
+            }
+            
+            else if indexPath.item == self.paginatePostsCount - 1 && !isFinishedPaging{
                 print("CollectionView Paginate")
                 paginatePosts()
             }
@@ -832,11 +884,6 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             
             if self.viewFilter.filterLocation != nil && displayPost.locationGPS != nil {
                 displayPost.distance = Double((displayPost.locationGPS?.distance(from: (self.viewFilter.filterLocation!)))!)
-            }
-            
-            if newUser {
-                self.extShowNewUserFollowing()
-                newUser = false
             }
             
             if !isGridView {
@@ -895,6 +942,10 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if collectionView == self.collectionView {
+            if self.showEmpty
+            {
+                return CGSize(width: view.frame.width - 30, height: view.frame.width)
+            }
             if !isGridView {
                 var displayPost = displayedPosts[indexPath.item]
 
@@ -1809,13 +1860,13 @@ extension LegitHomeView: EmptyDataSetSource, EmptyDataSetDelegate {
         textColor = UIColor.ianBlueColor()
         
         
-        font = UIFont.systemFont(ofSize: 14)
-        textColor = UIColor.rgb(red: 43, green: 43, blue: 43)
+//        font = UIFont.systemFont(ofSize: 14)
+//        textColor = UIColor.rgb(red: 43, green: 43, blue: 43)
         
         if viewFilter.isFiltering {
             text = "Nothing Legit Here! 😭"
         } else {
-            text = ""
+            text = "No Posts Yet! Add A Post or Follow A Friend!"
         }
         
         if text == nil {
@@ -1825,7 +1876,7 @@ extension LegitHomeView: EmptyDataSetSource, EmptyDataSetDelegate {
         
         let descTitle = NSAttributedString(string: text!, attributes: [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: font])
         
-        return nil
+        return descTitle
 
         
     }
@@ -2224,6 +2275,7 @@ extension LegitHomeView {
 extension LegitHomeView {
 
     @objc func fetchSortFilterPosts(){
+        self.isFetchingPosts = true
             Database.fetchAllPosts(fetchedPostIds: self.fetchedPostIds, completion: { (firebaseFetchedPosts) in
                 self.isFetchingPosts = false
                 self.displayedPosts = firebaseFetchedPosts

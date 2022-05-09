@@ -65,6 +65,7 @@ class NewUserOnboardView: UIViewController {
 
 
     override func viewDidDisappear(_ animated: Bool) {
+        self.navigationController?.isNavigationBarHidden = false
     }
     
     

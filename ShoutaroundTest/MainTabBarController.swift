@@ -357,7 +357,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         NotificationCenter.default.addObserver(self, selector: #selector(goToHome), name: MainTabBarController.GoToHome, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentMultImagePicker), name: MainTabBarController.OpenAddNewPhoto, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentLogin), name: MainTabBarController.showLoginScreen, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(showOnboarding), name: MainTabBarController.showOnboarding, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(extShowOnboarding), name: MainTabBarController.showOnboarding, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestLocation), name: AppDelegate.RequestLocationNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestNotification), name: AppDelegate.NotificationAccessRequest, object: nil)
         
@@ -436,8 +436,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         }
 
     // NEW USER - NEW CURRENT USER ALREADY LOADED IN SIGN UP
-        else if newUser  {
-            self.showOnboarding()
+        else if newUserOnboarding  {
+            self.extShowOnboarding()
             successLogin()
         }
         
@@ -476,15 +476,17 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 
     }
     
-    @objc func showOnboarding(){
-//        let welcomeView = NewUserOnboardingView()
-        let welcomeView = NewUserOnboardView()
-
-        let testNav = UINavigationController(rootViewController: welcomeView)
-        self.present(testNav, animated: true, completion: nil)
-        //        self.navigationController?.pushViewController(listView, animated: true)
-        
-    }
+//    @objc func showOnboarding(){
+////        let welcomeView = NewUserOnboardingView()
+//        print("MainTabBar showOnboarding")
+//
+//        let welcomeView = NewUserOnboardView()
+//
+//        let testNav = UINavigationController(rootViewController: welcomeView)
+//        self.present(testNav, animated: true, completion: nil)
+//        //        self.navigationController?.pushViewController(listView, animated: true)
+//        
+//    }
     
     @objc func presentLogin(){
         print("MainTabBar | No User | Display Login")
@@ -507,7 +509,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         if CurrentUser.user == nil || viewControllers?.count != 5 {
             print("MainTabBarController | ViewWillAppear | Missing Current User | Load Current User")
             self.checkForCurrentUser()
-            self.selectedIndex = 0
+            // DEFAULT SHOW PROFILE PAGE FOR NEW USER
+            self.selectedIndex = 4
         }
 
 //        else if CurrentUser.user?.uid != Auth.auth().currentUser?.uid {
@@ -520,7 +523,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     @objc func setupViewControllers() {
         
         if newUserTest {
-            newUser = true
+            newUserOnboarding = true
+            newUserRecommend = true
         }
         
         // ONLY REQUIRES CURRENT USER UID LOADED

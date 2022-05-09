@@ -38,6 +38,23 @@ extension UICollectionView {
          IndexPath(item: $0, section: section)
       })
    }
+    
+
+    func setEmptyMessage(_ message: String) {
+        let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
+        messageLabel.text = message
+        messageLabel.textColor = .black
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = .center;
+        messageLabel.font = UIFont(name: "TrebuchetMS", size: 15)
+        messageLabel.sizeToFit()
+
+        self.backgroundView = messageLabel;
+    }
+
+    func restore() {
+        self.backgroundView = nil
+    }
 }
 
 extension UIColor {
@@ -1305,6 +1322,7 @@ extension UIViewController {
         let welcomeView = NewUserOnboardView()
         let testNav = UINavigationController(rootViewController: welcomeView)
         self.present(testNav, animated: true, completion: nil)
+        newUserOnboarding = false
 //        NotificationCenter.default.post(name: MainTabBarController.showOnboarding, object: nil)
     }
     
@@ -1321,6 +1339,7 @@ extension UIViewController {
         let followingController = NewUserOnboardViewFollowing()
         let navController = UINavigationController(rootViewController: followingController)
         self.present(navController, animated: true, completion: nil)
+        newUserRecommend = false
     }
     
     func extShowUserLikesForPost(inputPost: Post?, displayFollowing: Bool = true) {

@@ -256,7 +256,8 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
                     print("Successful Guest Sign In: \(uid)")
                 
                     Database.setupGuestUser(uid: uid) {
-                        newUser = true
+                        newUserOnboarding = true
+                        newUserRecommend = true
                         self.successfulLogin()
                     }
                 }
@@ -318,14 +319,14 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
         return label
     }()
     
-    @objc func showOnboarding() {
-        print("showOnboarding")
-        let welcomeView = NewUserOnboardView()
-
-        let testNav = UINavigationController(rootViewController: welcomeView)
-        self.present(testNav, animated: true, completion: nil)
-//        NotificationCenter.default.post(name: MainTabBarController.showOnboarding, object: nil)
-    }
+//    @objc func showOnboarding() {
+//        print("LoginController showOnboarding")
+//        let welcomeView = NewUserOnboardView()
+//
+//        let testNav = UINavigationController(rootViewController: welcomeView)
+//        self.present(testNav, animated: true, completion: nil)
+////        NotificationCenter.default.post(name: MainTabBarController.showOnboarding, object: nil)
+//    }
     
 
     

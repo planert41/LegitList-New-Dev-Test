@@ -30,14 +30,30 @@ class EmptyCell: UICollectionViewCell {
     }
         
     func refreshLabels(){
-        self.imageLabel.text = isFiltering ? "No Results Found" : "No Posts"
-        self.imageSubLabel.text = isFiltering ? "Tap To Refresh Search" : "Tap To Add Photos"
-
+        self.imageLabel.text = isFiltering ? "No Results Found" : "No Posts Yet"
+        self.imageSubLabel.text = isFiltering ? "Tap To Refresh Search" : "Add A Photo Or Follow A Friend"
+        self.imageIcon.isHidden = !isFiltering
+        self.defaultIcon.isHidden = !self.imageIcon.isHidden
+//        var tempImage = isFiltering ? #imageLiteral(resourceName: "noResults_pic") : #imageLiteral(resourceName: "Legit_Vector")
+//        self.imageIcon.setImage(tempImage.withRenderingMode(.alwaysOriginal), for: .normal)
+//        self.imageIcon.sizeToFit()
+        
     }
     
     let imageIcon: UIButton = {
         let button = UIButton()
         let listIcon = #imageLiteral(resourceName: "noResults_pic").withRenderingMode(.alwaysOriginal)
+        button.setImage(listIcon, for: .normal)
+        button.backgroundColor = UIColor.clear
+        button.isUserInteractionEnabled = false
+        button.tintColor = UIColor.ianBlackColor()
+        button.contentMode = .scaleAspectFill
+        return button
+    }()
+    
+    let defaultIcon: UIButton = {
+        let button = UIButton()
+        let listIcon = #imageLiteral(resourceName: "Legit_Vector").withRenderingMode(.alwaysOriginal)
         button.setImage(listIcon, for: .normal)
         button.backgroundColor = UIColor.clear
         button.isUserInteractionEnabled = false
@@ -89,6 +105,16 @@ class EmptyCell: UICollectionViewCell {
         imageIcon.center = cellView.center
         imageIcon.addTarget(self, action: #selector(didTap), for: .touchUpInside)
         imageIcon.isUserInteractionEnabled = true
+        imageIcon.isHidden = true
+        
+        cellView.addSubview(defaultIcon)
+        defaultIcon.anchor(top: topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 150, height: 100)
+        defaultIcon.centerXAnchor.constraint(equalTo: cellView.centerXAnchor).isActive = true
+
+        defaultIcon.center = cellView.center
+        defaultIcon.addTarget(self, action: #selector(didTap), for: .touchUpInside)
+        defaultIcon.isUserInteractionEnabled = true
+        defaultIcon.isHidden = false
 
         cellView.addSubview(imageLabel)
         imageLabel.anchor(top: imageIcon.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)

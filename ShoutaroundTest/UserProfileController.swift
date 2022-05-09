@@ -157,20 +157,21 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = false
-        if newUser {
+        if newUserOnboarding {
             print("*** NEW USER *** SHOW ONBOARDING")
-            showOnboarding()
-            newUser = false
+            self.extShowOnboarding()
+//            showOnboarding()
+//            newUser = false
         }
     }
 
-    func showOnboarding(){
-        let welcomeView = NewUserOnboardingView()
-        let testNav = UINavigationController(rootViewController: welcomeView)
-        self.present(testNav, animated: true, completion: nil)
-        //        self.navigationController?.pushViewController(listView, animated: true)
-        
-    }
+//    func showOnboarding(){
+//        let welcomeView = NewUserOnboardingView()
+//        let testNav = UINavigationController(rootViewController: welcomeView)
+//        self.present(testNav, animated: true, completion: nil)
+//        //        self.navigationController?.pushViewController(listView, animated: true)
+//        
+//    }
     
     
     override func viewWillDisappear(_ animated: Bool) {

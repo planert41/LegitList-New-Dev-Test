@@ -37,7 +37,8 @@ var appDelegatePostID: String? = nil {
 //}
 var appDelegateViewPage: Int = 0
 var appDelegateMapViewInd: Bool = false
-var newUser: Bool = false
+var newUserOnboarding: Bool = false
+var newUserRecommend: Bool = false
 var newUserTest: Bool = false
 
 var allUsersFetched: [User] = []
@@ -64,6 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let LocationDeniedNotificationName = NSNotification.Name(rawValue: "Location Denied")
     static let NotificationAccessRequest = NSNotification.Name(rawValue: "Request Notifications")
     static let UserFollowUpdatedNotificationName = NSNotification.Name(rawValue: "HomeUserFollowUpdate")
+    static let DismissOnboardNotificationName = NSNotification.Name(rawValue: "DismissOnboardNotificationName")
 
     
 //    let LocationAuthview = LocationRequestViewController()

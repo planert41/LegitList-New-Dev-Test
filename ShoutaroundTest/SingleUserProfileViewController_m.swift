@@ -377,6 +377,10 @@ class SingleUserProfileViewController: UIViewController {
     // MARK: - VIEWDIDLOAD
 
     override func viewWillAppear(_ animated: Bool) {
+        print("SingleProfileController | viewWillAppear")
+        if #available(iOS 13.0, *) {
+             navigationController?.navigationBar.setNeedsLayout()
+        }
         setupNavigationItems()
         toggleNewPostButton()
         
@@ -548,7 +552,7 @@ class SingleUserProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
-        self.view.layoutIfNeeded()
+//        self.view.layoutIfNeeded()
 
         print("  END |  NewListCollectionView | ViewdidLoad")
 
@@ -651,6 +655,7 @@ class SingleUserProfileViewController: UIViewController {
     func setupNavigationItems() {
         let tempImage = UIImage.init(color: UIColor.white)
         navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.barTintColor = UIColor.white
         navigationController?.navigationBar.tintColor = UIColor.white
@@ -1018,10 +1023,11 @@ extension SingleUserProfileViewController {
         bottomEmojiBar.displayedEmojis = topEmojis
         let showBottomEmojiBar = (self.viewFilter.isFiltering || self.viewFilter.filterSort != defaultRecentSort)
         bottomEmojiBarHide?.constant = showBottomEmojiBar ? bottomEmojiBarHeight : 0
-        self.view.layoutIfNeeded()
+//        self.view.layoutIfNeeded()
     }
     
     @objc func handleRefresh() {
+        self.setupNavigationItems()
         self.refreshAll()
 //        fetchPostsForUser()
         print("Refresh User Profile Feed. FetchedPostCount: ", self.displayedPosts.count, " DisplayedPost: ", self.paginatePostsCount)
@@ -1896,7 +1902,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if section == 0 {
             var postCount = (isFiltering) ? displayedPosts.count : fetchedPosts.count
-            self.showEmpty = (postCount == 0 && isFiltering)
+            self.showEmpty = postCount == 0
             postCount = self.showEmpty ? 1 : self.paginatePostsCount
             return postCount
         } else {
@@ -1912,8 +1918,9 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.section == 0 {
             
-            if showEmpty && self.isFiltering {
+            if showEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
+                cell.isFiltering = self.isFiltering
                 cell.delegate = self
                 return cell
             }
@@ -1995,9 +2002,9 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if indexPath.section == 0 {
-            if self.showEmpty && self.isFiltering
+            if self.showEmpty
             {
-                return CGSize(width: view.frame.width, height: view.frame.width)
+                return CGSize(width: view.frame.width - 30, height: view.frame.width)
             }
             else if self.postFormatInd == 1 {
                 var height: CGFloat = 35 //headerview = username userprofileimageview

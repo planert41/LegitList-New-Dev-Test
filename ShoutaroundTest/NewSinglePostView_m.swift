@@ -890,8 +890,9 @@ class NewSinglePostView: UIViewController {
         
         self.scrollview.bringSubviewToFront(photoImageScrollView)
         self.scrollview.bringSubviewToFront(photoImageView)
+        self.scrollview.bringSubviewToFront(emojiDetailLabel)
 
-
+        
     }
     
     func updateLinkLabel() {

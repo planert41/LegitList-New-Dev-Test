@@ -24,6 +24,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     var FBCredentials: AuthCredential?
     var delegate: SignUpControllerDelegate?
     var newUserAutoFollow: Bool = false
+    var allowDefaultPhoto: Bool = false
+    var testUserSignUp: Bool = false
     
     var editUserInd: Bool = false {
         didSet{
@@ -899,8 +901,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 return
             }
             print("Successful Guest Sign In: \(uid)")
-            newUser = true
-            self.showOnboarding()
+            newUserOnboarding = true
+            newUserRecommend = true
+//            self.showOnboarding()
 
             
 //            let listView = SignUpNewListController()
@@ -914,11 +917,11 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         
     }
     
-    @objc func showOnboarding() {
-        let welcomeView = NewUserOnboardingView()
-        let testNav = UINavigationController(rootViewController: welcomeView)
-        self.present(testNav, animated: true, completion: nil)
-    }
+//    @objc func showOnboarding() {
+//        let welcomeView = NewUserOnboardingView()
+//        let testNav = UINavigationController(rootViewController: welcomeView)
+//        self.present(testNav, animated: true, completion: nil)
+//    }
     
     
     
@@ -926,6 +929,10 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     @objc func handleSignUp() {
 
         self.dismissKeyboard()
+        if self.testUserSignUp {
+            self.signInTestNewUser()
+            return
+        }
         
         // Disable button
         self.signUpButton.isEnabled = false
@@ -943,7 +950,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 self.signUpButton.isEnabled = true
             return}
         
-        if plusPhotoButton.currentImage == #imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal) {
+        if !allowDefaultPhoto && plusPhotoButton.currentImage == #imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal) {
             self.alert(title: "Error", message: "Please Upload Profile Picture")
             self.signUpButton.isEnabled = true
             return
@@ -1291,6 +1298,28 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             
     }
     
+    func signInTestNewUser() {
+        let testEmail = "test111@gmail.com"
+        let testPassword = "111111"
+        let testUsername = "test111"
+
+        Auth.auth().signIn(withEmail: testEmail, password: testPassword) { (user, err) in
+        
+            if let err = err {
+                print("Failed to sign in test user email:", user , err)
+            }
+            guard let uid = user?.user.uid else {return}
+        
+        print("Successfully sign in test user:", testEmail ?? "")
+            let dictionaryValues = ["username": testUsername, "profileImageUrl": defaultProfileImageUrl, "creationDate": Date().timeIntervalSince1970] as [String : Any]
+            let values = [uid:dictionaryValues]
+            self.loadTestUserObject(uid: uid, dictionary: dictionaryValues, completion: {
+                print("Loaded Temp TEST User | TEST USER")
+                self.signUpComplete()
+            })
+        }
+    }
+    
     // Auto Follow Users
 
     func loadTestUserObject(uid: String?, dictionary: [String:Any]?,  completion: @escaping() ->()){
@@ -1315,22 +1344,25 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }
     
     @objc func signUpComplete(){
-        newUser = true
+        newUserOnboarding = true
+        newUserRecommend = true
 //        self.dismiss(animated: true, completion: nil)
 //        SVProgressHUD.dismiss()
 
         self.dismiss(animated: true) {
             print("signUpComplete | Dismiss")
+            guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+            print("Sucessful Sign Up | New Sign In | Load Current User | \(Auth.auth().currentUser?.uid)")
+            mainTabBarController.checkForCurrentUser()
+            mainTabBarController.selectedIndex = 4
+            self.navigationController?.navigationBar.layoutIfNeeded()
         }
         
-        guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
-        print("Sucessful Sign Up | New Sign In | Load Current User | \(Auth.auth().currentUser?.uid)")
-        mainTabBarController.checkForCurrentUser()
-        mainTabBarController.selectedIndex = 0
+
         
-        if newUser {
-            self.showOnboarding()
-        }
+//        if newUser {
+//            self.showOnboarding()
+//        }
 
 //        if (Auth.auth().currentUser?.isAnonymous)! {
 //            mainTabBarController.selectedIndex = 0
@@ -1609,7 +1641,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             signUpButton.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
             self.alreadyHaveAccountButton.isHidden = false
         }
-        self.signUpButton.isEnabled = false
+        self.signUpButton.isEnabled = testUserSignUp
         
 //        if self.editUserInd {
 //            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, updatePasswordButton, userCityTextField, signUpButton, cancelButton])
