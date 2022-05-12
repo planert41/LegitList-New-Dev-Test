@@ -6,27 +6,27 @@
 //
 
 import Foundation
-import Purchases
+import RevenueCat
 
 class PurchaseService {
     
     
-    static func purchase(productId:String?, successfulPurchase:@escaping (SKPaymentTransaction?) -> Void) {
+    static func purchase(productId:String?, successfulPurchase:@escaping (StoreTransaction?) -> Void) {
     
         guard productId != nil else {
             return
         }
         
-        var skProduct:SKProduct?
+        var skProduct:StoreProduct?
         
         // Find product based on Id
-        Purchases.shared.products([productId!]) { products in
+        Purchases.shared.getProducts([productId!]) { products in
             
             if !products.isEmpty {
                 skProduct = products[0]
                 
                 // Purchase it
-                Purchases.shared.purchaseProduct(skProduct!) { (transaction, purchaseInfo, error, userCancelled) in
+                Purchases.shared.purchase(product: skProduct!) { (transaction, purchaseInfo, error, userCancelled) in
                     // If successful purchase...
                     if let err = error as NSError? {
                                     
@@ -35,20 +35,22 @@ class PurchaseService {
                         print("Message: \(err.localizedDescription)")
                         print("Underlying Error: \(err.userInfo[NSUnderlyingErrorKey])")
 
-                        // handle specific errors
-                        switch Purchases.ErrorCode(_nsError: err).code {
-                        case .purchaseNotAllowedError:
-                            print("Purchases not allowed on this device.")
-                        case .purchaseInvalidError:
-                            print("Purchase invalid, check payment source.")
-                        default:
-                            break
+                        if let error = error as? RevenueCat.ErrorCode {
+                            switch error {
+                            case .purchaseNotAllowedError:
+                                print("Purchases not allowed on this device.")
+                            case .purchaseInvalidError:
+                                print("Purchase invalid, check payment source.")
+                            default:
+                                break
+                            }
+                        } else {
+                            // Error is a different type
                         }
                     }
                     
                     if error == nil && !userCancelled {
                         var transId = transaction?.transactionIdentifier
-                        var trans = transaction?.original?.transactionIdentifier
                         print("TRANSID: ", transId)
 
                         print(transaction)

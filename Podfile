@@ -17,7 +17,6 @@ pod 'GooglePlaces'
 pod 'GoogleMaps'
 pod 'SwiftyJSON', '~> 4.0'
 pod 'GeoFire', :git => 'https://github.com/firebase/geofire-objc.git'
-pod 'SwiftLocation'
 pod 'Alamofire', '~> 5.0.0.beta.1'
 pod 'mailgun', '~> 1.0.3'
 pod 'GoogleAPIClientForREST/Gmail', '~> 1.2.1'
@@ -37,7 +36,7 @@ pod 'FacebookLogin'
 pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
 pod 'Smile'
 pod 'Kingfisher', '~> 5.0'
-pod 'Purchases'
+pod 'RevenueCat'
 end
 
 post_install do |installer|

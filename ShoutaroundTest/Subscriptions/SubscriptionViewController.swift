@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-import Purchases
+import RevenueCat
 import StoreKit
 import FirebaseAuth
 import FirebaseDatabase
@@ -229,7 +229,7 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
 //        let indSub5_ID = "creator_sub_5"
 //        let indSub10_ID = "creator_sub_10"
         
-        Purchases.shared.purchaserInfo { (info, error) in
+        Purchases.shared.getCustomerInfo { (info, error) in
             if info?.entitlements["premium"]?.isActive == true {
                 self.isPremiumSub = true
             } else {
@@ -409,7 +409,7 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
 
     func checkCurrentStatus() {
         print("checkCurrentStatus")
-        Purchases.shared.purchaserInfo { (info, error) in
+        Purchases.shared.getCustomerInfo { (info, error) in
             // Check the info parameter for active entitlements
 
             var currentSubs = info?.activeSubscriptions

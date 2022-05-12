@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Purchases
+import RevenueCat
 import StoreKit
 
 enum RegisteredPurchase: String {
@@ -172,7 +172,7 @@ class SubscriptionViewControllerSample: UIViewController {
     
     func checkCurrentStatus() {
         print("checkCurrentStatus")
-        Purchases.shared.purchaserInfo { (info, error) in
+        Purchases.shared.getCustomerInfo { (info, error) in
             // Check the info parameter for active entitlements
             if info?.entitlements["premium"]?.isActive == true {
                 
@@ -224,8 +224,9 @@ class SubscriptionViewControllerSample: UIViewController {
             // Upon successful purchase, set the all access flag
             self.currentSub = true
             self.checkCurrentStatus()
-            let trans = (transaction ?? SKPaymentTransaction()) as SKPaymentTransaction
-            self.alert(title: "Transaction", message: "\(trans.transactionIdentifier) \n\(trans.transactionDate)")
+            if let transaction = transaction {
+                self.alert(title: "Transaction", message: "\(transaction.transactionIdentifier) \n\(transaction.purchaseDate)")
+            }
         }
     }
     
@@ -235,8 +236,9 @@ class SubscriptionViewControllerSample: UIViewController {
             // Upon successful purchase, set the all access flag
             self.currentSub = true
             self.checkCurrentStatus()
-            let trans = (transaction ?? SKPaymentTransaction()) as SKPaymentTransaction
-            self.alert(title: "Transaction", message: "\(trans.transactionIdentifier) \n\(trans.transactionDate)")
+            if let transaction = transaction {
+                self.alert(title: "Transaction", message: "\(transaction.transactionIdentifier) \n\(transaction.purchaseDate)")
+            }
         }
     }
     
@@ -246,8 +248,9 @@ class SubscriptionViewControllerSample: UIViewController {
             // Upon successful purchase, set the all access flag
             self.currentSub = true
             self.checkCurrentStatus()
-            let trans = (transaction ?? SKPaymentTransaction()) as SKPaymentTransaction
-            self.alert(title: "Transaction", message: "\(trans.transactionIdentifier) \n\(trans.transactionDate)")
+            if let transaction = transaction {
+                self.alert(title: "Transaction", message: "\(transaction.transactionIdentifier) \n\(transaction.purchaseDate)")
+            }
         }
     }
     

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Purchases
+import RevenueCat
 import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
@@ -213,9 +213,9 @@ class PremiumSubViewController: UIViewController {
     func handleMonthlySub() {
         PurchaseService.purchase(productId: monthlySubProductID) { (transaction) in
             if let transaction = transaction {
-                var purchaseDate = (transaction.transactionDate ?? Date())!
+                var purchaseDate = (transaction.purchaseDate ?? Date())!
                 var transID = transaction.transactionIdentifier
-                if transID == "0" || (transID?.isEmptyOrWhitespace() ?? true) {
+                if transID == "0" || (transID.isEmptyOrWhitespace() ?? true) {
                     transID = NSUUID().uuidString
                     print("Random UUID : \(transID) - \(transaction.transactionIdentifier)")
                 }
@@ -233,7 +233,7 @@ class PremiumSubViewController: UIViewController {
     func handleAnnualSub() {
         PurchaseService.purchase(productId: annualSubProductID) { (transaction) in
             if let transaction = transaction {
-                var purchaseDate = (transaction.transactionDate ?? Date())!
+                var purchaseDate = (transaction.purchaseDate ?? Date())!
                 var transID = transaction.transactionIdentifier
                 Database.createPremiumSubscription(transactionId: transID, buyerId: Auth.auth().currentUser?.uid, subPeriod: .annual) { (tempSub) in
                     Database.premiumUserSignUp(subscription: tempSub)

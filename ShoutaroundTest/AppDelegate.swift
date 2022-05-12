@@ -13,7 +13,7 @@ import FirebaseCore
 import UserNotifications
 import FirebaseMessaging
 import FirebaseAnalytics
-import Purchases
+import RevenueCat
 
 // OLD PHOTO
 // "https://firebasestorage.googleapis.com/v0/b/shoutaroundtest-ae721.appspot.com/o/profile_images%2FF3A38E61-1537-4499-AC26-C074CD9059B8?alt=media&token=0e228917-d385-474f-9625-c1f4e32ecea8"

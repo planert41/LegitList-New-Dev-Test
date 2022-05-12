@@ -16,7 +16,7 @@ import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
 import Photos
-import Purchases
+import RevenueCat
 
 var postCache = [String: Post]()
 var voteCache = [String:Int]()
@@ -11152,7 +11152,7 @@ extension Database{
             print("Free Premium User \(CurrentUser.username) | checkPremiumStatus")
             return
         }
-        Purchases.shared.purchaserInfo { (info, error) in
+        Purchases.shared.getCustomerInfo { (info, error) in
         // Check for current Premium Status
             var activate = false
             var cancel = false

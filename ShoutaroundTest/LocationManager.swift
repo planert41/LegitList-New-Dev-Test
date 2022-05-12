@@ -10,7 +10,6 @@ import Foundation
 import UIKit
 import CoreLocation
 import SVProgressHUD
-import SwiftLocation
 
 class LocationSingleton: NSObject,CLLocationManagerDelegate {
 

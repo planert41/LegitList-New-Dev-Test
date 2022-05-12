@@ -1,11 +1,12 @@
 PODS:
   - AFNetworking (1.1.0)
   - Alamofire (5.0.5)
-  - AppAuth (1.4.0):
-    - AppAuth/Core (= 1.4.0)
-    - AppAuth/ExternalUserAgent (= 1.4.0)
-  - AppAuth/Core (1.4.0)
-  - AppAuth/ExternalUserAgent (1.4.0)
+  - AppAuth (1.5.0):
+    - AppAuth/Core (= 1.5.0)
+    - AppAuth/ExternalUserAgent (= 1.5.0)
+  - AppAuth/Core (1.5.0)
+  - AppAuth/ExternalUserAgent (1.5.0):
+    - AppAuth/Core
   - BSImagePicker (3.3.1)
   - CLImageEditor/AllTools (0.2.4):
     - CLImageEditor/Core
@@ -26,7 +27,7 @@ PODS:
   - CLImageEditor/TextTool (0.2.4):
     - CLImageEditor/Core
   - Cosmos (18.0.1)
-  - CropViewController (2.6.0)
+  - CropViewController (2.6.1)
   - DropDown (2.3.4)
   - EmptyDataSet-Swift (5.0.0)
   - FacebookCore (0.9.0):
@@ -45,75 +46,75 @@ PODS:
     - FBSDKLoginKit/Login (= 5.15.1)
   - FBSDKLoginKit/Login (5.15.1):
     - FBSDKCoreKit (~> 5.0)
-  - Firebase (8.10.0):
-    - Firebase/Core (= 8.10.0)
-  - Firebase/Auth (8.10.0):
+  - Firebase (8.15.0):
+    - Firebase/Core (= 8.15.0)
+  - Firebase/Auth (8.15.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 8.10.0)
-  - Firebase/Core (8.10.0):
+    - FirebaseAuth (~> 8.15.0)
+  - Firebase/Core (8.15.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (~> 8.10.0)
-  - Firebase/CoreOnly (8.10.0):
-    - FirebaseCore (= 8.10.0)
-  - Firebase/Database (8.10.0):
+    - FirebaseAnalytics (~> 8.15.0)
+  - Firebase/CoreOnly (8.15.0):
+    - FirebaseCore (= 8.15.0)
+  - Firebase/Database (8.15.0):
     - Firebase/CoreOnly
-    - FirebaseDatabase (~> 8.10.0)
-  - Firebase/Messaging (8.10.0):
+    - FirebaseDatabase (~> 8.15.0)
+  - Firebase/Messaging (8.15.0):
     - Firebase/CoreOnly
-    - FirebaseMessaging (~> 8.10.0)
-  - Firebase/Storage (8.10.0):
+    - FirebaseMessaging (~> 8.15.0)
+  - Firebase/Storage (8.15.0):
     - Firebase/CoreOnly
-    - FirebaseStorage (~> 8.10.0)
-  - FirebaseAnalytics (8.10.0):
-    - FirebaseAnalytics/AdIdSupport (= 8.10.0)
+    - FirebaseStorage (~> 8.15.0)
+  - FirebaseAnalytics (8.15.0):
+    - FirebaseAnalytics/AdIdSupport (= 8.15.0)
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/MethodSwizzler (~> 7.6)
-    - GoogleUtilities/Network (~> 7.6)
-    - "GoogleUtilities/NSData+zlib (~> 7.6)"
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (~> 2.30908.0)
-  - FirebaseAnalytics/AdIdSupport (8.10.0):
+  - FirebaseAnalytics/AdIdSupport (8.15.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
-    - GoogleAppMeasurement (= 8.10.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/MethodSwizzler (~> 7.6)
-    - GoogleUtilities/Network (~> 7.6)
-    - "GoogleUtilities/NSData+zlib (~> 7.6)"
+    - GoogleAppMeasurement (= 8.15.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (~> 2.30908.0)
-  - FirebaseAuth (8.10.0):
+  - FirebaseAuth (8.15.0):
     - FirebaseCore (~> 8.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/Environment (~> 7.7)
     - GTMSessionFetcher/Core (~> 1.5)
-  - FirebaseCore (8.10.0):
+  - FirebaseCore (8.15.0):
     - FirebaseCoreDiagnostics (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.6)
-    - GoogleUtilities/Logger (~> 7.6)
-  - FirebaseCoreDiagnostics (8.10.0):
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Logger (~> 7.7)
+  - FirebaseCoreDiagnostics (8.15.0):
     - GoogleDataTransport (~> 9.1)
-    - GoogleUtilities/Environment (~> 7.6)
-    - GoogleUtilities/Logger (~> 7.6)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Logger (~> 7.7)
     - nanopb (~> 2.30908.0)
-  - FirebaseDatabase (8.10.0):
+  - FirebaseDatabase (8.15.0):
     - FirebaseCore (~> 8.0)
     - leveldb-library (~> 1.22)
-  - FirebaseInstallations (8.10.0):
+  - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.6)
-    - GoogleUtilities/UserDefaults (~> 7.6)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (< 3.0, >= 1.2)
-  - FirebaseMessaging (8.10.0):
+  - FirebaseMessaging (8.15.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
     - GoogleDataTransport (~> 9.1)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/Environment (~> 7.6)
-    - GoogleUtilities/Reachability (~> 7.6)
-    - GoogleUtilities/UserDefaults (~> 7.6)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/Environment (~> 7.7)
+    - GoogleUtilities/Reachability (~> 7.7)
+    - GoogleUtilities/UserDefaults (~> 7.7)
     - nanopb (~> 2.30908.0)
-  - FirebaseStorage (8.10.0):
+  - FirebaseStorage (8.15.0):
     - FirebaseCore (~> 8.0)
     - GTMSessionFetcher/Core (~> 1.5)
   - GeoFire (4.3.0):
@@ -127,36 +128,36 @@ PODS:
   - GoogleAPIClientForREST/Gmail (1.2.1):
     - GoogleAPIClientForREST/Core
     - GTMSessionFetcher (>= 1.1.7)
-  - GoogleAppMeasurement (8.10.0):
-    - GoogleAppMeasurement/AdIdSupport (= 8.10.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/MethodSwizzler (~> 7.6)
-    - GoogleUtilities/Network (~> 7.6)
-    - "GoogleUtilities/NSData+zlib (~> 7.6)"
+  - GoogleAppMeasurement (8.15.0):
+    - GoogleAppMeasurement/AdIdSupport (= 8.15.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (~> 2.30908.0)
-  - GoogleAppMeasurement/AdIdSupport (8.10.0):
-    - GoogleAppMeasurement/WithoutAdIdSupport (= 8.10.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/MethodSwizzler (~> 7.6)
-    - GoogleUtilities/Network (~> 7.6)
-    - "GoogleUtilities/NSData+zlib (~> 7.6)"
+  - GoogleAppMeasurement/AdIdSupport (8.15.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 8.15.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (~> 2.30908.0)
-  - GoogleAppMeasurement/WithoutAdIdSupport (8.10.0):
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
-    - GoogleUtilities/MethodSwizzler (~> 7.6)
-    - GoogleUtilities/Network (~> 7.6)
-    - "GoogleUtilities/NSData+zlib (~> 7.6)"
+  - GoogleAppMeasurement/WithoutAdIdSupport (8.15.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
+    - GoogleUtilities/MethodSwizzler (~> 7.7)
+    - GoogleUtilities/Network (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (~> 2.30908.0)
-  - GoogleDataTransport (9.1.2):
-    - GoogleUtilities/Environment (~> 7.2)
-    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (9.1.4):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleMaps (6.0.1):
-    - GoogleMaps/Maps (= 6.0.1)
-  - GoogleMaps/Base (6.0.1)
-  - GoogleMaps/Maps (6.0.1):
+  - GoogleMaps (6.2.1):
+    - GoogleMaps/Maps (= 6.2.1)
+  - GoogleMaps/Base (6.2.1)
+  - GoogleMaps/Maps (6.2.1):
     - GoogleMaps/Base
-  - GooglePlaces (6.0.0)
+  - GooglePlaces (6.2.1)
   - GoogleSignIn (6.1.0):
     - AppAuth (~> 1.4)
     - GTMAppAuth (~> 1.0)
@@ -180,15 +181,15 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
-  - GTMAppAuth (1.2.2):
+  - GTMAppAuth (1.3.0):
     - AppAuth/Core (~> 1.4)
     - GTMSessionFetcher/Core (~> 1.5)
-  - GTMSessionFetcher (1.7.0):
-    - GTMSessionFetcher/Full (= 1.7.0)
-  - GTMSessionFetcher/Core (1.7.0)
-  - GTMSessionFetcher/Full (1.7.0):
-    - GTMSessionFetcher/Core (= 1.7.0)
-  - IQKeyboardManagerSwift (6.5.9)
+  - GTMSessionFetcher (1.7.2):
+    - GTMSessionFetcher/Full (= 1.7.2)
+  - GTMSessionFetcher/Core (1.7.2)
+  - GTMSessionFetcher/Full (1.7.2):
+    - GTMSessionFetcher/Core (= 1.7.2)
+  - IQKeyboardManagerSwift (6.5.10)
   - Kingfisher (5.15.8):
     - Kingfisher/Core (= 5.15.8)
   - Kingfisher/Core (5.15.8)
@@ -200,24 +201,16 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - PromisesObjC (2.0.0)
-  - Purchases (3.13.1):
-    - PurchasesCoreSwift (= 3.13.1)
-  - PurchasesCoreSwift (3.13.1)
+  - PromisesObjC (2.1.0)
+  - RevenueCat (4.3.0)
   - SKPhotoBrowser (6.0.0)
   - Smile (2.0.0)
   - SVProgressHUD (2.2.6):
     - SVProgressHUD/Core (= 2.2.6)
   - SVProgressHUD/Core (2.2.6)
-  - SwiftLocation (5.1.0):
-    - SwiftLocation/BeaconBroadcaster (= 5.1.0)
-    - SwiftLocation/Core (= 5.1.0)
-  - SwiftLocation/BeaconBroadcaster (5.1.0):
-    - SwiftLocation/Core
-  - SwiftLocation/Core (5.1.0)
   - SwiftyJSON (4.3.0)
   - TLPhotoPicker (2.1.9)
-  - UIFontComplete (5.0.0)
+  - UIFontComplete (6.0.0)
 
 DEPENDENCIES:
   - Alamofire (~> 5.0.0.beta.1)
@@ -243,11 +236,10 @@ DEPENDENCIES:
   - IQKeyboardManagerSwift
   - Kingfisher (~> 5.0)
   - mailgun (~> 1.0.3)
-  - Purchases
+  - RevenueCat
   - SKPhotoBrowser (~> 6.0.0)
   - Smile
   - SVProgressHUD (from `https://github.com/SVProgressHUD/SVProgressHUD.git`)
-  - SwiftLocation
   - SwiftyJSON (~> 4.0)
   - TLPhotoPicker
   - UIFontComplete
@@ -291,11 +283,9 @@ SPEC REPOS:
     - mailgun
     - nanopb
     - PromisesObjC
-    - Purchases
-    - PurchasesCoreSwift
+    - RevenueCat
     - SKPhotoBrowser
     - Smile
-    - SwiftLocation
     - SwiftyJSON
     - TLPhotoPicker
     - UIFontComplete
@@ -317,52 +307,50 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AFNetworking: e6427e782b25a2289d909960df8ef41358b3277c
   Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
-  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
+  AppAuth: 80317d99ac7ff2801a2f18ff86b48cd315ed465d
   BSImagePicker: 0fe04b574d4d6b81093785d2af6c26227efc8428
   CLImageEditor: dc3e5358f641368da3a76fc1c744a4c2ceb270ad
   Cosmos: 7dfaa3f52584ca5f94ab74b5c2e264019cc9f7f5
-  CropViewController: 7093b39ec3cb508531b22d35773e06cecd7378d8
+  CropViewController: 58fb440f30dac788b129d2a1f24cffdcb102669c
   DropDown: f225ff0fd09dde064d17aa03db7e4d4e4ff40b6b
   EmptyDataSet-Swift: eb382c0c87a2d9c678077385a595cec52da38171
   FacebookCore: ba86524b66cfa86d0f8e65d08faa8504a9f732dd
   FacebookLogin: 6cee9fd6e1fe976fe8f7eec199e27b28b14f5d63
   FBSDKCoreKit: 1d5acf7c9d7a2f92bb1a242dc60cae5b7adb91df
   FBSDKLoginKit: f1ea8026a58b52d30c9f2e6a58ca7d813619fb83
-  Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
-  FirebaseAnalytics: 319c9b3b1bdd400d60e2f415dff0c5f6959e6760
-  FirebaseAuth: 59a2d2b933b5b79e18fb1e6ad230c6abdaa73d26
-  FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
-  FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
-  FirebaseDatabase: 5f3e83b0a0d8759378fbd5d05661244d14dfbbb0
-  FirebaseInstallations: 830327b45345ffc859eaa9c17bcd5ae893fd5425
-  FirebaseMessaging: b0aeba17332ee1ee610662b4d1e02a86db82f08f
-  FirebaseStorage: 815410224b548172c578f02554a86bbc8f817f50
+  Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
+  FirebaseAnalytics: 7761cbadb00a717d8d0939363eb46041526474fa
+  FirebaseAuth: 3e73bf8abf4fbb40f8b421f361f4cc48ee57388c
+  FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
+  FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
+  FirebaseDatabase: f567afd233e54a303d84423207736590a6feb419
+  FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
+  FirebaseMessaging: 5e5118a2383b3531e730d974680954c679ca0a13
+  FirebaseStorage: 8019af461599b2c3bc61c6a5dbdfa3d2de66a4d9
   GeoFire: c34927b5c81ab614f611c79aa8d074cfa9780f07
   GoogleAPIClientForREST: a8b95a252014ce2e618df6b75dc72eca2c00b4af
-  GoogleAppMeasurement: a3311dbcf3ea651e5a070fe8559b57c174ada081
-  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
-  GoogleMaps: c213fc2334b7374144cede914da779b99be0ab74
-  GooglePlaces: c97d96ae68594acb64035c9ca9f26fbfc1d23af1
+  GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
+  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
+  GoogleMaps: 20d7b12be49a14287f797e88e0e31bc4156aaeb4
+  GooglePlaces: 94974aa119573d5acc2a35a699948dac838abd73
   GoogleSignIn: c90b5bec45e780f54c6a8e1e3c182a86e3dda69d
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
-  GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
-  GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
-  IQKeyboardManagerSwift: 6e839c575c4aa1078d58a596e41244e77abe918f
+  GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
+  IQKeyboardManagerSwift: 52962c76ab33532f15ad9f3ff4e5715eda5335bb
   Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   mailgun: 17290deea4db24050dd03ca59cd7385d508904b3
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  Purchases: 2693d6444609de044ab25fcda9561bef038f24da
-  PurchasesCoreSwift: ca55f9ef671f89abed133775dd9e53f55007828d
+  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
+  RevenueCat: bcbf0d68e546f947e00b7ea68d4f2d1c913e7767
   SKPhotoBrowser: 76eb862685761707b5745fde7762757966565e07
   Smile: 21ff6c48e06ecfcee605cca32aedd74d5810e34a
   SVProgressHUD: de812b4f0e1d65358f0064416473174ae619843f
-  SwiftLocation: 83e0ea75a1969cee3a1197e2b7095603fc23fde5
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
   TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329
-  UIFontComplete: 843cb7b58fd6503b3918447918ea6daaeaceccff
+  UIFontComplete: 4c4c38468a23ad9426b0e748f0933eea1f8d7965
 
-PODFILE CHECKSUM: 3c21d58da29c95e3e4ad1b126034f3971a4ae973
+PODFILE CHECKSUM: a825587d3d8b95d47bdcb18496a01b6fa8638ae6
 
 COCOAPODS: 1.11.3

@@ -12,7 +12,6 @@ import CoreLocation
 import GeoFire
 import GoogleMaps
 import SwiftyJSON
-import SwiftLocation
 import Alamofire
 import GooglePlaces
 import Cosmos
