@@ -1331,7 +1331,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         var testUser = User.init(uid: uid, dictionary: tempDictionary)
         CurrentUser.user = testUser
         userCache[uid] = testUser
-        CurrentUser.followingUids = [weizouID, meimeiID, maynardID, legitID]
+        if newUserAutoFollow {
+            CurrentUser.followingUids = [weizouID, meimeiID, maynardID, legitID]
+        }
         LocationSingleton.sharedInstance.determineCurrentLocation()
         completion()
 //        Database.createDefaultList(uid: uid, completion: { (defaultList, defaultListId) in

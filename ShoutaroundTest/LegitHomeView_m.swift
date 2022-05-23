@@ -172,6 +172,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     var filteredAllResults:[String] = []
     var currentPostRatingCounts = RatingCountArray
 
+    var pageLoadUp: Bool = true
+    
     override func viewWillAppear(_ animated: Bool) {
         self.setupNavigationItems()
         if self.isFetchingPosts {
@@ -1865,7 +1867,7 @@ extension LegitHomeView: EmptyDataSetSource, EmptyDataSetDelegate {
         
         if viewFilter.isFiltering {
             text = "Nothing Legit Here! 😭"
-        } else {
+        } else if !pageLoadUp {
             text = "No Posts Yet! Add A Post or Follow A Friend!"
         }
         
@@ -2331,6 +2333,7 @@ extension LegitHomeView {
                     self.updateNoFilterCounts()
                     self.paginatePosts()
                     self.updateDetailLabel()
+                    self.pageLoadUp = false
 
     //                self.showFilterView()
                     
