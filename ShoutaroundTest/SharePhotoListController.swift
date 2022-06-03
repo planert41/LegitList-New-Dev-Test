@@ -1031,28 +1031,28 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             return
         }
         
-        Database.editPostToDatabase(imageUrls: imageUrls, postId: postId, uploadDictionary: uploadPostDictionary, uploadLocation: uploadPostLocation, prevPost: preEditPost) {
+        Database.editPostToDatabase(imageUrls: imageUrls, postId: postId, uploadDictionary: uploadPostDictionary, uploadLocation: uploadPostLocation, prevPost: preEditPost) { (editPost) in
             
             // Update Post Cache
-            var tempPost = self.uploadPost
-            tempPost?.selectedListId = listIds
-            tempPost?.creatorListId = listIds
-            
-            if (tempPost?.selectedListId?.count)! > 0 {
-                tempPost?.hasPinned = true
-            }
-
-            postCache[(self.uploadPost?.id)!] = tempPost
+//            var tempPost = self.uploadPost
+//            tempPost?.selectedListId = listIds
+//            tempPost?.creatorListId = listIds
+//
+//            if (tempPost?.selectedListId?.count)! > 0 {
+//                tempPost?.hasPinned = true
+//            }
+//
+//            postCache[(self.uploadPost?.id)!] = tempPost
             SVProgressHUD.dismiss()
 
             self.navigationController?.popToRootViewController(animated: true)
             self.navigationItem.rightBarButtonItem?.isEnabled = true
-            self.delegate?.refreshPost(post: tempPost!)
-            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-            let editPostId:[String: String] = ["editPostId": postId]
-            NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
+            self.delegate?.refreshPost(post: editPost)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//            let editPostId:[String: String] = ["editPostId": postId]
+//            NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
 //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
             
         }

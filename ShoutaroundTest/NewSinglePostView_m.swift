@@ -55,7 +55,7 @@ class NewSinglePostView: UIViewController {
             setupUser()
             setupRatingLegitIcon()
             setupTaggedList()
-//            setupEmojis()
+            setupEmojis()
             setupPostDetails()
             bottomActionBar.post = post
             scrollview.contentSize = scrollview.intrinsicContentSize
@@ -71,7 +71,7 @@ class NewSinglePostView: UIViewController {
     
     @objc func updateEditedSinglePost(_ notification: NSNotification)  {
         guard let postId = post?.id else {return}
-        if let editedPostId = notification.userInfo?["editPostId"] as? String {
+        if let editedPostId = notification.userInfo?["updatedPostId"] as? String {
            if self.post?.id == editedPostId {
                print("Edited Post in SinglePostView \(editedPostId) | Refresh Post")
             Database.fetchPostWithPostID(postId: postId) { (post, error) in
@@ -570,7 +570,7 @@ class NewSinglePostView: UIViewController {
         
         
         // Setup Navigation Look
-        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost(_:)), name: NewSinglePostView.editSinglePostNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
 
         // USER PROFILE
             headerView.addSubview(userProfileImageView)

@@ -2602,7 +2602,7 @@ extension Database{
     }
 
 // Edit Posts Function
-    static func editPostToDatabase(imageUrls: [String]?, postId: String?, uploadDictionary:[String:Any]?,uploadLocation: CLLocation?, prevPost: Post?, completion:@escaping () ->()){
+    static func editPostToDatabase(imageUrls: [String]?, postId: String?, uploadDictionary:[String:Any]?,uploadLocation: CLLocation?, prevPost: Post?, completion:@escaping (Post) ->()){
     
         //    1. Update Post Dictionary
         //    2. Update Post Geofire Location
@@ -2668,7 +2668,13 @@ extension Database{
         
         let postDict:[String: String] = ["updatedPostId": postId]
         NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
+        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+        NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
 
+//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//        let editPostId:[String: String] = ["editPostId": postId]
+//        NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
 
         // Update New Post Cache
         newPost = tempPost
@@ -2714,7 +2720,7 @@ extension Database{
         
 
         
-        completion()
+        completion(tempPost)
     
     }
     

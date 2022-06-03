@@ -2475,8 +2475,13 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         
         
         
-        Database.editPostToDatabase(imageUrls: imageUrls, postId: postId, uploadDictionary: uploadPostDictionary, uploadLocation: uploadPostLocation, prevPost: preEditPost) {
-            
+        Database.editPostToDatabase(imageUrls: imageUrls, postId: postId, uploadDictionary: uploadPostDictionary, uploadLocation: uploadPostLocation, prevPost: preEditPost) {(editPost) in
+            self.delegate?.refreshPost(post: editPost)
+            SVProgressHUD.dismiss()
+            self.navigationItem.rightBarButtonItem?.isEnabled = true
+            self.dismiss(animated: true, completion: {
+
+            })
             
 //            self.dismiss(animated: true, completion: {
 //                self.navigationItem.rightBarButtonItem?.isEnabled = true
@@ -2490,29 +2495,25 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
         
         
         // Update Post Cache
-        var tempPost = self.uploadPost
-        tempPost?.selectedListId = listIds
-        tempPost?.creatorListId = listIds
+//        var tempPost = self.uploadPost
+//        tempPost?.selectedListId = listIds
+//        tempPost?.creatorListId = listIds
+//        
+//        if (tempPost?.selectedListId?.count)! > 0 {
+//            tempPost?.hasPinned = true
+//        }
         
-        if (tempPost?.selectedListId?.count)! > 0 {
-            tempPost?.hasPinned = true
-        }
-        
-        postCache[(self.uploadPost?.id)!] = tempPost
-        self.delegate?.refreshPost(post: tempPost!)
-        SVProgressHUD.dismiss()
-        self.navigationItem.rightBarButtonItem?.isEnabled = true
-        self.delegate?.refreshPost(post: tempPost!)
-        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-        let editPostId:[String: String] = ["editPostId": postId]
-        NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
+//        postCache[(self.uploadPost?.id)!] = tempPost
+
+//        self.delegate?.refreshPost(post: tempPost!)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+////            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//        let editPostId:[String: String] = ["editPostId": postId]
+//        NotificationCenter.default.post(name: NewSinglePostView.editSinglePostNotification, object: nil, userInfo: editPostId)
         //            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
         
-        self.dismiss(animated: true, completion: {
 
-        })
         
         
         
