@@ -22,6 +22,7 @@ class SingleUserProfileViewController: UIViewController {
 
 
     static let RefreshNotificationName = NSNotification.Name(rawValue: "RefreshUser")
+    var pageLoadUp: Bool = true
 
     var displayUserId:String? {
         didSet {
@@ -964,6 +965,7 @@ extension SingleUserProfileViewController {
         self.isFiltering = self.viewFilter.isFiltering
         
         Database.filterSortPosts(inputPosts: self.fetchedPosts, postFilter: self.viewFilter) { finalPosts in
+            self.pageLoadUp = false
             self.displayedPosts = finalPosts ?? []
             if !self.viewFilter.isFiltering {
                 self.fetchedPosts = finalPosts ?? []
@@ -1921,6 +1923,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
             if showEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
                 cell.isFiltering = self.isFiltering
+                cell.pageLoadUp = self.pageLoadUp
                 cell.delegate = self
                 return cell
             }

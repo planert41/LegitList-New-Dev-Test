@@ -862,6 +862,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             if showEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyCellId, for: indexPath) as! EmptyCell
                 cell.isFiltering = self.viewFilter.isFiltering
+                cell.pageLoadUp = self.pageLoadUp
                 cell.delegate = self
                 return cell
             }
@@ -2321,7 +2322,8 @@ extension LegitHomeView {
                 
                 // Sort Posts
                 Database.sortPosts(inputPosts: filteredPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (filteredPosts) in
-                    
+                    self.pageLoadUp = false
+
                     self.displayedPosts = []
                     if filteredPosts != nil {
                         self.displayedPosts = filteredPosts!
@@ -2333,7 +2335,6 @@ extension LegitHomeView {
                     self.updateNoFilterCounts()
                     self.paginatePosts()
                     self.updateDetailLabel()
-                    self.pageLoadUp = false
 
     //                self.showFilterView()
                     

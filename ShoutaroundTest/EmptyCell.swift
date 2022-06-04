@@ -22,6 +22,11 @@ protocol EmptyCellDelegate {
 class EmptyCell: UICollectionViewCell {
 
     var delegate : EmptyCellDelegate?
+    var pageLoadUp: Bool = true {
+        didSet {
+            self.refreshLabels()
+        }
+    }
     
     var isFiltering: Bool = false {
         didSet {
@@ -30,8 +35,14 @@ class EmptyCell: UICollectionViewCell {
     }
         
     func refreshLabels(){
-        self.imageLabel.text = isFiltering ? "No Results Found" : "No Posts Yet"
-        self.imageSubLabel.text = isFiltering ? "Tap To Refresh Search" : (newUserOnboarding ? "Add A Photo Or Follow A Friend" : "")
+        if self.pageLoadUp {
+            self.imageLabel.text = ""
+            self.imageSubLabel.text = ""
+        } else {
+            self.imageLabel.text = isFiltering ? "No Results Found" : "No Posts Yet"
+            self.imageSubLabel.text = isFiltering ? "Tap To Refresh Search" : (newUserOnboarding ? "Add A Photo Or Follow A Friend" : "")
+        }
+
         self.imageIcon.isHidden = !isFiltering
         self.defaultIcon.isHidden = !self.imageIcon.isHidden
 //        var tempImage = isFiltering ? #imageLiteral(resourceName: "noResults_pic") : #imageLiteral(resourceName: "Legit_Vector")
