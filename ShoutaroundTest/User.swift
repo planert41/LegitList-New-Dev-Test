@@ -54,7 +54,8 @@ struct User {
     var APNTokens: [String] = []
     var mostUsedEmojis: [String] = []
     var mostUsedCities: [String] = []
-    
+    var blockedPosts: [String: Date] = [:]
+
     
     init(uid: String, dictionary: [String:Any]) {
         self.username = dictionary["username"] as? String ?? ""
@@ -75,6 +76,12 @@ struct User {
         let lists = dictionary["lists"] as? [String:Any] ?? [:]
         for (listId, values) in lists {
             self.listIds.append(listId)
+        }
+        
+        let blocked = dictionary["block"] as? [String:Any] ?? [:]
+        for (postid, blockdate) in blocked {
+            let blockDate = blockdate as? Double ?? 0
+            self.blockedPosts[postid] = Date(timeIntervalSince1970: blockDate)
         }
         
         let social = dictionary["social"] as? [String:Int] ?? [:]
@@ -285,6 +292,8 @@ struct CurrentUser {
         }
     }
     static var posts: [String:Post] = [:]
+    
+    static var blockedPosts:[String: Date] = [:]
 
     // Inbox
     static var inboxThreads: [MessageThread] = [] {
@@ -314,6 +323,7 @@ struct CurrentUser {
                 self.premiumCancel = user?.premiumCancel
                 self.premiumPeriod = user?.premiumPeriod
                 self.APNTokens = user?.APNTokens ?? []
+                self.blockedPosts = user?.blockedPosts ?? [:]
                 self.checkAPNToken()
             } else {
                 self.username = nil
@@ -326,6 +336,7 @@ struct CurrentUser {
                 self.premiumStart = nil
                 self.premiumCancel = nil
                 self.premiumPeriod = nil
+                self.blockedPosts = [:]
             }
         }
     }

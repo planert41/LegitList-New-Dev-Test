@@ -111,10 +111,10 @@ class ProfileHeaderLayout: UICollectionViewFlowLayout {
 //        }
         
         if contentOffsetY < priorOffsetY! &&  self.priorHeaderPosition! < headerfloor{
-            print("Scroll up reset header")
+//            print("Scroll up reset header")
             headerOffset = headerfloor
         } else if contentOffsetY < priorOffsetY! && self.priorHeaderPosition! > headerceiling{
-            print("Scroll up capping header")
+//            print("Scroll up capping header")
             headerOffset = headerceiling
         } else {
             headerOffset = self.priorHeaderPosition!

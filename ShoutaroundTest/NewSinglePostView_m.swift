@@ -463,7 +463,11 @@ class NewSinglePostView: UIViewController {
     @objc func handleOptions() {
         guard let post = post else {return}
         print("Options Button Pressed")
-        self.userOptionPost(post: post)
+        if CurrentUser.uid == post.creatorUID {
+            self.userOptionPost(post: post)
+        } else {
+            self.guestOptionPost(post: post)
+        }
     }
     
     let locationDistanceLabel: LightPaddedUILabel = {
@@ -834,7 +838,7 @@ class NewSinglePostView: UIViewController {
         postAddDetailView.addSubview(optionsButton)
         optionsButton.anchor(top: nil, left: nil, bottom: nil, right: postAddDetailView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 10, width: 40, height: 20)
         optionsButton.centerYAnchor.constraint(equalTo: postAddDetailView.centerYAnchor).isActive = true
-        optionsButton.isHidden = true
+//        optionsButton.isHidden = true
         
 
 
@@ -1335,7 +1339,7 @@ class NewSinglePostView: UIViewController {
             self.postDateLabel.attributedText = attributedText
             self.postDateLabel.sizeToFit()
             
-            self.optionsButton.isHidden = !(post.creatorUID == Auth.auth().currentUser?.uid)
+//            self.optionsButton.isHidden = !(post.creatorUID == Auth.auth().currentUser?.uid)
             self.optionsButton.isUserInteractionEnabled = true
         }
 
@@ -1630,6 +1634,30 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         self.extTapUser(post: post)
     }
     
+    func guestOptionPost(post:Post){
+        
+        let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
+        
+        optionsAlert.addAction(UIAlertAction(title: "Report Post", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.reportPost(post: post)
+        }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Block Post", style: .default, handler: { (action: UIAlertAction!) in
+            self.blockPost(post: post)
+        }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Block And Report Post", style: .default, handler: { (action: UIAlertAction!) in
+            self.blockAndReportPost(post: post)
+        }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
+        present(optionsAlert, animated: true, completion: nil)
+    }
+    
     func userOptionPost(post:Post){
         
         let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
@@ -1676,6 +1704,55 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         }))
         present(deleteAlert, animated: true, completion: nil)
         
+    }
+    
+    func blockPost(post:Post){
+        
+        let blockAlert = UIAlertController(title: "Block Post", message: "Block Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
+        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            Database.blockPost(post: post)
+        }))
+        
+        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(blockAlert, animated: true, completion: nil)
+    }
+    
+    func reportPost(post:Post){
+        
+        let reportAlert = UIAlertController(title: "Report Post", message: "Report Post to the team? Post will be blocked if reported more than 5 times.", preferredStyle: UIAlertController.Style.alert)
+        reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            Database.reportPost(post: post)
+        }))
+        
+        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(reportAlert, animated: true, completion: nil)
+    }
+    
+    func blockAndReportPost(post:Post){
+        
+        let blockAlert = UIAlertController(title: "Block And Report Post", message: "Block and Report Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
+        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            Database.blockPost(post: post)
+            Database.reportPost(post: post)
+        }))
+        
+        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(blockAlert, animated: true, completion: nil)
     }
     
     

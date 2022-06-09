@@ -29,6 +29,10 @@ var processingCache = [String: Int]()
 var listRefreshRecord = [String:Int]()
 
 extension Database{
+    
+    enum PostError: Error {
+        case noPost
+    }
 
 
     static func setupGuestUser(uid: String?, completion:@escaping () ->()){
@@ -3069,6 +3073,12 @@ extension Database{
         
 //        guard let uid = Auth.auth().currentUser?.uid else {return}
         if postId.isEmptyOrWhitespace() {return}
+        
+//        if CurrentUser.blockedPost[postId] != nil {
+//            print("Filtered Out Blocked Post \(postId)")
+//            completion(nil, nil)
+//        }
+        
         var tempPost: Post? = nil
 
     //  TRIES CACHE FIRST IF NOT FORCE REFRESH
@@ -3417,23 +3427,41 @@ extension Database{
         let thisGroup = DispatchGroup()
         var fetchedPostsTemp: [Post] = []
         
+        
+//        print("Fetch All Posts Count ", fetchedPostIds.count)
+        
         for postId in fetchedPostIds {
+            if CurrentUser.blockedPosts[postId.id] != nil {
+                print("Blocked Post \(postId.id)")
+                continue
+            }
             thisGroup.enter()
             Database.fetchPostWithPostID(postId: postId.id, completion: { (post, error) in
                 if let error = error {
                     print(" ! Fetch Post: ERROR: \(postId)", error)
                 }
                 
-                guard let post = post else {
-                    print(" ! Fetch Post: ERROR: No Post for \(postId)", error)
-                    thisGroup.leave()
-                    return
+                if let tempPost = post {
+                    fetchedPostsTemp.append(tempPost)
                 }
                 
-                var tempPost = post
-                
-                fetchedPostsTemp.append(tempPost)
+//                let count = thisGroup.debugDescription.components(separatedBy: ",").filter({$0.contains("count")}).first?.components(separatedBy: CharacterSet.decimalDigits.inverted).compactMap{Int($0)}.first
+//
+//                print(count, postId)
                 thisGroup.leave()
+
+                
+//                guard let post = post else {
+//                    print(" ! Fetch Post: ERROR: No Post for \(postId)", error)
+//                    thisGroup.leave()
+//                    throw PostError.noPost
+////                    return
+//                }
+//
+//                var tempPost = post
+//
+//                fetchedPostsTemp.append(tempPost)
+//                thisGroup.leave()
             })
         }
         
@@ -4743,6 +4771,56 @@ extension Database{
         }
     }
     
+    static func blockPost(post: Post) {
+        guard let postId = post.id else {
+            return
+        }
+        print(" ! BLOCK POST | \(post.id)")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let createdDate = Date().timeIntervalSince1970
+        CurrentUser.blockedPosts[postId] = Date()
+
+//         Create List Id in User
+        let userRef = Database.database().reference().child("users").child(uid).child("block")
+        let values = [postId: createdDate] as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("Block Posts with User: ERROR: \(postId), User: \(uid)", err)
+                return
+            }
+
+            userRef.keepSynced(true)
+            print("Block Post with User: SUCCESS: \(postId), User: \(uid)")
+            
+            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+        }
+    }
+    
+    static func reportPost(post: Post) {
+        guard let postId = post.id else {
+            return
+        }
+        print(" ! REPORT POST | \(post.id)")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let createdDate = Date().timeIntervalSince1970
+        
+//         Create List Id in User
+        let userRef = Database.database().reference().child("report").child(postId)
+        let values = [uid: createdDate] as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("Report Post By User: ERROR: \(postId), User: \(uid)", err)
+                return
+            }
+
+            userRef.keepSynced(true)
+            print("Report Post By User: SUCCESS: \(postId), User: \(uid)")
+//                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+        }
+    }
     
     static func deletePost(post: Post){
         guard let postId = post.id else {
@@ -7445,10 +7523,16 @@ extension Database{
         var deleteIds:[String] = []
 
         for (index,postObject) in list.postIds!.enumerated() {
-            thisGroup.enter()
             
             let postId = postObject.key
             let postListDate = postObject.value
+            
+            if CurrentUser.blockedPosts[postId] != nil {
+                print("Blocked Post \(postId) from list \(list.name)")
+                continue
+            }
+            
+            thisGroup.enter()
             
             Database.fetchPostWithPostID(postId: postId, completion: { (fetchedPost, error) in
                 if let error = error {
