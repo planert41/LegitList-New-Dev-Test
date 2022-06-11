@@ -110,8 +110,9 @@ class EmptyCell: UICollectionViewCell {
         cellView.backgroundColor = UIColor.backgroundGrayColor()
 
         cellView.addSubview(imageIcon)
-        imageIcon.anchor(top: topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
+        imageIcon.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
         imageIcon.centerXAnchor.constraint(equalTo: cellView.centerXAnchor).isActive = true
+        imageIcon.centerYAnchor.constraint(equalTo: cellView.centerYAnchor).isActive = true
 
         imageIcon.center = cellView.center
         imageIcon.addTarget(self, action: #selector(didTap), for: .touchUpInside)
@@ -119,8 +120,9 @@ class EmptyCell: UICollectionViewCell {
         imageIcon.isHidden = true
         
         cellView.addSubview(defaultIcon)
-        defaultIcon.anchor(top: topAnchor, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 150, height: 100)
+        defaultIcon.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 150, height: 100)
         defaultIcon.centerXAnchor.constraint(equalTo: cellView.centerXAnchor).isActive = true
+        defaultIcon.centerYAnchor.constraint(equalTo: cellView.centerYAnchor).isActive = true
 
         defaultIcon.center = cellView.center
         defaultIcon.addTarget(self, action: #selector(didTap), for: .touchUpInside)

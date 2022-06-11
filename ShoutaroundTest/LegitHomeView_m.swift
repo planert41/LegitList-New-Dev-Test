@@ -1101,7 +1101,9 @@ extension LegitHomeView {
     
     @objc func handleRefresh(){
         print("LegitHomeView | handleRefresh")
-        SVProgressHUD.show(withStatus: "Refreshing Feed")
+        if self.isPresented {
+            SVProgressHUD.show(withStatus: "Refreshing Feed")
+        }
         self.clearFilter()
         self.fetchPostIds()
         self.hideDropDown()

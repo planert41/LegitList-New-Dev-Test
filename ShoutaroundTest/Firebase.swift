@@ -3084,7 +3084,7 @@ extension Database{
     //  TRIES CACHE FIRST IF NOT FORCE REFRESH
         if !force! {
             if let cachedPost = postCache[postId] {
-                if cachedPost != nil {
+                if cachedPost != nil && (!cachedPost.reportedFlag || cachedPost.creatorUID == Auth.auth().currentUser?.uid) {
                     tempPost = cachedPost
                 }
             } else if let cachedPost = CurrentUser.posts[postId] {
@@ -3197,6 +3197,65 @@ extension Database{
             completion(nil, err)
         }
     }
+    
+//    static func fetchAllReportedPostID(completion: @escaping ([String]?) -> ()) {
+//
+//        let ref = Database.database().reference().child("report")
+//        ref.observeSingleEvent(of: .value, with: {(snapshot) in
+//
+//            guard let dictionary = snapshot.value as? [String: Any] else {
+//                print("   ~ Database | fetchAllReportedPostID | No Reported Posts ")
+//                completion(nil)
+//                return
+//            }
+//
+//            for p
+//
+//            let creatorUID = dictionary["creatorUID"] as? String ?? ""
+//
+//            if creatorUID == "" {
+//                print("ERROR CREATOR UID | \(postId)")
+//                completion(nil, nil)
+//            } else {
+//                Database.fetchUserWithUID(uid: creatorUID, completion: { (user) in
+//
+//                    guard let user = user else {
+//                        print("   ~ Database | fetchPostWithPostID | No User Found For \(creatorUID) | Post \(postId)")
+//                        completion(nil, nil)
+//                        return
+//                    }
+//                    var post = Post(user: user, dictionary: dictionary)
+//                    post.id = postId
+//
+//                    if let tempLoc = CurrentUser.currentLocation {
+//                        if let _ = post.locationGPS {
+//                            post.distance = Double((post.locationGPS?.distance(from: tempLoc))!)
+//                        } else {
+//                            post.distance = nil
+//                        }
+//                    }
+//
+//                    checkPostForSocial(post: post, completion: { (post) in
+//                        checkPostIntegrity(post: post, completion: { (post) in
+//                            postCache[postId] = post
+//
+//
+//                            //                print(post)
+//                            if post.creatorUID == CurrentUser.uid {
+//                                CurrentUser.posts[postId] = post
+//                            }
+//                            completion(post, nil)
+//                        })
+//                    })
+//                })
+//            }
+//        }) {(err) in
+//            print("Failed to fetch post for postid:",err)
+//            completion(nil, err)
+//        }
+//
+//
+//    }
     
     static func fetchAllPostWithLocation(location: CLLocation, distance: Double, completion: @escaping ([Post], [PostId]) -> ()) {
         
@@ -3442,7 +3501,12 @@ extension Database{
                 }
                 
                 if let tempPost = post {
-                    fetchedPostsTemp.append(tempPost)
+                    // Fetch flagged posts for user still
+                    if !tempPost.reportedFlag || tempPost.creatorUID == Auth.auth().currentUser?.uid {
+                        fetchedPostsTemp.append(tempPost)
+                    }
+                } else {
+                    print("No Posts for \(postId)")
                 }
                 
 //                let count = thisGroup.debugDescription.components(separatedBy: ",").filter({$0.contains("count")}).first?.components(separatedBy: CharacterSet.decimalDigits.inverted).compactMap{Int($0)}.first
@@ -4799,28 +4863,197 @@ extension Database{
         }
     }
     
-    static func reportPost(post: Post) {
+    static func respondToReportPost(post: Post, details: String) {
         guard let postId = post.id else {
             return
         }
-        print(" ! REPORT POST | \(post.id)")
+        print(" ! RESPOND REPORT POST | \(post.id)")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let createdDate = Date().timeIntervalSince1970
+        let det = "\(createdDate),\(details)"
+
+        let reportFlag = Database.database().reference().child("report").child(postId)
+        reportFlag.runTransactionBlock({ (currentData) -> TransactionResult in
+            var temp_post = currentData.value as? [String : AnyObject] ?? [:]
+//            var respond: Dictionary<String, String>
+//            respond = temp_post["response"] as? [String : String] ?? [:]
+//            respond[createdDate] = details
+            
+            var respond = temp_post["response"] as? [String] ?? []
+            respond.append(det)
+            
+            temp_post["response"] = respond as AnyObject
+            currentData.value = temp_post
+            return TransactionResult.success(withValue: currentData)
+            
+        }) { (error, committed, snapshot) in
+            if let error = error {
+                print(" ! Respond Post Report ERROR | \(postId) | \(error)")
+            } else {
+                print("  ~ SUCCESS Respond Post Report| \(postId) | \(det)")
+            }
+        }
+    }
+    
+    static func reportPost(post: Post, details: String) {
+        // REPORT POST makes a report count in the post itself. If its more than 3 reports it gets moved to the reportedPost tree and gets deleted in the main Post Tree.
+        // Sends a notification to the creator. It was hard to let user access their own posts while blocking the rest
+        
+        guard let postId = post.id else {
+            return
+        }
+        print(" ! REPORT POST | \(post.id) | \(details)")
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let createdDate = Date().timeIntervalSince1970
         
-//         Create List Id in User
-        let userRef = Database.database().reference().child("report").child(postId)
-        let values = [uid: createdDate] as [String:Any]
-        userRef.updateChildValues(values) { (err, ref) in
-            if let err = err {
-                print("Report Post By User: ERROR: \(postId), User: \(uid)", err)
-                return
+        let reportFlag = Database.database().reference().child("report").child(postId)
+        reportFlag.runTransactionBlock({ (currentData) -> TransactionResult in
+//            guard let curPost = currentData.value as? [String : AnyObject] else {
+//                print(" ! reportPost Error: No Post", postId)
+//                return TransactionResult.abort()
+//            }
+            var temp_post = currentData.value as? [String : AnyObject] ?? [:]
+            var reports: Dictionary<String, String>
+            reports = temp_post["reports"] as? [String : String] ?? [:]
+            reports[uid] = "\(createdDate), \(details)"
+            temp_post["reports"] = reports as AnyObject
+            temp_post["reports_count"] = reports.count as AnyObject
+
+            if reports.count > 0 {
+                print("More than 3 reports. Move and Delete Post")
+                self.flagPostToBlock(post: post, block: true)
+//                self.moveReportedPost(post: post)
             }
 
-            userRef.keepSynced(true)
-            print("Report Post By User: SUCCESS: \(postId), User: \(uid)")
-//                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+            currentData.value = temp_post
+            return TransactionResult.success(withValue: currentData)
+            
+        }) { (error, committed, snapshot) in
+            if let error = error {
+                print(" ! reportPost ERROR | \(postId) | \(error)")
+            } else {
+                // Update post Cache
+                print("  ~ SUCCESS updatePostforReport| \(postId)")
+            }
+        }
+        
+        
+//         Create List Id in User
+//        let userRef = Database.database().reference().child("report").child(postId)
+//        let values = [uid: createdDate] as [String:Any]
+//        userRef.updateChildValues(values) { (err, ref) in
+//            if let err = err {
+//                print("Report Post By User: ERROR: \(postId), User: \(uid)", err)
+//                return
+//            }
+//
+//            userRef.keepSynced(true)
+//            print("Report Post By User: SUCCESS: \(postId), User: \(uid)")
+////                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+//        }
+        
+        // UPDATES REPORT DATA ON POST ID
+        
+//        let postRef = Database.database().reference().child("posts").child(postId)
+//        postRef.runTransactionBlock({ (currentData) -> TransactionResult in
+//            guard let curPost = currentData.value as? [String : AnyObject] else {
+//                print(" ! reportPost Error: No Post", postId)
+//                return TransactionResult.abort()
+//            }
+//            var temp_post = curPost
+//            var reports: Dictionary<String, String>
+//            reports = temp_post["reports"] as? [String : String] ?? [:]
+//            reports[uid] = "\(createdDate), \(details)"
+//            temp_post["reports"] = reports as AnyObject
+//            temp_post["reports_count"] = reports.count as AnyObject
+//            temp_post["reports_block"] = (reports.count > 0) as AnyObject
+//
+////            if reports.count > 0 {
+////                print("More than 3 reports. Move and Delete Post")
+////                self.moveReportedPost(post: post)
+////            }
+//
+//            currentData.value = temp_post
+//            return TransactionResult.success(withValue: currentData)
+//
+//        }) { (error, committed, snapshot) in
+//            if let error = error {
+//                print(" ! reportPost ERROR | \(postId) | \(error)")
+//            } else {
+//                // Update post Cache
+//
+//                print("  ~ SUCCESS updatePostforReport| \(postId)")
+//            }
+//        }
+    }
+    
+    static func flagPostToBlock(post: Post, block: Bool) {
+        guard let postId = post.id else {
+            return
+        }
+        
+        Database.database().reference().child("posts/\(postId)/reportedFlag").setValue(block)
+        if let postCreatorUid = post.creatorUID {
+            self.createNotificationEventForUser(postId: postId, listId: nil, targetUid: postCreatorUid, action: Social.report, value: 1, locName: nil, listName: nil, commentText: nil)
+        }
+        
+        // Update Post Cache
+        var temp = postCache[postId]
+        if let _ = temp {
+            temp?.reportedFlag = block
+            postCache[postId] = temp
+        }
+
+        print("flagPostToBlock SUCCESS \(postId) - \(block)")
+    }
+    
+    static func moveReportedPost(post: Post) {
+
+        guard let postId = post.id else {
+            print("moveReportedPost ERROR | No Post ID | \(post.id)")
+            return
+        }
+        let postCreatorUid = post.creatorUID ?? ""
+        let dict = post.dictionary()
+        print(" ! moveReportedPost | \(post.id)")
+        
+        let userRef = Database.database().reference().child("blockedPost").child(postId)
+        let values = dict as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("moveReportedPost ERROR: \(postId)", err)
+                return
+            } else {
+//                Database.database().reference().child("posts").child(post.id!).removeValue()
+//                self.updateReportedPostForUser(post: post)
+                self.createNotificationEventForUser(postId: postId, listId: nil, targetUid: postCreatorUid, action: Social.report, value: 1, locName: nil, listName: nil, commentText: nil)
+                print("moveReportedPost SUCCESS: \(postId)")
+            }
         }
     }
+    
+    
+//    static func updateReportedPostForUser(post: Post) {
+//        guard let postId = post.id else {
+//            print("updateReportedPostForUser ERROR | No Post ID | \(post.id)")
+//            return
+//        }
+//        guard let creatorId = post.creatorUID else {
+//            print("updateReportedPostForUser ERROR | No User ID | \(post.id) | \(post.creatorUID)")
+//            return
+//        }
+//
+//        let createdDate = Date().timeIntervalSince1970
+//        //         Create List Id in User
+//        let userRef = Database.database().reference().child("user_reported").child(creatorId).child(postId)
+//        userRef.updateChildValues(createdDate) { (err, ref) in
+//            if let err = err {
+//                print("updateReportedPostForUser: ERROR: \(postId), User: \(creatorId)", err)
+//                return
+//            }
+//            print("updateReportedPostForUser: SUCCESS: \(postId), User: \(creatorId)")
+//        }
+//    }
     
     static func deletePost(post: Post){
         guard let postId = post.id else {
@@ -8286,6 +8519,12 @@ extension Database{
             notificationHeader = "\((CurrentUser.username)!) commented on a post you commented"
             if let commentText = commentText {
                 notificationBody = (commentText).capitalizingFirstLetter()
+            }
+        case .report:
+            eventAction = reportAction
+            notificationHeader = "A post has been reported"
+            if let commentText = commentText {
+                notificationBody = "One of your post is now private because it's been reported more than 3 times."
             }
         default:
             eventAction = nil

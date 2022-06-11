@@ -21,6 +21,7 @@ enum Social: String {
     case comment
     case commentToo
     case create
+    case report
 }
 
 enum Object {
@@ -37,6 +38,7 @@ enum EventAction {
     case commentPost
     case commentTooPost
     case addPostToList
+    case reportPost
 }
 
 class Event {
@@ -132,6 +134,8 @@ class Event {
             self.eventAction = .commentPost
         } else if self.action == Social.commentToo && self.postId != nil{
             self.eventAction = .commentTooPost
+        } else if self.action == Social.report  && self.postId != nil{
+            self.eventAction = .reportPost
         }
         
         else

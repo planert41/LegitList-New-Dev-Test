@@ -824,7 +824,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         let firebaseAlert = UIAlertController(title: "Firebase Update", message: "Do you want to update Firebase Data?", preferredStyle: UIAlertController.Style.alert)
         
         firebaseAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
-            self.addLocationTest()
+            self.revertBlockedPost()
+//            self.addLocationTest()
 //            self.avgGPSTest()
 //            self.duplicateImages()
 //            self.addBadgeForUsers()
@@ -887,6 +888,35 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
                 
             }
         }
+    }
+    
+    func revertBlockedPost() {
+        let blockRef = Database.database().reference().child("blockedPost")
+        let postRef = Database.database().reference().child("posts")
+
+        blockRef.queryOrderedByKey().observe(.value) { snapshot in
+
+            guard let blockedPosts = snapshot.value as? [String:Any]  else {return}
+
+            for (postId, postJson) in blockedPosts {
+                print(postId)
+                print(postJson)
+                postRef.child(postId).setValue(postJson)
+            }
+        }
+        
+//        let rootRef = Firebase(url:"https://your-Firebase.firebaseio.com")
+//        let groceryRef = ref.child("groceryLists").childByAutoId()
+//
+//        groceryRef.queryOrdered(byChild: "completed").queryEnding(atValue: true)
+//                .observe(.childAdded) { (snapshot) in
+//                    let historyNode = rootRef.child(snapshot.key)
+//                    thisHistoryNode.setValue(snapshot.value)
+//
+//                    //get a reference to the data we just read and remove it
+//                    let nodeToRemove = nodeToRemove.child(snapshot.key)
+//                    nodeToRemove.removeValue();
+//            }
     }
 
     func addLocationTest() {

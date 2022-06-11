@@ -205,6 +205,8 @@ struct Post: Hashable, Equatable  {
 
     var followingComments :[Comment] = []
     
+    var reportedFlag: Bool = false
+    
     
     
     init(user: User, dictionary: [String: Any]) {
@@ -342,6 +344,8 @@ struct Post: Hashable, Equatable  {
         } else {
             self.imageGPS = CLLocation(latitude: Double(imageGPSTextArray[0])!, longitude: Double(imageGPSTextArray[1])!)
         }
+        
+        self.reportedFlag = dictionary["reportedFlag"] as? Bool ?? false
     
     }
     
@@ -372,7 +376,7 @@ struct Post: Hashable, Equatable  {
             uploadedImageLocationGPS = uploadedImageLocationGPSLatitude! + "," + uploadedImageLocationGPSLongitude!
         }
         
-        let values = ["caption": self.caption,"rating": self.rating, "ratingEmoji": self.ratingEmoji, "nonratingEmoji": self.nonRatingEmoji, "nonratingEmojiTags": self.nonRatingEmojiTags, "autoTagEmojis": self.autoTagEmoji, "autoTagEmojisDict": self.autoTagEmojiTags, "creationDate": createdTime, "googlePlaceID": self.locationGooglePlaceID, "locationName": self.locationName, "locationAdress": self.locationAdress, "locationSummaryID": self.locationSummaryID, "postLocationGPS": uploadedLocationGPS, "imageLocationGPS": uploadedImageLocationGPS, "creatorUID": self.creatorUID, "price": self.price, "type": self.type, "lists": self.creatorListId, "isLegit": self.isLegit, "smallImageLink": self.smallImageUrl, "imageUrls": self.imageUrls, "urlLink": self.urlLink] as [String:Any]
+        let values = ["caption": self.caption,"rating": self.rating, "ratingEmoji": self.ratingEmoji, "nonratingEmoji": self.nonRatingEmoji, "nonratingEmojiTags": self.nonRatingEmojiTags, "autoTagEmojis": self.autoTagEmoji, "autoTagEmojisDict": self.autoTagEmojiTags, "creationDate": createdTime, "googlePlaceID": self.locationGooglePlaceID, "locationName": self.locationName, "locationAdress": self.locationAdress, "locationSummaryID": self.locationSummaryID, "postLocationGPS": uploadedLocationGPS, "imageLocationGPS": uploadedImageLocationGPS, "creatorUID": self.creatorUID, "price": self.price, "type": self.type, "lists": self.creatorListId, "isLegit": self.isLegit, "smallImageLink": self.smallImageUrl, "imageUrls": self.imageUrls, "urlLink": self.urlLink, "reportedFlag": self.reportedFlag] as [String:Any]
         
         return values
     }

@@ -146,6 +146,7 @@ class EventCell: UITableViewCell {
         iv.backgroundColor = .white
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
+        iv.clearBackground = true
         return iv
     }()
     
@@ -254,6 +255,11 @@ class EventCell: UITableViewCell {
         attributedText.append(dateString)
         
         self.eventTextView.attributedText = attributedText
+        
+        if event.eventAction == .reportPost {
+            let reportString = NSMutableAttributedString(string: "One of your post has been reported more than 3 times and set to private", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
+            self.eventTextView.attributedText = reportString
+        }
         self.eventTextView.sizeToFit()
         
 
@@ -323,7 +329,15 @@ class EventCell: UITableViewCell {
 
     
     func setupUserProfileImage() {
-        if let image = self.initEventUser?.profileImageUrl {
+        if self.event?.eventAction == .reportPost {
+            let icon = #imageLiteral(resourceName: "legit_check").withRenderingMode(.alwaysOriginal)
+            if let url = CurrentUser.profileImageUrl {
+                self.profileImageView.loadImage(urlString: url)
+            } else {
+                self.profileImageView.image = icon
+            }
+        }
+        else if let image = self.initEventUser?.profileImageUrl {
             self.profileImageView.loadImage(urlString: (self.initEventUser?.profileImageUrl)!)
         }
     }

@@ -359,6 +359,7 @@ var commentAction = "comment"
 var commentTooAction = "commentToo"
 var messageAction = "message"
 var createAction = "create"
+var reportAction = "report"
 
 var notificationActions = [likeAction, followAction, bookmarkAction, commentAction, commentTooAction]
 
