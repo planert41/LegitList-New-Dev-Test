@@ -1296,15 +1296,17 @@ extension SingleListViewController: TestGridPhotoCellDelegate, TestGridPhotoCell
         self.viewFilter.filterUser = self.searchUser
         
         if let loc = selectedPlace {
-            if let _ = self.noCaptionFilterTagCounts[loc] {
-                if let googleId = locationGoogleIdDictionary[loc] {
-                    self.viewFilter.filterGoogleLocationID = googleId
-                    print("Filter by GoogleLocationID | \(googleId)")
-                } else {
-                    self.viewFilter.filterLocationName = loc
-                    print("Filter by Location Name , No Google ID | \(loc)")
-                }
-            }
+            self.viewFilter.filterLocationName = loc
+
+//            if let _ = self.noCaptionFilterTagCounts[loc] {
+//                if let googleId = locationGoogleIdDictionary[loc] {
+//                    self.viewFilter.filterGoogleLocationID = googleId
+//                    print("Filter by GoogleLocationID | \(googleId)")
+//                } else {
+//                    self.viewFilter.filterLocationName = loc
+//                    print("Filter by Location Name , No Google ID | \(loc)")
+//                }
+//            }
         }
         
         self.viewFilter.filterLocationSummaryID = self.selectedCity

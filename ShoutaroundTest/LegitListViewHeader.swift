@@ -117,7 +117,7 @@ class LegitListViewHeader: UICollectionViewCell {
                     } else if viewFilter.filterLocationName != nil {
                         fullSearchBar.text = viewFilter.filterLocationName
                     } else if let googleID = viewFilter.filterGoogleLocationID {
-                        if let locationName = locationGoogleIdDictionary.key(forValue: googleID) {
+                        if let locationName = locationGoogleIdDictionary[googleID] {
                             fullSearchBar.text = locationName
                         } else {
                             fullSearchBar.text = googleID

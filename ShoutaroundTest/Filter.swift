@@ -211,7 +211,7 @@ class Filter {
     }
     
     func checkIsFiltering(){
-        if (self.filterCaption != nil && self.filterCaption?.removingWhitespaces() != "") || (self.filterRange != nil) || (self.filterRange == nil && self.filterGoogleLocationID != nil) || (self.filterMinRating != 0) || (self.filterType != nil) || (self.filterMaxPrice != nil) || (self.filterLegit == true) ||  (self.filterUser != nil) || (self.filterList != nil) || (self.filterTime! > 0) || (self.filterLocationSummaryID != nil) || self.filterPostId != nil || self.filterCaptionArray.count > 0 || self.filterTypeArray.count > 0 || self.filterRatingEmoji != nil || self.filterLegit
+        if (self.filterCaption != nil && self.filterCaption?.removingWhitespaces() != "") || (self.filterRange != nil) || (self.filterRange == nil && self.filterGoogleLocationID != nil) || (self.filterMinRating != 0) || (self.filterType != nil) || (self.filterMaxPrice != nil) || (self.filterLegit == true) ||  (self.filterUser != nil) || (self.filterList != nil) || (self.filterTime! > 0) || (self.filterLocationSummaryID != nil) || self.filterPostId != nil || self.filterCaptionArray.count > 0 || self.filterTypeArray.count > 0 || self.filterRatingEmoji != nil || self.filterLegit || (self.filterLocationName != nil)
         
         {
             self.isFiltering = true
@@ -266,7 +266,7 @@ class Filter {
             searchTermsType.append(SearchPlace)
 
         } else if let id = self.filterGoogleLocationID {
-            if let name = locationGoogleIdDictionary.key(forValue: id) {
+            if let name = locationGoogleIdDictionary[id] {
                 searchTerms.append(name)
                 searchTermsType.append(SearchPlace)
 
@@ -295,10 +295,16 @@ class Filter {
             self.filterGoogleLocationID = nil
             return
         }
-        if let id = locationGoogleIdDictionary[locationName] {
-            self.filterGoogleLocationID = id
-        } else if self.filterLocationName == nil {
-            self.filterGoogleLocationID = nil
+        
+        var counts = locationGoogleIdDictionaryCounts.count(for: locationName)
+        if counts > 1 {
+            print("Multiple Locations for \(locationName) : \(counts), Don't Lookup Google ID")
+        } else {
+            if let id = locationGoogleIdDictionary[locationName] {
+                self.filterGoogleLocationID = id
+            } else if self.filterLocationName == nil {
+                self.filterGoogleLocationID = nil
+            }
         }
     }
     

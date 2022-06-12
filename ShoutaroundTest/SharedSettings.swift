@@ -12,8 +12,18 @@ import CoreLocation
 
 var premiumActivated = false
 
-// Location Name to Google Location ID
-var locationGoogleIdDictionary:[String:String] = [:]
+// Location Google Location ID to Name
+var locationGoogleIdDictionary:[String:String] = [:] {
+    didSet {
+        let countedSet = NSCountedSet()
+        for (_, value) in locationGoogleIdDictionary {
+            countedSet.add(value)
+        }
+        locationGoogleIdDictionaryCounts = countedSet
+    }
+}
+// Location Name - Counts : Could have multiple restaurant chains
+var locationGoogleIdDictionaryCounts:NSCountedSet = NSCountedSet()
 
 var GridCellEmojiHeight: CGFloat = 35
 var GridCellImageHeightMult: CGFloat = 1 //1.25

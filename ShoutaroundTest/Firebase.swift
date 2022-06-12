@@ -1200,7 +1200,7 @@ extension Database{
             
         // ADD LOCATION NAME TO GOOGLE LOCATION ID DIC
             if googleId.removingWhitespaces() != "" && googleId != nil {
-                locationGoogleIdDictionary[name] = googleId
+                locationGoogleIdDictionary[googleId] = name
             }
             
             // CITY
@@ -1569,7 +1569,7 @@ extension Database{
             
         // ADD LOCATION NAME TO GOOGLE LOCATION ID DIC
             if googleId.removingWhitespaces() != "" && googleId != nil {
-                locationGoogleIdDictionary[name] = googleId
+                locationGoogleIdDictionary[googleId] = name
             }
 
             
@@ -9554,6 +9554,7 @@ extension Database{
 
     // Filter Specifically for a Google Location (Non-nil google location and range = 0)
         let filterGoogleLocationID = postFilter?.filterGoogleLocationID
+        let filterGoogleLocationName = postFilter?.filterLocationName
         let filterRange = postFilter?.filterRange
         let filterLocation = postFilter?.filterLocation
         
@@ -9567,6 +9568,19 @@ extension Database{
                 }
             }
             print("Filtered Post By Google Location ID: \(filterGoogleLocationID), Range: \(filterRange), Pre: \(tempPosts.count), Post: \(tempFilterPosts.count)")
+            tempPosts = tempFilterPosts
+        }
+        
+        else if filterGoogleLocationName != nil && filterRange == nil {
+            
+            var tempFilterPosts: [Post] = []
+            for post in tempPosts {
+                var tempPost = post
+                if tempPost.locationName == filterGoogleLocationName {
+                    tempFilterPosts.append(tempPost)
+                }
+            }
+            print("Filtered Post By Google Name: \(filterGoogleLocationName), Range: \(filterRange), Pre: \(tempPosts.count), Post: \(tempFilterPosts.count)")
             tempPosts = tempFilterPosts
         }
             

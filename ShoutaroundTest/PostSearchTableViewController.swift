@@ -427,15 +427,17 @@ class PostSearchTableViewController: UITableViewController {
             self.viewFilter.filterUser = self.searchUser
             
             if let loc = selectedPlace {
-                if let _ = self.defaultPlaceCounts[loc] {
-                    if let googleId = locationGoogleIdDictionary[loc] {
-                        self.viewFilter.filterGoogleLocationID = googleId
-                        print("Filter by GoogleLocationID | \(googleId)")
-                    } else {
-                        self.viewFilter.filterLocationName = loc
-                        print("Filter by Location Name , No Google ID | \(loc)")
-                    }
-                }
+                self.viewFilter.filterLocationName = loc
+
+//                if let _ = self.defaultPlaceCounts[loc] {
+//                    if let googleId = locationGoogleIdDictionary[loc] {
+//                        self.viewFilter.filterGoogleLocationID = googleId
+//                        print("Filter by GoogleLocationID | \(googleId)")
+//                    } else {
+//                        self.viewFilter.filterLocationName = loc
+//                        print("Filter by Location Name , No Google ID | \(loc)")
+//                    }
+//                }
             }
             
             self.viewFilter.filterLocationSummaryID = self.selectedCity
@@ -604,7 +606,7 @@ class PostSearchTableViewController: UITableViewController {
                     
                     cell.locationName = displayTerm
                     cell.postCount = defaultPlaceCounts[displayTerm] ?? 0
-                    let googleId = locationGoogleIdDictionary[displayTerm]
+                    let googleId = locationGoogleIdDictionary.key(forValue: displayTerm)
                     cell.isSelected = (displayTerm == self.viewFilter.filterLocationName) || googleId == self.viewFilter.filterGoogleLocationID
                 }
                     
