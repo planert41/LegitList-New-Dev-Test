@@ -55,6 +55,9 @@ struct User {
     var mostUsedEmojis: [String] = []
     var mostUsedCities: [String] = []
     var blockedPosts: [String: Date] = [:]
+    var blockedUsers: [String: Date] = [:]
+    var reportedFlag: Bool = false
+    var isPrivate: Bool = false
 
     
     init(uid: String, dictionary: [String:Any]) {
@@ -78,10 +81,16 @@ struct User {
             self.listIds.append(listId)
         }
         
-        let blocked = dictionary["block"] as? [String:Any] ?? [:]
-        for (postid, blockdate) in blocked {
-            let blockDate = blockdate as? Double ?? 0
+        let blockPosts = dictionary["blockPost"] as? [String:Any] ?? [:]
+        for (postid, blockDate) in blockPosts {
+            let blockDate = blockDate as? Double ?? 0
             self.blockedPosts[postid] = Date(timeIntervalSince1970: blockDate)
+        }
+        
+        let blockUsers = dictionary["blockUser"] as? [String:Any] ?? [:]
+        for (blockuid, blockDate) in blockUsers {
+            let blockDate = blockDate as? Double ?? 0
+            self.blockedUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
         }
         
         let social = dictionary["social"] as? [String:Int] ?? [:]
@@ -122,6 +131,10 @@ struct User {
             return value == true
         }
         self.APNTokens = Array(tokens.keys)
+        
+        self.reportedFlag = dictionary["reportedFlag"] as? Bool ?? false
+        self.isPrivate = dictionary["isPrivate"] as? Bool ?? false
+
         
     // PREMIUM
         self.isPremium = dictionary["isPremium"] as? Bool ?? false
@@ -294,6 +307,7 @@ struct CurrentUser {
     static var posts: [String:Post] = [:]
     
     static var blockedPosts:[String: Date] = [:]
+    static var blockedUsers:[String: Date] = [:]
 
     // Inbox
     static var inboxThreads: [MessageThread] = [] {
@@ -324,6 +338,7 @@ struct CurrentUser {
                 self.premiumPeriod = user?.premiumPeriod
                 self.APNTokens = user?.APNTokens ?? []
                 self.blockedPosts = user?.blockedPosts ?? [:]
+                self.blockedUsers = user?.blockedUsers ?? [:]
                 self.checkAPNToken()
             } else {
                 self.username = nil
@@ -337,6 +352,7 @@ struct CurrentUser {
                 self.premiumCancel = nil
                 self.premiumPeriod = nil
                 self.blockedPosts = [:]
+                self.blockedUsers = [:]
             }
         }
     }

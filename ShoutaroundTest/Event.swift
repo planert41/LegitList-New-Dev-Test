@@ -39,6 +39,7 @@ enum EventAction {
     case commentTooPost
     case addPostToList
     case reportPost
+    case reportUser
 }
 
 class Event {
@@ -134,8 +135,10 @@ class Event {
             self.eventAction = .commentPost
         } else if self.action == Social.commentToo && self.postId != nil{
             self.eventAction = .commentTooPost
-        } else if self.action == Social.report  && self.postId != nil{
+        } else if self.action == Social.report && self.postId != nil{
             self.eventAction = .reportPost
+        } else if self.action == Social.report && self.receiverUid != nil{
+            self.eventAction = .reportUser
         }
         
         else

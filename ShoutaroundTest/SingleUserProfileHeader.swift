@@ -43,6 +43,9 @@ protocol SingleUserProfileHeaderDelegate {
     func displayAllLists()
     func didTapFilterLegit()
     
+    func openInbox()
+    func messageUser()
+
 
 }
 
@@ -56,7 +59,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
             guard let profileImageUrl = user?.profileImageUrl else {return}
             profileImageView.loadImage(urlString: profileImageUrl)
 //            checkUserFollowing()
-            setupEditFollowButton()
+            setupActionButtons()
             setupSocialLabels()
             setupUserStatus()
             setupUserInfo()
@@ -188,6 +191,35 @@ class SingleUserProfileHeader: UICollectionViewCell {
         button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         button.addTarget(self, action: #selector(handleEditProfileOrFollow), for: .touchUpInside)
         return button
+    }()
+    
+    lazy var messageInboxButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("", for: .normal)
+        button.titleLabel?.font =  UIFont(name: "Poppins-Bold", size: 12)
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 5
+        button.backgroundColor = UIColor.white
+        button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        button.addTarget(self, action: #selector(handleMessageOrInbox), for: .touchUpInside)
+        return button
+    }()
+    
+    let inboxCountLabel: UILabel = {
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 15, height: 15))
+        label.layer.borderColor = UIColor.clear.cgColor
+        label.layer.borderWidth = 0
+        label.layer.cornerRadius = label.bounds.size.height / 2
+        label.textAlignment = .center
+        label.layer.masksToBounds = true
+        label.font = UIFont(name: "Poppins-Bold", size: 10)
+        label.textColor = .white
+        label.backgroundColor = UIColor.ianLegitColor()
+        label.text = "80"
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleMessageOrInbox)))
+        return label
     }()
     
     let userInfoTextView: UITextView = {
@@ -491,14 +523,28 @@ class SingleUserProfileHeader: UICollectionViewCell {
         addSubview(actionView)
         actionView.anchor(top: locationLabel.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 40)
 
-        setupEditFollowButton()
-        actionView.addSubview(editProfileFollowButton)
+        let actionStackView = UIStackView(arrangedSubviews: [editProfileFollowButton, messageInboxButton])
+        actionStackView.distribution = .fillEqually
+        actionStackView.axis = .horizontal
+        actionStackView.spacing = 10
+        actionView.addSubview(actionStackView)
+        actionStackView.anchor(top: actionView.topAnchor, left: actionView.leftAnchor, bottom: nil, right: actionView.rightAnchor, paddingTop: 5, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: 30)
+        actionStackView.layer.applySketchShadow()
+        actionStackView.backgroundColor = UIColor.clear
+        
+        messageInboxButton.addSubview(inboxCountLabel)
+        inboxCountLabel.anchor(top: nil, left: nil, bottom: nil, right: messageInboxButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 40, width: 15, height: 15)
+        inboxCountLabel.centerYAnchor.constraint(equalTo: messageInboxButton.centerYAnchor).isActive = true
+
+        setupActionButtons()
+//        actionView.addSubview(editProfileFollowButton)
 //        editProfileFollowButton.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 200, height: 30)
-        editProfileFollowButton.anchor(top: nil, left: actionView.leftAnchor, bottom: nil, right: actionView.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 30)
+//        editProfileFollowButton.anchor(top: nil, left: actionView.leftAnchor, bottom: nil, right: actionView.rightAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 0, height: 30)
 
 //        editProfileFollowButton.centerXAnchor.constraint(equalTo: actionView.centerXAnchor).isActive = true
-        editProfileFollowButton.centerYAnchor.constraint(equalTo: actionView.centerYAnchor).isActive = true
-
+//        editProfileFollowButton.centerYAnchor.constraint(equalTo: actionView.centerYAnchor).isActive = true
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(setupActionButtons), name: InboxController.newMsgNotificationName, object: nil)
 
         
         
@@ -739,7 +785,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
     }
     
     
-    fileprivate func setupEditFollowButton() {
+    @objc fileprivate func setupActionButtons() {
         guard let currentLoggedInUserID = Auth.auth().currentUser?.uid else {return}
         guard let userId = user?.uid else {return}
         
@@ -756,6 +802,18 @@ class SingleUserProfileHeader: UICollectionViewCell {
 //                self.setupFollowStyle()
 //            }
 //        }
+    }
+    
+    @objc func handleMessageOrInbox() {
+        guard let currentLoggedInUserId = Auth.auth().currentUser?.uid else {return}
+        guard let userId = user?.uid else {return}
+        
+        if (currentLoggedInUserId == userId){
+            self.delegate?.openInbox()
+        } else {
+            self.delegate?.messageUser()
+        }
+        
     }
     
     @objc func handleEditProfileOrFollow() {
@@ -1243,34 +1301,64 @@ extension SingleUserProfileHeader {
         print("setupFollowStyle | Following: \(self.user?.isFollowing)")
         if Auth.auth().currentUser?.uid == user?.uid {
             // Edit Profile
-            self.editProfileFollowButton.setTitle("Options", for: .normal)
-            self.editProfileFollowButton.setTitleColor(UIColor.white, for: .normal)
-            self.editProfileFollowButton.backgroundColor = UIColor.mainBlue()
-            self.editProfileFollowButton.layer.borderColor = UIColor.clear.cgColor
+            editProfileFollowButton.setTitle("Options", for: .normal)
+            editProfileFollowButton.setTitleColor(UIColor.white, for: .normal)
+            editProfileFollowButton.backgroundColor = UIColor.mainBlue()
+            editProfileFollowButton.layer.borderColor = UIColor.clear.cgColor
+            
+            messageInboxButton.setTitle("Inbox", for: .normal)
+            messageInboxButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
+            messageInboxButton.backgroundColor = UIColor.ianWhiteColor()
+            messageInboxButton.layer.borderColor = UIColor.ianBlackColor().cgColor
+            
+            if CurrentUser.unreadMessageCount > 0 {
+                inboxCountLabel.text = String(CurrentUser.unreadMessageCount)
+                inboxCountLabel.tintColor = UIColor.ianLegitColor()
+                inboxCountLabel.isHidden = false
+            } else {
+                inboxCountLabel.isHidden = true
+            }
+            
+        } else {
+            let followInd = user?.isFollowing ?? false
+            editProfileFollowButton.setTitle(followInd ? "Following" : "Follow", for: .normal)
+            editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
+            editProfileFollowButton.layer.borderColor = (followInd ? UIColor.ianLegitColor() : UIColor.mainBlue()).cgColor
+            editProfileFollowButton.backgroundColor = followInd ? UIColor.ianLegitColor() : UIColor.mainBlue()
+            
+            messageInboxButton.setTitle("Message", for: .normal)
+            messageInboxButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
+            messageInboxButton.backgroundColor = UIColor.ianWhiteColor()
+            messageInboxButton.layer.borderColor = UIColor.ianBlackColor().cgColor
+            inboxCountLabel.isHidden = true
+
+            self.setupSocialLabels()
+            
+            
         }
         
-        else if (user?.isFollowing)!
-        {
-            self.editProfileFollowButton.setTitle("Following", for: .normal)
-            self.editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
-            self.editProfileFollowButton.layer.borderColor = UIColor.ianLegitColor().cgColor
-            self.editProfileFollowButton.backgroundColor = UIColor.ianLegitColor()
-            self.setupSocialLabels()
-        }
-        else
-        {
-//            self.editProfileFollowButton.setTitle("Follow", for: .normal)
+//        else if (user?.isFollowing)!
+//        {
+//            self.editProfileFollowButton.setTitle("Following", for: .normal)
+//            self.editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
+//            self.editProfileFollowButton.layer.borderColor = UIColor.ianLegitColor().cgColor
 //            self.editProfileFollowButton.backgroundColor = UIColor.ianLegitColor()
-//            self.editProfileFollowButton.setTitleColor(UIColor.white, for: .normal)
-//            self.editProfileFollowButton.layer.borderColor = UIColor.clear.cgColor
 //            self.setupSocialLabels()
-            
-            self.editProfileFollowButton.setTitle("Follow", for: .normal)
-            self.editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
-            self.editProfileFollowButton.layer.borderColor = UIColor.mainBlue().cgColor
-            self.editProfileFollowButton.backgroundColor = UIColor.mainBlue()
-            self.setupSocialLabels()
-        }
+//        }
+//        else
+//        {
+////            self.editProfileFollowButton.setTitle("Follow", for: .normal)
+////            self.editProfileFollowButton.backgroundColor = UIColor.ianLegitColor()
+////            self.editProfileFollowButton.setTitleColor(UIColor.white, for: .normal)
+////            self.editProfileFollowButton.layer.borderColor = UIColor.clear.cgColor
+////            self.setupSocialLabels()
+//
+//            self.editProfileFollowButton.setTitle("Follow", for: .normal)
+//            self.editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
+//            self.editProfileFollowButton.layer.borderColor = UIColor.mainBlue().cgColor
+//            self.editProfileFollowButton.backgroundColor = UIColor.mainBlue()
+//            self.setupSocialLabels()
+//        }
      
     }
     

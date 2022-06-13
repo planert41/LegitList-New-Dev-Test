@@ -75,9 +75,62 @@ class SingleUserProfileViewController: UIViewController {
         label.backgroundColor = UIColor.ianLegitColor()
         label.text = "80"
         label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openInbox)))
+        return label
+    }()
+    
+//    let navNotificationButton: UIButton = {
+//        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+//        button.setImage(#imageLiteral(resourceName: "alert").withRenderingMode(.alwaysTemplate), for: .normal)
+//        button.tintColor = UIColor.darkGray
+//        //        button.layer.cornerRadius = button.frame.width/2
+////        button.layer.masksToBounds = true
+//        button.setTitle("", for: .normal)
+//        button.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
+//        button.layer.backgroundColor = UIColor.clear.cgColor
+//        button.layer.borderColor = UIColor.gray.cgColor
+//        button.layer.borderWidth = 0
+//        button.layer.cornerRadius = 40/2
+//        button.titleLabel?.textColor = UIColor.ianLegitColor()
+////        button.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+////        button.titleLabel?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+////        button.imageView?.transform = CGAffineTransform(scaleX: -1.0, y: 1.0)
+//        return button
+//    }()
+    
+    let notificationLabel: UILabel = {
+        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 15, height: 15))
+        label.layer.borderColor = UIColor.clear.cgColor
+        label.layer.borderWidth = 0
+        label.layer.cornerRadius = label.bounds.size.height / 2
+        label.textAlignment = .center
+        label.layer.masksToBounds = true
+        label.font = UIFont(name: "Poppins-Bold", size: 10)
+        label.textColor = .white
+        label.backgroundColor = UIColor.ianLegitColor()
+        label.text = "80"
+        label.isUserInteractionEnabled = true
         label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openNotifications)))
         return label
     }()
+    
+    @objc func refreshNotifications() {
+        if CurrentUser.unreadEventCount > 0 {
+            notificationButton.tintColor = UIColor.ianLegitColor()
+            notificationLabel.text = String(CurrentUser.unreadEventCount)
+//            navNotificationButton.addSubview(notificationLabel)
+            navNotificationButton.tintColor = UIColor.ianLegitColor()
+            notificationLabel.isHidden = false
+        } else {
+//                    notificationButton.setTitle("", for: .normal)
+            notificationButton.tintColor = UIColor.gray
+            notificationLabel.text = ""
+            notificationLabel.isHidden = true
+            navNotificationButton.tintColor = UIColor.darkGray
+        }
+        navNotificationButton.isUserInteractionEnabled = true
+
+    }
     
     @objc func refreshInboxNotifications() {
         if displayUser?.uid != CurrentUser.uid {
@@ -97,6 +150,17 @@ class SingleUserProfileViewController: UIViewController {
             navInboxLabel.tintColor = UIColor.darkGray
         }
     }
+    
+    lazy var otherUserOptionsButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("•••", for: .normal)
+        button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 15)
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(handleOptions), for: .touchUpInside)
+        button.isUserInteractionEnabled = true
+        return button
+    }()
+
     
 // SEARCH SELECTIONS
     var first100EmojiCounts: [String:Int] = [:]
@@ -248,7 +312,7 @@ class SingleUserProfileViewController: UIViewController {
         return button
     }()
     
-    @objc func didTapNavShare(){
+    @objc func messageUser(){
         guard let user = self.displayUser else {return}
 
         
@@ -390,6 +454,7 @@ class SingleUserProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshNotifications), name: UserEventViewController.refreshNotificationName, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -653,6 +718,8 @@ class SingleUserProfileViewController: UIViewController {
         searchViewController.searchBar.text = ""
     }
     
+    var notificationButton = UIBarButtonItem()
+    
     func setupNavigationItems() {
         let tempImage = UIImage.init(color: UIColor.white)
         navigationController?.isNavigationBarHidden = false
@@ -737,18 +804,15 @@ class SingleUserProfileViewController: UIViewController {
 
         
 // LEFT BAR BUTTON
-        navNotificationButton.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
-        let notificationCount = (CurrentUser.unreadEventCount > 0) ? String(CurrentUser.unreadEventCount) : ""
-        navNotificationButton.setTitle(notificationCount, for: .normal)
-        navNotificationButton.semanticContentAttribute = .forceRightToLeft
-        let notificationButton = UIBarButtonItem.init(customView: navNotificationButton)
+//        navNotificationButton.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
+//        let notificationCount = (CurrentUser.unreadEventCount > 0) ? String(CurrentUser.unreadEventCount) : ""
+//        navNotificationButton.setTitle(notificationCount, for: .normal)
+//        navNotificationButton.semanticContentAttribute = .forceRightToLeft
+//        let notificationButton = UIBarButtonItem.init(customView: navNotificationButton)
 
         // Nav Back Button
         navBackButton.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
         let backButton = UIBarButtonItem.init(customView: navBackButton)
-        
-        navInboxButton.addTarget(self, action: #selector(openInbox), for: .touchUpInside)
-        let inboxButton = UIBarButtonItem.init(customView: navInboxButton)
         
         navSubscriptionButton.addTarget(self, action: #selector(openSubscriptions), for: .touchUpInside)
         let subscribeButton = UIBarButtonItem.init(customView: navSubscriptionButton)
@@ -781,13 +845,30 @@ class SingleUserProfileViewController: UIViewController {
 
         
     // SHARE
-        navShareButton.addTarget(self, action: #selector(didTapNavShare), for: .touchUpInside)
+        navShareButton.addTarget(self, action: #selector(messageUser), for: .touchUpInside)
         let shareBarButton = UIBarButtonItem.init(customView: navShareButton)
         
+    // INBOX
+        navInboxButton.addTarget(self, action: #selector(openInbox), for: .touchUpInside)
+        let inboxButton = UIBarButtonItem.init(customView: navInboxButton)
+        
+    // NOTIFICATION
+        navNotificationButton.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
+        notificationButton = UIBarButtonItem.init(customView: navNotificationButton)
+        notificationButton.customView?.addSubview(notificationLabel)
+        self.view.bringSubviewToFront(notificationLabel)
+        
+    // OTHER USERS
+        otherUserOptionsButton.addTarget(self, action: #selector(handleOptions), for: .touchUpInside)
+        let navUserSetting = UIBarButtonItem.init(customView: otherUserOptionsButton)
+        
+  
+        
         if Auth.auth().currentUser != nil {
-            self.navigationItem.rightBarButtonItem = (self.displayUser?.uid == Auth.auth().currentUser?.uid) ? inboxButton : shareBarButton
+            self.navigationItem.rightBarButtonItem = (self.displayUser?.uid == Auth.auth().currentUser?.uid) ? notificationButton : navUserSetting
         }
         refreshInboxNotifications()
+        refreshNotifications()
     }
     
     @objc func toggleMapFunction(){
@@ -1256,6 +1337,53 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         print("SingleUserProfile | Sort is  \(self.viewFilter.filterSort) | \(self.displayUser?.username)")
     }
     
+    
+    @objc func handleOptions() {
+        
+        print("Options Button Pressed")
+        if CurrentUser.uid == displayUser?.uid {
+            self.userSettings()
+        } else {
+            self.otherUserSettings()
+        }
+    }
+    
+    func otherUserSettings(){
+        guard let curUser = self.displayUser else {return}
+                
+        let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
+        
+ //       optionsAlert.addAction(UIAlertAction(title: "Change Profile Picture", style: .default, handler: { (action: UIAlertAction!) in
+ //           // Allow Editing
+ //           self.editUser()
+ //       }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Block User", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.extBlockUser(user: curUser)
+        }))
+        
+         optionsAlert.addAction(UIAlertAction(title: "Report User", style: .default, handler: { (action: UIAlertAction!) in
+             self.extReportUser(user: curUser)
+         }))
+        
+     
+        optionsAlert.addAction(UIAlertAction(title: "Message User", style: .default, handler: { (action: UIAlertAction!) in
+            self.messageUser()
+        }))
+     
+
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
+        present(optionsAlert, animated: true) {
+            optionsAlert.view.superview?.isUserInteractionEnabled = true
+            optionsAlert.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(self.alertClose(gesture:))))
+        }
+
+    }
+    
    func userSettings(){
        guard let uid = Auth.auth().currentUser?.uid else {return}
        
@@ -1275,9 +1403,9 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
            self.editUser()
        }))
        
-    optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
-        self.contactUs()
-    }))
+        optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
+            self.contactUs()
+        }))
        
     
        optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .default, handler: { (action: UIAlertAction!) in
@@ -1285,7 +1413,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
        }))
     
 
-       optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+       optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
            print("Handle Cancel Logic here")
        }))
        
@@ -1448,7 +1576,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
             self.deletePost(post: post)
         }))
         
-        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -1496,7 +1624,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
             Database.deletePost(post: post)
         }))
         
-        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         present(deleteAlert, animated: true, completion: nil)
@@ -1684,7 +1812,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
 
         }))
         
-        statusAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        statusAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -1732,7 +1860,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
             }
         }))
         
-        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
             self.imageCollectionView.reloadData()
         }))
@@ -1774,7 +1902,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
 
         })
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: {(alert: UIAlertAction!) in print("cancel")})
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive, handler: {(alert: UIAlertAction!) in print("cancel")})
 
         alertController.addAction(somethingAction)
         alertController.addAction(cancelAction)

@@ -676,7 +676,7 @@ extension Database{
 //            let newThread = MessageThread.init(threadID: data.key, dictionary: data.value)
             Database.fetchMessageThreadsForUID(userUID: creatoruid) { (threads) in
                 CurrentUser.inboxThreads = threads
-//                NotificationCenter.default.post(name: InboxController.newMsgNotificationName, object: nil)
+                NotificationCenter.default.post(name: InboxController.newMsgNotificationName, object: nil)
                 print("New Inbox Message For \(creatoruid)")
             }
         }
@@ -703,7 +703,7 @@ extension Database{
                     
                     tempInboxThreads.append(tempThread)
                     CurrentUser.inboxThreads = tempInboxThreads
-//                    NotificationCenter.default.post(name: InboxController.newMsgNotificationName, object: nil)
+                    NotificationCenter.default.post(name: InboxController.newMsgNotificationName, object: nil)
                     print("New Inbox Message For Thread \(threadId)")
                 }
             }
@@ -4845,7 +4845,7 @@ extension Database{
         CurrentUser.blockedPosts[postId] = Date()
 
 //         Create List Id in User
-        let userRef = Database.database().reference().child("users").child(uid).child("block")
+        let userRef = Database.database().reference().child("users").child(uid).child("blockPost")
         let values = [postId: createdDate] as [String:Any]
         userRef.updateChildValues(values) { (err, ref) in
             if let err = err {
@@ -4872,7 +4872,7 @@ extension Database{
         let createdDate = Date().timeIntervalSince1970
         let det = "\(createdDate),\(details)"
 
-        let reportFlag = Database.database().reference().child("report").child(postId)
+        let reportFlag = Database.database().reference().child("report_post").child(postId)
         reportFlag.runTransactionBlock({ (currentData) -> TransactionResult in
             var temp_post = currentData.value as? [String : AnyObject] ?? [:]
 //            var respond: Dictionary<String, String>
@@ -4895,6 +4895,91 @@ extension Database{
         }
     }
     
+    static func blockUser(user: User) {
+        let blockUid = user.uid
+        print(" ! BLOCK USER | \(blockUid)")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let createdDate = Date().timeIntervalSince1970
+        CurrentUser.blockedUsers[blockUid] = Date()
+
+//         Create List Id in User
+        let userRef = Database.database().reference().child("users").child(uid).child("blockUser")
+        let values = [blockUid: createdDate] as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("Block Users ERROR: \(blockUid), User: \(uid)", err)
+                return
+            }
+
+            userRef.keepSynced(true)
+            print("Block User: SUCCESS: \(blockUid), User: \(uid)")
+            
+            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+        }
+    }
+    
+    static func reportUser(user: User, details: String) {
+        let reportUid = user.uid
+        print(" ! REPORT User | \(reportUid) | \(details)")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let createdDate = Date().timeIntervalSince1970
+        
+        let reportFlag = Database.database().reference().child("report_user").child(reportUid)
+        reportFlag.runTransactionBlock({ (currentData) -> TransactionResult in
+//            guard let curPost = currentData.value as? [String : AnyObject] else {
+//                print(" ! reportPost Error: No Post", postId)
+//                return TransactionResult.abort()
+//            }
+            var temp_post = currentData.value as? [String : AnyObject] ?? [:]
+            var reports: Dictionary<String, String>
+            reports = temp_post["reports"] as? [String : String] ?? [:]
+            reports[uid] = "\(createdDate), \(details)"
+            temp_post["reports"] = reports as AnyObject
+            temp_post["reports_count"] = reports.count as AnyObject
+
+            if reports.count > 0 {
+                print("More than 3 reports. Move User to Private")
+                self.flagUserToBlock(user: user, block: true)
+//                self.moveReportedPost(post: post)
+            }
+
+            currentData.value = temp_post
+            return TransactionResult.success(withValue: currentData)
+            
+        }) { (error, committed, snapshot) in
+            if let error = error {
+                print(" ! reportUser ERROR | \(reportUid) | \(error)")
+            } else {
+                // Update post Cache
+                print("  ~ SUCCESS updateUserforReport| \(reportUid)")
+            }
+        }
+        
+        
+        
+    }
+    
+    static func flagUserToBlock(user: User, block: Bool) {
+        let uid = user.uid
+        
+        Database.database().reference().child("users/\(uid)/reportedFlag").setValue(block)
+        Database.database().reference().child("users/\(uid)/isPrivate").setValue(block)
+        self.createNotificationEventForUser(postId: nil, listId: nil, targetUid: uid, action: Social.report, value: 1, locName: nil, listName: nil, commentText: nil)
+        
+        // Update Post Cache
+        var temp = userCache[uid]
+        if let _ = temp {
+            temp?.reportedFlag = block
+            temp?.isPrivate = block
+            userCache[uid] = temp
+        }
+
+        print("flagUserToBlock SUCCESS \(uid) - \(block)")
+    }
+    
     static func reportPost(post: Post, details: String) {
         // REPORT POST makes a report count in the post itself. If its more than 3 reports it gets moved to the reportedPost tree and gets deleted in the main Post Tree.
         // Sends a notification to the creator. It was hard to let user access their own posts while blocking the rest
@@ -4906,7 +4991,7 @@ extension Database{
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let createdDate = Date().timeIntervalSince1970
         
-        let reportFlag = Database.database().reference().child("report").child(postId)
+        let reportFlag = Database.database().reference().child("report_post").child(postId)
         reportFlag.runTransactionBlock({ (currentData) -> TransactionResult in
 //            guard let curPost = currentData.value as? [String : AnyObject] else {
 //                print(" ! reportPost Error: No Post", postId)
@@ -8522,10 +8607,19 @@ extension Database{
             }
         case .report:
             eventAction = reportAction
-            notificationHeader = "A post has been reported"
-            if let commentText = commentText {
-                notificationBody = "One of your post is now private because it's been reported more than 3 times."
+            if postId != nil {
+                notificationHeader = "A post has been reported"
+                if let commentText = commentText {
+                    notificationBody = "One of your post is now private because it's been reported more than 3 times."
+                }
+            } else {
+                notificationHeader = "Your profile has been flagged"
+                if let commentText = commentText {
+                    notificationBody = "Your profile has been set to private because it's been reported more than 3 times."
+                }
             }
+            
+
         default:
             eventAction = nil
         }

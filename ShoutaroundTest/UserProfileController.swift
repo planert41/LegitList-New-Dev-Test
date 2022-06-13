@@ -839,7 +839,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             self.didSignOut()
         }))
         
-        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -863,7 +863,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             self.deletePost(post: post)
         }))
         
-        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -903,7 +903,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
             Database.deletePost(post: post)
         }))
         
-        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         present(deleteAlert, animated: true, completion: nil)

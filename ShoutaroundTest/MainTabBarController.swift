@@ -407,7 +407,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) -> Void in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (_) -> Void in
             print("Notification Denied")
         }
         alert.addAction(settingsAction)
@@ -680,17 +680,21 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 
     
     @objc func updateUnreadNotifications(){
-        let unread = CurrentUser.unreadEventCount
+        let unreadNotification = CurrentUser.unreadEventCount
+        let unreadMsg = CurrentUser.unreadMessageCount
+
         let newListUpdates = CurrentUser.followedListNotifications.count
 //        print("updateUnreadNotifications \(unread)")
         
         guard let items = tabBar.items else {return}
         if items.count < 5 {return}
         
-        // LIST NOTIFICATIONS
-        items[0].badgeValue = unread > 0 ? String(unread) : nil
+        var total = unreadNotification + unreadMsg
         
-        print("MainTabBar | updateUnreadNotifications | New: \(CurrentUser.unreadEventCount) | Events: \(CurrentUser.events.count)")
+        // LIST NOTIFICATIONS
+        items[4].badgeValue = (total > 0) ? String(total) : nil
+        
+        print("MainTabBar | updateUnreadNotifications | New: \(total) | Events: \(CurrentUser.unreadEventCount) | Inbox \(CurrentUser.unreadMessageCount)")
 
         
         // USER NOTIFICATIONS
@@ -702,14 +706,17 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         let unread = CurrentUser.unreadMessageCount
         let newListUpdates = CurrentUser.followedListNotifications.count
 //        print("updateUnreadNotifications \(unread)")
-        
+        let unreadNotification = CurrentUser.unreadEventCount
+        let unreadMsg = CurrentUser.unreadMessageCount
+        var total = unreadNotification + unreadMsg
+
         guard let items = tabBar.items else {return}
         if items.count < 5 {return}
         
         // LIST NOTIFICATIONS
-        items[4].badgeValue = unread > 0 ? String(unread) : nil
+        items[4].badgeValue = total > 0 ? String(total) : nil
         
-        print("MainTabBar | updateUnreadMessage | New: \(CurrentUser.unreadMessageCount) | Messages: \(CurrentUser.inboxThreads.count)")
+        print("MainTabBar | updateUnreadNotifications | New: \(total) | Events: \(CurrentUser.unreadEventCount) | Inbox \(CurrentUser.unreadMessageCount)")
 
         
         // USER NOTIFICATIONS
@@ -838,7 +845,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
             
         }))
         
-        firebaseAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        firebaseAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -1780,7 +1787,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
                 }
             }
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) -> Void in
+            let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (_) -> Void in
                 NotificationCenter.default.post(name: AppDelegate.LocationDeniedNotificationName, object: nil)
                 print("Location Denied")
             }

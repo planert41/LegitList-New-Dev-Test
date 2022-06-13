@@ -1640,18 +1640,18 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         
         optionsAlert.addAction(UIAlertAction(title: "Report Post", style: .default, handler: { (action: UIAlertAction!) in
             // Allow Editing
-            self.reportPost(post: post)
+            self.extReportPost(post: post)
         }))
         
         optionsAlert.addAction(UIAlertAction(title: "Block Post", style: .default, handler: { (action: UIAlertAction!) in
-            self.blockPost(post: post)
+            self.extBlockPost(post: post)
         }))
         
         optionsAlert.addAction(UIAlertAction(title: "Block And Report Post", style: .default, handler: { (action: UIAlertAction!) in
-            self.blockAndReportPost(post: post)
+            self.extBlockAndReportPost(post: post)
         }))
         
-        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -1677,7 +1677,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
             }))
         }
         
-        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -1698,7 +1698,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
             Database.respondToReportPost(post: post, details: details)
         }))
         
-        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         present(reportAlert, animated: true, completion: nil)
@@ -1725,72 +1725,72 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
             Database.deletePost(post: post)
         }))
         
-        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         present(deleteAlert, animated: true, completion: nil)
         
     }
     
-    func blockPost(post:Post){
-        
-        let blockAlert = UIAlertController(title: "Block Post", message: "Block Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
-        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
-            // Remove from Current View
-            self.dismiss(animated: true, completion: nil)
-            self.navigationController?.popToRootViewController(animated: true)
-            Database.blockPost(post: post)
-        }))
-        
-        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
-        present(blockAlert, animated: true, completion: nil)
-    }
-    
-    func reportPost(post:Post){
-        
-        let reportAlert = UIAlertController(title: "Report Post", message: "Report Post to the team? Post will be blocked if reported more than 5 times.", preferredStyle: UIAlertController.Style.alert)
-        reportAlert.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Please enter more details"
-        }
-        
-        reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
-            // Remove from Current View
-            self.dismiss(animated: true, completion: nil)
-            self.navigationController?.popToRootViewController(animated: true)
-            let details = reportAlert.textFields![0].text ?? ""
-
-            Database.reportPost(post: post, details: details)
-        }))
-        
-        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
-        present(reportAlert, animated: true, completion: nil)
-    }
-    
-    func blockAndReportPost(post:Post){
-        
-        let blockAlert = UIAlertController(title: "Block And Report Post", message: "Block and Report Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
-        blockAlert.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Please enter more details"
-        }
-        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
-            // Remove from Current View
-            self.dismiss(animated: true, completion: nil)
-            self.navigationController?.popToRootViewController(animated: true)
-            let details = blockAlert.textFields![0].text ?? ""
-
-            Database.reportPost(post: post, details: details)
-            Database.blockPost(post: post)
-        }))
-        
-        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
-        present(blockAlert, animated: true, completion: nil)
-    }
+//    func blockPost(post:Post){
+//        
+//        let blockAlert = UIAlertController(title: "Block Post", message: "Block Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
+//        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+//            // Remove from Current View
+//            self.dismiss(animated: true, completion: nil)
+//            self.navigationController?.popToRootViewController(animated: true)
+//            Database.blockPost(post: post)
+//        }))
+//        
+//        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+//            print("Handle Cancel Logic here")
+//        }))
+//        present(blockAlert, animated: true, completion: nil)
+//    }
+//    
+//    func reportPost(post:Post){
+//        
+//        let reportAlert = UIAlertController(title: "Report Post", message: "Report Post to the team? Post will be blocked if reported more than 5 times.", preferredStyle: UIAlertController.Style.alert)
+//        reportAlert.addTextField { (textField : UITextField!) -> Void in
+//            textField.placeholder = "Please enter more details"
+//        }
+//        
+//        reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+//            // Remove from Current View
+//            self.dismiss(animated: true, completion: nil)
+//            self.navigationController?.popToRootViewController(animated: true)
+//            let details = reportAlert.textFields![0].text ?? ""
+//
+//            Database.reportPost(post: post, details: details)
+//        }))
+//        
+//        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+//            print("Handle Cancel Logic here")
+//        }))
+//        present(reportAlert, animated: true, completion: nil)
+//    }
+//    
+//    func blockAndReportPost(post:Post){
+//        
+//        let blockAlert = UIAlertController(title: "Block And Report Post", message: "Block and Report Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
+//        blockAlert.addTextField { (textField : UITextField!) -> Void in
+//            textField.placeholder = "Please enter more details"
+//        }
+//        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+//            // Remove from Current View
+//            self.dismiss(animated: true, completion: nil)
+//            self.navigationController?.popToRootViewController(animated: true)
+//            let details = blockAlert.textFields![0].text ?? ""
+//
+//            Database.reportPost(post: post, details: details)
+//            Database.blockPost(post: post)
+//        }))
+//        
+//        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+//            print("Handle Cancel Logic here")
+//        }))
+//        present(blockAlert, animated: true, completion: nil)
+//    }
     
     
     func displayLocationAdress(adressString: String?) -> String {

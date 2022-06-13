@@ -1469,6 +1469,107 @@ extension UIViewController {
     }
         
     
+    // BLOCK AND REPORTING
+    
+    func extBlockPost(post:Post){
+        
+        let blockAlert = UIAlertController(title: "Block Post", message: "Block Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
+        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            Database.blockPost(post: post)
+        }))
+        
+        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(blockAlert, animated: true, completion: nil)
+    }
+    
+    func extReportPost(post:Post){
+        
+        let reportAlert = UIAlertController(title: "Report Post", message: "Report Post to the team? Post will be blocked if reported more than 5 times.", preferredStyle: UIAlertController.Style.alert)
+        reportAlert.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Please enter more details"
+        }
+        
+        reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            let details = reportAlert.textFields![0].text ?? ""
+
+            Database.reportPost(post: post, details: details)
+        }))
+        
+        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(reportAlert, animated: true, completion: nil)
+    }
+    
+    func extBlockAndReportPost(post:Post){
+        
+        let blockAlert = UIAlertController(title: "Block And Report Post", message: "Block and Report Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
+        blockAlert.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Please enter more details"
+        }
+        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            let details = blockAlert.textFields![0].text ?? ""
+
+            Database.reportPost(post: post, details: details)
+            Database.blockPost(post: post)
+        }))
+        
+        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(blockAlert, animated: true, completion: nil)
+    }
+    
+    func extBlockUser(user:User){
+        
+        let name = user.username ?? ""
+        
+        let blockAlert = UIAlertController(title: "Block User", message: "Block User \(name) and never see them again?", preferredStyle: UIAlertController.Style.alert)
+        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            Database.blockUser(user: user)
+        }))
+        
+        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(blockAlert, animated: true, completion: nil)
+    }
+    
+    func extReportUser(user:User){
+        
+        let reportAlert = UIAlertController(title: "Report User", message: "Report User to the team? User will be set to private if reported more than 5 times.", preferredStyle: UIAlertController.Style.alert)
+        reportAlert.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Please enter more details"
+        }
+        
+        reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+            // Remove from Current View
+            self.dismiss(animated: true, completion: nil)
+            self.navigationController?.popToRootViewController(animated: true)
+            let details = reportAlert.textFields![0].text ?? ""
+
+            Database.reportUser(user: user, details: details)
+        }))
+        
+        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        present(reportAlert, animated: true, completion: nil)
+    }
 //    
 //    func extUserSettings(user: User?){
 //       guard let uid = Auth.auth().currentUser?.uid else {return}

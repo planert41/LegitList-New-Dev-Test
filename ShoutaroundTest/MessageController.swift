@@ -1052,7 +1052,7 @@ class MessageController: UIViewController, UICollectionViewDataSource, UICollect
             self.handleSendToUsers(sentUsers: tempUsers)
         }))
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: { (action: UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive, handler: { (action: UIAlertAction!) in
 
         }))
         self.present(alert, animated: true, completion: nil)

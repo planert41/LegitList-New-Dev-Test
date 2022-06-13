@@ -736,7 +736,7 @@ class TabListViewController: UIViewController, UITableViewDelegate, UITableViewD
         }))
         
         
-        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
             self.tableView.setEditing(false, animated: true)
         }))
@@ -1281,7 +1281,7 @@ class TabListViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }))
         
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
         
@@ -1309,7 +1309,7 @@ class TabListViewController: UIViewController, UITableViewDelegate, UITableViewD
                 self.createList(newList: newList)
             }))
             
-            optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
                 print("Handle Cancel Logic here")
             }))
             self.present(optionsAlert, animated: true, completion: {
