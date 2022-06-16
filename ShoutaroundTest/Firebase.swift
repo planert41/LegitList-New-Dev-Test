@@ -886,7 +886,9 @@ extension Database{
                     user.isFollowing = false
                 }
                 
-                if user.username != "" {
+                user.isBlocked = CurrentUser.blockedUsers[key] != nil
+                
+                if user.username != "" && user.blockedUsers[(Auth.auth().currentUser?.uid)!] == nil {
                     tempUsers.append(user)
                 }
                 myGroup.leave()
@@ -4913,7 +4915,39 @@ extension Database{
 
             userRef.keepSynced(true)
             print("Block User: SUCCESS: \(blockUid), User: \(uid)")
+            self.handleFollowing(userUid: blockUid, forceUnfollow: true) {
+                print("Force Unfollow \(blockUid) after blocking")
+            }
             
+            NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+        }
+    }
+    
+    static func unBlockUser(user: User) {
+        let blockUid = user.uid
+        print(" ! UNBLOCK USER | \(blockUid)")
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let createdDate = Date().timeIntervalSince1970
+        
+        CurrentUser.blockedUsers[blockUid] = nil
+
+//         Create List Id in User
+        let userRef = Database.database().reference().child("users").child(uid).child("blockUser")
+        let values = [blockUid: nil] as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("UNBlock Users ERROR: \(blockUid), User: \(uid)", err)
+                return
+            }
+
+            userRef.keepSynced(true)
+            print("UNBlock User: SUCCESS: \(blockUid), User: \(uid)")
+            
+            NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
             NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
@@ -8917,7 +8951,7 @@ extension Database{
 //        - UPDATE FOLLOWER COUNT IN FOLLOWED USER DATABASE
     
     
-    static func handleFollowing(userUid: String!, hideAlert: Bool = false,  forceFollow: Bool = false, completion: @escaping () -> Void){
+    static func handleFollowing(userUid: String!, hideAlert: Bool = false, forceFollow: Bool = false, forceUnfollow: Bool = false, completion: @escaping () -> Void){
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let ref = Database.database().reference().child("following").child(uid)
@@ -8929,6 +8963,8 @@ extension Database{
             var followingCount = user["followingCount"] as? Int ?? 0
 
             if let _ = following[userUid] {
+                // CHECK IF FOLLOWING USER THEN UNFOLLOW
+
                 if forceFollow {
                     print("Already Following \(userUid) | Force Follow")
                 } else {
@@ -8942,7 +8978,12 @@ extension Database{
                 }
 
             } else {
-                if following[userUid] == 1 || following[userUid] != nil {
+                // CHECK IF NOT FOLLOWING USER THEN FOLLOW
+
+                if forceUnfollow {
+                    print("Already Not Following \(userUid) | Force UnFollow")
+                }
+                else if following[userUid] == 1 || following[userUid] != nil {
                     print("Following: ERROR: \(uid) already following \(userUid)")
                 } else {
                 // Follow User
@@ -9206,26 +9247,39 @@ extension Database{
             completion(tempUser)
             return}
         let followingUid = user.uid
-
         
-        if CurrentUser.followingUids.count > 0 {
-            
-            if CurrentUser.followingUids.contains(user.uid) {
-                tempUser.isFollowing = true
-            } else {
-                tempUser.isFollowing = false
-            }
+        // CHECK IF USER IS BLOCKED
+        if CurrentUser.blockedUsers[tempUser.uid] != nil {
+            print("CurrentUser is Blocking \(tempUser.uid)")
+            tempUser.isBlocked = true
             completion(tempUser)
-        } else {
-            self.fetchFollowingUserUids(uid: uid, completion: { (fetchedIds) in
-                CurrentUser.followingUids = fetchedIds
+        } else if user.blockedUsers[uid] != nil {
+            print("CurrentUser is BLOCKED by \(tempUser.uid)")
+            tempUser.isBlocked = true
+            completion(tempUser)
+        }
+        
+        else {
+        // CHECK IF USER IS FOLLOWED
+            if CurrentUser.followingUids.count > 0 {
+                
                 if CurrentUser.followingUids.contains(user.uid) {
                     tempUser.isFollowing = true
                 } else {
                     tempUser.isFollowing = false
                 }
                 completion(tempUser)
-            })
+            } else {
+                self.fetchFollowingUserUids(uid: uid, completion: { (fetchedIds) in
+                    CurrentUser.followingUids = fetchedIds
+                    if CurrentUser.followingUids.contains(user.uid) {
+                        tempUser.isFollowing = true
+                    } else {
+                        tempUser.isFollowing = false
+                    }
+                    completion(tempUser)
+                })
+            }
         }
     }
     

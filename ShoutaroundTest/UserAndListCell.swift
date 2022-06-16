@@ -19,6 +19,7 @@ protocol UserAndListCellDelegate {
     func extTapList(list: List)
     func goToLocation(location: Location?)
     func showCity(city: City)
+    func extBlockUser(user: User)
 }
 
 class UserAndListCell: UITableViewCell, EmojiButtonArrayDelegate {
@@ -683,7 +684,11 @@ class UserAndListCell: UITableViewCell, EmojiButtonArrayDelegate {
         
         self.followButton.isHidden = (user?.uid == Auth.auth().currentUser?.uid)
         
-        if (user?.isFollowing)!{
+        if user?.isBlocked ?? false {
+            self.followButton.setTitle("Blocked", for: .normal)
+            self.followButton.backgroundColor = UIColor.red
+        }
+        else if (user?.isFollowing)!{
             self.followButton.setTitle("Unfollow", for: .normal)
             self.followButton.backgroundColor = UIColor.orange
         } else {
@@ -720,6 +725,13 @@ class UserAndListCell: UITableViewCell, EmojiButtonArrayDelegate {
         guard let userId = user?.uid else {return}
         print("handleFollow: ", user?.username ?? "", userId)
         if currentLoggedInUserId == userId {return}
+        
+        if self.user?.isBlocked ?? false {
+            if let user = self.user {
+                self.delegate?.extBlockUser(user: user)
+            }
+            return
+        }
         
         Database.handleFollowing(userUid: userId) { }
         guard let user = self.user else {return}

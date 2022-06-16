@@ -26,7 +26,7 @@ pod 'IQKeyboardManagerSwift'
 pod 'UIFontComplete'
 pod 'EmptyDataSet-Swift', '~> 5.0.0'
 pod "BSImagePicker"
-pod 'SKPhotoBrowser', "~> 6.0.0"
+pod 'SKPhotoBrowser', :git => 'https://github.com/suzuki-0000/SKPhotoBrowser.git', :branch => 'master'
 pod 'DropDown', '2.3.4'
 pod 'CLImageEditor/AllTools'
 pod 'CropViewController'
@@ -43,6 +43,7 @@ post_install do |installer|
    installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64 i386"
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
    end
    end
  end

@@ -45,7 +45,7 @@ protocol SingleUserProfileHeaderDelegate {
     
     func openInbox()
     func messageUser()
-
+    func extBlockUser(user:User)
 
 }
 
@@ -824,6 +824,10 @@ class SingleUserProfileHeader: UICollectionViewCell {
         
         if (currentLoggedInUserId == userId && self.editProfileFollowButton.titleLabel?.text == "Options"){
             self.delegate?.userSettings()
+        } else if self.user?.isBlocked ?? false {
+            if let user = user {
+                self.delegate?.extBlockUser(user: user)
+            }
         } else if self.editProfileFollowButton.titleLabel?.text == "Following" || self.editProfileFollowButton.titleLabel?.text == "Follow" {
             Database.handleFollowing(userUid: userId) { }
             guard let user = self.user else {return}
@@ -832,26 +836,8 @@ class SingleUserProfileHeader: UICollectionViewCell {
             tempUser.followersCount += (tempUser.isFollowing)! ? 1 : -1
             self.user = tempUser
             self.setupFollowStyle()
-
-            
-        // UPDATE CURRENT USER CACHE
-//            if (self.user?.isFollowing)! {
-//                if CurrentUser.followingUids.contains(userId) {
-//                    CurrentUser.followingUids.append(userId)
-//                }
-//            } else if !(self.user?.isFollowing)! {
-//                if CurrentUser.followingUids.contains(userId) {
-//                    CurrentUser.followingUids.removeAll { (uid) -> Bool in
-//                        return uid == userId
-//                    }
-//                }
-//            }
-            
         }
     }
-
-
-
 }
 
 extension SingleUserProfileHeader: UITextViewDelegate, UITextFieldDelegate {
@@ -1320,12 +1306,19 @@ extension SingleUserProfileHeader {
             }
             
         } else {
-            let followInd = user?.isFollowing ?? false
-            editProfileFollowButton.setTitle(followInd ? "Following" : "Follow", for: .normal)
-            editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
-            editProfileFollowButton.layer.borderColor = (followInd ? UIColor.ianLegitColor() : UIColor.mainBlue()).cgColor
-            editProfileFollowButton.backgroundColor = followInd ? UIColor.ianLegitColor() : UIColor.mainBlue()
-            
+            if user?.isBlocked ?? false {
+                editProfileFollowButton.setTitle("Blocked", for: .normal)
+                editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
+                editProfileFollowButton.layer.borderColor = UIColor.red.cgColor
+                editProfileFollowButton.backgroundColor = UIColor.red
+            } else {
+                let followInd = user?.isFollowing ?? false
+                editProfileFollowButton.setTitle(followInd ? "Following" : "Follow", for: .normal)
+                editProfileFollowButton.setTitleColor(UIColor.ianWhiteColor(), for: .normal)
+                editProfileFollowButton.layer.borderColor = (followInd ? UIColor.ianLegitColor() : UIColor.mainBlue()).cgColor
+                editProfileFollowButton.backgroundColor = followInd ? UIColor.ianLegitColor() : UIColor.mainBlue()
+            }
+
             messageInboxButton.setTitle("Message", for: .normal)
             messageInboxButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
             messageInboxButton.backgroundColor = UIColor.ianWhiteColor()
@@ -1333,8 +1326,6 @@ extension SingleUserProfileHeader {
             inboxCountLabel.isHidden = true
 
             self.setupSocialLabels()
-            
-            
         }
         
 //        else if (user?.isFollowing)!

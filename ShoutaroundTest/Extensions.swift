@@ -1534,13 +1534,21 @@ extension UIViewController {
     func extBlockUser(user:User){
         
         let name = user.username ?? ""
+        let isBlocked = user.isBlocked ?? false
         
-        let blockAlert = UIAlertController(title: "Block User", message: "Block User \(name) and never see them again?", preferredStyle: UIAlertController.Style.alert)
-        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
+        var titleText = isBlocked ? "Blocked User" : "Block User"
+        var bodyText = isBlocked ? "Unblock User \(name)?" : "Block User \(name) and never see them again?"
+        
+        let blockAlert = UIAlertController(title: titleText, message: bodyText, preferredStyle: UIAlertController.Style.alert)
+        blockAlert.addAction(UIAlertAction(title: isBlocked ? "Unblock" : "Block", style: .default, handler: { (action: UIAlertAction!) in
             // Remove from Current View
             self.dismiss(animated: true, completion: nil)
             self.navigationController?.popToRootViewController(animated: true)
-            Database.blockUser(user: user)
+            if isBlocked {
+                Database.blockUser(user: user)
+            } else {
+                Database.unBlockUser(user: user)
+            }
         }))
         
         blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in

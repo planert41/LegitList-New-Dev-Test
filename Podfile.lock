@@ -203,7 +203,7 @@ PODS:
   - nanopb/encode (2.30908.0)
   - PromisesObjC (2.1.0)
   - RevenueCat (4.3.0)
-  - SKPhotoBrowser (6.0.0)
+  - SKPhotoBrowser (7.0.0)
   - Smile (2.0.0)
   - SVProgressHUD (2.2.6):
     - SVProgressHUD/Core (= 2.2.6)
@@ -237,7 +237,7 @@ DEPENDENCIES:
   - Kingfisher (~> 5.0)
   - mailgun (~> 1.0.3)
   - RevenueCat
-  - SKPhotoBrowser (~> 6.0.0)
+  - SKPhotoBrowser (from `https://github.com/suzuki-0000/SKPhotoBrowser.git`, branch `master`)
   - Smile
   - SVProgressHUD (from `https://github.com/SVProgressHUD/SVProgressHUD.git`)
   - SwiftyJSON (~> 4.0)
@@ -284,7 +284,6 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - RevenueCat
-    - SKPhotoBrowser
     - Smile
     - SwiftyJSON
     - TLPhotoPicker
@@ -293,6 +292,9 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   GeoFire:
     :git: https://github.com/firebase/geofire-objc.git
+  SKPhotoBrowser:
+    :branch: master
+    :git: https://github.com/suzuki-0000/SKPhotoBrowser.git
   SVProgressHUD:
     :git: https://github.com/SVProgressHUD/SVProgressHUD.git
 
@@ -300,6 +302,9 @@ CHECKOUT OPTIONS:
   GeoFire:
     :commit: fd0349afe7f9fd88c5c55f2e875abc4533f3dcd9
     :git: https://github.com/firebase/geofire-objc.git
+  SKPhotoBrowser:
+    :commit: b74b39ee359ce7f3bbacdd7378b6c6258828af2e
+    :git: https://github.com/suzuki-0000/SKPhotoBrowser.git
   SVProgressHUD:
     :commit: de1d4dba816a19454329031156b8788692bcfa2c
     :git: https://github.com/SVProgressHUD/SVProgressHUD.git
@@ -344,13 +349,13 @@ SPEC CHECKSUMS:
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   RevenueCat: bcbf0d68e546f947e00b7ea68d4f2d1c913e7767
-  SKPhotoBrowser: 76eb862685761707b5745fde7762757966565e07
+  SKPhotoBrowser: 6aaa8f232752e87c7e76bace183bead0a137097d
   Smile: 21ff6c48e06ecfcee605cca32aedd74d5810e34a
   SVProgressHUD: de812b4f0e1d65358f0064416473174ae619843f
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
   TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329
   UIFontComplete: 4c4c38468a23ad9426b0e748f0933eea1f8d7965
 
-PODFILE CHECKSUM: a825587d3d8b95d47bdcb18496a01b6fa8638ae6
+PODFILE CHECKSUM: 86f667b04cbf40db61d9787622ad0f7d30f14a89
 
 COCOAPODS: 1.11.3

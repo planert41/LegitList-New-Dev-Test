@@ -58,6 +58,7 @@ struct User {
     var blockedUsers: [String: Date] = [:]
     var reportedFlag: Bool = false
     var isPrivate: Bool = false
+    var isBlocked: Bool = false
 
     
     init(uid: String, dictionary: [String:Any]) {
