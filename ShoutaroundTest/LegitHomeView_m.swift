@@ -2121,9 +2121,15 @@ extension LegitHomeView {
             uid = Auth.auth().currentUser?.uid
         }
         
+        let start = DispatchTime.now() // <<<<<<<<<< Start time
         Database.fetchAllHomeFeedPostIds(uid: uid) { (postIds) in
             print("Home| fetchCrewPostIds| Fetched \(postIds.count) Post Ids")
             self.fetchedPostIds = postIds
+            let end = DispatchTime.now()   // <<<<<<<<<<   end time
+            let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+            let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+            print("Fetch Post IDS time: \(timeInterval) seconds")
+
             NotificationCenter.default.post(name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
             
             // SET LISTENER ONCE AFTER FETCHING POSTS
@@ -2282,7 +2288,13 @@ extension LegitHomeView {
 
     @objc func fetchSortFilterPosts(){
         self.isFetchingPosts = true
+        let start = DispatchTime.now() // <<<<<<<<<< Start time
             Database.fetchAllPosts(fetchedPostIds: self.fetchedPostIds, completion: { (firebaseFetchedPosts) in
+                let end = DispatchTime.now()   // <<<<<<<<<<   end time
+                let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+                let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+
+                print("Fetch Post Time: \(timeInterval) seconds")
                 self.isFetchingPosts = false
                 self.displayedPosts = firebaseFetchedPosts
                 self.filterSortFetchedPosts()

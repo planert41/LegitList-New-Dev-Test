@@ -612,6 +612,7 @@ class SingleUserProfileViewController: UIViewController {
 //        imageCollectionView.bottomAnchor.constraint(lessThanOrEqualTo: bottomSearchBar.topAnchor).isActive = true
 //        imageCollectionView.bottomAnchor.constraint(lessThanOrEqualTo: bottomEmojiBar.topAnchor).isActive = true
 
+        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateFeed), name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
@@ -980,6 +981,13 @@ extension SingleUserProfileViewController {
     
     func fetchPostsForUser(){
         guard let uid = displayUser?.uid else {return}
+        if (displayUser?.isBlocked ?? false) {
+            self.fetchedPosts = []
+            print("Blocked User")
+            self.filterSortFetchedPosts()
+            self.isFetchingPost = false
+            return
+        }
         if isFetchingPost {
             print("  ~ BUSY | fetchPostsForUser | \(uid) | Fetching: \(isFetchingPost)")
             return
@@ -991,9 +999,14 @@ extension SingleUserProfileViewController {
             SVProgressHUD.show(withStatus: "Loading Posts")
         }
         
+        let start = DispatchTime.now() // <<<<<<<<<< Start time
         Database.fetchAllPostWithUID(creatoruid: uid) { (posts) in
             print("Fetched Posts | \(posts.count) | SingleUserProfileViewController")
-            
+            let end = DispatchTime.now()   // <<<<<<<<<<   end time
+            let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+            let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+
+            print("Fetch Single User Post Time: \(timeInterval) seconds")
             if uid == Auth.auth().currentUser?.uid {
                 self.countMostUsedEmojis(posts: posts.filter({ (post) -> Bool in
                     post.creatorUID == uid
@@ -1108,6 +1121,24 @@ extension SingleUserProfileViewController {
         let showBottomEmojiBar = (self.viewFilter.isFiltering || self.viewFilter.filterSort != defaultRecentSort)
         bottomEmojiBarHide?.constant = showBottomEmojiBar ? bottomEmojiBarHeight : 0
 //        self.view.layoutIfNeeded()
+    }
+    
+    @objc func handleUpdateFeed() {
+        
+        // Check for new post that was edited or uploaded
+        if newPost != nil && newPostId != nil {
+            
+            self.fetchedPosts.insert(newPost!, at: 0)
+            self.filterSortFetchedPosts()
+            if self.imageCollectionView.numberOfItems(inSection: 0) != 0 {
+                let indexPath = IndexPath(item: 0, section: 0)
+                self.imageCollectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            }
+            print("Pull in new post")
+            
+        } else {
+            self.handleRefresh()
+        }
     }
     
     @objc func handleRefresh() {

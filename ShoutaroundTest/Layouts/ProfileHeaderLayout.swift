@@ -83,7 +83,7 @@ class ProfileHeaderLayout: UICollectionViewFlowLayout {
             self.initContentYOffset = contentOffsetY
             self.priorHeaderPosition = frameForSupplementaryView.origin.y
             self.priorOffsetY = contentOffsetY
-            print("Set Init Offset, OffsetY \(contentOffsetY), InitOffset: \(self.initContentYOffset)")
+//            print("Set Init Offset, OffsetY \(contentOffsetY), InitOffset: \(self.initContentYOffset)")
         }
         
         var headerfloor = max(0,contentOffsetY - self.initContentYOffset! - (headerHeightConstant ?? 0.0))

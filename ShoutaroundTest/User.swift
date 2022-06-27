@@ -56,9 +56,20 @@ struct User {
     var mostUsedCities: [String] = []
     var blockedPosts: [String: Date] = [:]
     var blockedUsers: [String: Date] = [:]
+    var blockedByUsers: [String: Date] = [:]
     var reportedFlag: Bool = false
     var isPrivate: Bool = false
     var isBlocked: Bool = false
+    var isBlockedByUser: Bool = false {
+        didSet {
+            self.isBlocked = isBlockedByUser || isBlockedByCurUser
+        }
+    }
+    var isBlockedByCurUser: Bool = false {
+        didSet {
+            self.isBlocked = isBlockedByUser || isBlockedByCurUser
+        }
+    }
 
     
     init(uid: String, dictionary: [String:Any]) {
@@ -92,6 +103,12 @@ struct User {
         for (blockuid, blockDate) in blockUsers {
             let blockDate = blockDate as? Double ?? 0
             self.blockedUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
+        }
+        
+        let blockByUsers = dictionary["blockByUser"] as? [String:Any] ?? [:]
+        for (blockuid, blockDate) in blockByUsers {
+            let blockDate = blockDate as? Double ?? 0
+            self.blockedByUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
         }
         
         let social = dictionary["social"] as? [String:Int] ?? [:]
@@ -309,6 +326,7 @@ struct CurrentUser {
     
     static var blockedPosts:[String: Date] = [:]
     static var blockedUsers:[String: Date] = [:]
+    static var blockedByUsers:[String: Date] = [:]
 
     // Inbox
     static var inboxThreads: [MessageThread] = [] {
@@ -340,6 +358,7 @@ struct CurrentUser {
                 self.APNTokens = user?.APNTokens ?? []
                 self.blockedPosts = user?.blockedPosts ?? [:]
                 self.blockedUsers = user?.blockedUsers ?? [:]
+                self.blockedByUsers = user?.blockedByUsers ?? [:]
                 self.checkAPNToken()
             } else {
                 self.username = nil
@@ -354,6 +373,7 @@ struct CurrentUser {
                 self.premiumPeriod = nil
                 self.blockedPosts = [:]
                 self.blockedUsers = [:]
+                self.blockedByUsers = [:]
             }
         }
     }

@@ -886,9 +886,10 @@ extension Database{
                     user.isFollowing = false
                 }
                 
-                user.isBlocked = CurrentUser.blockedUsers[key] != nil
-                
-                if user.username != "" && user.blockedUsers[(Auth.auth().currentUser?.uid)!] == nil {
+                user.isBlockedByCurUser = CurrentUser.blockedUsers[key] != nil
+                user.isBlockedByUser = user.blockedUsers[(Auth.auth().currentUser?.uid)!] != nil
+
+                if user.username != "" && !user.isBlockedByUser {
                     tempUsers.append(user)
                 }
                 myGroup.leave()
@@ -3157,6 +3158,10 @@ extension Database{
                 return
             }
             let creatorUID = dictionary["creatorUID"] as? String ?? ""
+            if CurrentUser.blockedByUsers[creatorUID] != nil {
+                print("Post Creator User Blocked Current User | \(postId) | \(creatorUID)")
+                completion(nil, nil)
+            }
 
             if creatorUID == "" {
                 print("ERROR CREATOR UID | \(postId)")
@@ -4903,8 +4908,14 @@ extension Database{
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let createdDate = Date().timeIntervalSince1970
         CurrentUser.blockedUsers[blockUid] = Date()
-
-//         Create List Id in User
+        if let _ = userCache[user.uid] {
+            userCache[user.uid]!.isBlockedByCurUser = true
+        }
+        if let row = allUsersFetched.firstIndex(where: {$0.uid == blockUid}) {
+            allUsersFetched[row].isBlockedByCurUser = true
+        }
+        
+//         Update Data in Blocking User
         let userRef = Database.database().reference().child("users").child(uid).child("blockUser")
         let values = [blockUid: createdDate] as [String:Any]
         userRef.updateChildValues(values) { (err, ref) in
@@ -4915,15 +4926,29 @@ extension Database{
 
             userRef.keepSynced(true)
             print("Block User: SUCCESS: \(blockUid), User: \(uid)")
-            self.handleFollowing(userUid: blockUid, forceUnfollow: true) {
-                print("Force Unfollow \(blockUid) after blocking")
+            self.handleFollowing(userUid: blockUid, hideAlert: true, forceUnfollow: true) {
+                print("Cur User Force Unfollow \(blockUid) after blocking")
+            }
+            self.handleFollowing(followerUid: blockUid, followingUid: uid, hideAlert: true, forceUnFollow: true) {
+                print("\(blockUid) Force Unfollow Cur User after blocking")
             }
             
             NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
 //                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+        }
+        
+//         Update Data in Blocked User
+        let userRefb = Database.database().reference().child("users").child(blockUid).child("blockByUser")
+        let valuesb = [uid: createdDate] as [String:Any]
+        userRefb.updateChildValues(valuesb) { (err, ref) in
+            if let err = err {
+                print("Block By Users ERROR: \(blockUid), User: \(uid)", err)
+                return
+            }
+            print("Block By User: SUCCESS: \(blockUid), User: \(uid)")
         }
     }
     
@@ -4933,7 +4958,14 @@ extension Database{
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let createdDate = Date().timeIntervalSince1970
         
+    // UPDATE CACHE
         CurrentUser.blockedUsers[blockUid] = nil
+        if let _ = userCache[user.uid] {
+            userCache[user.uid]!.isBlockedByCurUser = false
+        }
+        if let row = allUsersFetched.firstIndex(where: {$0.uid == blockUid}) {
+            allUsersFetched[row].isBlockedByCurUser = false
+        }
 
 //         Create List Id in User
         let userRef = Database.database().reference().child("users").child(uid).child("blockUser")
@@ -4948,10 +4980,21 @@ extension Database{
             print("UNBlock User: SUCCESS: \(blockUid), User: \(uid)")
             
             NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
 //                Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+        }
+        
+//         Update Data in Blocked User
+        let userRefb = Database.database().reference().child("users").child(blockUid).child("blockByUser")
+        let valuesb = [uid: nil] as [String:Any]
+        userRefb.updateChildValues(valuesb) { (err, ref) in
+            if let err = err {
+                print("UnBlock By Users ERROR: \(blockUid), User: \(uid)", err)
+                return
+            }
+            print("UnBlock By User: SUCCESS: \(blockUid), User: \(uid)")
         }
     }
     
@@ -8819,7 +8862,7 @@ extension Database{
     }
     
 // FOLLOWING FUNCTION TO SPECIFY BOTH FOLLOWER AND FOLLOWING
-    static func handleFollowing(followerUid: String?, followingUid: String?, hideAlert: Bool = false, forceFollow: Bool = false, completion: @escaping () -> Void){
+    static func handleFollowing(followerUid: String?, followingUid: String?, hideAlert: Bool = false, forceFollow: Bool = false, forceUnFollow: Bool = false, completion: @escaping () -> Void){
         
         guard let uid = followerUid else {return}
         guard let userUid = followingUid else {return}
@@ -8838,6 +8881,17 @@ extension Database{
                 else {
                     followingCount += 1
                     following[userUid] = 1
+                }
+            }
+            else if forceUnFollow {
+                if let _ = following[userUid] {
+                    if let deleteIndex = following.index(forKey: userUid) {
+                        following.remove(at: deleteIndex)
+                        followingCount -= 1
+                    }
+                }
+                else {
+                    print("Already Unfollowed \(userUid) | Force Unfollow")
                 }
             }
             else {
@@ -9251,11 +9305,11 @@ extension Database{
         // CHECK IF USER IS BLOCKED
         if CurrentUser.blockedUsers[tempUser.uid] != nil {
             print("CurrentUser is Blocking \(tempUser.uid)")
-            tempUser.isBlocked = true
+            tempUser.isBlockedByCurUser = true
             completion(tempUser)
         } else if user.blockedUsers[uid] != nil {
             print("CurrentUser is BLOCKED by \(tempUser.uid)")
-            tempUser.isBlocked = true
+            tempUser.isBlockedByUser = true
             completion(tempUser)
         }
         

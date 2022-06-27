@@ -192,6 +192,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         NotificationCenter.default.addObserver(self, selector: #selector(didCreateNewList), name:TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshItems), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
 
         
         setupNavigationItems()

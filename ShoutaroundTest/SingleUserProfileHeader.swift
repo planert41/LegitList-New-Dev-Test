@@ -63,7 +63,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
             setupSocialLabels()
             setupUserStatus()
             setupUserInfo()
-            if self.listSummary.currentUserUid != user?.uid {
+            if self.listSummary.currentUserUid != user?.uid && !(user?.isBlocked ?? false) {
                 self.listSummary.currentUserUid = user?.uid
             }
             refreshListView()

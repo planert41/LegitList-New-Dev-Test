@@ -1534,7 +1534,7 @@ extension UIViewController {
     func extBlockUser(user:User){
         
         let name = user.username ?? ""
-        let isBlocked = user.isBlocked ?? false
+        let isBlocked = user.isBlockedByCurUser ?? false
         
         var titleText = isBlocked ? "Blocked User" : "Block User"
         var bodyText = isBlocked ? "Unblock User \(name)?" : "Block User \(name) and never see them again?"
@@ -1542,19 +1542,32 @@ extension UIViewController {
         let blockAlert = UIAlertController(title: titleText, message: bodyText, preferredStyle: UIAlertController.Style.alert)
         blockAlert.addAction(UIAlertAction(title: isBlocked ? "Unblock" : "Block", style: .default, handler: { (action: UIAlertAction!) in
             // Remove from Current View
-            self.dismiss(animated: true, completion: nil)
-            self.navigationController?.popToRootViewController(animated: true)
+
             if isBlocked {
-                Database.blockUser(user: user)
-            } else {
                 Database.unBlockUser(user: user)
+            } else {
+                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popToRootViewController(animated: true)
+                Database.blockUser(user: user)
             }
         }))
         
         blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             print("Handle Cancel Logic here")
         }))
-        present(blockAlert, animated: true, completion: nil)
+        
+        let gotBlockedAlert = UIAlertController(title: "Blocked User", message: "You have been blocked by the user", preferredStyle: UIAlertController.Style.alert)
+        
+        gotBlockedAlert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
+        if user.isBlockedByUser {
+            present(gotBlockedAlert, animated: true, completion: nil)
+        } else {
+            present(blockAlert, animated: true, completion: nil)
+        }
+        
     }
     
     func extReportUser(user:User){
