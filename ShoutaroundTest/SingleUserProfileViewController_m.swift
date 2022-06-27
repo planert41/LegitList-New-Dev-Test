@@ -99,7 +99,7 @@ class SingleUserProfileViewController: UIViewController {
 //    }()
     
     let notificationLabel: UILabel = {
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 15, height: 15))
+        let label = UILabel(frame: CGRect(x: 15, y: 0, width: 15, height: 15))
         label.layer.borderColor = UIColor.clear.cgColor
         label.layer.borderWidth = 0
         label.layer.cornerRadius = label.bounds.size.height / 2

@@ -1385,11 +1385,53 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 self.signUpButton.isEnabled = true
                 self.signUpButton.backgroundColor = UIColor.ianBlueColor()
                 print("SignupController | Appld UID: \(appleUid)")
+                self.isAppleSignUp = true
+            } else {
+                self.isAppleSignUp = false
             }
         }
     }
     
+    var isAppleSignUp: Bool = false {
+        didSet {
+            self.setupInputFields()
+        }
+    }
+    
+    let appleSignUpDetails: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.clear
+        label.font = UIFont(font: .avenirBlack, size: 30)
+//        label.font = UIFont(name: "Poppins-Regular", size: 14)
+        label.text = "User Fields populated with Apple ID info. Please insert a user photo and current city. "
+        label.textColor = UIColor.darkGray
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.textAlignment = .center
+        return label
+    }()
+    
+    func enableAppleSignUpMode() {
+        if (appleUid?.count ?? 0) > 0 {
+            self.emailTextField.isEnabled = false
+            self.usernameTextField.isEnabled = false
+            self.passwordTextField.isEnabled = false
+//            print("SignupController | Appld UID: \(appleUid)")
+            setupInputFields()
+            self.signUpButton.isEnabled = true
+            self.signUpButton.backgroundColor = UIColor.ianBlueColor()
+        }
+    }
+    
+    func presentAppleSignUpDetail() {
+        self.alert(title: "Apple ID Sign Up", message: "New User details are populated with your Apple ID data. Add a user photo and location to continue")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
+        if isAppleSignUp {
+            self.presentAppleSignUpDetail()
+        }
 //        if (appleUid?.count ?? 0) > 0 {
 //            self.signUpButton.isEnabled = true
 //            self.signUpButton.backgroundColor = UIColor.ianBlueColor()
@@ -1619,9 +1661,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     var stackView = UIStackView()
 
     
-    fileprivate func setupInputFields()
-    {
-
+    func formatInputFields() {
         emailTextField.delegate = self
         usernameTextField.delegate = self
         passwordTextField.delegate = self
@@ -1633,24 +1673,40 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         passwordTextField.autocapitalizationType = UITextAutocapitalizationType.none
         userCityTextField.autocapitalizationType = UITextAutocapitalizationType.none
         confirmPasswordTextField.autocapitalizationType = UITextAutocapitalizationType.none
-
+        
         if self.editUserInd {
             signUpButton.setTitle("Confirm User Edits", for: .normal)
             signUpButton.addTarget(self, action: #selector(confirmEdit), for: .touchUpInside)
             self.alreadyHaveAccountButton.isHidden = true
-        } else {
+        } else if self.isAppleSignUp {
+            signUpButton.setTitle("Continue", for: .normal)
+            self.emailTextField.isEnabled = false
+            self.usernameTextField.isEnabled = false
+            self.passwordTextField.isEnabled = false
+            print("SignupController | Appld UID: \(appleUid)")
+        }
+        else {
             signUpButton.setTitle("Sign Up", for: .normal)
             signUpButton.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
             self.alreadyHaveAccountButton.isHidden = false
         }
         self.signUpButton.isEnabled = testUserSignUp
+        self.emailTextField.backgroundColor = isAppleSignUp ? UIColor.clear : UIColor.white
+        self.passwordTextField.backgroundColor = isAppleSignUp ? UIColor.clear : UIColor.white
+        self.usernameTextField.backgroundColor = isAppleSignUp ? UIColor.clear : UIColor.white
         
+        self.handleTextInputChange()
+    }
+    
+    fileprivate func setupInputFields()
+    {
 //        if self.editUserInd {
 //            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, updatePasswordButton, userCityTextField, signUpButton, cancelButton])
 //        } else {
 ////            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, confirmPasswordTextField, signUpButton])
 //            stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, userCityTextField, signUpButton])
 //        }
+        self.formatInputFields()
         
         stackView = UIStackView(arrangedSubviews: [emailTextField, usernameTextField, passwordTextField, userCityTextField, signUpButton])
 
