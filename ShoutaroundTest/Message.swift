@@ -29,7 +29,8 @@ class MessageThread {
     var lastMessageDate: Date = Date.distantPast
     var isRead: Bool = false
     var userArray: [String: User] = [:]
-    
+    var isHidden: Bool = false
+
     func checkRead() {
         if self.messages.count > 0 {
             if self.messages.sorted(by: { (m1, m2) -> Bool in
@@ -86,6 +87,7 @@ class MessageThread {
                 
             }
         }
+        self.isHidden = CurrentUser.blockedMessages[threadID] != nil
 //        print("input Message Dic: ", messageDictionaries)
     }
 }

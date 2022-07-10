@@ -62,7 +62,7 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
         }()
         
         
-        lazy var navShareButton: UIButton = {
+        lazy var navMessageButton: UIButton = {
             let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
     //        let icon = #imageLiteral(resourceName: "share").withRenderingMode(.alwaysTemplate)
             let icon = #imageLiteral(resourceName: "editPencil").withRenderingMode(.alwaysTemplate)
@@ -80,6 +80,30 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
             button.titleLabel?.font = UIFont.systemFont(ofSize: 8)
             return button
         }()
+    
+    let newMsgButton: UIButton = {
+        let button = UIButton(type: .system)
+        let icon = #imageLiteral(resourceName: "editPencil").withRenderingMode(.alwaysTemplate)
+        button.setImage(icon, for: .normal)
+//        button.setImage(#imageLiteral(resourceName: "search_selected").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.contentMode = .scaleAspectFill
+        button.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+
+        button.backgroundColor = UIColor.ianLegitColor()
+        button.addTarget(self, action: #selector(newMessage), for: .touchUpInside)
+        button.setTitle(" Message", for: .normal)
+        button.tintColor = UIColor.ianWhiteColor()
+        button.backgroundColor = UIColor.mainBlue()
+        button.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+        button.layer.cornerRadius = 10
+        button.layer.masksToBounds = true
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.mainBlue().cgColor
+        button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 14)
+        button.setTitleColor(UIColor.white, for: .normal)
+        
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -143,14 +167,18 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
         
 //        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "NEW", style: .plain, target: self, action: #selector(newMessgae))
 
-        navShareButton.addTarget(self, action: #selector(newMessage), for: .touchUpInside)
-        let newBarButton = UIBarButtonItem.init(customView: navShareButton)
+        navMessageButton.addTarget(self, action: #selector(newMessage), for: .touchUpInside)
+        let newBarButton = UIBarButtonItem.init(customView: navMessageButton)
         self.navigationItem.rightBarButtonItem = newBarButton
         
         
         navBackButton.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
         let backBarButton = UIBarButtonItem.init(customView: navBackButton)
         self.navigationItem.leftBarButtonItem = backBarButton
+        
+        view.addSubview(newMsgButton)
+        newMsgButton.anchor(top: nil, left: nil, bottom: bottomLayoutGuide.topAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 20, paddingBottom: 10, paddingRight: 15, width: 120, height: 40)
+        newMsgButton.sizeToFit()
 
     }
     
@@ -182,7 +210,10 @@ class InboxController: UICollectionViewController,UICollectionViewDelegateFlowLa
         guard let currentUserUID = Auth.auth().currentUser?.uid else {return}
         
         Database.fetchMessageThreadsForUID(userUID: currentUserUID) { (messageThreads) in
-            self.messageThreads = messageThreads
+            self.messageThreads = messageThreads.filter { thread in
+                return CurrentUser.blockedMessages[thread.threadID] == nil
+            }
+            
             self.collectionView.refreshControl?.endRefreshing()
             self.collectionView?.reloadData()
         }

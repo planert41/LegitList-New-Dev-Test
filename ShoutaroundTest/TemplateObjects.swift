@@ -298,23 +298,33 @@ class TemplateObjects {
     class NavNotificationButton: UIButton {
         
         override init(frame: CGRect) {
-            super.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-            let iconImage = #imageLiteral(resourceName: "alert").withRenderingMode(.alwaysTemplate)
-            self.setImage(iconImage, for: .normal)
-            self.imageView?.contentMode = .scaleAspectFit
+//            super.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+//            let iconImage = #imageLiteral(resourceName: "alert").withRenderingMode(.alwaysTemplate)
+//            self.setImage(iconImage, for: .normal)
+//            self.imageView?.contentMode = .scaleAspectFit
+//
+//            self.tintColor = UIColor.ianLegitColor()
+//
+//            self.setTitleColor(UIColor.darkLegitColor(), for: .normal)
+//            self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+//            self.setTitle("", for: .normal)
+//            self.contentHorizontalAlignment = .center
+//            self.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+//            
+//            self.layer.borderColor = UIColor.ianBlackColor().cgColor
+//            self.layer.borderWidth = 0
+//            self.layer.cornerRadius = 1
+//            self.clipsToBounds = true
             
-            self.tintColor = UIColor.ianLegitColor()
-            
-            self.setTitleColor(UIColor.darkLegitColor(), for: .normal)
-            self.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
+            super.init(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+            self.setImage(#imageLiteral(resourceName: "alert").withRenderingMode(.alwaysTemplate), for: .normal)
+            self.tintColor = UIColor.darkGray
             self.setTitle("", for: .normal)
-            self.contentHorizontalAlignment = .center
-            self.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
-            
-            self.layer.borderColor = UIColor.ianBlackColor().cgColor
+            self.layer.backgroundColor = UIColor.clear.cgColor
+            self.layer.borderColor = UIColor.gray.cgColor
             self.layer.borderWidth = 0
-            self.layer.cornerRadius = 1
-            self.clipsToBounds = true
+            self.layer.cornerRadius = 40/2
+            self.titleLabel?.textColor = UIColor.ianLegitColor()
         }
         
         required init?(coder aDecoder: NSCoder) {

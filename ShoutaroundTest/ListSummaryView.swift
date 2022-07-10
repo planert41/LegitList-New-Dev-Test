@@ -234,8 +234,9 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
 //        self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .left, animated: true)
 //    }
     
-    @objc func newlistCreated(_ notification: NSNotification) {
+    @objc func listUpdated(_ notification: NSNotification) {
 
+    // NEW LIST CREATED
          if let listId = notification.userInfo?["newListID"] as? String {
             var tempList = CurrentUser.lists.first { (list) -> Bool in
                 return list.id == listId
@@ -250,11 +251,20 @@ class ListSummaryView: UIView, UICollectionViewDelegate, UICollectionViewDataSou
     //        self.displayList.insert(newList, at: 1)
 
          }
+        
+        // UPDATED LIST FOR SORTING
+        else if let listId = notification.userInfo?["updatedListID"] as? String {
+            if let row = self.userLists.firstIndex(where: {$0.id == listId}) {
+                let tempList = self.userLists[row]
+                tempList.latestNotificationTime = Date()
+                self.sortLists()
+            }
+          }
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        NotificationCenter.default.addObserver(self, selector: #selector(newlistCreated(_:)), name: TabListViewController.refreshListNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(listUpdated(_:)), name: TabListViewController.refreshListNotificationName, object: nil)
 
         let cell = UIView()
         addSubview(cell)

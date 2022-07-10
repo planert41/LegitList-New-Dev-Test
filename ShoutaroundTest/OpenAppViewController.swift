@@ -7,6 +7,14 @@
 //
 
 import UIKit
+import FirebaseDatabase
+import FirebaseAuth
+import FirebaseStorage
+import AuthenticationServices
+import SVProgressHUD
+import CryptoKit
+import JWTDecode
+
 
 class OpenAppViewController: UIViewController, UIScrollViewDelegate {
 
@@ -143,6 +151,20 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     var moveInd: Bool = true
     var imgTimer: Timer?
     
+    @available(iOS 13.0, *)
+    lazy var appleLogInButton : ASAuthorizationAppleIDButton = {
+        let button = ASAuthorizationAppleIDButton()
+        button.addTarget(self, action: #selector(handleAppleIdRequest), for: .touchUpInside)
+        button.layer.cornerRadius = 20
+        button.layer.masksToBounds = true
+        return button
+    }()
+    
+    var appleEmail: String?
+    var appleUid: String?
+    var appleUsername: String?
+    var appleCred: ASAuthorizationAppleIDCredential?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.modalPresentationStyle = .fullScreen
@@ -172,8 +194,15 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         findOutMoreButton.addTarget(self, action: #selector(extShowOnboarding), for: .touchUpInside)
 //        findOutMoreButton.isHidden = true
         
+        infoView.addSubview(appleLogInButton)
+        appleLogInButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 70, paddingRight: 50, width: 0, height: 50)
+        appleLogInButton.isUserInteractionEnabled = true
+        
+//        appleLogInButton.addTarget(self, action: #selector(handleAppleIdRequest), for: .touchDown)
+        
+        
         infoView.addSubview(signUpButton)
-        signUpButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 70, paddingRight: 50, width: 0, height: 50)
+        signUpButton.anchor(top: nil, left: infoView.leftAnchor, bottom: appleLogInButton.topAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 8, paddingRight: 50, width: 0, height: 50)
         signUpButton.addTarget(self, action: #selector(tapSignup), for: .touchUpInside)
         
         infoView.addSubview(loginButton)
@@ -333,7 +362,49 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         self.navigationController?.pushViewController(signUp, animated: true)
 //        self.extShowSignUp()()
     }
+    
+    func successfulLogin() {
+        SVProgressHUD.show(withStatus: "Logging in")
 
+        self.dismiss(animated: true) {
+        }
+        
+        guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
+
+        print("Sucessful Logging in | LoginViewController | New Sign In | Load Current User")
+        mainTabBarController.checkForCurrentUser()
+        mainTabBarController.selectedIndex = 0
+
+    }
+
+    
+    @objc func handleAppleIdRequest() {
+        print("handleAppleIdRequest")
+        if #available(iOS 13.0, *) {
+//            let appleIDProvider = ASAuthorizationAppleIDProvider()
+//            let request = appleIDProvider.createRequest()
+//            request.requestedScopes = [.fullName, .email]
+//            let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+//            authorizationController.delegate = self
+//            authorizationController.performRequests()
+            
+            let nonce = SharedFunctions.randomNonceString()
+            currentNonce = nonce
+            let appleIDProvider = ASAuthorizationAppleIDProvider()
+            let request = appleIDProvider.createRequest()
+            request.requestedScopes = [.fullName, .email]
+            request.nonce = SharedFunctions.sha256(nonce)
+
+            let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+            authorizationController.delegate = self
+            authorizationController.presentationContextProvider = self
+            authorizationController.performRequests()
+
+        }
+    }
+    
+    
+    
     /*
     // MARK: - Navigation
 
@@ -344,4 +415,145 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
     }
     */
 
+}
+
+extension OpenAppViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+
+    
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+    
+    @available(iOS 13, *)
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+      if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+        
+        // Save authorised user ID for future reference
+        UserDefaults.standard.set(appleIDCredential.user, forKey: "appleAuthorizedUserIdKey")
+
+        guard let nonce = currentNonce else {
+          fatalError("Invalid state: A login callback was received, but no login request was sent.")
+        }
+        guard let appleIDToken = appleIDCredential.identityToken else {
+          print("Unable to fetch identity token")
+          return
+        }
+        guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+          print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+          return
+        }
+
+          self.appleCred = appleIDCredential
+          self.appleEmail = appleIDCredential.email
+          self.appleUsername = appleIDCredential.fullName?.givenName?.removingWhitespaces()
+          
+          if self.appleEmail == nil || self.appleUsername == nil {
+              if let identityTokenData = appleIDCredential.identityToken,
+              let identityTokenString = String(data: identityTokenData, encoding: .utf8) {
+              print("Identity Token \(identityTokenString)")
+                  do {
+                     let jwt = try decode(jwt: identityTokenString)
+                     let decodedBody = jwt.body as Dictionary<String, Any>
+                      if let email = (decodedBody["email"]) as? String {
+                          self.appleEmail = email
+                      }
+                     print(decodedBody)
+                     print("Decoded email: "+(decodedBody["email"] as? String ?? "n/a")   )
+                  } catch {
+                     print("decoding failed")
+                  }
+              }
+          }
+
+          
+        
+        // Initialize a Firebase credential.
+        let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                  idToken: idTokenString,
+                                                  rawNonce: nonce)
+//        print("ID TOKEN ", idTokenString)
+        // Sign in with Firebase.
+        Auth.auth().signIn(with: credential) { (authResult, error) in
+            if let error = error {
+            // Error. If error.code == .MissingOrInvalidNonce, make sure
+            // you're sending the SHA256-hashed nonce as a hex string with
+            // your request to Apple.
+            print(error.localizedDescription)
+                self.alert(title: "Apple Sign In Error", message: error.localizedDescription)
+            return
+          }
+          
+            guard let newUid = Auth.auth().currentUser?.uid else {return}
+            print("Apple Sign In SUCCESS : \(newUid) | \(self.appleEmail) | \(self.appleUsername)")
+            self.appleUid = newUid
+            self.checkUserUid(uid: newUid)
+            
+            
+
+            // User is signed in to Firebase with Apple.
+          // ...
+            // Make a request to set user's display name on Firebase
+//            let changeRequest = authResult?.user.createProfileChangeRequest()
+//            changeRequest?.displayName = appleIDCredential.fullName?.givenName
+//            changeRequest?.commitChanges(completion: { (error) in
+//
+//                if let error = error {
+//                    print(error.localizedDescription)
+//                } else {
+//                    print("Updated display name: \(Auth.auth().currentUser!.displayName!)")
+//                }
+//            })
+        }
+      }
+    }
+    
+    func checkUserUid(uid: String?) {
+        // Check if current logged in user uid actually exists in database
+        guard let userUid = Auth.auth().currentUser?.uid else {return}
+        
+        let ref = Database.database().reference().child("users").child(userUid)
+        ref.observeSingleEvent(of: .value, with: { (snapshot) in
+          
+            guard let userDictionary = snapshot.value as? [String:Any] else {
+                print("LoginController | User Doesn't Exist | Create New User")
+                self.showAppleSignUp()
+                return}
+            
+            
+            let user = User(uid:userUid, dictionary: userDictionary)
+            Database.loadCurrentUser(inputUser: user, completion: {
+                print("User \(userUid) Exists - Successful Login")
+                self.successfulLogin()
+            })
+        }){ (err) in print("Error Search User", err) }
+        
+    }
+    
+    func showAppleSignUp() {
+        let signUpController = SignUpController()
+        signUpController.appleUid = self.appleUid
+        signUpController.appleCredentials = self.appleCred
+        signUpController.appleEmail = self.appleEmail
+        signUpController.appleUsername = self.appleUsername
+        signUpController.emailTextField.text = self.appleEmail
+        signUpController.usernameTextField.text = "@" + (self.appleUsername ?? "")
+        signUpController.passwordTextField.text = "password"
+        signUpController.passwordTextField.isHidden = true
+        signUpController.handleTextInputChange()
+        print("showAppleSignUp | \(self.appleEmail) | \(self.appleUsername)")
+        self.navigationController?.pushViewController(signUpController, animated: true)
+    }
+    
+    
+    
+    
+
+    @available(iOS 13, *)
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+      // Handle error.
+      print("Sign in with Apple errored: \(error)")
+    }
+    
+
+    
 }

@@ -136,6 +136,51 @@ class InboxMessageViewController: UICollectionViewController, UICollectionViewDe
     }()
     var profileImageSize: CGFloat = 35
 
+    let deleteButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 25, height: 25))
+        button.setImage(#imageLiteral(resourceName: "delete"), for: .normal)
+        //        button.layer.cornerRadius = button.frame.width/2
+        button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(openDeleteMsg), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.clear.cgColor
+        button.layer.borderColor = UIColor.gray.cgColor
+        button.layer.borderWidth = 0
+        return button
+    }()
+    
+    @objc func openDeleteMsg() {
+        
+        print("Delete Msg Button Pressed")
+        let optionsAlert = UIAlertController(title: "Hide Message?", message: "Hide This Inbox Message?", preferredStyle: UIAlertController.Style.alert)
+        
+        
+        optionsAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.hideCurrentMessage()
+        }))
+
+     
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
+        present(optionsAlert, animated: true) {
+            optionsAlert.view.superview?.isUserInteractionEnabled = true
+            optionsAlert.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(self.alertClose(gesture:))))
+        }
+    }
+    
+    func hideCurrentMessage() {
+        guard let thread = messageThread else {return}
+        CurrentUser.blockedMessages[thread.threadID] = Date()
+        Database.blockMessage(messageThread: thread)
+        self.handleBack()
+        print("DISMISS - Hide current message \(thread.threadID)")
+
+    }
+    
+    
+    
     var displayUser: User? {
         didSet {
             self.loadDisplayUser()
@@ -352,6 +397,9 @@ class InboxMessageViewController: UICollectionViewController, UICollectionViewDe
         let backBarButton = UIBarButtonItem.init(customView: navBackButton)
         self.navigationItem.leftBarButtonItem = backBarButton
         
+        let deleteNavButton = UIBarButtonItem.init(customView: deleteButton)
+        self.navigationItem.rightBarButtonItem = deleteNavButton
+
         self.navigationController?.navigationBar.tintColor = UIColor.ianLegitColor()
         self.navigationController?.navigationBar.barTintColor = UIColor.white
         self.navigationController?.navigationBar.backgroundColor = UIColor.clear

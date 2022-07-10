@@ -16,6 +16,7 @@ import FacebookLogin
 import SVProgressHUD
 import AuthenticationServices
 import CryptoKit
+import JWTDecode
 
 
 protocol LoginControllerDelegate {
@@ -348,7 +349,8 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
     var appleEmail: String?
     var appleUid: String?
     var appleUsername: String?
-    
+    var appleCred: ASAuthorizationAppleIDCredential?
+
     let backButton: UIButton = {
         let button = UIButton(type: .system)
         let attributedTitle = NSMutableAttributedString()
@@ -804,8 +806,6 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
         fbLoginButton.delegate = self
     }
     
-    fileprivate var currentNonce: String?
-
     
     @objc func handleAppleIdRequest() {
         print("handleAppleIdRequest")
@@ -817,12 +817,12 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
 //            authorizationController.delegate = self
 //            authorizationController.performRequests()
             
-            let nonce = randomNonceString()
+            let nonce = SharedFunctions.randomNonceString()
             currentNonce = nonce
             let appleIDProvider = ASAuthorizationAppleIDProvider()
             let request = appleIDProvider.createRequest()
             request.requestedScopes = [.fullName, .email]
-            request.nonce = sha256(nonce)
+            request.nonce = SharedFunctions.sha256(nonce)
 
             let authorizationController = ASAuthorizationController(authorizationRequests: [request])
             authorizationController.delegate = self
@@ -857,6 +857,10 @@ extension LoginController: ASAuthorizationControllerDelegate, ASAuthorizationCon
         return self.view.window!
     }
     
+    func checkAppleIdentity() {
+        
+    }
+    
     @available(iOS 13, *)
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
       if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
@@ -876,7 +880,29 @@ extension LoginController: ASAuthorizationControllerDelegate, ASAuthorizationCon
           return
         }
 
-        
+          self.appleCred = appleIDCredential
+          self.appleEmail = appleIDCredential.email
+          self.appleUsername = appleIDCredential.fullName?.givenName?.removingWhitespaces()
+          
+          if self.appleEmail == nil || self.appleUsername == nil {
+              if let identityTokenData = appleIDCredential.identityToken,
+              let identityTokenString = String(data: identityTokenData, encoding: .utf8) {
+              print("Identity Token \(identityTokenString)")
+                  do {
+                     let jwt = try decode(jwt: identityTokenString)
+                     let decodedBody = jwt.body as Dictionary<String, Any>
+                      if let email = (decodedBody["email"]) as? String {
+                          self.appleEmail = email
+                      }
+                     print(decodedBody)
+                     print("Decoded email: "+(decodedBody["email"] as? String ?? "n/a")   )
+                  } catch {
+                     print("decoding failed")
+                  }
+              }
+          }
+
+          
         
         // Initialize a Firebase credential.
         let credential = OAuthProvider.credential(withProviderID: "apple.com",
@@ -895,12 +921,8 @@ extension LoginController: ASAuthorizationControllerDelegate, ASAuthorizationCon
           }
           
             guard let newUid = Auth.auth().currentUser?.uid else {return}
-            print("Apple Sign In SUCCESS : \(newUid)")
-            
-            self.appleEmail = appleIDCredential.email
-            self.appleUsername = appleIDCredential.fullName?.givenName?.removingWhitespaces()
+            print("Apple Sign In SUCCESS : \(newUid) | \(self.appleEmail) | \(self.appleUsername)")
             self.appleUid = newUid
-            
             self.checkUserUid(uid: newUid)
             
             
@@ -947,11 +969,15 @@ extension LoginController: ASAuthorizationControllerDelegate, ASAuthorizationCon
     func showAppleSignUp() {
         let signUpController = SignUpController()
         signUpController.appleUid = self.appleUid
+        signUpController.appleCredentials = self.appleCred
+        signUpController.appleEmail = self.appleEmail
+        signUpController.appleUsername = self.appleUsername
         signUpController.emailTextField.text = self.appleEmail
         signUpController.usernameTextField.text = "@" + (self.appleUsername ?? "")
         signUpController.passwordTextField.text = "password"
         signUpController.passwordTextField.isHidden = true
-        signUpController.handleTextInputChange()        
+        signUpController.handleTextInputChange()
+        print("showAppleSignUp | \(self.appleEmail) | \(self.appleUsername)")
         self.navigationController?.pushViewController(signUpController, animated: true)
     }
     
@@ -965,51 +991,6 @@ extension LoginController: ASAuthorizationControllerDelegate, ASAuthorizationCon
       print("Sign in with Apple errored: \(error)")
     }
     
-    
-    
-    @available(iOS 13, *)
-    private func sha256(_ input: String) -> String {
-          let inputData = Data(input.utf8)
-          let hashedData = SHA256.hash(data: inputData)
-          let hashString = hashedData.compactMap {
-            return String(format: "%02x", $0)
-          }.joined()
-
-          return hashString
-    }
-    
-
-    private func randomNonceString(length: Int = 32) -> String {
-      precondition(length > 0)
-      let charset: Array<Character> =
-          Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
-      var result = ""
-      var remainingLength = length
-
-      while remainingLength > 0 {
-        let randoms: [UInt8] = (0 ..< 16).map { _ in
-          var random: UInt8 = 0
-          let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
-          if errorCode != errSecSuccess {
-            fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
-          }
-          return random
-        }
-
-        randoms.forEach { random in
-          if remainingLength == 0 {
-            return
-          }
-
-          if random < charset.count {
-            result.append(charset[Int(random)])
-            remainingLength -= 1
-          }
-        }
-      }
-
-      return result
-    }
 }
 
 // Helper function inserted by Swift 4.2 migrator.

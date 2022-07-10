@@ -2435,10 +2435,6 @@ class UploadPhotoListControllerMore: UIViewController, UICollectionViewDelegate,
                 self.navigationItem.rightBarButtonItem?.isEnabled = true
                 self.currentUploadingPostCheck = nil
                 print("savePostToDatabase | Complete | Share Button ENABLED")
-                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
                 
             })
         }

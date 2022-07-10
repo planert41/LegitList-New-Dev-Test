@@ -37,6 +37,7 @@ pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git
 pod 'Smile'
 pod 'Kingfisher', '~> 5.0'
 pod 'RevenueCat'
+pod 'JWTDecode', '~> 2.6'
 end
 
 post_install do |installer|

@@ -533,7 +533,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
         actionStackView.backgroundColor = UIColor.clear
         
         messageInboxButton.addSubview(inboxCountLabel)
-        inboxCountLabel.anchor(top: nil, left: nil, bottom: nil, right: messageInboxButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 40, width: 15, height: 15)
+        inboxCountLabel.anchor(top: nil, left: nil, bottom: nil, right: messageInboxButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 50, width: 15, height: 15)
         inboxCountLabel.centerYAnchor.constraint(equalTo: messageInboxButton.centerYAnchor).isActive = true
 
         setupActionButtons()
@@ -1284,7 +1284,7 @@ extension SingleUserProfileHeader {
     
     fileprivate func setupFollowStyle(){
         
-        print("setupFollowStyle | Following: \(self.user?.isFollowing)")
+//        print("setupFollowStyle | Following: \(self.user?.isFollowing)")
         if Auth.auth().currentUser?.uid == user?.uid {
             // Edit Profile
             editProfileFollowButton.setTitle("Options", for: .normal)
@@ -1292,10 +1292,16 @@ extension SingleUserProfileHeader {
             editProfileFollowButton.backgroundColor = UIColor.mainBlue()
             editProfileFollowButton.layer.borderColor = UIColor.clear.cgColor
             
+            var unreadMessage = CurrentUser.unreadMessageCount > 0
+            var msgColor = unreadMessage ? UIColor.ianLegitColor() : UIColor.ianBlackColor()
+            var msgText = unreadMessage ? "Inbox (\(CurrentUser.unreadMessageCount))" : "Inbox"
+
             messageInboxButton.setTitle("Inbox", for: .normal)
-            messageInboxButton.setTitleColor(UIColor.ianBlackColor(), for: .normal)
+            messageInboxButton.setTitleColor(msgColor, for: .normal)
             messageInboxButton.backgroundColor = UIColor.ianWhiteColor()
-            messageInboxButton.layer.borderColor = UIColor.ianBlackColor().cgColor
+            messageInboxButton.layer.borderColor = msgColor.cgColor
+            
+
             
             if CurrentUser.unreadMessageCount > 0 {
                 inboxCountLabel.text = String(CurrentUser.unreadMessageCount)

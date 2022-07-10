@@ -57,6 +57,7 @@ struct User {
     var blockedPosts: [String: Date] = [:]
     var blockedUsers: [String: Date] = [:]
     var blockedByUsers: [String: Date] = [:]
+    var blockedMessages: [String: Date] = [:]
     var reportedFlag: Bool = false
     var isPrivate: Bool = false
     var isBlocked: Bool = false
@@ -95,20 +96,30 @@ struct User {
         
         let blockPosts = dictionary["blockPost"] as? [String:Any] ?? [:]
         for (postid, blockDate) in blockPosts {
-            let blockDate = blockDate as? Double ?? 0
-            self.blockedPosts[postid] = Date(timeIntervalSince1970: blockDate)
+            if let blockDate = blockDate as? Double {
+                self.blockedPosts[postid] = Date(timeIntervalSince1970: blockDate)
+            }
         }
         
         let blockUsers = dictionary["blockUser"] as? [String:Any] ?? [:]
         for (blockuid, blockDate) in blockUsers {
-            let blockDate = blockDate as? Double ?? 0
-            self.blockedUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
+            if let blockDate = blockDate as? Double {
+                self.blockedUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
+            }
         }
         
         let blockByUsers = dictionary["blockByUser"] as? [String:Any] ?? [:]
         for (blockuid, blockDate) in blockByUsers {
-            let blockDate = blockDate as? Double ?? 0
-            self.blockedByUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
+            if let blockDate = blockDate as? Double {
+                self.blockedByUsers[blockuid] = Date(timeIntervalSince1970: blockDate)
+            }
+        }
+        
+        let blockMessages = dictionary["blockMessage"] as? [String:Any] ?? [:]
+        for (blockuid, blockDate) in blockMessages {
+            if let blockDate = blockDate as? Double {
+                self.blockedMessages[blockuid] = Date(timeIntervalSince1970: blockDate)
+            }
         }
         
         let social = dictionary["social"] as? [String:Int] ?? [:]
@@ -327,15 +338,24 @@ struct CurrentUser {
     static var blockedPosts:[String: Date] = [:]
     static var blockedUsers:[String: Date] = [:]
     static var blockedByUsers:[String: Date] = [:]
+    static var blockedMessages:[String: Date] = [:] {
+        didSet {
+            self.refreshInbox()
+        }
+    }
 
     // Inbox
     static var inboxThreads: [MessageThread] = [] {
         didSet{
-            self.unreadMessageCount = inboxThreads.filter({ (thread) -> Bool in
-                return !thread.isRead
-            }).count
-            print("UNREAD MESSAGE COUNT: \(self.unreadMessageCount)")
+            self.refreshInbox()
         }
+    }
+    
+    static func refreshInbox() {
+        self.unreadMessageCount = inboxThreads.filter({ (thread) -> Bool in
+            return !thread.isRead && CurrentUser.blockedMessages[thread.threadID] == nil
+        }).count
+        print("refreshInbox | UNREAD MESSAGE COUNT: \(self.unreadMessageCount)")
     }
     
     
@@ -359,6 +379,7 @@ struct CurrentUser {
                 self.blockedPosts = user?.blockedPosts ?? [:]
                 self.blockedUsers = user?.blockedUsers ?? [:]
                 self.blockedByUsers = user?.blockedByUsers ?? [:]
+                self.blockedMessages = user?.blockedMessages ?? [:]
                 self.checkAPNToken()
             } else {
                 self.username = nil
@@ -374,6 +395,7 @@ struct CurrentUser {
                 self.blockedPosts = [:]
                 self.blockedUsers = [:]
                 self.blockedByUsers = [:]
+                self.blockedMessages = [:]
             }
         }
     }

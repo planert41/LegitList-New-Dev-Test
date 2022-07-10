@@ -991,9 +991,9 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
                 self.currentUploadingPostCheck = nil
                 print("handleShareNewPost | Share Button ENABLED")
             })
-            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
         }
     }
     

@@ -1796,6 +1796,10 @@ extension Database{
                 
                 let postDict:[String: String] = ["updatedPostId": postId]
                 NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
+                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
                 
                 guard let newPost = newPost else {
                     completion()
@@ -4998,6 +5002,54 @@ extension Database{
         }
     }
     
+    static func blockMessage(messageThread: MessageThread) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let blockId = messageThread.threadID
+        print(" ! BLOCK Message | \(blockId)")
+
+        let createdDate = Date().timeIntervalSince1970
+        CurrentUser.blockedMessages[blockId] = Date()
+        
+//         Update Data in Blocking User
+        let userRef = Database.database().reference().child("users").child(uid).child("blockMessage")
+        let values = [blockId: createdDate] as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("Block Message ERROR: \(blockId), User: \(uid)", err)
+                return
+            }
+
+            userRef.keepSynced(true)
+            print("Block Message: SUCCESS: \(blockId), User: \(uid)")
+
+            NotificationCenter.default.post(name: InboxController.newMsgNotificationName, object: nil)
+        }
+    }
+    
+    static func unBlockMessage(messageThread: MessageThread) {
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        let blockId = messageThread.threadID
+        print(" ! UNBLOCK Message | \(blockId)")
+
+        let createdDate = Date().timeIntervalSince1970
+        CurrentUser.blockedMessages[blockId] = Date()
+        
+//         Update Data in Blocking User
+        let userRef = Database.database().reference().child("users").child(uid).child("blockMessage")
+        let values = [blockId: nil] as [String:Any]
+        userRef.updateChildValues(values) { (err, ref) in
+            if let err = err {
+                print("UNBlock Message ERROR: \(blockId), User: \(uid)", err)
+                return
+            }
+
+            userRef.keepSynced(true)
+            print("UNBlock Message: SUCCESS: \(blockId), User: \(uid)")
+
+            NotificationCenter.default.post(name: InboxController.newMsgNotificationName, object: nil)
+        }
+    }
+    
     static func reportUser(user: User, details: String) {
         let reportUid = user.uid
         print(" ! REPORT User | \(reportUid) | \(details)")
@@ -7447,9 +7499,10 @@ extension Database{
             ref.keepSynced(true)
 
             print("   ~ Database |  updateListWithPost_ADD | Success | \(tempList.name) - \(tempList.id) | \(tempList.listImageUrls.count) Small Images | \(tempList.postIds?.count) Posts")
-            NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
-
-
+            if let listId = list.id {
+                let updatedListID:[String: String] = ["updatedListID": listId]
+                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil, userInfo: updatedListID)
+            }
         }
         
         

@@ -190,6 +190,7 @@ PODS:
   - GTMSessionFetcher/Full (1.7.2):
     - GTMSessionFetcher/Core (= 1.7.2)
   - IQKeyboardManagerSwift (6.5.10)
+  - JWTDecode (2.6.3)
   - Kingfisher (5.15.8):
     - Kingfisher/Core (= 5.15.8)
   - Kingfisher/Core (5.15.8)
@@ -234,6 +235,7 @@ DEPENDENCIES:
   - GooglePlaces
   - GoogleSignIn
   - IQKeyboardManagerSwift
+  - JWTDecode (~> 2.6)
   - Kingfisher (~> 5.0)
   - mailgun (~> 1.0.3)
   - RevenueCat
@@ -278,6 +280,7 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - IQKeyboardManagerSwift
+    - JWTDecode
     - Kingfisher
     - leveldb-library
     - mailgun
@@ -343,6 +346,7 @@ SPEC CHECKSUMS:
   GTMAppAuth: 4d8f864896f3646f0c33baf38a28362f4c601e15
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   IQKeyboardManagerSwift: 52962c76ab33532f15ad9f3ff4e5715eda5335bb
+  JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
   Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   mailgun: 17290deea4db24050dd03ca59cd7385d508904b3
@@ -356,6 +360,6 @@ SPEC CHECKSUMS:
   TLPhotoPicker: 939c40eaad130b69f9571e61e021e8120fa76329
   UIFontComplete: 4c4c38468a23ad9426b0e748f0933eea1f8d7965
 
-PODFILE CHECKSUM: 86f667b04cbf40db61d9787622ad0f7d30f14a89
+PODFILE CHECKSUM: b57d3b77c95eb3f0fcecd3fe8f946d27742e1d75
 
 COCOAPODS: 1.11.3

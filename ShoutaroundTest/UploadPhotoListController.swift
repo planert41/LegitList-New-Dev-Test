@@ -1432,10 +1432,10 @@ class UploadPhotoListController: UIViewController, UICollectionViewDelegate, UIC
                 self.navigationItem.rightBarButtonItem?.isEnabled = true
                 self.currentUploadingPostCheck = nil
                 print("savePostToDatabase | Complete | Share Button ENABLED")
-                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
                 
             })
         }
@@ -1502,6 +1502,7 @@ class UploadPhotoListController: UIViewController, UICollectionViewDelegate, UIC
                     if CurrentUser.lists[listIndex].postIds![(self.uploadPost?.id)!] == nil {
                         CurrentUser.lists[listIndex].postIds![(self.uploadPost?.id)!] = listAddDate
                     }
+                    CurrentUser.lists[listIndex].latestNotificationTime = Date()
                 }
             }
             

@@ -317,7 +317,7 @@ class NewLegitHomeHeader: UICollectionViewCell {
         headerView.addSubview(notificationButton)
         notificationButton.anchor(top: nil, left: nil, bottom: nil, right: headerView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: 40, height: 40)
         notificationButton.centerYAnchor.constraint(equalTo: headerLabelView.centerYAnchor).isActive = true
-        notificationButton.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
+//        notificationButton.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
 
         refreshNotifications()
 

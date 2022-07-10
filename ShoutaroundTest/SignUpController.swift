@@ -14,6 +14,8 @@ import FBSDKLoginKit
 import IQKeyboardManagerSwift
 import SVProgressHUD
 import GooglePlaces
+import AuthenticationServices
+
 
 protocol SignUpControllerDelegate {
     func successSignUp()
@@ -354,7 +356,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     func locationSelected(name: String, loc: CLLocation?) {
         self.tempUserCityLoc = loc
         self.userCityTextField.text = name
-        self.checkUpdate()
+        self.handleTextInputChange()
         
         var userCity = self.userCityTextField.text
         var userCityLoc = self.tempUserCityLoc
@@ -971,20 +973,51 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         guard let username = usernameTemp, username.count > 1 else {return}
         guard let status = statusTextField.text else {return}
         
-        
-        SVProgressHUD.show(withStatus: "Creating User")
-        
+                
 //        if email.contains("test") {
 //            self.testSignUp()
 //            return
 //        }
+                
+        let SignUpAlert = UIAlertController(title: "Terms And Conditions", message:
+                                            """
+                                            You agree to Legit's Terms and Conditions, Privacy Policy and EULA if you sign up as a new user.
+                                            Thanks for keeping Legit a happy space.
+                                            """, preferredStyle: .alert)
+        
+        SignUpAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.finalizeSignup()
+        }))
 
+        SignUpAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            self.signUpButton.isEnabled = true
+            print("Handle Cancel Logic here")
+        }))
+        
+        present(SignUpAlert, animated: true) {
+
+        }
+    }
+    
+    func finalizeSignup() {
         if self.appleUid?.count ?? 0 > 0 {
             guard let appleUid = appleUid else {
                 print("SIGN UP ERROR - NO APPLE UID")
                 return}
             self.processUser(userID: appleUid)
         } else {
+            guard let email = emailTextField.text, email.count > 6 else {
+                    self.alert(title: "Error", message: "Email Needs to be more than 6 letters")
+                    self.signUpButton.isEnabled = true
+                return}
+            guard let password = passwordTextField.text, password.count > 0 else {
+                    self.alert(title: "Error", message: "Password Needs to be more than 1 letter")
+                    self.signUpButton.isEnabled = true
+                return}
+            SVProgressHUD.show(withStatus: "Creating User")
+
+            
             Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
             
                 if let err = error {
@@ -1398,6 +1431,25 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         }
     }
     
+    var appleCredentials: ASAuthorizationAppleIDCredential?
+    var appleEmail: String? {
+        didSet {
+            if let _ = appleEmail {
+                self.emailTextField.text = self.appleEmail
+                self.formatInputFields()
+            }
+        }
+    }
+    
+    var appleUsername: String?{
+        didSet {
+            if let _ = appleUsername {
+                self.usernameTextField.text = "@" + (self.appleUsername ?? "")
+                self.formatInputFields()
+            }
+        }
+    }
+    
     let appleSignUpDetails: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -1413,7 +1465,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }()
     
     func enableAppleSignUpMode() {
-        if (appleUid?.count ?? 0) > 0 {
+        if isAppleSignUp {
             self.emailTextField.isEnabled = false
             self.usernameTextField.isEnabled = false
             self.passwordTextField.isEnabled = false
@@ -1425,7 +1477,30 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }
     
     func presentAppleSignUpDetail() {
-        self.alert(title: "Apple ID Sign Up", message: "New User details are populated with your Apple ID data. Add a user photo and location to continue")
+        var missingEmail = "Missing Apple ID Email: Please populate email adress"
+        var missingUsername = "Missing Apple ID Username: Please populate username"
+        if self.appleEmail != nil && self.appleUsername != nil {
+            var status = """
+            New User details are populated with your Apple ID data. Add a user photo and location to continue
+            """
+
+            SVProgressHUD.showSuccess(withStatus: status)
+            SVProgressHUD.dismiss(withDelay: 1.5)
+        } else if self.appleEmail == nil || self.appleUsername == nil {
+            var status = """
+            New User details are populated with your Apple ID data. Add a user photo and location to continue.
+            \((self.appleEmail == nil) ? missingEmail : "")
+            \((self.appleUsername == nil) ? missingUsername : "")
+            """
+            
+            let editAlert = UIAlertController(title: "New Apple User", message: status, preferredStyle: UIAlertController.Style.alert)
+            editAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+            }))
+            self.present(editAlert, animated: true)
+            
+        }
+
+//        self.alert(title: "Apple ID Sign Up", message: "New User details are populated with your Apple ID data. Add a user photo and location to continue")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -1467,12 +1542,30 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         return label
     }()
     
+    let legitEULALabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = UIColor.clear
+//        label.font = UIFont(font: .avenirBlack, size: 30)
+        label.font = UIFont(name: "Poppins-Regular", size: 14)
+        label.text = "End User License And Agreement"
+        label.textColor = UIColor.mainBlue()
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.textAlignment = .center
+        return label
+    }()
+    
     @objc func tapLegitTerms() {
         self.extOpenLegitTerms()
     }
     
     @objc func tapLegitPrivacy() {
         self.extOpenLegitPrivacy()
+    }
+    
+    @objc func tapLegitEULA() {
+        self.extOpenLegitEULA()
     }
     
     override func viewDidLoad() {
@@ -1534,6 +1627,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
         legitPrivacyLabel.sizeToFit()
         legitPrivacyLabel.isUserInteractionEnabled = true
         legitPrivacyLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapLegitPrivacy)))
+        
+        view.addSubview(legitEULALabel)
+        legitEULALabel.anchor(top: legitPrivacyLabel.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 3, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        legitEULALabel.sizeToFit()
+        legitEULALabel.isUserInteractionEnabled = true
+        legitEULALabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapLegitEULA)))
         
         setupBottomFields()
         
@@ -1680,10 +1779,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             self.alreadyHaveAccountButton.isHidden = true
         } else if self.isAppleSignUp {
             signUpButton.setTitle("Continue", for: .normal)
-            self.emailTextField.isEnabled = false
-            self.usernameTextField.isEnabled = false
+            signUpButton.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
+            self.alreadyHaveAccountButton.isHidden = false
+            self.emailTextField.isEnabled = self.appleEmail == nil
+            self.usernameTextField.isEnabled = self.appleUsername == nil
             self.passwordTextField.isEnabled = false
-            print("SignupController | Appld UID: \(appleUid)")
+            print("SignupController | Appld UID: \(appleUid) | \(self.appleEmail) | \(self.appleUsername)")
         }
         else {
             signUpButton.setTitle("Sign Up", for: .normal)
@@ -1691,9 +1792,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             self.alreadyHaveAccountButton.isHidden = false
         }
         self.signUpButton.isEnabled = testUserSignUp
-        self.emailTextField.backgroundColor = isAppleSignUp ? UIColor.clear : UIColor.white
+        self.emailTextField.backgroundColor = (isAppleSignUp && self.appleEmail != nil) ? UIColor.clear : UIColor.white
         self.passwordTextField.backgroundColor = isAppleSignUp ? UIColor.clear : UIColor.white
-        self.usernameTextField.backgroundColor = isAppleSignUp ? UIColor.clear : UIColor.white
+        self.usernameTextField.backgroundColor = (isAppleSignUp && self.appleUsername != nil) ? UIColor.clear : UIColor.white
         
         self.handleTextInputChange()
     }

@@ -1467,7 +1467,14 @@ extension UIViewController {
         guard let url = URL(string: "https://pages.flycricket.io/legit/privacy.html") else { return }
         UIApplication.shared.open(url)
     }
+    
+    func extOpenLegitEULA() {
+        guard let url = URL(string: "https://www.legitapp.co/post/legit-eula") else { return }
+        UIApplication.shared.open(url)
+    }
         
+    
+
     
     // BLOCK AND REPORTING
     
