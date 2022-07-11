@@ -1780,6 +1780,7 @@ extension Database{
                 uploadValues["imageUrls"] = imageUrls
                 newPost = Post.init(user: CurrentUser.user!, dictionary: uploadValues)
                 newPost?.id = postId
+                newPostId = PostId.init(id: postId, creatorUID: uid, sort: nil)
 //                print("New Post Temp Uploaded: ",newPost)
                 
                 
@@ -1794,12 +1795,12 @@ extension Database{
                     CurrentUser.posts[postId] = newPost
                 }
                 
-                let postDict:[String: String] = ["updatedPostId": postId]
-                NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
-                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
-                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
+                let userDataDict:[String: String] = ["uid": uid, "postId": postId]
+                NotificationCenter.default.post(name: MainTabBarController.newUserPost, object: nil, userInfo: userDataDict)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//                NotificationCenter.default.post(name: TabListViewController.refreshListNotificationName, object: nil)
                 
                 guard let newPost = newPost else {
                     completion()
@@ -2678,10 +2679,10 @@ extension Database{
         postCache[postId] = tempPost
         
         let postDict:[String: String] = ["updatedPostId": postId]
-        NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
-        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-        NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+        NotificationCenter.default.post(name: MainTabBarController.editUserPost, object: nil, userInfo: postDict)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
 
 //            NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
 //        let editPostId:[String: String] = ["editPostId": postId]
@@ -5326,11 +5327,12 @@ extension Database{
             })
         }
 
+        let postDict:[String: String] = ["updatedPostId": postId]
+        NotificationCenter.default.post(name: MainTabBarController.deleteUserPost, object: nil, userInfo: postDict)
         
-        
-        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
-        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-        NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateFeedNotificationName, object: nil)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
+//        NotificationCenter.default.post(name: SharePhotoListController.updateListFeedNotificationName, object: nil)
 //        NotificationCenter.default.post(name: AppDelegate.RefreshAllName, object: nil)
 
         
@@ -6811,7 +6813,7 @@ extension Database{
         // Replace Post Cache
         postCache[postId] = tempPost
         let postDict:[String: String] = ["updatedPostId": postId]
-        NotificationCenter.default.post(name: AppDelegate.refreshPostNotificationName, object: nil, userInfo: postDict)
+        NotificationCenter.default.post(name: MainTabBarController.editUserPost, object: nil, userInfo: postDict)
         
         completion(tempPost)
         
@@ -8740,12 +8742,12 @@ extension Database{
             if postId != nil {
                 notificationHeader = "A post has been reported"
                 if let commentText = commentText {
-                    notificationBody = "One of your post is now private because it's been reported more than 3 times."
+                    notificationBody = "One of your post will be set to private if flagged more than 3 times."
                 }
             } else {
                 notificationHeader = "Your profile has been flagged"
                 if let commentText = commentText {
-                    notificationBody = "Your profile has been set to private because it's been reported more than 3 times."
+                    notificationBody = "Your profile will be set to private if flagged more than 3 times."
                 }
             }
             

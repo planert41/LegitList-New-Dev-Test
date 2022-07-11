@@ -1584,6 +1584,11 @@ extension UIViewController {
             textField.placeholder = "Please enter more details"
         }
         
+        
+        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
         reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             // Remove from Current View
             self.dismiss(animated: true, completion: nil)
@@ -1592,10 +1597,7 @@ extension UIViewController {
 
             Database.reportUser(user: user, details: details)
         }))
-        
-        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
+
         present(reportAlert, animated: true, completion: nil)
     }
 //    

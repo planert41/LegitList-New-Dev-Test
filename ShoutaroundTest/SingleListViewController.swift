@@ -343,6 +343,7 @@ class SingleListViewController: UIViewController {
 //        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name:UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postDeleted(_:)), name: MainTabBarController.deleteUserPost, object: nil)
 
         self.edgesForExtendedLayout = UIRectEdge.top
         setupNavigationItems()
@@ -390,7 +391,7 @@ class SingleListViewController: UIViewController {
         
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: MainTabBarController.editUserPost, object: nil)
 //
 //        postSortFormatBar.delegate = self
 //        self.view.addSubview(postSortFormatBar)
@@ -441,6 +442,14 @@ class SingleListViewController: UIViewController {
 //        imageCollectionView.contentInset = contentInset
 //    }
     
+    
+    @objc func postDeleted(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        self.displayedPosts.removeAll(where: {$0.id == postId})
+        self.fetchedPosts.removeAll(where: {$0.id == postId})
+        self.currentDisplayList?.postIds?.removeValue(forKey: postId)
+        self.imageCollectionView.reloadData()
+    }
     
     func updateDetailLabel() {
 //        var postCount = self.displayedPosts.count

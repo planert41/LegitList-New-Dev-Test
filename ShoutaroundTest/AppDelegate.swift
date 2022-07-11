@@ -59,7 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let RefreshAllName = NSNotification.Name(rawValue: "RefreshAll")
     static let NewEmojiDic = NSNotification.Name(rawValue: "NewEmojiDic")
     static let ShowCityNotificationName = NSNotification.Name(rawValue: "ShowCity")
-    static let refreshPostNotificationName = NSNotification.Name(rawValue: "Refresh Post")
     static let RequestLocationNotificationName = NSNotification.Name(rawValue: "Request Location")
     static let LocationUpdatedNotificationName = NSNotification.Name(rawValue: "Location Updated")
     static let LocationDeniedNotificationName = NSNotification.Name(rawValue: "Location Denied")

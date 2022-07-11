@@ -257,10 +257,10 @@ class EventCell: UITableViewCell {
         self.eventTextView.attributedText = attributedText
         
         if event.eventAction == .reportPost {
-            let reportString = NSMutableAttributedString(string: "One of your post has been reported more than 3 times and set to private", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
+            let reportString = NSMutableAttributedString(string: "Your post will be set to private if reported more than 3 times", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
             self.eventTextView.attributedText = reportString
         } else if event.eventAction == .reportUser {
-            let reportString = NSMutableAttributedString(string: "Your profile has been reported more than 3 times and is set to private", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
+            let reportString = NSMutableAttributedString(string: "Your profile will be set to private if flagged more than 3 times", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.systemFont(ofSize: 13)]))
             self.eventTextView.attributedText = reportString
         }
         self.eventTextView.sizeToFit()

@@ -461,7 +461,7 @@ class NewTabMapViewController: UIViewController {
             detailLabel.sizeToFit()
             detailLabel.isHidden = false
         } else if let filteredList = self.filteredList {
-            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount)Posts in \(filteredList.name.capitalizingFirstLetter()) List"
+            detailLabel.text = "\(self.mapFilter.filterLegit ? "Top " : "" )\(postCount) Posts in \(filteredList.name.capitalizingFirstLetter()) List"
             detailLabel.sizeToFit()
             detailLabel.isHidden = false
         } else if self.mapFilter.filterLegit {
@@ -1032,7 +1032,8 @@ class NewTabMapViewController: UIViewController {
     func setupNotificationCenters(){
         
         // FUNCTIONS FOR NEW POSTS
-        NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateFeed), name: SharePhotoListController.updateFeedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: MainTabBarController.editUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
     }
@@ -1547,7 +1548,13 @@ class NewTabMapViewController: UIViewController {
     }
 
     
-    @objc func handleUpdateFeed() {
+    @objc func newUserPost(_ notification: NSNotification) {
+
+        let postId = (notification.userInfo?["postId"] ?? "")! as! String
+        let userId = (notification.userInfo?["uid"] ?? "")! as! String
+        
+        var tuserId: String! = userId
+        var tpostId: String! = postId
         
         // Check for new post that was edited or uploaded
         if newPost != nil && newPostId != nil {#imageLiteral(resourceName: "icons8-hash-30.png")
@@ -1565,6 +1572,16 @@ class NewTabMapViewController: UIViewController {
             self.handleRefresh()
         }
     }
+    
+    @objc func postEdited(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        Database.fetchPostWithPostID(postId: postId) { (post, error) in
+            if let post = post {
+                self.refreshPost(post: post)
+            }
+        }
+    }
+    
     
     func refreshWithoutMovingMap(){
         self.refreshAll()

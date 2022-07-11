@@ -56,20 +56,24 @@ class SingleUserProfileHeader: UICollectionViewCell {
     // USER
     var user: User? {
         didSet{
-            guard let profileImageUrl = user?.profileImageUrl else {return}
-            profileImageView.loadImage(urlString: profileImageUrl)
-//            checkUserFollowing()
-            setupActionButtons()
-            setupSocialLabels()
-            setupUserStatus()
-            setupUserInfo()
-            if self.listSummary.currentUserUid != user?.uid && !(user?.isBlocked ?? false) {
-                self.listSummary.currentUserUid = user?.uid
-            }
-            refreshListView()
-            self.addNewListButton.isHidden = !(user?.uid == Auth.auth().currentUser?.uid)
-            self.emojiSummary.displayUser = user
+            self.loadUser()
         }
+    }
+    
+    func loadUser() {
+        guard let profileImageUrl = user?.profileImageUrl else {return}
+        profileImageView.loadImage(urlString: profileImageUrl)
+//            checkUserFollowing()
+        setupActionButtons()
+        setupSocialLabels()
+        setupUserStatus()
+        setupUserInfo()
+        if self.listSummary.currentUserUid != user?.uid && !(user?.isBlocked ?? false) {
+            self.listSummary.currentUserUid = user?.uid
+        }
+        refreshListView()
+        self.addNewListButton.isHidden = !(user?.uid == Auth.auth().currentUser?.uid)
+        self.emojiSummary.displayUser = user
     }
 
 
@@ -757,6 +761,7 @@ class SingleUserProfileHeader: UICollectionViewCell {
 
     @objc func newListEventRefresh(){
         // SORT BY RECENT
+        self.loadUser()
         listSummary.sortListByPostCount = false
         listSummary.showBookmarkFirst = false
         self.refreshSortListButton()

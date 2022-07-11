@@ -335,7 +335,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(didTapHomeButton), name: MainTabBarController.tapHomeTabBarButtonNotificationName, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: MainTabBarController.editUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postDeleted(_:)), name: MainTabBarController.deleteUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onboardDismissed), name: AppDelegate.DismissOnboardNotificationName, object: nil)
@@ -575,6 +576,13 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
                 self.refreshPost(post: post)
             }
         }
+    }
+    
+    @objc func postDeleted(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        self.fetchedPostIds.removeAll(where: {$0.id == postId})
+        self.displayedPosts.removeAll(where: {$0.id == postId})
+        self.collectionView.reloadData()
     }
     
     @objc func newUserPost(_ notification: NSNotification) {

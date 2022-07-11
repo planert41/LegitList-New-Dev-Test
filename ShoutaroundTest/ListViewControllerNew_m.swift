@@ -546,6 +546,7 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(autoLoadUser), name:ListViewControllerNew.CurrentUserLoadedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
 
         setupNavigationItems()
         setupTypeSegment()
@@ -598,6 +599,28 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
 //        createNewListButton.sizeToFit()
 //        self.showHideAddListButton()
         
+    }
+    
+    @objc func newUserPost(_ notification: NSNotification) {
+
+        let postId = (notification.userInfo?["postId"] ?? "")! as! String
+        let userId = (notification.userInfo?["uid"] ?? "")! as! String
+        
+        var tuserId: String! = userId
+        var tpostId: String! = postId
+        
+        // Check for new post that was edited or uploaded
+        if newPost != nil && newPostId != nil {#imageLiteral(resourceName: "icons8-hash-30.png")
+            guard let newPost = newPost else {return}
+            let tempListIds = newPost.creatorListId
+
+            loadCurrentUserPosts()
+            if (tempListIds?.count ?? 0) > 0 {
+                fetchLists()
+            }
+        } else {
+
+        }
     }
 
     func setupSegmentControl() {

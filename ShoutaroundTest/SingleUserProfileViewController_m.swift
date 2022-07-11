@@ -615,17 +615,25 @@ class SingleUserProfileViewController: UIViewController {
 //        imageCollectionView.bottomAnchor.constraint(lessThanOrEqualTo: bottomEmojiBar.topAnchor).isActive = true
 
         NotificationCenter.default.addObserver(self, selector: #selector(handleUpdateFeed), name: SharePhotoListController.updateProfileFeedNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: TabListViewController.refreshListNotificationName, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: ListViewController.refreshListViewNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleRefresh), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshInboxNotifications), name: InboxController.newMsgNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postEdited(_:)), name: MainTabBarController.editUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.postDeleted(_:)), name: MainTabBarController.deleteUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
 //        self.view.layoutIfNeeded()
 
         print("  END |  NewListCollectionView | ViewdidLoad")
 
+    }
+    
+    @objc func postDeleted(_ notification: NSNotification) {
+        let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
+        self.displayedPosts.removeAll(where: {$0.id == postId})
+        self.fetchedPosts.removeAll(where: {$0.id == postId})
+        self.imageCollectionView.reloadData()
     }
     
     func updateDetailLabel() {

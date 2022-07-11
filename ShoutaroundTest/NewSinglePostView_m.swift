@@ -574,7 +574,7 @@ class NewSinglePostView: UIViewController {
         
         
         // Setup Navigation Look
-        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost(_:)), name: AppDelegate.refreshPostNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost(_:)), name: MainTabBarController.editUserPost, object: nil)
 
         // USER PROFILE
             headerView.addSubview(userProfileImageView)
@@ -1733,7 +1733,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
     }
     
 //    func blockPost(post:Post){
-//        
+//
 //        let blockAlert = UIAlertController(title: "Block Post", message: "Block Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
 //        blockAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
 //            // Remove from Current View
@@ -1741,20 +1741,20 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
 //            self.navigationController?.popToRootViewController(animated: true)
 //            Database.blockPost(post: post)
 //        }))
-//        
+//
 //        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
 //            print("Handle Cancel Logic here")
 //        }))
 //        present(blockAlert, animated: true, completion: nil)
 //    }
-//    
+//
 //    func reportPost(post:Post){
-//        
+//
 //        let reportAlert = UIAlertController(title: "Report Post", message: "Report Post to the team? Post will be blocked if reported more than 5 times.", preferredStyle: UIAlertController.Style.alert)
 //        reportAlert.addTextField { (textField : UITextField!) -> Void in
 //            textField.placeholder = "Please enter more details"
 //        }
-//        
+//
 //        reportAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
 //            // Remove from Current View
 //            self.dismiss(animated: true, completion: nil)
@@ -1763,7 +1763,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
 //
 //            Database.reportPost(post: post, details: details)
 //        }))
-//        
+//
 //        reportAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
 //            print("Handle Cancel Logic here")
 //        }))
@@ -1771,7 +1771,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
 //    }
 //    
 //    func blockAndReportPost(post:Post){
-//        
+//
 //        let blockAlert = UIAlertController(title: "Block And Report Post", message: "Block and Report Post and never see it again?", preferredStyle: UIAlertController.Style.alert)
 //        blockAlert.addTextField { (textField : UITextField!) -> Void in
 //            textField.placeholder = "Please enter more details"
@@ -1785,7 +1785,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
 //            Database.reportPost(post: post, details: details)
 //            Database.blockPost(post: post)
 //        }))
-//        
+//
 //        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
 //            print("Handle Cancel Logic here")
 //        }))
