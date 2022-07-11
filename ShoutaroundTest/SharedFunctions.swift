@@ -254,7 +254,7 @@ class SharedFunctions {
     
     static func getNotificationSettings() {
       UNUserNotificationCenter.current().getNotificationSettings { settings in
-        print("Notification settings: \(settings)")
+//        print("Notification settings: \(settings)")
         guard settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional else { return }
         DispatchQueue.main.async {
           UIApplication.shared.registerForRemoteNotifications()

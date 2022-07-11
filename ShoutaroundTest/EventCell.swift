@@ -118,7 +118,7 @@ class EventCell: UITableViewCell {
         }
         if let url = self.post?.imageUrls[0] {
             self.postImageView.loadImage(urlString: url)
-            print("Event Cell | No Small Image URL, Load Full Image | \(self.post?.id)")
+//            print("Event Cell | No Small Image URL, Load Full Image | \(self.post?.id)")
             return
         } else {
             print("Event Cell | No Image URLS | \(self.post?.id)")

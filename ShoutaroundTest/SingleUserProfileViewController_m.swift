@@ -117,6 +117,9 @@ class SingleUserProfileViewController: UIViewController {
     }()
     
     @objc func refreshNotifications() {
+        if displayUser?.uid != Auth.auth().currentUser?.uid {
+            return
+        }
         if CurrentUser.unreadEventCount > 0 {
             notificationButton.tintColor = UIColor.ianLegitColor()
             notificationLabel.text = String(CurrentUser.unreadEventCount)
@@ -455,14 +458,11 @@ class SingleUserProfileViewController: UIViewController {
         self.keyboardTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshNotifications), name: UserEventViewController.refreshNotificationName, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: MainTabBarController.newUserPost, object: nil)
     }
     
     @objc func newUserPost(_ notification: NSNotification) {
@@ -623,6 +623,8 @@ class SingleUserProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.postDeleted(_:)), name: MainTabBarController.deleteUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshNotifications), name: UserEventViewController.refreshNotificationName, object: nil)
 //        self.view.layoutIfNeeded()
 
         print("  END |  NewListCollectionView | ViewdidLoad")
