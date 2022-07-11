@@ -323,7 +323,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         
         setupNavigationItems()
         setupCollectionView()
-        fetchPostIds()
+        initFetchHomeFeed()
         SharedFunctions.checkNotificationAccess()
 
         NotificationCenter.default.addObserver(self, selector: #selector(fetchSortFilterPosts), name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
@@ -2120,7 +2120,7 @@ extension LegitHomeView {
         }
     }
 
-    func fetchCrewPostIds(){
+    func initFetchHomeFeed() {
         var uid: String?
         if (Auth.auth().currentUser?.isAnonymous)! {
             print("HomeViewController | fetchCrewPostIds | Guest User | Defaulting to WZ")
@@ -2130,13 +2130,12 @@ extension LegitHomeView {
         }
         
         let start = DispatchTime.now() // <<<<<<<<<< Start time
-        Database.fetchAllHomeFeedPostIds(uid: uid) { (postIds) in
-            print("Home| fetchCrewPostIds| Fetched \(postIds.count) Post Ids")
+        Database.fetchAllHomeFeedPostIds(uid: uid, first100: true) { (postIds) in
             self.fetchedPostIds = postIds
             let end = DispatchTime.now()   // <<<<<<<<<<   end time
             let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
             let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
-            print("Fetch Post IDS time: \(timeInterval) seconds")
+            print("Home| INIT fetchCrewPostIds| Fetched \(postIds.count) Post Ids: \(timeInterval) seconds")
 
             NotificationCenter.default.post(name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
             
@@ -2149,6 +2148,27 @@ extension LegitHomeView {
                 }
             }
             
+        }
+    }
+    
+    func fetchCrewPostIds(){
+        var uid: String?
+        if (Auth.auth().currentUser?.isAnonymous)! {
+            print("HomeViewController | fetchCrewPostIds | Guest User | Defaulting to WZ")
+            uid = "2G76XbYQS8Z7bojJRrImqpuJ7pz2"
+        } else {
+            uid = Auth.auth().currentUser?.uid
+        }
+        
+        let start = DispatchTime.now() // <<<<<<<<<< Start time
+        Database.fetchAllHomeFeedPostIds(uid: uid) { (postIds) in
+            self.fetchedPostIds = postIds
+            let end = DispatchTime.now()   // <<<<<<<<<<   end time
+            let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+            let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+            print("Home| fetchCrewPostIds| Fetched \(postIds.count) Post Ids: \(timeInterval) seconds")
+
+            NotificationCenter.default.post(name: LegitHomeView.finishFetchingPostIdsNotificationName, object: nil)
         }
     }
     
@@ -2302,7 +2322,7 @@ extension LegitHomeView {
                 let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
                 let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
 
-                print("Fetch Home Feed Post Time: \(timeInterval) seconds")
+                print("Fetch Home Feed Post - \(firebaseFetchedPosts.count) Posts | Time: \(timeInterval) seconds")
                 self.isFetchingPosts = false
                 self.displayedPosts = firebaseFetchedPosts
                 self.filterSortFetchedPosts()

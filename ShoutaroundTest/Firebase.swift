@@ -2761,7 +2761,7 @@ extension Database{
         }
     }
     
-    static func fetchAllHomeFeedPostIds(uid: String?, completion: @escaping ([PostId]) -> ()) {
+    static func fetchAllHomeFeedPostIds(uid: String?, first100:Bool = false, completion: @escaping ([PostId]) -> ()) {
         
         print("   ~ Database | fetchAllHomeFeedPostIds | \(uid)")
         guard let uid = uid else {return}
@@ -2774,32 +2774,44 @@ extension Database{
         var fetchedFollowedLists: Bool = false
         
     // Fetching Self Post Ids
-        myGroup.enter()
-        Database.fetchAllPostIDWithCreatorUID(creatoruid: uid) { (postIds) in
-            fetchedPostIds = fetchedPostIds + postIds
-            fetchedSelf = true
-            myGroup.leave()
-            print("Home | fetchAllHomeFeedPostIds | Current User | Post IDs: ", fetchedPostIds.count)
+        if first100 {
+            myGroup.enter()
+            Database.fetchAllPostIDWithCreatorUIDFirst100(creatoruid: uid) { (postIds) in
+                fetchedPostIds = fetchedPostIds + postIds
+                fetchedSelf = true
+                myGroup.leave()
+                print("Home | fetchAllHomeFeedPostIds | Current User | Post IDs: ", fetchedPostIds.count)
+            }
+        } else {
+            myGroup.enter()
+            Database.fetchAllPostIDWithCreatorUID(creatoruid: uid) { (postIds) in
+                fetchedPostIds = fetchedPostIds + postIds
+                fetchedSelf = true
+                myGroup.leave()
+                print("Home | fetchAllHomeFeedPostIds | Current User | Post IDs: ", fetchedPostIds.count)
+            }
         }
+        
         
     // Fetch User Friends
         myGroup.enter()
-        Database.fetchAllFollowingUserPostIDforUser(uid: uid) { (postIds) in
+        Database.fetchAllFollowingUserPostIDforUser(uid: uid, first100: first100) { (postIds) in
             fetchedPostIds = fetchedPostIds + postIds
             fetchedFollowedUsers = true
             myGroup.leave()
             print("Home | fetchAllHomeFeedPostIds | Following Posts | Post IDs: ", fetchedPostIds.count)
 
         }
+
         
-    // Fetch Followed List
-        myGroup.enter()
-        Database.fetchAllFollowingListPostIDforUser(uid: uid) { (postIds) in
-            fetchedPostIds = fetchedPostIds + postIds
-            fetchedFollowedLists = true
-            myGroup.leave()
-            print("Home | fetchAllHomeFeedPostIds | Following Lists | Post IDs: ", fetchedPostIds.count)
-        }
+    // Fetch Followed List - Skip followed list for now due to load speed
+//        myGroup.enter()
+//        Database.fetchAllFollowingListPostIDforUser(uid: uid) { (postIds) in
+//            fetchedPostIds = fetchedPostIds + postIds
+//            fetchedFollowedLists = true
+//            myGroup.leave()
+//            print("Home | fetchAllHomeFeedPostIds | Following Lists | Post IDs: ", fetchedPostIds.count)
+//        }
 
         myGroup.notify(queue: .main, execute: {
             self.checkDisplayPostIdForDups(postIds: fetchedPostIds, completion: { (postIds) in
@@ -2812,7 +2824,7 @@ extension Database{
         
     }
     
-    static func fetchAllFollowingUserPostIDforUser(uid: String, completion: @escaping ([PostId]) -> ()) {
+    static func fetchAllFollowingUserPostIDforUser(uid: String, first100: Bool = false, completion: @escaping ([PostId]) -> ()) {
         let myGroup = DispatchGroup()
         var fetchedPostIds = [] as [PostId]
         var followingUserIds = [] as [String]
@@ -2827,14 +2839,24 @@ extension Database{
             }
             
             for id in followingUids {
-                myGroup.enter()
-                Database.fetchAllPostIDWithCreatorUID(creatoruid: id, completion: { (postIds) in
-                    myGroup.leave()
-                    fetchedPostIds += postIds
-                })
+                if first100 {
+                    myGroup.enter()
+                    Database.fetchAllPostIDWithCreatorUIDFirst100(creatoruid: id, completion: { (postIds) in
+//                        print("fetchAllFollowingUserPostIDforUser \(id) - \(postIds.count) - \(first100)")
+                        myGroup.leave()
+                        fetchedPostIds += postIds
+                    })
+                } else {
+                    myGroup.enter()
+                    Database.fetchAllPostIDWithCreatorUID(creatoruid: id, completion: { (postIds) in
+//                        print("fetchAllFollowingUserPostIDforUser \(id) - \(postIds.count) - \(first100)")
+                        myGroup.leave()
+                        fetchedPostIds += postIds
+                    })
+                }
+
             }
             myGroup.leave()
-            
         }
         
         myGroup.notify(queue: .main, execute: {

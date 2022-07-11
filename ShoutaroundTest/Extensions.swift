@@ -1547,6 +1547,11 @@ extension UIViewController {
         var bodyText = isBlocked ? "Unblock User \(name)?" : "Block User \(name) and never see them again?"
         
         let blockAlert = UIAlertController(title: titleText, message: bodyText, preferredStyle: UIAlertController.Style.alert)
+        
+        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
         blockAlert.addAction(UIAlertAction(title: isBlocked ? "Unblock" : "Block", style: .default, handler: { (action: UIAlertAction!) in
             // Remove from Current View
 
@@ -1558,11 +1563,7 @@ extension UIViewController {
                 Database.blockUser(user: user)
             }
         }))
-        
-        blockAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
-            print("Handle Cancel Logic here")
-        }))
-        
+
         let gotBlockedAlert = UIAlertController(title: "Blocked User", message: "You have been blocked by the user", preferredStyle: UIAlertController.Style.alert)
         
         gotBlockedAlert.addAction(UIAlertAction(title: "OK", style: .destructive, handler: { (action: UIAlertAction!) in
