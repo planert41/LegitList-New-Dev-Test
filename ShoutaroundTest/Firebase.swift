@@ -2802,8 +2802,8 @@ extension Database{
         }
 
         myGroup.notify(queue: .main, execute: {
-            print("   ~ Database | fetchAllHomeFeedPostIds | Fetched \(fetchedPostIds.count) PostIds | \(uid)")
             self.checkDisplayPostIdForDups(postIds: fetchedPostIds, completion: { (postIds) in
+                print("   ~ Database | fetchAllHomeFeedPostIds | Fetched \(fetchedPostIds.count) PostIds | \(uid)")
                 completion(postIds)
             })
             
@@ -2882,6 +2882,51 @@ extension Database{
     }
     
     
+    
+    static func fetchAllPostIDWithCreatorUIDFirst100(creatoruid: String?, completion: @escaping ([PostId]) -> ()) {
+        
+        guard let creatoruid = creatoruid else {return}
+        
+        let myGroup = DispatchGroup()
+        var fetchedPostIds = [] as [PostId]
+        
+        let ref = Database.database().reference().child("userposts").child(creatoruid).queryOrderedByKey().queryLimited(toFirst: 100)
+        ref.observeSingleEvent(of: .value, with: {(snapshot) in
+//        ref.observe(.value) { (snapshot) in
+
+            guard let userposts = snapshot.value as? [String: Any] else {
+                completion([])
+                return}
+
+            userposts.forEach({ (key,value) in
+                myGroup.enter()
+//                print("Key \(key), Value: \(value)")
+                
+                let dictionary = value as? [String: Any]
+                let secondsFrom1970 = dictionary?["creationDate"] as? Double ?? 0
+                let emoji = dictionary?["emoji"] as? String ?? ""
+                
+//                let temp_time = Date(timeIntervalSince1970: secondsFrom1970)
+//                print("\(creatoruid) | \(key) | \(temp_time)")
+            
+                let tempID = PostId.init(id: key, creatorUID: creatoruid, sort: nil)
+                fetchedPostIds.append(tempID)
+                myGroup.leave()
+            })
+            
+            myGroup.notify(queue: .main) {
+                if creatoruid == Auth.auth().currentUser?.uid {
+//                    print(" ~ FetchingPostIDForUser | Current User | \(fetchedPostIds.count) / \(userposts.count) Posts")
+                    CurrentUser.postIds = fetchedPostIds
+                    
+                } else {
+//                    print(" ~ FetchingPostIDForUser | \(creatoruid) | \(fetchedPostIds.count) / \(userposts.count) Posts")
+                }
+                ref.keepSynced(true)
+                completion(fetchedPostIds)
+            }
+        })
+    }
     
     
     static func fetchAllPostIDWithCreatorUID(creatoruid: String?, completion: @escaping ([PostId]) -> ()) {
@@ -9828,7 +9873,7 @@ extension Database{
             tempPosts = tempFilterPosts
         }
         
-        else if filterGoogleLocationName != nil && filterRange == nil {
+        else if filterGoogleLocationName != nil && filterRange == nil && filterGoogleLocationName != CurrentUserLocation {
             
             var tempFilterPosts: [Post] = []
             for post in tempPosts {

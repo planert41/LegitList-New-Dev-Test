@@ -623,7 +623,7 @@ var OtherEmojiDictionary:[String:String] = [
     "🦷":"teeth",
     "💋":"romantic",
     "💪":"strong",
-    "🏆":"champ",
+    "🏆":"top",
     "🙏":"pray",
     "👨‍🍳":"chef",
     "👨‍💻":"work",

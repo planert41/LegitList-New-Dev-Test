@@ -2302,7 +2302,7 @@ extension LegitHomeView {
                 let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
                 let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
 
-                print("Fetch Post Time: \(timeInterval) seconds")
+                print("Fetch Home Feed Post Time: \(timeInterval) seconds")
                 self.isFetchingPosts = false
                 self.displayedPosts = firebaseFetchedPosts
                 self.filterSortFetchedPosts()

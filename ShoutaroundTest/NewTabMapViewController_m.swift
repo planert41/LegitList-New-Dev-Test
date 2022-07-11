@@ -53,7 +53,7 @@ class NewTabMapViewController: UIViewController {
                 self.mapFilter.filterSort = defaultNearestSort
             }
             
-            mapFilter.filterLocationName = (mapFilter.filterLocation == CurrentUser.currentLocation) ? CurrentUserLocation : mapFilter.filterLocationName
+//            mapFilter.filterLocationName = (mapFilter.filterLocation == CurrentUser.currentLocation) ? CurrentUserLocation : mapFilter.filterLocationName
             self.updateSearchTerms()
             self.topSearchBar.viewFilter = self.mapFilter
             setupNavigationItems()

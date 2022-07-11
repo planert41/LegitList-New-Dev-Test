@@ -14,6 +14,8 @@ protocol LegitHomeHeaderDelegate {
     func toggleFeedType()
     func didTapAddTag(addTag: String)
     func didRemoveTag(tag: String)
+    func didRemoveRatingFilter(rating: String)
+    func didRemoveLocationFilter(location: String)
     func didTapGridButton()
     func didTapMapButton()
     func didTapSearchButton()
@@ -706,11 +708,11 @@ extension NewLegitHomeHeader: postSortSegmentControlDelegate, postViewFormatSegm
     }
     
     func didRemoveLocationFilter(location: String) {
-        
+        self.delegate?.didRemoveLocationFilter(location: location)
     }
     
     func didRemoveRatingFilter(rating: String) {
-        
+        self.delegate?.didRemoveRatingFilter(rating: rating)
     }
     
     func didTapCell(tag: String) {

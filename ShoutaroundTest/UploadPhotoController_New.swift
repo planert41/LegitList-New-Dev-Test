@@ -1154,7 +1154,7 @@ First emoji will displayed on map.
             // Extra Rating Emoji Info
             self.alert(title: "Ratings Emojis", message: """
 Rating Emojis help you describe your experience beyond just star ratings
-🏆 : Best
+🥇 : Best
 🌟 : Special
 🔥 : Fire
 💯 : 100%

@@ -246,9 +246,9 @@ struct Post: Hashable, Equatable  {
         self.ratingEmoji = dictionary["ratingEmoji"] as? String ?? nil
         
         // CHANGE THE BEST RATING EMOJI
-        if self.ratingEmoji == "🥇" {
-            self.ratingEmoji = "🏆"
-        }
+//        if self.ratingEmoji == "🥇" {
+//            self.ratingEmoji = "🏆"
+//        }
         
         // ADJUST All emojis like chicken dup emoji
         var tempEmoji:[String] = []

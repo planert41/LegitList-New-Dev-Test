@@ -174,6 +174,8 @@ class SelectedFilterBarCell: UICollectionViewCell {
             displayColor = UIColor.ianLegitColor()
             if let text = extraRatingEmojisDic[displayTerm] {
                 displayTerm += " \(text.capitalizingFirstLetter())"
+            } else {
+                displayTerm = ">= \(displayTerm)"
             }
         }
         else if searchTermType == SearchPlace || searchTermType == SearchCity
@@ -293,24 +295,24 @@ class SelectedFilterBarCell: UICollectionViewCell {
         } else {
             self.didTapCell()
         }
-        print("HomeFilterBarCell | Tap Cancel | \(remove)")
+        print("SelectedFilterBarCell | Tap Cancel | remove")
     }
     
     @objc func removeTag(){
         guard let remove = self.searchTerm else {return}
-        print("HomeFilterBarCell | Remove Tag | \(remove)")
+        print("SelectedFilterBarCell | Remove Tag | \(remove)")
         self.delegate?.didRemoveTag(tag: remove)
     }
     
     @objc func removeLocation(){
         guard let remove = self.searchTerm else {return}
-        print("HomeFilterBarCell | Remove Location | \(remove)")
+        print("SelectedFilterBarCell | Remove Location | \(remove)")
         self.delegate?.didRemoveLocationFilter(location: remove)
     }
     
     @objc func removeRating(){
         guard let remove = self.searchTerm else {return}
-        print("HomeFilterBarCell | Remove Rating | \(remove)")
+        print("SelectedFilterBarCell | Remove Rating | \(remove)")
         self.delegate?.didRemoveRatingFilter(rating: remove)
     }
     

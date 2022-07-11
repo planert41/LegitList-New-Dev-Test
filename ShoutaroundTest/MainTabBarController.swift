@@ -833,7 +833,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         let firebaseAlert = UIAlertController(title: "Firebase Update", message: "Do you want to update Firebase Data?", preferredStyle: UIAlertController.Style.alert)
         
         firebaseAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
-            self.revertBlockedPost()
+            self.changeRatingEmoji()
+//            self.revertBlockedPost()
 //            self.addLocationTest()
 //            self.avgGPSTest()
 //            self.duplicateImages()
@@ -926,6 +927,36 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //                    let nodeToRemove = nodeToRemove.child(snapshot.key)
 //                    nodeToRemove.removeValue();
 //            }
+    }
+    
+    func changeRatingEmoji() {
+        
+
+        print("changeRatingEmoji")
+        Database.fetchAllHomeFeedPostIds(uid: Auth.auth().currentUser?.uid) { (postIds) in
+            Database.fetchAllPosts(fetchedPostIds: postIds) { (posts) in
+                print("changeRatingEmoji \(posts.count) Posts")
+                var count = 0
+                let oldEmoji = "🏆"
+                let newEmoji = "🥇"
+                for post in posts {
+                    if post.ratingEmoji == oldEmoji {
+                        guard let postId = post.id else {return}
+                        Database.database().reference().child("posts").child(postId).child("ratingEmoji").setValue(newEmoji, withCompletionBlock: { (err, ref) in
+                            if let err = err {
+                                print("   ~ Database | changeRatingEmoji | Update List in Post Object \(postId): Fail, \(err)")
+                                return
+                            }
+                            count += 1
+                            print("   ~ Database | changeRatingEmoji | Update List in Post Object \(postId): Success | \(postId)")
+                            
+                        })
+                    }
+                }
+                
+                print("changeRatingEmoji - Finish - \(count) Posts | Change \(oldEmoji) to \(newEmoji)")
+            }
+        }
     }
 
     func addLocationTest() {
