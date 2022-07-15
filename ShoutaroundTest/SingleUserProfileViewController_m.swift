@@ -741,7 +741,9 @@ class SingleUserProfileViewController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.barTintColor = UIColor.white
         navigationController?.navigationBar.tintColor = UIColor.white
+        navigationController?.navigationBar.backgroundColor = UIColor.white
         navigationController?.view.backgroundColor = UIColor.white
+        navigationController?.navigationBar.layer.shadowColor = UIColor.white.cgColor
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.layoutIfNeeded()
         
