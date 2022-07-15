@@ -198,7 +198,7 @@ struct User {
         }
         
         let premExp = dictionary["premiumExpiry"] as? Double ?? 0
-        if premExp > 0 {
+        if premExp >= 0 {
             self.premiumExpiry = Date(timeIntervalSince1970: premExp)
             if Date() > self.premiumExpiry! && self.isPremium && !self.isPremiumFree{
                 self.isPremium = false
@@ -224,7 +224,11 @@ struct CurrentUser {
     static var premiumExpiry: Date?
     static var premiumCancel: Date?
     static var premiumPeriod: SubPeriod?
-    static var isPremium: Bool = false
+    static var isPremium: Bool = false {
+        didSet {
+            print("Current User IsPremium: \(isPremium)")
+        }
+    }
     static var isPremiumFree: Bool = false
 
 

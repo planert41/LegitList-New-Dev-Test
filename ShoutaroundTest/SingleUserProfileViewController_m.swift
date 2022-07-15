@@ -1451,6 +1451,9 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
             self.contactUs()
         }))
        
+       optionsAlert.addAction(UIAlertAction(title: "Manage Subscriptions", style: .default, handler: { (action: UIAlertAction!) in
+           self.openSubscriptions()
+       }))
     
        optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .default, handler: { (action: UIAlertAction!) in
            self.didSignOut()
@@ -2217,7 +2220,7 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
 
             if let selectedIndex = HeaderSortOptions.firstIndex(of: self.viewFilter.filterSort ?? HeaderSortOptions[0]) {
                 if header.sortSegmentControl.selectedSegmentIndex != selectedIndex {
-                    print("Header Load | \(selectedIndex) | \(self.viewFilter.filterSort) | CUR: \(header.sortSegmentControl.selectedSegmentIndex)")
+//                    print("Header Load | \(selectedIndex) | \(self.viewFilter.filterSort) | CUR: \(header.sortSegmentControl.selectedSegmentIndex)")
                     header.sortSegmentControl.selectedSegmentIndex = selectedIndex
 //                    header.reloadSegmentControl()
                 }

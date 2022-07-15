@@ -143,6 +143,7 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
         } else {
             self.subButton.isHidden = true
         }
+        self.subscriptionLimitLabel.isHidden = !self.subButton.isHidden
     }
 
     let navHeaderLabel: UILabel = {
@@ -288,6 +289,21 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
         return label
     }()
     
+    let subscriptionLimitLabel: UILabel = {
+        let label = UILabel()
+        label.layer.borderColor = UIColor.clear.cgColor
+        label.layer.borderWidth = 0
+        label.layer.cornerRadius = label.bounds.size.height / 2
+        label.textAlignment = .center
+        label.layer.masksToBounds = true
+        label.font = UIFont(name: "Poppins-Bold", size: 15)
+        label.textColor = .darkGray
+        label.backgroundColor = UIColor.clear
+        label.numberOfLines = 0
+        label.text = "Users will need to subcribe to Legit Premium to add more than \(premiumPostLimit) Posts"
+        return label
+    }()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -377,6 +393,10 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
         setupTableView()
         self.view.addSubview(tableView)
         tableView.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 20, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        view.addSubview(subscriptionLimitLabel)
+        subscriptionLimitLabel.anchor(top: headerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 150, paddingLeft: 20, paddingBottom: 0, paddingRight: 20, width: 0, height: 0)
+        subscriptionLimitLabel.sizeToFit()
         
         let tableDiv = UIView()
         self.view.addSubview(tableDiv)

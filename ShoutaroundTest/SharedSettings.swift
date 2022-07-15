@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import CoreLocation
 
-var premiumActivated = false
+var premiumActivated = true
 
 // Location Google Location ID to Name
 var locationGoogleIdDictionary:[String:String] = [:] {
@@ -139,8 +139,8 @@ var defaultLocation = CLLocation(latitude: 41.9735039, longitude: -87.6677513999
 var LocMissingTitle = "Location Missing"
 var LocMissingDetails = "Legit is missing your current location to sort by nearest. Will sort by recent instead."
 
-//var UID_team = [UID_wei, UID_mayn, UID_ernie, UID_magnus, UID_zm]
-var UID_team:[String] = []
+var UID_team = [UID_mayn, UID_ernie, UID_magnus, UID_zm] // UID_wei,
+//var UID_team:[String] = []
 
 //var listTypeOptions:[String] = [listAll, listCreated, listFollowed]
 //var listTypeDefault = listAll

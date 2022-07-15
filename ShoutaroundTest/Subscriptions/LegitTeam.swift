@@ -210,7 +210,7 @@ extension LegitTeamView {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: UserCellId, for: indexPath) as! UserAndListCell
         cell.user = teamUsers[indexPath.item]
-        cell.followButton.isHidden = Auth.auth().currentUser == nil
+//        cell.followButton.isHidden = Auth.auth().currentUser == nil
         return cell
     }
     

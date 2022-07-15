@@ -101,6 +101,7 @@ extension Database{
             
             let activate = snapshot.value as? Bool
             premiumActivated = activate ?? false
+            print("fetchPremiumActivate : \(premiumActivated)")
         }) {(err) in
             print("Failed to fetchPremiumActivate:",err)
         }
@@ -118,6 +119,7 @@ extension Database{
             print("FETCH_CURRENT_USER: ERROR, No User UID")
             return}
         
+        Database.fetchPremiumActivate()
         
 // 1. FIND CURRENT LOCATION
         
@@ -7291,12 +7293,12 @@ extension Database{
                 }
                 
                 guard let list = CurrentUser.followedListIdObjects.first(where: {$0.listId == listId.listId}) else {
-                    print("FollowedListListener | ERROR | New List Event but User \(uid) not following List \(listId.listId)")
+//                    print("FollowedListListener | ERROR | New List Event but User \(uid) not following List \(listId.listId)")
                     return
                 }
                 
                 if tempEvent.eventTime > list.listLastLoadDate ?? Date.distantPast {
-                    print("FollowedListListener | New Followed List Event | \n\(tempEvent)")
+//                    print("FollowedListListener | New Followed List Event | \n\(tempEvent)")
                     guard let eventListId = tempEvent.listId else {return}
                     if !CurrentUser.followedListNotifications.contains(eventListId) {
                         CurrentUser.followedListNotifications.append(eventListId)
@@ -7308,7 +7310,7 @@ extension Database{
                     // CLEAR CACHE TO FORCE RELOAD
                     if let listId = tempEvent.listId {
                         listCache[listId] = nil
-                        print("New Post Notification | Clear Cache For List | \(listId)")
+//                        print("New Post Notification | Clear Cache For List | \(listId)")
                     }
                     
                     // REFRESHES NOTIFICATION PAGE
@@ -7316,7 +7318,7 @@ extension Database{
                     
                     // REFRESHES TAB NOTIFICATION COUNT
                     NotificationCenter.default.post(name: MainTabBarController.NewNotificationName, object: nil)
-                    print("Trigger |  setupUserFollowedListListener | MainTabBarController.NewNotificationName")
+//                    print("Trigger |  setupUserFollowedListListener | MainTabBarController.NewNotificationName")
 
                     // REFRESHES TAB LIST
                     NotificationCenter.default.post(name: TabListViewController.newFollowedListNotificationName, object: nil)
