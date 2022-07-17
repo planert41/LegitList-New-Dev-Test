@@ -66,11 +66,8 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     var userPosts:[Post] = [] {
         didSet {
-            Database.countMostUsedEmojis(posts: userPosts) { emojis in
-                self.mostUsedEmojis = emojis
-            }
-            Database.countMostUsedCities(posts: userPosts) { cities in
-                self.mostUsedCities
+            self.updateEmojiCounts {
+                
             }
             self.userPostsDic.removeAll()
             for post in userPosts {
@@ -79,6 +76,26 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
                 }
             }
 //            self.updateUserPostFavCounts()
+        }
+    }
+    
+    
+    func updateEmojiCounts(completion: @escaping () -> ()) {
+        let myGroup = DispatchGroup()
+        myGroup.enter()
+        myGroup.enter()
+
+        Database.countMostUsedEmojis(posts: userPosts) { emojis in
+            self.mostUsedEmojis = emojis
+            myGroup.leave()
+        }
+        Database.countMostUsedCities(posts: userPosts) { cities in
+            self.mostUsedCities
+            myGroup.leave()
+        }
+        
+        myGroup.notify(queue: .main) {
+            completion()
         }
     }
     
@@ -301,9 +318,8 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
                         temp.heroImageUrl = imageUrl
                     }
                 }
-                
-                tempLists[emoji] = temp
             }
+            tempLists[emoji] = temp
         }
         self.userFavsLists = tempLists
         
@@ -610,11 +626,13 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
         var tpostId: String! = postId
         
         // Check for new post that was edited or uploaded
-        if newPost != nil && newPostId != nil {#imageLiteral(resourceName: "icons8-hash-30.png")
+        if newPost != nil && newPostId != nil {
             guard let newPost = newPost else {return}
             let tempListIds = newPost.creatorListId
-
-            loadCurrentUserPosts()
+            self.userPosts.append(newPost)
+            self.updateEmojiCounts {
+                self.createUserAutoLists()
+            }
             if (tempListIds?.count ?? 0) > 0 {
                 fetchLists()
             }

@@ -1795,6 +1795,10 @@ extension Database{
                     var temp = PostId.init(id: postId, creatorUID: CurrentUser.uid, sort: 0)
                     CurrentUser.postIds.append(temp)
                     CurrentUser.posts[postId] = newPost
+                    let ps = Array(CurrentUser.posts.values.map{ $0 }) as [Post]
+
+                    Database.refreshCurrentUserMostUsed(posts:  ps) {
+                    }
                 }
                 
                 let userDataDict:[String: String] = ["uid": uid, "postId": postId]
