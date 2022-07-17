@@ -1348,7 +1348,7 @@ extension Database{
         }
         
         if emojiCounts.count == 0 {
-            print("sortEmojis ERROR: 0 Emoji Counts")
+//            print("sortEmojis ERROR: 0 Emoji Counts")
             completion(inputEmojis)
             return
         }

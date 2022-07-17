@@ -478,6 +478,8 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         navigationController?.isNavigationBarHidden = false
         self.navigationController?.navigationBar.barTintColor = UIColor.ianLegitColor()
         self.navigationController?.navigationBar.tintColor = UIColor.ianLegitColor()
+        navigationController?.navigationBar.backgroundColor = UIColor.ianLegitColor()
+        navigationController?.navigationBar.layer.shadowColor = UIColor.ianLegitColor().cgColor
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)

@@ -605,8 +605,26 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
                 if !self.fetchedPostIds.contains(where: { (curPostId) -> Bool in
                     return curPostId.id == postId
                 }) {
-                    self.refreshPostsForSearch()
-                    print("NEW FOLLOWING POST, REFRESHING ", postId )
+                    if !self.viewFilter.isFiltering {
+                        if newPost != nil && newPostId != nil {
+                            self.displayedPosts.insert(newPost!, at: 0)
+                            self.fetchedPostIds.insert(newPostId!, at: 0)
+                            
+                            self.collectionView?.reloadData()
+                            if self.collectionView?.numberOfItems(inSection: 0) != 0 {
+                                let indexPath = IndexPath(item: 0, section: 0)
+                                self.collectionView?.scrollToItem(at: indexPath, at: .bottom, animated: true)
+                            }
+                            print("Force feed in new post - HomeController")
+                            
+                        } else {
+                            self.handleRefresh()
+                        }
+                    }
+                    else {
+                        self.refreshPostsForSearch()
+                        print("NEW FOLLOWING POST, REFRESHING ", postId )
+                    }
                 }
             }
         } else if self.fetchTypeInd == HomeFetchOptions[2] {

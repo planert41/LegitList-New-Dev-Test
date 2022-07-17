@@ -1407,15 +1407,17 @@ Rating Emojis help you describe your experience beyond just star ratings
         if #available(iOS 13.0, *) {
             let tabBarAppearance: UITabBarAppearance = UITabBarAppearance()
             tabBarAppearance.configureWithDefaultBackground()
-            tabBarAppearance.backgroundColor = UIColor.white
+            tabBarAppearance.backgroundColor = UIColor.ianLegitColor()
             tabBarAppearance.selectionIndicatorTintColor = UIColor.ianLegitColor()
             setTabBarItemColors(tabBarAppearance.stackedLayoutAppearance)
             setTabBarItemColors(tabBarAppearance.inlineLayoutAppearance)
             setTabBarItemColors(tabBarAppearance.compactInlineLayoutAppearance)
             UITabBar.appearance().standardAppearance = tabBarAppearance
+            UITabBar.appearance().isTranslucent = false
 
             if #available(iOS 15.0, *) {
                 UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+                UITabBar.appearance().standardAppearance = tabBarAppearance
             }
         }
         

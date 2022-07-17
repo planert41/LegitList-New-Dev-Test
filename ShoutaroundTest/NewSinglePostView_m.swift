@@ -982,6 +982,8 @@ class NewSinglePostView: UIViewController {
     func setupNavigationItems(){
         let tempImage = UIImage.init(color: UIColor.backgroundGrayColor())
         navigationController?.navigationBar.setBackgroundImage(tempImage, for: .default)
+        navigationController?.navigationBar.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.layer.shadowColor = UIColor.backgroundGrayColor().cgColor
         navigationController?.view.backgroundColor = UIColor.backgroundGrayColor()
         navigationController?.isNavigationBarHidden = false
         

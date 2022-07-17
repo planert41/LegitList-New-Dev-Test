@@ -472,8 +472,25 @@ class SingleUserProfileViewController: UIViewController {
                     if !self.fetchedPosts.contains(where: { (post) -> Bool in
                         return post.id == postId
                     }) {
-                        self.fetchPostsForUser()
-                        print("NEW USER POST REFRESING ", userId , postId, "ProfileView")
+                        if !self.viewFilter.isFiltering {
+                            if newPost != nil && newPostId != nil {
+                                self.displayedPosts.insert(newPost!, at: 0)
+                                self.fetchedPosts.insert(newPost!, at: 0)
+                                
+                                self.imageCollectionView.reloadData()
+                                if self.imageCollectionView.numberOfItems(inSection: 0) != 0 {
+                                    let indexPath = IndexPath(item: 0, section: 0)
+                                    self.imageCollectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+                                }
+                                print("Force feed in new post - ProfileController")
+                                
+                            } else {
+                                self.handleRefresh()
+                            }
+                        } else {
+                            self.fetchPostsForUser()
+                            print("NEW USER POST REFRESING ", userId , postId, "ProfileView")
+                        }
                     }
                 }
             }
