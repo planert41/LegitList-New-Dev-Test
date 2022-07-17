@@ -210,6 +210,9 @@ class PremiumSubViewController: UIViewController {
         self.handleAnnualSub()
     }
     
+    // CREATE A TRANSACTION ENTRY UNDER 'PREMIUM TRANSACTIONS'
+    // THEN CREATE A PREMIUM USER ACCOUNT UNDER 'PREMIUM'
+    
     func handleMonthlySub() {
         PurchaseService.purchase(productId: monthlySubProductID) { (transaction) in
             if let transaction = transaction {
@@ -222,7 +225,7 @@ class PremiumSubViewController: UIViewController {
                 Database.createPremiumSubscription(transactionId: transID, buyerId: Auth.auth().currentUser?.uid, subPeriod: .monthly) { (tempSub) in
                     Database.premiumUserSignUp(subscription: tempSub)
                     self.dismiss(animated: true) {
-                        print("Monthly User Subscription Complete")
+                        print("Monthly User Subscription Complete | TransID: \(transID)")
 //                        self.navigationController?.popToRootViewController(animated: true)
                     }
                 }
@@ -238,7 +241,7 @@ class PremiumSubViewController: UIViewController {
                 Database.createPremiumSubscription(transactionId: transID, buyerId: Auth.auth().currentUser?.uid, subPeriod: .annual) { (tempSub) in
                     Database.premiumUserSignUp(subscription: tempSub)
                     self.dismiss(animated: true) {
-                        print("Annual User Subscription Complete")
+                        print("Annual User Subscription Complete | TransID : \(transID)")
 //                        self.navigationController?.popToRootViewController(animated: true)
                     }
                 }
