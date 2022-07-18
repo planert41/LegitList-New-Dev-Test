@@ -1005,7 +1005,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             guard let appleUid = appleUid else {
                 print("SIGN UP ERROR - NO APPLE UID")
                 return}
-            self.processUser(userID: appleUid)
+            self.processUser(userID: appleUid, appleSignUp: self.isAppleSignUp)
         } else {
             guard let email = emailTextField.text, email.count > 6 else {
                     self.alert(title: "Error", message: "Email Needs to be more than 6 letters")
@@ -1036,7 +1036,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 }
                 
                 print("FirebaseAuth | Successfully created user: ", user?.user.uid ?? "")
-                self.processUser(userID: user?.user.uid)
+                self.processUser(userID: user?.user.uid, appleSignUp: self.isAppleSignUp)
             }
         }
     }
@@ -1080,7 +1080,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     }
     
     
-    func processUser(userID: String?){
+    func processUser(userID: String?, appleSignUp: Bool? = false){
         print("Creating User Firebase | INIT | \(userID)")
         
         guard let userID = userID else {
@@ -1118,12 +1118,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     }
                     guard let profileImageUrl = url?.absoluteString else {return}
                     print("Uploaded New Profile Image For User: \(userID) | URL: \(profileImageUrl)")
-                    self.createUserWithProfileImageUrl(userID: userID, url: profileImageUrl)
+                    self.createUserWithProfileImageUrl(userID: userID, url: profileImageUrl, appleSignUp: appleSignUp)
                 })
             })
         } else {
             print("Default Image Profile Image For User: \(userID) | URL: \(defaultProfileImageUrl)")
-            self.createUserWithProfileImageUrl(userID: userID, url: defaultProfileImageUrl)
+            self.createUserWithProfileImageUrl(userID: userID, url: defaultProfileImageUrl, appleSignUp: appleSignUp)
         }
     }
         
@@ -1244,9 +1244,9 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 //    }
     
     
-    func createUserWithProfileImageUrl(userID: String, url: String) {
+    func createUserWithProfileImageUrl(userID: String, url: String, appleSignUp: Bool? = false) {
             // 2. Creating User Object
-            print("createUserWithProfileImageUrl: \(userID) | \(url)")
+            print("createUserWithProfileImageUrl: \(userID) | \(url) | Apple: \(appleSignUp)")
 
             var usernameTemp = usernameTextField.text
             usernameTemp = usernameTemp?.replacingOccurrences(of: " ", with: "")
@@ -1272,7 +1272,10 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
             }
         
             let uid = userID
-        let dictionaryValues = ["username": username, "profileImageUrl": url, "creationDate": userCreatedDate, "userLocation": cityGPS, "userCity": userCity] as [String : Any]
+        var dictionaryValues = ["username": username, "profileImageUrl": url, "creationDate": userCreatedDate, "userLocation": cityGPS, "userCity": userCity] as [String : Any]
+        if appleSignUp ?? false {
+            dictionaryValues["appleSignUp"] = appleSignUp
+        }
             let values = [uid:dictionaryValues]
         
             Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (err, ref) in

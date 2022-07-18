@@ -71,6 +71,7 @@ struct User {
             self.isBlocked = isBlockedByUser || isBlockedByCurUser
         }
     }
+    var appleSignUp: Bool = false
 
     
     init(uid: String, dictionary: [String:Any]) {
@@ -84,7 +85,8 @@ struct User {
         self.userBadges = dictionary["userBadges"] as? [Int] ?? []
         let tagSecondsFrom1970 = dictionary["creationDate"] as? Double ?? 0
         self.creationDate = Date(timeIntervalSince1970: tagSecondsFrom1970)
-        
+        self.appleSignUp = dictionary["appleSignUp"] as? Bool ?? false
+
         let tagSecondsFrom1971 = dictionary["lastModeDate"] as? Double ?? 0
         self.lastModDate = Date(timeIntervalSince1970: tagSecondsFrom1971)
         
@@ -230,6 +232,7 @@ struct CurrentUser {
         }
     }
     static var isPremiumFree: Bool = false
+    static var appleSignUp: Bool = false
 
 
     static var distanceFormatter: MeasurementFormatter {
@@ -384,6 +387,7 @@ struct CurrentUser {
                 self.blockedUsers = user?.blockedUsers ?? [:]
                 self.blockedByUsers = user?.blockedByUsers ?? [:]
                 self.blockedMessages = user?.blockedMessages ?? [:]
+                self.appleSignUp = user?.appleSignUp ?? false
                 self.checkAPNToken()
             } else {
                 self.username = nil
@@ -400,6 +404,7 @@ struct CurrentUser {
                 self.blockedUsers = [:]
                 self.blockedByUsers = [:]
                 self.blockedMessages = [:]
+                self.appleSignUp = false
             }
         }
     }
