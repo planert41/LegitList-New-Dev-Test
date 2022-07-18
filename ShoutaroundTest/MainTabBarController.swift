@@ -1809,7 +1809,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         if LocationSingleton.sharedInstance.locationManager?.authorizationStatus == .denied || !CLLocationManager.locationServicesEnabled() {
             let alert = UIAlertController(title: "Location Access", message: "Legit needs your current location to sort food posts nearest to you. Please enable location services on your settings.", preferredStyle: .alert)
             
-            let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+            let settingsAction = UIAlertAction(title: "Allow", style: .default) { (_) -> Void in
 
                 guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
                     return
@@ -1822,7 +1822,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
                 }
             }
             
-            let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (_) -> Void in
+            let cancelAction = UIAlertAction(title: "Not Now", style: .destructive) { (_) -> Void in
                 NotificationCenter.default.post(name: AppDelegate.LocationDeniedNotificationName, object: nil)
                 print("Location Denied")
             }
