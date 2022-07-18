@@ -394,7 +394,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     
     @objc func requestNotification(){
         let alert = UIAlertController(title: "Notification Access", message: "Legit needs permission to send you notifications when users like your posts or follow you", preferredStyle: .alert)
-        let settingsAction = UIAlertAction(title: "Settings", style: .default) { (_) -> Void in
+        let settingsAction = UIAlertAction(title: "Allow", style: .default) { (_) -> Void in
             let center = UNUserNotificationCenter.current()
             center.getNotificationSettings { settings in
                 let status = settings.authorizationStatus
@@ -409,7 +409,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive) { (_) -> Void in
+        let cancelAction = UIAlertAction(title: "Not Now", style: .destructive) { (_) -> Void in
             print("Notification Denied")
         }
         alert.addAction(settingsAction)
