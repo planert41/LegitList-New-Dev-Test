@@ -365,7 +365,8 @@ var DrinksEmojiDictionary: [String:String] = [
     "🍸":"cocktail",
     "🍾":"champagne",
     "🧊":"ice",
-    "🍹":"fruity"
+    "🍹":"fruity",
+    "🧉":"mate"
 
 
 ]
@@ -419,6 +420,8 @@ var VegEmojiDictionary: [String:String] = [
     "🌺":"blossom",
     "🌼":"flower",
     "🌻":"sunflower",
+    "🫘":"bean",
+
 
 ]
 
@@ -714,7 +717,8 @@ var OtherEmojiDictionary:[String:String] = [
     "🎖":"honor",
     "🎗":"charity",
     "🎃":"seasonal",
-    "🤑":"pricey"
+    "🤑":"pricey",
+    "🥡":"takeout"
 
 ]
 
