@@ -1474,6 +1474,10 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
            self.openSubscriptions()
        }))
     
+       optionsAlert.addAction(UIAlertAction(title: "Delete Account", style: .default, handler: { (action: UIAlertAction!) in
+           self.didDeleteUser()
+       }))
+       
        optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .default, handler: { (action: UIAlertAction!) in
            self.didSignOut()
        }))
@@ -1516,6 +1520,20 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         self.extSignOutUser()
     }
     
+    func didDeleteUser(){
+        guard let curUser = self.displayUser else {
+            print("didDeleteUser | ERROR | No User")
+            return
+        }
+        
+        if curUser.uid != Auth.auth().currentUser?.uid {
+            print("didDeleteUser | ERROR | Not Current User Deleting \(curUser.uid) | \(Auth.auth().currentUser?.uid)")
+            self.alert(title: "Delete Account Error", message: "You don't have permission to delete account for user \((curUser.username))")
+            return
+        }
+        
+        self.extDeleteUser(user: curUser)
+    }
     
     func tapProfileImage(image: UIImage?) {
         guard let image = image else {return}

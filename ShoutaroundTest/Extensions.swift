@@ -1308,6 +1308,25 @@ extension UIViewController {
         present(alertController, animated: true, completion: nil)
     }
     
+    func extDeleteUser(user: User){
+        let username = user.username as! String
+        let optionsAlert = UIAlertController(title: "Delete Account", message: "All the data for \(username) will be deleted from our databases.", preferredStyle: UIAlertController.Style.alert)
+        
+        optionsAlert.addAction(UIAlertAction(title: "Delete \(username)", style: .default, handler: { (action: UIAlertAction!) in
+            self.extShowLogin()
+            Database.deleteUser(user: user)
+        }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
+        present(optionsAlert, animated: true) {
+            optionsAlert.view.superview?.isUserInteractionEnabled = true
+            optionsAlert.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(self.alertClose(gesture:))))
+        }
+    }
+    
     func extShowLogin() {
         let openAppController = OpenAppViewController()
         let navController = UINavigationController( rootViewController: openAppController)

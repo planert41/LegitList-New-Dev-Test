@@ -5412,6 +5412,123 @@ extension Database{
         
     }
     
+    static func deleteUser(user: User){
+        
+        print(" ! DELETE User | \(user.uid) | \(user.username)")
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("Delete User ERROR. No Auth UID")
+            return}
+        guard let curUid = CurrentUser.uid else {
+            print("Delete User ERROR. No Cur User UID")
+            return}
+        
+        let userId = user.uid
+
+        if uid != user.uid {
+            print("Delete User ERROR. Not Auth User \(uid) \(userId)")
+            return
+        } else if uid != curUid {
+            print("Delete User ERROR. Not Cur User \(uid) \(curUid)")
+            return
+        }
+
+        // DELETE POSTS
+        for (id, post) in CurrentUser.posts {
+            Database.database().reference().child("posts").child(post.id!).removeValue()
+            Database.database().reference().child("postlocations").child(post.id!).removeValue()
+            Database.database().reference().child("comments").child(post.id!).removeValue()
+            Database.database().reference().child("post_lists").child(post.id!).removeValue()
+            Database.database().reference().child("post_messages").child(post.id!).removeValue()
+            Database.database().reference().child("post_votes").child(post.id!).removeValue()
+
+
+            for imageUrl in post.imageUrls {
+                if imageUrl != "" {
+                    var deleteRef = Storage.storage().reference(forURL: imageUrl)
+                    deleteRef.delete(completion: { (error) in
+                        if let error = error {
+                            print("post image delete error for ", imageUrl)
+                        } else {
+                            print("Image Delete Success: ", imageUrl)
+                        }
+                    })
+                }
+            }
+            
+            let smallImageUrl = post.smallImageUrl
+            if post.smallImageUrl != "" {
+                var smallDeleteRef = Storage.storage().reference(forURL: smallImageUrl)
+                smallDeleteRef.delete(completion: { (error) in
+                    if let error = error {
+                        print("post image delete error for ", smallImageUrl)
+                    } else {
+                        print("Small Image Delete Success: ", smallImageUrl)
+                    }
+                })
+            }
+        }
+        
+        for list in CurrentUser.lists {
+            if let tempId = list.id {
+                Database.database().reference().child("lists").child(tempId).removeValue()
+            }
+        }
+        
+        
+        Database.database().reference().child("users").child(userId).removeValue()
+        Database.database().reference().child("premium").child(userId).removeValue()
+        Database.database().reference().child("userposts").child(userId).removeValue()
+        Database.database().reference().child("userlists").child(userId).removeValue()
+        Database.database().reference().child("userlikes").child(userId).removeValue()
+        Database.database().reference().child("inbox").child(userId).removeValue()
+        Database.database().reference().child("user_event").child(userId).removeValue()
+        Database.database().reference().child("emojiDic").child(userId).removeValue()
+
+        
+        // DELETE FIREBASE USER
+        let curUser = Auth.auth().currentUser
+        curUser?.delete { error in
+          if let error = error {
+            print("Firebase Delete User ERROR: \(error)")
+          } else {
+              print("Firebase Delete User Success \(user.uid)")
+          }
+        }
+        
+        // DELETE APPLE USER
+        if user.appleSignUp {
+            removeAppleAccount()
+        }
+        
+        do {
+            try Auth.auth().signOut()
+            CurrentUser.clear()
+        } catch let signOutErr {
+            print("Failed to sign out user After Deletion:", signOutErr)
+        }
+                
+
+        
+        print("SUCCESS DELETING USER \(user.username) | \(user.uid)")
+    }
+    
+    static func removeAppleAccount() {
+      let token = UserDefaults.standard.string(forKey: "refreshToken")
+
+      if let token = token {
+        
+          let url = URL(string: "https://YOUR-URL.cloudfunctions.net/revokeToken?refresh_token=\(token)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "https://apple.com")!
+                
+          let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+            guard data != nil else { return }
+          }
+          print("removeAppleAccount | \(token)")
+          task.resume()
+          
+      }
+    }
+          
+    
 //    static func fetchMessageForUID( userUID: String, completion: @escaping ([Message]) -> ()) {
 //        
 //        let myGroup = DispatchGroup()

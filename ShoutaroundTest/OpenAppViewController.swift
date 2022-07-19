@@ -442,6 +442,28 @@ extension OpenAppViewController: ASAuthorizationControllerDelegate, ASAuthorizat
           print("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
           return
         }
+          
+
+      // Add new code below
+      if let authorizationCode = appleIDCredential.authorizationCode,
+         let codeString = String(data: authorizationCode, encoding: .utf8) {
+          print(codeString)
+          let url = URL(string: "https://YOUR-URL.cloudfunctions.net/getRefreshToken?code=\(codeString)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "https://apple.com")!
+                  
+          let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+              
+              if let data = data {
+                  let refreshToken = String(data: data, encoding: .utf8) ?? ""
+                  print(refreshToken)
+                  // *For security reasons, we recommend iCloud keychain rather than UserDefaults.
+                  UserDefaults.standard.set(refreshToken, forKey: "refreshToken")
+                  UserDefaults.standard.synchronize()
+              }
+          }
+            task.resume()
+      }
+          
+
 
           self.appleCred = appleIDCredential
           self.appleEmail = appleIDCredential.email
