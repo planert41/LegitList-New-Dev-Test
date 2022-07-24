@@ -5474,6 +5474,15 @@ extension Database{
             }
         }
         
+        // DELETE USER PROFILE PICTURE
+        var deleteRef = Storage.storage().reference(forURL: user.profileImageUrl)
+        deleteRef.delete(completion: { (error) in
+            if let error = error {
+                print("profile image delete error for ", user.profileImageUrl)
+            } else {
+                print("Profile Image Delete Success: ", user.profileImageUrl)
+            }
+        })
         
         Database.database().reference().child("users").child(userId).removeValue()
         Database.database().reference().child("premium").child(userId).removeValue()
@@ -5517,7 +5526,8 @@ extension Database{
 
       if let token = token {
         
-          let url = URL(string: "https://YOUR-URL.cloudfunctions.net/revokeToken?refresh_token=\(token)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "https://apple.com")!
+      
+          let url = URL(string: "https://us-central1-shoutaroundtest-ae721.cloudfunctions.net/revokeToken?refresh_token=\(token)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "https://apple.com")!
                 
           let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
             guard data != nil else { return }

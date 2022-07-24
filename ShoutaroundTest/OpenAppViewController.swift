@@ -448,13 +448,16 @@ extension OpenAppViewController: ASAuthorizationControllerDelegate, ASAuthorizat
       if let authorizationCode = appleIDCredential.authorizationCode,
          let codeString = String(data: authorizationCode, encoding: .utf8) {
           print(codeString)
-          let url = URL(string: "https://YOUR-URL.cloudfunctions.net/getRefreshToken?code=\(codeString)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "https://apple.com")!
+      
+
+          
+          let url = URL(string: "https://us-central1-shoutaroundtest-ae721.cloudfunctions.net/getRefreshToken?code=\(codeString)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "https://apple.com")!
                   
           let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
               
               if let data = data {
                   let refreshToken = String(data: data, encoding: .utf8) ?? ""
-                  print(refreshToken)
+                  print("Apple refreshToken: ", refreshToken)
                   // *For security reasons, we recommend iCloud keychain rather than UserDefaults.
                   UserDefaults.standard.set(refreshToken, forKey: "refreshToken")
                   UserDefaults.standard.synchronize()
