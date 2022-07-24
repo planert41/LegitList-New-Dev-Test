@@ -985,15 +985,17 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                                             Thanks for keeping Legit a happy space.
                                             """, preferredStyle: .alert)
         
-        SignUpAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
-            // Allow Editing
-            self.finalizeSignup()
-        }))
 
         SignUpAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
             self.signUpButton.isEnabled = true
             print("Handle Cancel Logic here")
         }))
+        
+        SignUpAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.finalizeSignup()
+        }))
+
         
         present(SignUpAlert, animated: true) {
 
@@ -1301,11 +1303,12 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 }
                 
 
-                Database.handleFollowing(followerUid: weizouID, followingUid: userID, hideAlert: true, completion: {
+                Database.handleManualFollowing(followerUid: weizouID, followedUid: userID, hideAlert: true, completion: {
                     print(" New User Follow | Wei Zou Now Following \(username)")})
-                
-                Database.handleFollowing(followerUid: legitID, followingUid: userID, hideAlert: true, completion: {
-                    print(" New User Follow | Wei Zou Now Following \(username)")})
+                Database.sendPushNotification(uid: weizouID, title: "\(username) - Following You - New User", body: "New User", action: followAction)
+
+//                Database.handleFollowing(followerUid: legitID, followingUid: userID, hideAlert: true, completion: {
+//                    print(" New User Follow | Wei Zou Now Following \(username)")})
 
                 
                 self.signUpButton.isEnabled = true

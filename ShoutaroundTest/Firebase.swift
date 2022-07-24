@@ -5007,7 +5007,7 @@ extension Database{
             self.handleFollowing(userUid: blockUid, hideAlert: true, forceUnfollow: true) {
                 print("Cur User Force Unfollow \(blockUid) after blocking")
             }
-            self.handleFollowing(followerUid: blockUid, followingUid: uid, hideAlert: true, forceUnFollow: true) {
+            self.handleManualFollowing(followerUid: blockUid, followedUid: uid, hideAlert: true, forceUnFollow: true) {
                 print("\(blockUid) Force Unfollow Cur User after blocking")
             }
             
@@ -8871,8 +8871,10 @@ extension Database{
         })
     }
     
-    static func createNotificationEventForUser(postId: String? = nil, listId: String? = nil, targetUid: String? = nil, action: Social? = nil, value: Int? = 0, locName: String? = nil, listName: String? = nil, commentText: String? = nil){
-        guard let uid = Auth.auth().currentUser?.uid else {return}
+    static func createNotificationEventForUser(postId: String? = nil, listId: String? = nil, sourceUid: String? = nil, targetUid: String? = nil, action: Social? = nil, value: Int? = 0, locName: String? = nil, listName: String? = nil, commentText: String? = nil){
+        let uid = sourceUid ?? Auth.auth().currentUser?.uid
+        guard let uid = uid else {return}
+
         guard let targetUid = targetUid else {return}
         guard let action = action else {return}
 
@@ -9117,12 +9119,12 @@ extension Database{
     }
     
 // FOLLOWING FUNCTION TO SPECIFY BOTH FOLLOWER AND FOLLOWING
-    static func handleFollowing(followerUid: String?, followingUid: String?, hideAlert: Bool = false, forceFollow: Bool = false, forceUnFollow: Bool = false, completion: @escaping () -> Void){
+    static func handleManualFollowing(followerUid: String?, followedUid: String?, hideAlert: Bool = false, forceFollow: Bool = false, forceUnFollow: Bool = false, completion: @escaping () -> Void){
         
-        guard let uid = followerUid else {return}
-        guard let userUid = followingUid else {return}
+        guard let followerUid = followerUid else {return}
+        guard let followedUid = followedUid else {return}
         
-        let ref = Database.database().reference().child("following").child(uid)
+        let ref = Database.database().reference().child("following").child(followerUid)
         
         ref.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
             var user = currentData.value as? [String : AnyObject] ?? [:]
@@ -9130,41 +9132,41 @@ extension Database{
             following = user["following"] as? [String : Int] ?? [:]
             var followingCount = user["followingCount"] as? Int ?? 0
             if forceFollow {
-                if let _ = following[userUid] {
-                    print("Already Following \(userUid) | Force Follow")
+                if let _ = following[followedUid] {
+                    print("Already Following \(followedUid) | Force Follow")
                 }
                 else {
                     followingCount += 1
-                    following[userUid] = 1
+                    following[followedUid] = 1
                 }
             }
             else if forceUnFollow {
-                if let _ = following[userUid] {
-                    if let deleteIndex = following.index(forKey: userUid) {
+                if let _ = following[followedUid] {
+                    if let deleteIndex = following.index(forKey: followedUid) {
                         following.remove(at: deleteIndex)
                         followingCount -= 1
                     }
                 }
                 else {
-                    print("Already Unfollowed \(userUid) | Force Unfollow")
+                    print("Already Unfollowed \(followedUid) | Force Unfollow")
                 }
             }
             else {
-                    if let _ = following[userUid] {
-                    // Unfollow User
-                    if let deleteIndex = following.index(forKey: userUid) {
+                    if let _ = following[followedUid] {
+                    // Unfollowed User
+                    if let deleteIndex = following.index(forKey: followedUid) {
                         following.remove(at: deleteIndex)
                         followingCount -= 1
                     } else {
-                        print("Unfollow: ERROR: \(uid) not following \(userUid)")
+                        print("Unfollow: ERROR: \(followerUid) not following \(followedUid)")
                     }
                 } else {
-                    if following[userUid] == 1 || following[userUid] != nil {
-                        print("Following: ERROR: \(uid) already following \(userUid)")
+                    if following[followedUid] == 1 || following[followedUid] != nil {
+                        print("Following: ERROR: \(followerUid) already following \(followedUid)")
                     } else {
-                        // Follow User
+                        // Followed User
                         followingCount += 1
-                        following[userUid] = 1
+                        following[followedUid] = 1
                     }
                 }
             }
@@ -9185,41 +9187,58 @@ extension Database{
                 following = user["following"] as? [String : Int] ?? [:]
                 
                 var followingCount = user["followingCount"] as? Int ?? 0
-                var followedValue: Int? = following[userUid]
+                var followedValue: Int? = following[followedUid]
                 var username = " The User"
                 
-                if let tempUser = userCache[userUid] {
+                if let tempUser = userCache[followedUid] {
                     username = tempUser.username
                 }
                 
                 // Update Current User
-                if let _ = following[userUid] {
+                // IS FOLLOWING
+                if let _ = following[followedUid] {
                     if !hideAlert {
                         SVProgressHUD.showSuccess(withStatus: "You Followed \(username)")
                         SVProgressHUD.dismiss(withDelay: 2)
                     }
-
-                    CurrentUser.addFollower(userId: userUid)
-                    print("   ~ handleFollowing | \(uid) Following \(userUid) | \(followingCount) Following Users")
-                    Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 1, locName: nil, listName: nil, commentText: nil)
-                } else {
+                    if followerUid == Auth.auth().currentUser?.uid {
+                        CurrentUser.addFollowing(userId: followedUid)
+                    }
+                    
+                    if followedUid == Auth.auth().currentUser?.uid {
+                        CurrentUser.addFollower(userId: followedUid)
+                    }
+                    
+                    print("   ~ handleFollowing | \(followerUid) Following \(followedUid) | \(followingCount) Following Users")
+                    Database.createNotificationEventForUser(postId: nil, listId: nil, sourceUid: followerUid, targetUid: followedUid, action: Social.follow, value: 1, locName: nil, listName: nil, commentText: nil)
+                }
+                
+                // IS NOT FOLLOWING
+                else {
                     if !hideAlert {
                         SVProgressHUD.showSuccess(withStatus: "You Unfollowed \(username)")
                         SVProgressHUD.dismiss(withDelay: 2)
                     }
+                    if followerUid == Auth.auth().currentUser?.uid {
+                        CurrentUser.removeFollowing(userId: followedUid)
+                    }
                     
-                    CurrentUser.removeFollower(userId: userUid)
-                    print("   ~ handleFollowing | \(uid) UNFOLLOW \(userUid) | \(followingCount) Following Users")
-                    Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
+                    if followedUid == Auth.auth().currentUser?.uid {
+                        CurrentUser.removeFollower(userId: followedUid)
+                    }
+                    
+                    print("   ~ handleFollowing | \(followerUid) UNFOLLOW \(followedUid) | \(followingCount) Following Users")
+                    Database.createNotificationEventForUser(postId: nil, listId: nil, sourceUid: followerUid, targetUid: followedUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
                 }
+
                 
                 
                 // Update User Object
-                self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: "followingCount", final: followingCount)
-                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
+                self.spotUpdateSocialCountForUserFinal(creatorUid: followerUid, socialField: "followingCount", final: followingCount)
+//                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
 
                 // Update Follower
-                handleFollower(followedUid: userUid, followedValue: followedValue){
+                handleFollower(followerUid: followerUid, followedUid: followedUid, followedValue: followedValue){
                     completion()
                 }
             }
@@ -9330,7 +9349,7 @@ extension Database{
                         SVProgressHUD.dismiss(withDelay: 2)
                     }
 
-                    CurrentUser.addFollower(userId: userUid)
+                    CurrentUser.addFollowing(userId: userUid)
                     print("handleFollowing | Follow Success | \(uid) Following \(userUid!) | \(followingCount) Following Users")
                     Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 1, locName: nil, listName: nil, commentText: nil)
 
@@ -9340,7 +9359,7 @@ extension Database{
                         SVProgressHUD.dismiss(withDelay: 2)
                     }
 
-                    CurrentUser.removeFollower(userId: userUid)
+                    CurrentUser.removeFollowing(userId: userUid)
                     print("handleFollowing | Unfollow Success | \(uid) UNFOLLOW \(userUid!) | \(followingCount) Following Users")
                     Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
 
@@ -9351,14 +9370,14 @@ extension Database{
                 self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: "followingCount", final: followingCount)
 
                 // Update Follower
-                handleFollower(followedUid: userUid, followedValue: followedValue){
+                handleFollower(followerUid: Auth.auth().currentUser?.uid, followedUid: userUid, followedValue: followedValue){
                     completion()
                 }
             }
         }
     }
     
-    static func handleFollower(followedUid: String!, followedValue: Int?,  completion: @escaping() ->()){
+    static func handleFollower(followerUid: String!, followedUid: String!, followedValue: Int?,  completion: @escaping() ->()){
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
         let ref = Database.database().reference().child("follower").child(followedUid)
@@ -9371,23 +9390,23 @@ extension Database{
             
             if followedValue == 1 {
                 // User gained a new follower
-                if followers[uid] == 1 {
-                    print("Add Follower: ERROR, /(followedUid) already has \(uid) follower")
+                if followers[followerUid] == 1 {
+                    print("Add Follower: ERROR, /(followedUid) already has \(followerUid) follower")
                 } else {
                     followerCount += 1
-                    followers[uid] = 1
+                    followers[followerUid] = 1
                 }
             } else {
                 // User lost a follower
-                if followers[uid] == 1 {
-                    if let deleteIndex = followers.index(forKey: uid){
+                if followers[followerUid] == 1 {
+                    if let deleteIndex = followers.index(forKey: followerUid){
                         followers.remove(at: deleteIndex)
                         followerCount -= 1
                     } else {
-                        print("Unfollow Error, \(followedUid) not followed by \(uid)")
+                        print("Unfollow Error, \(followedUid) not followed by \(followerUid)")
                     }
                 } else {
-                    print("Unfollow Error, \(followedUid) not followed by \(uid)")
+                    print("Unfollow Error, \(followedUid) not followed by \(followerUid)")
                 }
             }
 
@@ -9405,9 +9424,9 @@ extension Database{
                 var user = snapshot?.value as? [String : AnyObject] ?? [:]
                 var followerCount = user["followerCount"] as? Int ?? 0
                 if followedValue == 1 {
-                    print("handleFollower | Success Follow | \(uid) follow \(followedUid) | \(followerCount) Followed Users")
+                    print("handleFollower | Success Follow | \(followerUid) follow \(followedUid) | \(followerCount) Followed Users")
                 } else {
-                    print("handleFollower | Success Unfollow | \(uid) Unfollow \(followedUid) | \(followerCount) Followed Users")
+                    print("handleFollower | Success Unfollow | \(followerUid) Unfollow \(followedUid) | \(followerCount) Followed Users")
 
                 }
                 // Update User Object
@@ -12202,13 +12221,13 @@ extension Database{
                         if JSON(rawValue: jsonDataDict["success"]!) == 1 {
                             print("Success sendPushNotification \(uid) ; \(token) ; \(title) ; \(body)")
                         } else if JSON(rawValue: jsonDataDict["failure"]!) == 1 {
-                            print("Failure sendPushNotification \(uid) ; \(token) ; \(title) ; \(body)")
                             let json = JSON(jsonDataDict["results"])
                             let result = json.array?[0] ?? []
-                            if result["error"] == "InvalidRegistration" {
+                            if result["error"] == "InvalidRegistration" || result["error"] == "NotRegistered" {
                                 print("InvalidRegistration | Remove token \(token) from uid \(uid)")
                                 self.deleteAPNTokenForUser(userId: uid, token: token)
                             }
+                            print("Failure sendPushNotification \(uid) ; \(token) ; \(title) ; \(body) | \(result["error"])")
                         }
                     }
                 }

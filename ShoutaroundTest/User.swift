@@ -439,8 +439,8 @@ struct CurrentUser {
     }
     
     
-    static func addFollower(userId: String?) {
-        print("Current User | Added Follower | \(userId)")
+    static func addFollowing(userId: String?) {
+        print("Current User | Added Following | \(userId)")
         guard let userId = userId else {return}
         self.followingUids.append(userId)
         
@@ -457,7 +457,7 @@ struct CurrentUser {
         }
     }
     
-    static func removeFollower(userId: String?) {
+    static func removeFollowing(userId: String?) {
         print("Current User | Unfollowed | \(userId)")
         guard let userId = userId else {return}
         if let removeIndex = self.followingUids.firstIndex(of: userId){
@@ -477,6 +477,20 @@ struct CurrentUser {
             userCache[userId] = tempUser
         }
         
+    }
+    
+    static func addFollower(userId: String?) {
+        print("Current User | Added Follower | \(userId)")
+        guard let userId = userId else {return}
+        self.followerUids.append(userId)
+    }
+    
+    static func removeFollower(userId: String?) {
+        print("Current User | Removed Follower | \(userId)")
+        guard let userId = userId else {return}
+        if let removeIndex = self.followerUids.firstIndex(of: userId){
+            self.followerUids.remove(at: removeIndex)
+        }
     }
     
     static func addList(list: List){
