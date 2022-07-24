@@ -11,6 +11,7 @@ import RevenueCat
 import FirebaseDatabase
 import FirebaseAuth
 import FirebaseStorage
+import SVProgressHUD
 
 class PremiumSubViewController: UIViewController {
 
@@ -213,7 +214,27 @@ class PremiumSubViewController: UIViewController {
     // CREATE A TRANSACTION ENTRY UNDER 'PREMIUM TRANSACTIONS'
     // THEN CREATE A PREMIUM USER ACCOUNT UNDER 'PREMIUM'
     
+    var processing = false {
+        didSet {
+            if !processing {
+                SVProgressHUD.dismiss()
+            }
+        }
+    }
+    
+    func showProcessing() {
+        self.processing = true
+        SVProgressHUD.show(withStatus: "Processing Purchase")
+        SVProgressHUD.dismiss(withDelay: 90) {
+            if self.processing {
+                SVProgressHUD.show(withStatus: "Sorry Still Processing Purchase")
+            }
+        }
+    }
+    
+    
     func handleMonthlySub() {
+        self.showProcessing()
         PurchaseService.purchase(productId: monthlySubProductID) { (transaction) in
             if let transaction = transaction {
                 var purchaseDate = (transaction.purchaseDate ?? Date())!
@@ -225,6 +246,7 @@ class PremiumSubViewController: UIViewController {
                 Database.createPremiumSubscription(transactionId: transID, buyerId: Auth.auth().currentUser?.uid, subPeriod: .monthly) { (tempSub) in
                     Database.premiumUserSignUp(subscription: tempSub)
                     self.dismiss(animated: true) {
+                        self.processing = false
                         print("Monthly User Subscription Complete | TransID: \(transID)")
 //                        self.navigationController?.popToRootViewController(animated: true)
                     }
@@ -234,6 +256,7 @@ class PremiumSubViewController: UIViewController {
     }
     
     func handleAnnualSub() {
+        self.showProcessing()
         PurchaseService.purchase(productId: annualSubProductID) { (transaction) in
             if let transaction = transaction {
                 var purchaseDate = (transaction.purchaseDate ?? Date())!
@@ -241,6 +264,7 @@ class PremiumSubViewController: UIViewController {
                 Database.createPremiumSubscription(transactionId: transID, buyerId: Auth.auth().currentUser?.uid, subPeriod: .annual) { (tempSub) in
                     Database.premiumUserSignUp(subscription: tempSub)
                     self.dismiss(animated: true) {
+                        self.processing = false
                         print("Annual User Subscription Complete | TransID : \(transID)")
 //                        self.navigationController?.popToRootViewController(animated: true)
                     }
