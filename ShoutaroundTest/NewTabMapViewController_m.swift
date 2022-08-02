@@ -1209,6 +1209,15 @@ class NewTabMapViewController: UIViewController {
                         }
                     }
                     
+                    if appDelegatePostID != nil {
+                        self.selectedMapPost = self.fetchedPosts.filter({ (post) -> Bool in
+                            post.id == appDelegatePostID
+                        }).first
+                        self.showSelectedPost()
+                        appDelegatePostID = nil
+                        print("Filter Sort | appDelegatePostID | Specific post | \(self.selectedMapPost?.id)")
+                    }
+                    
                     self.isFetching = false
                     self.refreshButton.isHidden = !self.mapFilter.isFiltering
                     self.refreshMap()

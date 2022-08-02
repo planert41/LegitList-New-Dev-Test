@@ -95,14 +95,14 @@ class SharedFunctions {
         
         
         if initDistance.value >= 500 {
-            distanceString = icons ? "✈️" : ""
+            distanceString = icons ? "✈️ " : ""
             
             if expand {
                 distanceString! += m.string(from: initDistance)
             }
             
         } else if initDistance.value >= 50 {
-            distanceString = icons ? "🚗" : "" 
+            distanceString = icons ? "🚗 " : ""
             if expand {
                 distanceString! += m.string(from: initDistance)
             }

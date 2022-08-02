@@ -213,6 +213,8 @@ extension Database{
                 CurrentUser.inboxThreads = messageThreads
             }
             
+            LocationSingleton.sharedInstance.determineCurrentLocation()
+            
         }
             
 //            Database.fetchUserFollowingListEventForUID(uid: uid) { (events) in

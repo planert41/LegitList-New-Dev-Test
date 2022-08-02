@@ -67,7 +67,7 @@ class LocationSummaryView: UIView {
     
     let mapView = MKMapView()
     let mapPinReuseInd = "MapPin"
-    let regionRadius: CLLocationDistance = 1000
+    let regionRadius: CLLocationDistance = 5000
 
     lazy var trackingButton: MKUserTrackingButton = {
         let button = MKUserTrackingButton()
@@ -93,7 +93,9 @@ class LocationSummaryView: UIView {
     // Map Button
     lazy var mapButton: UIButton = {
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        button.setImage((#imageLiteral(resourceName: "google_color").resizeImageWith(newSize: CGSize(width: 25, height: 25))).withRenderingMode(.alwaysOriginal), for: .normal)
+        let mapImage = #imageLiteral(resourceName: "map").withRenderingMode(.alwaysTemplate)
+        button.setImage(mapImage, for: .normal)
+        button.tintColor = UIColor.ianLegitColor()
         button.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
         button.layer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.8).cgColor
         return button
@@ -160,11 +162,13 @@ class LocationSummaryView: UIView {
             if placeOpenNow == nil {
                 locationHoursIcon.setTitle("", for: .normal)
                 locationHoursIcon.sizeToFit()
+                locationHoursIcon.isHidden = true
             } else {
                 let openImage = #imageLiteral(resourceName: "open_icon").withRenderingMode(.alwaysOriginal)
                 locationHoursIcon.setImage(self.placeOpenNow! ? openImage : UIImage(), for: .normal)
                 var text = (self.placeOpenNow! ? "" : " CLOSED ")
                 let headerTitle = NSAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(font: .avenirNextBold, size: 16)])
+                locationHoursIcon.isHidden = false
                 locationHoursIcon.setAttributedTitle(headerTitle, for: .normal)
                 locationHoursIcon.sizeToFit()
             }
@@ -396,6 +400,7 @@ class LocationSummaryView: UIView {
         
         
     // MAP VIEW
+//        setupMap()
         addSubview(mapView)
         mapView.anchor(top: actionBarContainer.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 200)
         mapView.isScrollEnabled = false
@@ -409,13 +414,18 @@ class LocationSummaryView: UIView {
         addSubview(bottomDivider)
         bottomDivider.anchor(top: mapView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 3)
         bottomDivider.backgroundColor = UIColor.ianLegitColor()
-        
-        addSubview(locationButton)
-        locationButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
-        locationButton.backgroundColor = UIColor.clear
+                
+//        addSubview(trackingButton)
+//        trackingButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
+//        trackingButton.backgroundColor = UIColor.white.withAlphaComponent(0.75)
+//        trackingButton.isHidden = false
+
+//        addSubview(locationButton)
+//        locationButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
+//        locationButton.backgroundColor = UIColor.clear
 
         addSubview(mapButton)
-        mapButton.anchor(top: mapView.topAnchor, left: nil, bottom: nil, right: mapView.rightAnchor, paddingTop: 10, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
+        locationButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
         mapButton.backgroundColor = UIColor.clear
 
 
@@ -988,8 +998,18 @@ extension LocationSummaryView: MKMapViewDelegate, GMSMapViewDelegate {
         mapView.mapType = MKMapType.standard
         mapView.isZoomEnabled = true
         mapView.isScrollEnabled = false
-        mapView.register(MapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
-        mapView.register(ClusterMapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
+//        mapView.register(MapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+//        mapView.register(ClusterMapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
+        
+        trackingButton = MKUserTrackingButton(mapView: mapView)
+        //        button.layer.backgroundColor = UIColor(white: 1, alpha: 0.8).cgColor
+        trackingButton.layer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.25).cgColor
+        trackingButton.layer.borderColor = UIColor.white.cgColor
+        trackingButton.layer.borderColor = UIColor.mainBlue().cgColor
+        
+        trackingButton.layer.borderWidth = 1
+        trackingButton.layer.cornerRadius = 5
+        trackingButton.translatesAutoresizingMaskIntoConstraints = true
     }
 
     
@@ -1032,7 +1052,7 @@ extension LocationSummaryView: MKMapViewDelegate, GMSMapViewDelegate {
         guard let selectedAdress = self.selectedAdress else {return}
         let distance = Double((selectedLocation.distance(from: currentUserLocation)))
         
-        locationDistanceLabel.text = SharedFunctions.formatDistance(inputDistance: distance)
+        locationDistanceLabel.text = SharedFunctions.formatDistance(inputDistance: distance, expand: true, icons: true)
         locationDistanceLabel.adjustsFontSizeToFitWidth = true
         locationDistanceLabel.sizeToFit()
     }
@@ -1248,7 +1268,7 @@ extension LocationSummaryView {
                 self.selectedAdress = result["formatted_address"].string ?? ""
                 self.locationMapButton.tintColor = (self.selectedAdress == "") ? UIColor.gray : UIColor.legitColor()
 
-                let tempMapString = NSMutableAttributedString(string: " Map", attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12), NSAttributedString.Key.foregroundColor:self.locationMapButton.tintColor])
+                let tempMapString = NSMutableAttributedString(string: " Directions", attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12), NSAttributedString.Key.foregroundColor:self.locationMapButton.tintColor])
                 self.locationMapButton.setAttributedTitle(tempMapString, for: .normal)
                 self.locationMapButton.isUserInteractionEnabled = !(self.placePhoneNo == "N/A")
                 self.locationMapButton.backgroundColor = (self.selectedAdress == "") ? invalidBackgroundColor : validBackgroundColor

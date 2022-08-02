@@ -1441,7 +1441,13 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
     
     
     func toggleMapFunction() {
-        print("MAP FUNCTION")
+//        guard let location = self.selectedLocation else {return}
+//        var tempFilter = Filter.init(defaultSort: defaultRecentSort)
+//        tempFilter.filterLocation = self.selectedLocation
+//        appDelegateFilter = tempFilter
+        appDelegatePostID = post?.id
+        print(" ~ Single Post | Map GPS  | PostID: \(appDelegatePostID)")
+        self.toggleMapView()
     }
     
     func didTapLocationHours(hours: [JSON]?){
@@ -1963,8 +1969,9 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         let regionSpan = MKCoordinateRegion(center: coordinates, latitudinalMeters: regionDistance, longitudinalMeters: regionDistance)
         let options = [
             MKLaunchOptionsMapCenterKey: NSValue(mkCoordinate: regionSpan.center),
-            MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: regionSpan.span)
-        ]
+//            MKLaunchOptionsMapSpanKey: NSValue(mkCoordinateSpan: regionSpan.span),
+            MKLaunchOptionsDirectionsModeKey : MKLaunchOptionsDirectionsModeDriving
+        ] as [String: Any]
         let placemark = MKPlacemark(coordinate: coordinates, addressDictionary: nil)
         let mapItem = MKMapItem(placemark: placemark)
         mapItem.name = "\(post.locationName)"

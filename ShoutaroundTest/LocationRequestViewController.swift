@@ -176,10 +176,10 @@ class LocationRequestViewController: UIViewController {
         nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         nextButton.sizeToFit()
         
-        view.addSubview(cancelButton)
-        cancelButton.anchor(top: nextButton.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 10, paddingLeft: sidePadding, paddingBottom: 30, paddingRight: sidePadding, width: 200, height: 50)
-        cancelButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        cancelButton.sizeToFit()
+//        view.addSubview(cancelButton)
+//        cancelButton.anchor(top: nextButton.bottomAnchor, left: nil, bottom: nil, right: nil, paddingTop: 10, paddingLeft: sidePadding, paddingBottom: 30, paddingRight: sidePadding, width: 200, height: 50)
+//        cancelButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        cancelButton.sizeToFit()
         // Do any additional setup after loading the view.
     }
     

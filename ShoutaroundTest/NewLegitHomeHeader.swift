@@ -178,7 +178,7 @@ class NewLegitHomeHeader: UICollectionViewCell {
         //        button.layer.cornerRadius = button.frame.width/2
 //        button.layer.masksToBounds = true
         button.setTitle("", for: .normal)
-        button.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
+//        button.addTarget(self, action: #selector(openNotifications), for: .touchUpInside)
         button.layer.backgroundColor = UIColor.clear.cgColor
         button.layer.borderColor = UIColor.gray.cgColor
         button.layer.borderWidth = 0
