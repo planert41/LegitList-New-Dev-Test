@@ -348,6 +348,7 @@
 		B6E9201D27B75D7500A6B303 /* NewUserOnboardView4Feed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9201C27B75D7500A6B303 /* NewUserOnboardView4Feed.swift */; };
 		B6E9201F27B8513300A6B303 /* NewUserOnboardViewLast.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */; };
 		B6E9202127B8647400A6B303 /* NewUserOnboardFollowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */; };
+		B6FDE3B92899FA8F00CF0AAD /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6FDE3B82899FA8F00CF0AAD /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -724,6 +725,7 @@
 		B6E9201C27B75D7500A6B303 /* NewUserOnboardView4Feed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardView4Feed.swift; sourceTree = "<group>"; };
 		B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardViewLast.swift; sourceTree = "<group>"; };
 		B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserOnboardFollowing.swift; sourceTree = "<group>"; };
+		B6FDE3B82899FA8F00CF0AAD /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -734,6 +736,7 @@
 				A5786AAC217CDD02003247CC /* CoreImage.framework in Frameworks */,
 				A5786AAA217CDCFA003247CC /* CoreGraphics.framework in Frameworks */,
 				A5786AA8217CDCF0003247CC /* Accelerate.framework in Frameworks */,
+				B6FDE3B92899FA8F00CF0AAD /* StoreKit.framework in Frameworks */,
 				A5C480D01F5DCB500096E003 /* FBSDKCoreKit.framework in Frameworks */,
 				A5C480D11F5DCB500096E003 /* FBSDKLoginKit.framework in Frameworks */,
 				A5BC59491FAA112200BEAD1C /* GoogleMaps.framework in Frameworks */,
@@ -754,6 +757,7 @@
 		3EA73406772E99D3B47B94DF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B6FDE3B82899FA8F00CF0AAD /* StoreKit.framework */,
 				B6BAA5CD278C87320051C844 /* FirebaseDatabase.framework */,
 				A5786AAB217CDD02003247CC /* CoreImage.framework */,
 				A5786AA9217CDCFA003247CC /* CoreGraphics.framework */,
@@ -2148,7 +2152,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2180,7 +2184,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ShoutaroundTest/LegitList.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				ENABLE_ONLY_ACTIVE_RESOURCES = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2216,7 +2220,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				EXCLUDED_ARCHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2247,7 +2251,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = YQ37FCKXVH;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = NotificationService/Info.plist;
