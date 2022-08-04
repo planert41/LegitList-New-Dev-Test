@@ -97,7 +97,9 @@ class LocationSummaryView: UIView {
         button.setImage(mapImage, for: .normal)
         button.tintColor = UIColor.ianLegitColor()
         button.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
-        button.layer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.8).cgColor
+        button.layer.backgroundColor = UIColor.white.withAlphaComponent(0.8).cgColor
+        button.layer.cornerRadius = 10 / 2
+        button.clipsToBounds = true
         return button
     }()
     
@@ -253,7 +255,6 @@ class LocationSummaryView: UIView {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "discover").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(activateBrowser), for: .touchUpInside)
-        button.titleLabel?.textColor = UIColor.ianLegitColor()
         button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 14)
         return button
     }()
@@ -262,14 +263,15 @@ class LocationSummaryView: UIView {
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "phone").withRenderingMode(.alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(activatePhone), for: .touchUpInside)
-        button.titleLabel?.textColor = UIColor.ianLegitColor()
         button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 14)
         return button
     }()
     
     let locationMapButton: UIButton = {
         let button = UIButton()
-        button.setImage(#imageLiteral(resourceName: "map").withRenderingMode(.alwaysTemplate), for: .normal)
+        let img = #imageLiteral(resourceName: "map_icon").withRenderingMode(.alwaysTemplate).resizeImageWith(newSize: CGSize(width: 30, height: 30))
+        button.setImage(img, for: .normal)
+        button.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(activateAppleMapFunction), for: .touchUpInside)
         button.titleLabel?.textColor = UIColor.ianLegitColor()
         button.titleLabel?.font = UIFont(name: "Poppins-Bold", size: 14)
@@ -400,7 +402,7 @@ class LocationSummaryView: UIView {
         
         
     // MAP VIEW
-//        setupMap()
+        setupMap()
         addSubview(mapView)
         mapView.anchor(top: actionBarContainer.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 200)
         mapView.isScrollEnabled = false
@@ -425,8 +427,10 @@ class LocationSummaryView: UIView {
 //        locationButton.backgroundColor = UIColor.clear
 
         addSubview(mapButton)
-        locationButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
-        mapButton.backgroundColor = UIColor.clear
+        mapButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
+//        mapButton.layer.cornerRadius = 30 / 2
+//        mapButton.clipsToBounds = true
+//        mapButton.backgroundColor = UIColor.white
 
 
         
@@ -466,10 +470,10 @@ class LocationSummaryView: UIView {
         self.delegate?.didTapLocation()
     }
     
-    
+    let actionBarColor = UIColor.black
+
     func setupActionBar() {
             hideActionBar = actionBarContainer.heightAnchor.constraint(equalToConstant: 0)
-            
             
     //        let locationStackView = UIStackView(arrangedSubviews: [locationPhoneButton, locationWebsiteButton,locationMapButton])
             let locationStackView = UIStackView(arrangedSubviews: [phoneContainerView, websiteContainerView,mapContainerView])
@@ -479,20 +483,22 @@ class LocationSummaryView: UIView {
             actionBarContainer.addSubview(locationStackView)
             locationStackView.anchor(top: actionBarContainer.topAnchor, left: actionBarContainer.leftAnchor, bottom: actionBarContainer.bottomAnchor, right: actionBarContainer.rightAnchor, paddingTop: 0, paddingLeft: 2, paddingBottom: 0, paddingRight: 2, width: 0, height: 0)
             
-            locationStackView.layer.borderColor = UIColor.ianLegitColor().cgColor
+            locationStackView.layer.borderColor = actionBarColor.cgColor
             locationStackView.layer.borderWidth = 1
             locationStackView.layer.cornerRadius = 5
             locationStackView.layer.masksToBounds = true
             locationStackView.clipsToBounds = true
 
-            
-            phoneContainerView.layer.borderColor = UIColor.rgb(red: 221, green: 221, blue: 221).cgColor
+//            let borderColor = UIColor.rgb(red: 221, green: 221, blue: 221).cgColor
+            let borderColor = actionBarColor.withAlphaComponent(0.5).cgColor
+
+            phoneContainerView.layer.borderColor = borderColor
             phoneContainerView.layer.borderWidth = 1
             
-            websiteContainerView.layer.borderColor = UIColor.rgb(red: 221, green: 221, blue: 221).cgColor
+            websiteContainerView.layer.borderColor = borderColor
             websiteContainerView.layer.borderWidth = 1
             
-            mapContainerView.layer.borderColor = UIColor.rgb(red: 221, green: 221, blue: 221).cgColor
+            mapContainerView.layer.borderColor = borderColor
             mapContainerView.layer.borderWidth = 1
             
             phoneContainerView.addSubview(locationPhoneButton)
@@ -993,7 +999,7 @@ extension LocationSummaryView: MKMapViewDelegate, GMSMapViewDelegate {
     
     // MAP
     func setupMap(){
-        mapView.delegate = self
+//        mapView.delegate = self
         mapView.showsUserLocation = true
         mapView.mapType = MKMapType.standard
         mapView.isZoomEnabled = true
@@ -1001,15 +1007,15 @@ extension LocationSummaryView: MKMapViewDelegate, GMSMapViewDelegate {
 //        mapView.register(MapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
 //        mapView.register(ClusterMapPinMarkerView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         
-        trackingButton = MKUserTrackingButton(mapView: mapView)
-        //        button.layer.backgroundColor = UIColor(white: 1, alpha: 0.8).cgColor
-        trackingButton.layer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.25).cgColor
-        trackingButton.layer.borderColor = UIColor.white.cgColor
-        trackingButton.layer.borderColor = UIColor.mainBlue().cgColor
-        
-        trackingButton.layer.borderWidth = 1
-        trackingButton.layer.cornerRadius = 5
-        trackingButton.translatesAutoresizingMaskIntoConstraints = true
+//        trackingButton = MKUserTrackingButton(mapView: mapView)
+//        //        button.layer.backgroundColor = UIColor(white: 1, alpha: 0.8).cgColor
+//        trackingButton.layer.backgroundColor = UIColor.lightGray.withAlphaComponent(0.25).cgColor
+//        trackingButton.layer.borderColor = UIColor.white.cgColor
+//        trackingButton.layer.borderColor = UIColor.mainBlue().cgColor
+//
+//        trackingButton.layer.borderWidth = 1
+//        trackingButton.layer.cornerRadius = 5
+//        trackingButton.translatesAutoresizingMaskIntoConstraints = true
     }
 
     
@@ -1234,14 +1240,14 @@ extension LocationSummaryView {
                 
                 
                 let invalidBackgroundColor = UIColor.lightGray
-                let validBackgroundColor = UIColor.ianWhiteColor()
+                let validBackgroundColor = UIColor.lightBackgroundGrayColor()
 
                 
         // LOCATION PHONE
                 self.placePhoneNo = result["formatted_phone_number"].string ?? "N/A"
                 self.locationPhoneButton.setImage(#imageLiteral(resourceName: "fill1803Fill1804").withRenderingMode(.alwaysTemplate), for: .normal)
                 self.locationPhoneButton.setTitle(self.placePhoneNo!, for: .normal)
-                self.locationPhoneButton.tintColor = (self.placePhoneNo == "N/A") ? UIColor.gray : UIColor.legitColor()
+                self.locationPhoneButton.tintColor = (self.placePhoneNo == "N/A") ? UIColor.gray : actionBarColor
                 
                 let tempPhoneString = NSMutableAttributedString(string: "  " + self.placePhoneNo!, attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12), NSAttributedString.Key.foregroundColor: self.locationPhoneButton.tintColor])
                 self.locationPhoneButton.setAttributedTitle(tempPhoneString, for: .normal)
@@ -1255,7 +1261,7 @@ extension LocationSummaryView {
                 self.placeWebsite = result["website"].string ?? ""
                 self.locationPhoneButton.isUserInteractionEnabled = !(self.placeWebsite == "")
                 self.locationWebsiteButton.setImage(#imageLiteral(resourceName: "fill2901Fill2902").withRenderingMode(.alwaysTemplate), for: .normal)
-                self.locationWebsiteButton.tintColor = (self.placeWebsite == "") ? UIColor.gray : UIColor.legitColor()
+                self.locationWebsiteButton.tintColor = (self.placeWebsite == "") ? UIColor.gray : actionBarColor
                 let tempWebsiteString = NSMutableAttributedString(string: " Website", attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12), NSAttributedString.Key.foregroundColor:self.locationWebsiteButton.tintColor ])
                 self.locationWebsiteButton.setAttributedTitle(tempWebsiteString, for: .normal)
                 self.locationWebsiteButton.backgroundColor = (self.placeWebsite == "") ? invalidBackgroundColor : validBackgroundColor
@@ -1266,7 +1272,7 @@ extension LocationSummaryView {
 
         // LOCATION MAP
                 self.selectedAdress = result["formatted_address"].string ?? ""
-                self.locationMapButton.tintColor = (self.selectedAdress == "") ? UIColor.gray : UIColor.legitColor()
+                self.locationMapButton.tintColor = (self.selectedAdress == "") ? UIColor.gray : actionBarColor
 
                 let tempMapString = NSMutableAttributedString(string: " Directions", attributes: [NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12), NSAttributedString.Key.foregroundColor:self.locationMapButton.tintColor])
                 self.locationMapButton.setAttributedTitle(tempMapString, for: .normal)
