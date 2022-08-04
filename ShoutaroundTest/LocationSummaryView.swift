@@ -402,7 +402,9 @@ class LocationSummaryView: UIView {
         
         
     // MAP VIEW
-        setupMap()
+//        setupMap()
+        mapView.isZoomEnabled = true
+        mapView.showsUserLocation = true
         addSubview(mapView)
         mapView.anchor(top: actionBarContainer.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 5, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 200)
         mapView.isScrollEnabled = false
