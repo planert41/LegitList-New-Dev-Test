@@ -1465,11 +1465,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
            // Allow Editing
            self.editUser()
        }))
-       
-        optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
-            self.contactUs()
-        }))
-       
+
        optionsAlert.addAction(UIAlertAction(title: "Manage Subscriptions", style: .default, handler: { (action: UIAlertAction!) in
            self.openSubscriptions()
        }))
@@ -1481,7 +1477,15 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
        optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .default, handler: { (action: UIAlertAction!) in
            self.didSignOut()
        }))
-    
+       
+       optionsAlert.addAction(UIAlertAction(title: "User Agreements", style: .default, handler: { (action: UIAlertAction!) in
+           self.userDocs()
+       }))
+       
+        optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
+            self.contactUs()
+        }))
+
 
        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
            print("Handle Cancel Logic here")
@@ -1493,6 +1497,41 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
        }
 
    }
+    
+    func userDocs(){
+
+        let optionsAlert = UIAlertController(title: "User Agreements", message: "", preferredStyle: UIAlertController.Style.alert)
+
+        optionsAlert.addAction(UIAlertAction(title: "Terms & Conditions", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.extOpenLegitTerms()
+        }))
+        
+        
+        optionsAlert.addAction(UIAlertAction(title: "Privacy Policy", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.extOpenLegitPrivacy()
+        }))
+        
+         optionsAlert.addAction(UIAlertAction(title: "End User License and Agreement", style: .default, handler: { (action: UIAlertAction!) in
+             self.extOpenLegitEULA()
+         }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
+            self.contactUs()
+        }))
+
+
+        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+            print("Handle Cancel Logic here")
+        }))
+        
+        present(optionsAlert, animated: true) {
+            optionsAlert.view.superview?.isUserInteractionEnabled = true
+            optionsAlert.view.superview?.addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(self.alertClose(gesture:))))
+        }
+
+    }
     
     func selectUserFollowers() {
         self.extShowUserFollowers(inputUser: self.displayUser)
