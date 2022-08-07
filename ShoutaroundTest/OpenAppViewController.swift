@@ -371,7 +371,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         
         guard let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController else { return }
 
-        print("Sucessful Logging in | LoginViewController | New Sign In | Load Current User")
+        print("Sucessful Logging in | OpenAppViewController | New Sign In | Load Current User")
         mainTabBarController.checkForCurrentUser()
         mainTabBarController.selectedIndex = 0
 

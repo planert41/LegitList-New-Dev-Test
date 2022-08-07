@@ -881,17 +881,17 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
     
     @objc func handleUserProfileImageTap() {
         if let post = post {
-            print("Tap Picture")
+            print("Tap Picture ~ TestHomeCellView ~ \(post.id)")
             delegate?.didTapUser(post: post)
         }
     }
     
     @objc func handlePictureTap() {
         if let post = post {
-            print("Tap Picture")
+            print("Tap Picture ~ TestHomeCellView ~ \(post.id)")
             delegate?.didTapPicture(post: post)
         } else {
-            print("Tap Picture | No Post | CELL TAG: \(self.tag)")
+            print("Tap Picture ~ TestHomeCellView | No Post | CELL TAG: \(self.tag)")
             delegateObjc?.didTapCell(int: self.tag)
         }
     }

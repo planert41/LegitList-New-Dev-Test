@@ -132,6 +132,7 @@ var UID_ernie = "VeG6VZOAvmcJ08AnBRTtO8JkSP12"
 var UID_magnus = "B6div2WhzSObg7XGJRFkKBFEQiC3"
 let UID_zm = "nWc6VAl9fUdIx0Yf05yQFdwGd5y2"
 let UID_weiren = "bWRsX8940oQ0oBhSBVog4rACoFF2"
+let UID_anghuat = "54tZKZ8cTCebGDK7ikAY4K99xBZ2"
 
 var defaultLocation = CLLocation(latitude: 41.9735039, longitude: -87.66775139999999)
 

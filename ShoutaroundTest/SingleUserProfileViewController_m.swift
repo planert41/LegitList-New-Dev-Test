@@ -27,7 +27,7 @@ class SingleUserProfileViewController: UIViewController {
     var displayUserId:String? {
         didSet {
             if displayUserId != oldValue {
-                print("Load ID | \(displayUserId) | SingleUserProfileViewController")
+                print("SingleUserProfileViewController | Load User ID | \(displayUserId)")
                 fetchUser()
             }
         }
@@ -181,7 +181,7 @@ class SingleUserProfileViewController: UIViewController {
     var bottomEmojiBarHide: NSLayoutConstraint?
     var bottomEmojiBarHeight: CGFloat = 50
     
-    var isFetchingPost = false
+    var isFetchingPosts = false
     var isFiltering = false
     var viewFilter: Filter = Filter.init(defaultSort: defaultRecentSort) {
         didSet {
@@ -544,7 +544,7 @@ class SingleUserProfileViewController: UIViewController {
 ////        postSortFormatBar.isHidden = true
 //
         self.scalar = min(1, UIScreen.main.nativeBounds.height / defaultHeight)
-        print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
+//        print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
 //
 //        let addPhotoButtonSize: CGFloat = 75 * scalar
 //        self.view.addSubview(addPhotoButton)
@@ -580,7 +580,7 @@ class SingleUserProfileViewController: UIViewController {
         newPostButton.layer.masksToBounds = true
         newPostButton.layer.borderWidth = 1
         newPostButton.layer.borderColor = UIColor.ianLegitColor().cgColor
-        let headerTitle = NSAttributedString(string: "📷  New Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
+        let headerTitle = NSAttributedString(string: "📷  Add Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
 
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
 //        toggleNewPostButton()
@@ -1016,19 +1016,21 @@ extension SingleUserProfileViewController {
             self.fetchedPosts = []
             print("Blocked User")
             self.filterSortFetchedPosts()
-            self.isFetchingPost = false
+            self.isFetchingPosts = false
             return
         }
-        if isFetchingPost {
-            print("  ~ BUSY | fetchPostsForUser | \(uid) | Fetching: \(isFetchingPost)")
+        if isFetchingPosts {
+            print("  ~ BUSY | fetchPostsForUser | \(uid) | Fetching: \(isFetchingPosts)")
             return
         } else {
-            isFetchingPost = true
+            isFetchingPosts = true
         }
         
         if self.isViewLoaded && self.view.window != nil {
             SVProgressHUD.show(withStatus: "Loading Posts")
         }
+        
+        showFetchProgressDetail()
         
         let start = DispatchTime.now() // <<<<<<<<<< Start time
         Database.fetchAllPostWithUID(creatoruid: uid) { (posts) in
@@ -1050,7 +1052,7 @@ extension SingleUserProfileViewController {
             
             self.fetchedPosts = posts
             self.filterSortFetchedPosts()
-            self.isFetchingPost = false
+            self.isFetchingPosts = false
         }
     }
     
@@ -1195,6 +1197,7 @@ extension SingleUserProfileViewController {
 
     func clearSort(){
         self.viewFilter.filterSort = defaultRecentSort
+        self.bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
     }
     
     
@@ -1212,6 +1215,8 @@ extension SingleUserProfileViewController {
     
     @objc func refreshPostsForSort(){
        self.isFiltering = self.viewFilter.isFiltering
+       showFetchProgressDetail()
+
         Database.checkLocationForSort(filter: self.viewFilter) {
             Database.sortPosts(inputPosts: self.displayedPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (sortedPosts) in
                 self.displayedPosts = sortedPosts ?? []
@@ -2139,6 +2144,76 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
         }
     }
     
+    
+    func showFetchProgressDetail(){
+        if !self.isPresented {
+            return
+        }
+        print("showFetchProgressDetail | SingleUserProfile | Filtering: \(self.viewFilter.isFiltering)")
+        // DEFAULT NOT FILTERING
+        if !self.viewFilter.isFiltering {
+            var sortString =  "Fetching Posts"
+            if self.viewFilter.filterSort == sortNew {
+                sortString = "Fetching Latest Posts"
+            } else if self.viewFilter.filterSort == sortNearest {
+                sortString = "Fetching Nearest Posts to You"
+            } else if self.viewFilter.filterSort == sortTrending {
+                sortString = "Fetching Most Popular Posts"
+            }
+            
+            SVProgressHUD.show(withStatus: sortString)
+        }
+            
+            // FILTERING FOR SOMETHING
+        else if self.viewFilter.filterCaption != nil
+        {
+            SVProgressHUD.show(withStatus: "Searching Posts for \((self.viewFilter.filterCaption?.capitalizingFirstLetter())!)")
+        }
+        else if self.viewFilter.filterCaptionArray.count > 0 || self.viewFilter.filterTypeArray.count > 0
+        {
+            var searchText = self.viewFilter.filterCaptionArray.count > 0 ? self.viewFilter.filterCaptionArray.joined(separator: " ") : ""
+            searchText += self.viewFilter.filterTypeArray.count > 0 ? self.viewFilter.filterTypeArray.joined(separator: " ") : ""
+            SVProgressHUD.show(withStatus: "Searching Posts for \(searchText)")
+        }
+        else if self.viewFilter.filterLocationSummaryID != nil
+        {
+            SVProgressHUD.show(withStatus: "Searching Posts at \((self.viewFilter.filterLocationSummaryID!.capitalizingFirstLetter()))")
+        }
+        else if let googleId = self.viewFilter.filterGoogleLocationID
+        {
+//            let locationName = locationGoogleIdDictionary.key(forValue: googleId) ?? ""
+            let locationName = locationGoogleIdDictionary[googleId] ?? ""
+            SVProgressHUD.show(withStatus: "Searching Posts at \((locationName.capitalizingFirstLetter()))")
+        }
+        else if self.viewFilter.filterUser != nil
+        {
+            guard let user = self.viewFilter.filterUser else {return}
+            SVProgressHUD.show(withStatus: "Searching Posts by \(user.username.capitalizingFirstLetter())")
+        }
+        else if self.viewFilter.filterType != nil
+        {
+            SVProgressHUD.show(withStatus: "Searching Posts by \(self.viewFilter.filterType!.capitalizingFirstLetter())")
+        }
+        else if self.viewFilter.filterLocation != nil
+        {
+            guard let coord = self.viewFilter.filterLocation?.coordinate else {return}
+            let lat = Double(coord.latitude).rounded(toPlaces: 2)
+            let long = Double(coord.longitude).rounded(toPlaces: 2)
+            
+            var coordinate = "(\(lat),\(long))"
+            SVProgressHUD.show(withStatus: "Searching Posts at \n GPS: \(coordinate)")
+        }
+        else if self.viewFilter.isFiltering
+        {
+            SVProgressHUD.show(withStatus: "Searching Posts")
+        }
+        else
+        {
+            SVProgressHUD.show(withStatus: "Loading Posts")
+        }
+        
+    }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 15
     }
@@ -2170,6 +2245,10 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
         
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.section == 0 {
+            
+            if (self.isPresented) && !self.isFetchingPosts {
+                SVProgressHUD.dismiss()
+            }
             
             if showEmpty {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
