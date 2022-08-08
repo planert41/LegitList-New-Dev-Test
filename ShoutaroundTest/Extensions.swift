@@ -716,6 +716,7 @@ extension UIViewController {
         guard let post = post else {return}
         let pictureController = NewSinglePostView()
         pictureController.post = post
+        pictureController.setupNavigationItems()
         navigationController?.pushViewController(pictureController, animated: true)
     }
     

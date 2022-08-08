@@ -753,8 +753,6 @@ class SingleUserProfileViewController: UIViewController {
     
     func setupNavigationItems() {
         let tempImage = UIImage.init(color: UIColor.white)
-        navigationController?.isNavigationBarHidden = false
-        navigationController?.setNavigationBarHidden(false, animated: false)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.barTintColor = UIColor.white
         navigationController?.navigationBar.tintColor = UIColor.white
@@ -763,7 +761,8 @@ class SingleUserProfileViewController: UIViewController {
         navigationController?.navigationBar.layer.shadowColor = UIColor.white.cgColor
         navigationController?.navigationBar.isTranslucent = false
         navigationController?.navigationBar.layoutIfNeeded()
-        
+        navigationController?.isNavigationBarHidden = false
+        navigationController?.setNavigationBarHidden(false, animated: false)
         
         let usernameNavHeader = UILabel()
         usernameNavHeader.textAlignment = .left

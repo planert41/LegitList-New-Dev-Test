@@ -2771,7 +2771,7 @@ extension Database{
     
     static func fetchAllHomeFeedPostIds(uid: String?, first100:Bool = false, completion: @escaping ([PostId]) -> ()) {
         
-        print("   ~ Database | fetchAllHomeFeedPostIds | \(uid)")
+        print("   ~ Database | fetchAllHomeFeedPostIds | \(uid) | First100: \(first100)")
         guard let uid = uid else {return}
         
         let myGroup = DispatchGroup()
@@ -2782,22 +2782,30 @@ extension Database{
         var fetchedFollowedLists: Bool = false
         
     // Fetching Self Post Ids
-        if first100 {
-            myGroup.enter()
-            Database.fetchAllPostIDWithCreatorUIDFirst100(creatoruid: uid) { (postIds) in
-                fetchedPostIds = fetchedPostIds + postIds
-                fetchedSelf = true
-                myGroup.leave()
-                print("Home | fetchAllHomeFeedPostIds | Current User | Post IDs: ", fetchedPostIds.count)
-            }
-        } else {
-            myGroup.enter()
-            Database.fetchAllPostIDWithCreatorUID(creatoruid: uid) { (postIds) in
-                fetchedPostIds = fetchedPostIds + postIds
-                fetchedSelf = true
-                myGroup.leave()
-                print("Home | fetchAllHomeFeedPostIds | Current User | Post IDs: ", fetchedPostIds.count)
-            }
+//        if first100 {
+//            myGroup.enter()
+//            Database.fetchAllPostIDWithCreatorUIDFirst100(creatoruid: uid) { (postIds) in
+//                fetchedPostIds = fetchedPostIds + postIds
+//                fetchedSelf = true
+//                myGroup.leave()
+//                print("Home | fetchAllHomeFeedPostIds | Current User  | First100: \(first100) | Post IDs: ", fetchedPostIds.count)
+//            }
+//        } else {
+//            myGroup.enter()
+//            Database.fetchAllPostIDWithCreatorUID(creatoruid: uid) { (postIds) in
+//                fetchedPostIds = fetchedPostIds + postIds
+//                fetchedSelf = true
+//                myGroup.leave()
+//                print("Home | fetchAllHomeFeedPostIds | Current User  | First100: \(first100) | Post IDs: ", fetchedPostIds.count)
+//            }
+//        }
+        
+        myGroup.enter()
+        Database.fetchAllPostIDWithCreatorUID(creatoruid: uid) { (postIds) in
+            fetchedPostIds = fetchedPostIds + postIds
+            fetchedSelf = true
+            myGroup.leave()
+            print("Home | fetchAllHomeFeedPostIds | Current User  | First100: \(first100) | Post IDs: ", fetchedPostIds.count)
         }
         
         
@@ -2807,7 +2815,7 @@ extension Database{
             fetchedPostIds = fetchedPostIds + postIds
             fetchedFollowedUsers = true
             myGroup.leave()
-            print("Home | fetchAllHomeFeedPostIds | Following Posts | Post IDs: ", fetchedPostIds.count)
+            print("Home | fetchAllHomeFeedPostIds | Following Posts  | First100: \(first100) | Post IDs: ", fetchedPostIds.count)
 
         }
 
@@ -2823,7 +2831,7 @@ extension Database{
 
         myGroup.notify(queue: .main, execute: {
             self.checkDisplayPostIdForDups(postIds: fetchedPostIds, completion: { (postIds) in
-                print("   ~ Database | fetchAllHomeFeedPostIds | Fetched \(fetchedPostIds.count) PostIds | \(uid)")
+                print("   ~ Database | fetchAllHomeFeedPostIds | First100: \(first100) | Fetched \(fetchedPostIds.count) PostIds | \(uid)")
                 completion(postIds)
             })
             
@@ -2868,7 +2876,7 @@ extension Database{
         }
         
         myGroup.notify(queue: .main, execute: {
-            print("   ~ Database | fetchAllFollowingPostIDforUser | Fetched \(fetchedPostIds.count) PostIds | \(followingUserIds.count) Users")
+            print("   ~ Database | fetchAllFollowingPostIDforUser | Fetched \(fetchedPostIds.count) PostIds | \(followingUserIds.count) Users | first100 \(first100)")
             completion(fetchedPostIds)
         })
     }
@@ -2919,8 +2927,8 @@ extension Database{
         
         let myGroup = DispatchGroup()
         var fetchedPostIds = [] as [PostId]
-        
-        let ref = Database.database().reference().child("userposts").child(creatoruid).queryOrderedByKey().queryLimited(toFirst: 100)
+          
+        let ref = Database.database().reference().child("userposts").child(creatoruid).queryOrdered(byChild: "creationDate").queryLimited(toLast: 100)
         ref.observeSingleEvent(of: .value, with: {(snapshot) in
 //        ref.observe(.value) { (snapshot) in
 
@@ -2954,6 +2962,8 @@ extension Database{
                 }
                 ref.keepSynced(true)
                 completion(fetchedPostIds)
+                
+                
             }
         })
     }
@@ -3617,12 +3627,64 @@ extension Database{
         }
         
         thisGroup.notify(queue: .main) {
-            print("   ~ Database | Fetched All Posts: ", fetchedPostsTemp.count)
+            print("   ~ Database | Fetched All Posts: : \(fetchedPostsTemp.count) Posts | \(fetchedPostIds.count) Post IDs")
             completion(fetchedPostsTemp)
         }
     }
     
-    
+    static func fetchAllPosts(postIds: [String], completion: @escaping ([Post])-> ()){
+        
+        let thisGroup = DispatchGroup()
+        var fetchedPostsTemp: [Post] = []
+        
+        
+//        print("Fetch All Posts Count ", fetchedPostIds.count)
+        
+        for postId in postIds {
+            if CurrentUser.blockedPosts[postId] != nil {
+                print("Blocked Post \(postId)")
+                continue
+            }
+            thisGroup.enter()
+            Database.fetchPostWithPostID(postId: postId, completion: { (post, error) in
+                if let error = error {
+                    print(" ! Fetch Post: ERROR: \(postId)", error)
+                }
+                
+                if let tempPost = post {
+                    // Fetch flagged posts for user still
+                    if !tempPost.reportedFlag || tempPost.creatorUID == Auth.auth().currentUser?.uid {
+                        fetchedPostsTemp.append(tempPost)
+                    }
+                } else {
+                    print("No Posts for \(postId)")
+                }
+                
+//                let count = thisGroup.debugDescription.components(separatedBy: ",").filter({$0.contains("count")}).first?.components(separatedBy: CharacterSet.decimalDigits.inverted).compactMap{Int($0)}.first
+//
+//                print(count, postId)
+                thisGroup.leave()
+
+                
+//                guard let post = post else {
+//                    print(" ! Fetch Post: ERROR: No Post for \(postId)", error)
+//                    thisGroup.leave()
+//                    throw PostError.noPost
+////                    return
+//                }
+//
+//                var tempPost = post
+//
+//                fetchedPostsTemp.append(tempPost)
+//                thisGroup.leave()
+            })
+        }
+        
+        thisGroup.notify(queue: .main) {
+            print("   ~ Database | Fetched All Posts: : \(fetchedPostsTemp.count) Posts | \(postIds.count) Post IDs")
+            completion(fetchedPostsTemp)
+        }
+    }
     
 // MARK: - CHECK SOCIAL ITEMS
 
@@ -7374,25 +7436,36 @@ extension Database{
         }
         
     }
-    
+        
     static func setupUserFollowingListener(uids: [String]?) {
+        guard let uids = uids else {return}
+
+        for uid in uids {
+            self.addUserFollowingListener(uid: uid)
+        }
+    }
+    
+    static func addUserFollowingListener(uid: String?) {
+        guard let uid = uid else {return}
+        let modifiedDate = Calendar.current.date(byAdding: .day, value: -5, to: Date())!.timeIntervalSince1970
+        Database.database().reference().child("userposts").child(uid).queryOrdered(byChild: "creationDate").queryStarting(afterValue: modifiedDate, childKey: "creationDate").observe(DataEventType.childAdded) { (data) in
+            guard let dictionary = data.value as? [String: Any] else {
+                return}
+            let userDataDict:[String: String] = ["uid": uid, "postId": data.key]
+            if CurrentUser.blockedPosts[data.key] == nil && CurrentUser.blockedUsers[uid] == nil && CurrentUser.blockedByUsers[uid] == nil {
+//                print("User Listener | New User Post | \(uid) \(data.key)")
+                NotificationCenter.default.post(name: MainTabBarController.newFollowedUserPost, object: nil, userInfo: userDataDict)
+            }
+        }
+    }
+    
+    static func removeUserFollowingListener(uids: [String]?) {
         guard let uids = uids else {return}
         guard let curUid = Auth.auth().currentUser?.uid else {return}
         var tempUids = uids
-        
-        if !tempUids.contains(curUid) {
-            tempUids.append(curUid)
-        }
-        
+  
         for uid in tempUids {
-            let userPostEventRef = Database.database().reference().child("userposts").child(uid)
-//            userPostEventRef.queryLimited(toLast: 1)
-            userPostEventRef.queryLimited(toLast: 1).observe(DataEventType.childAdded) { (data) in
-                guard let dictionary = data.value as? [String: Any] else {
-                    return}
-                let userDataDict:[String: String] = ["uid": uid, "postId": data.key]
-                NotificationCenter.default.post(name: MainTabBarController.newUserPost, object: nil, userInfo: userDataDict)
-            }
+            Database.database().reference().child("userposts").child(uid).removeAllObservers()
         }
     }
     

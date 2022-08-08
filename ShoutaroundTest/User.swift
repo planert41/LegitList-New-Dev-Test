@@ -426,6 +426,7 @@ struct CurrentUser {
     }
     
     static func clear(){
+        Database.removeUserFollowingListener(uids: self.followingUids)
         self.user = nil
         self.followingUids = []
         self.followerUids = []
@@ -455,6 +456,7 @@ struct CurrentUser {
                 CurrentUser.followingUsers.append(fetchedUser)
             }
         }
+        Database.addUserFollowingListener(uid: userId)
     }
     
     static func removeFollowing(userId: String?) {
@@ -476,6 +478,7 @@ struct CurrentUser {
             tempUser.isFollowing = false
             userCache[userId] = tempUser
         }
+        Database.database().reference().child("userposts").child(userId).removeAllObservers()
         
     }
     

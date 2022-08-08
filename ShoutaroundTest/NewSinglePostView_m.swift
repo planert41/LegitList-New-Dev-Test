@@ -571,6 +571,7 @@ class NewSinglePostView: UIViewController {
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
         }
+        self.view.backgroundColor = UIColor.backgroundGrayColor()
         
         
         // Setup Navigation Look
@@ -1000,6 +1001,7 @@ class NewSinglePostView: UIViewController {
         self.navigationController?.navigationBar.layer.shadowRadius = 1.0
         self.navigationController?.navigationBar.layer.shadowOpacity = 0.5
         self.navigationController?.navigationBar.layer.masksToBounds = false
+        edgesForExtendedLayout = .all   
         
         navShareButton.addTarget(self, action: #selector(showMessagingOptionsNav), for: .touchUpInside)
         navBackButton.addTarget(self, action: #selector(handleBackPressNav), for: .touchUpInside)
@@ -1127,7 +1129,7 @@ class NewSinglePostView: UIViewController {
         
         photoImageScrollView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.width)
         photoImageScrollView.contentSize.width = photoImageScrollView.frame.width * CGFloat((post?.imageCount)!)
-        photoImageScrollView.backgroundColor = UIColor.gray
+        photoImageScrollView.backgroundColor = UIColor.backgroundGrayColor()
         //        print("setupPicturesScroll | PhotoImageView ", photoImageScrollView.contentSize)
         
         for i in 1 ..< (post?.imageCount)! {

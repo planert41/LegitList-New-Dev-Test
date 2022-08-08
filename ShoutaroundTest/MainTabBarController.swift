@@ -49,6 +49,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     static let showOnboarding = NSNotification.Name(rawValue: "showOnboarding")
     static let newLocationUpdate = NSNotification.Name(rawValue: "locationUpdate")
     static let newUserPost = NSNotification.Name(rawValue: "newUserPost")
+    static let newFollowedUserPost = NSNotification.Name(rawValue: "newFollowedUserPost")
     static let deleteList = NSNotification.Name(rawValue: "deleteList")
     static let deleteUserPost = NSNotification.Name(rawValue: "deleteUserPost")
     static let editUserPost = NSNotification.Name(rawValue: "editUserPost")

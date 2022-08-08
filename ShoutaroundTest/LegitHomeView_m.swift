@@ -23,12 +23,28 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     // POST VARIABLES
     
-    var fetchedPostIds: [PostId] = []
+    var allFetchedPostIds: [PostId] = [] {
+        didSet {
+//            print("allFetchedPostIds \(allFetchedPostIds.count)")
+        }
+    }
+    var fetchedPostIds: [PostId] = [] {
+        didSet {
+            for id in fetchedPostIds {
+                if !allFetchedPostIds.contains(where: {$0.id == id.id}) {
+                    allFetchedPostIds.append(id)
+                }
+            }
+        }
+    }
     var displayedPosts: [Post] = []
     var tempSearchBarText: String? = nil
     var isFetchingPosts = false
     var setListener = false
     var showEmpty = false
+    
+    var newListenerPostIds: [String] = []
+    var newListenerPostIdsUsers: [String: String] = [:]
 
     
     var fetchTypeInd: String = HomeFetchDefault {
@@ -182,7 +198,19 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 //        self.initSearchSelections()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        if self.isFetchingPosts {
+            SVProgressHUD.show(withStatus: "Fetching Posts")
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
+        let tempImage = UIImage.init(color: UIColor.backgroundGrayColor())
+        navigationController?.navigationBar.setBackgroundImage(tempImage, for: .default)
+        navigationController?.navigationBar.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.layer.shadowColor = UIColor.backgroundGrayColor().cgColor
+        navigationController?.view.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.layoutIfNeeded()
         self.navigationController?.setNavigationBarHidden(false, animated: true)
     }
     
@@ -215,6 +243,17 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         button.contentMode = .scaleAspectFill
         button.backgroundColor = UIColor.ianLegitColor()
         button.addTarget(self, action: #selector(didTapAddPhoto), for: .touchUpInside)
+        return button
+    }()
+    
+    let refreshForNewPostButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.titleLabel?.font = UIFont(name: "Poppins-Regular", size: 12)
+        button.setTitleColor(.ianBlackColor(), for: .normal)
+//        button.setImage(#imageLiteral(resourceName: "search_selected").withRenderingMode(.alwaysOriginal), for: .normal)
+        button.contentMode = .scaleAspectFill
+        button.backgroundColor = UIColor.ianOrangeColor()
+        button.addTarget(self, action: #selector(handleRefresh), for: .touchUpInside)
         return button
     }()
     
@@ -316,7 +355,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
-        self.view.backgroundColor = UIColor.lightGray
+        self.view.backgroundColor = UIColor.backgroundGrayColor()
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
         } 
@@ -340,6 +379,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(onboardDismissed), name: AppDelegate.DismissOnboardNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.checkNewPostIds(_:)), name: MainTabBarController.newFollowedUserPost, object: nil)
 
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -396,7 +436,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             spread: 0)
  
         self.scalar = min(1, UIScreen.main.nativeBounds.height / defaultHeight)
-        print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
+//        print(" ~ addPhotoButton Scalar", self.scalar, UIScreen.main.nativeBounds.height, defaultHeight)
         let addPhotoButtonSize: CGFloat = min(150, 75 * scalar)
 
         
@@ -498,10 +538,19 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         newPostButton.layer.masksToBounds = true
         newPostButton.layer.borderWidth = 1
         newPostButton.layer.borderColor = UIColor.ianLegitColor().cgColor
-        let headerTitle = NSAttributedString(string: "📷  New Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
+        let headerTitle = NSAttributedString(string: "📷  Add Post", attributes: [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 14)])
 
         newPostButton.setAttributedTitle(headerTitle, for: .normal)
         
+        view.addSubview(refreshForNewPostButton)
+        refreshForNewPostButton.anchor(top: nil, left: view.leftAnchor, bottom: bottomSortBar.topAnchor, right: nil, paddingTop: 0, paddingLeft: 15, paddingBottom: 10, paddingRight: 15, width: 0, height: 0)
+        refreshForNewPostButton.isHidden = true
+        refreshForNewPostButton.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+        refreshForNewPostButton.layer.cornerRadius = 4
+        refreshForNewPostButton.layer.masksToBounds = true
+        refreshForNewPostButton.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+        refreshForNewPostButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 0, bottom: 2, right: 0)
+
         
         view.addSubview(filterLegitButton)
         filterLegitButton.anchor(top: nil, left: nil, bottom: newPostButton.topAnchor, right: newPostButton.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 40, height: 40)
@@ -642,6 +691,64 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             }
         }
     }
+    
+    var showNewPostCheck: Bool = false {
+        didSet {
+            self.refreshNewPostNotificationButton()
+        }
+    }
+    
+    func refreshNewPostNotificationButton() {
+        let postString = "  \(self.newListenerPostIds.count) New Posts ↓  "
+        self.refreshForNewPostButton.setTitle(postString, for: .normal)
+        self.refreshForNewPostButton.sizeToFit()
+        self.refreshForNewPostButton.isHidden = !showNewPostCheck
+    }
+    
+    @objc func checkNewPostIds(_ notification: NSNotification) {
+        
+        let postId = (notification.userInfo?["postId"] ?? "")! as! String
+        let userId = (notification.userInfo?["uid"] ?? "")! as! String
+        
+        var tuserId: String! = userId
+        var tpostId: String! = postId
+        
+        if CurrentUser.blockedPosts[postId] != nil || CurrentUser.blockedUsers[userId] != nil || CurrentUser.blockedByUsers[userId] != nil {
+            print("checkNewPostIds - BLOCKED ~ \(postId) ~ \(userId)")
+            return
+        }
+
+        
+//        print("checkNewPostIds ~ \(postId) ~ \(userId)")
+        
+        if !self.newListenerPostIds.contains(postId) {
+            self.newListenerPostIds.append(postId)
+            self.newListenerPostIdsUsers[postId] = userId
+//            print("ADD NEW POST checkNewPostIds ~ \(postId) ~ \(userId) ~ \(self.newListenerPostIds.count) New Posts")
+        }
+        
+        self.checkUnloadedNewPosts()
+
+    }
+    
+    func checkUnloadedNewPosts() {
+//        if !self.viewFilter.isFiltering {
+            for x in self.newListenerPostIds {
+                if self.allFetchedPostIds.contains(where: {$0.id == x}) {
+                    self.newListenerPostIds.removeAll(where: {$0 == x})
+                }
+            }
+        // ONLY SHOW NEW POST CHECK BUTTON AFTER PAGE HAS LOADED UP
+        self.showNewPostCheck = self.newListenerPostIds.count > 0 && !self.pageLoadUp
+            self.refreshNewPostNotificationButton()
+//        print("checkUnloadedNewPosts ~ \(self.showNewPostCheck) ~ Show New \(self.newListenerPostIds.count) Posts ~ Fetched \(self.allFetchedPostIds.count)")
+        for x in self.newListenerPostIds {
+            print(x, newListenerPostIdsUsers[x], userCache[newListenerPostIdsUsers[x] ?? ""]?.username)
+        }
+//        }
+    }
+    
+
     
     func setupSegmentControl() {
         sortSegmentControl = UISegmentedControl(items: HeaderSortOptions)
@@ -784,6 +891,14 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     */
     
     fileprivate func setupNavigationItems() {
+
+        let tempImage = UIImage.init(color: UIColor.backgroundGrayColor())
+        navigationController?.navigationBar.setBackgroundImage(tempImage, for: .default)
+        navigationController?.navigationBar.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.layer.shadowColor = UIColor.backgroundGrayColor().cgColor
+        navigationController?.view.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.layoutIfNeeded()
+
         self.navigationController?.setNavigationBarHidden(true, animated: true)
         navigationController?.isNavigationBarHidden = true
 //        guard let statusBarView = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else {
@@ -1130,6 +1245,15 @@ extension LegitHomeView {
         if self.isPresented {
             SVProgressHUD.show(withStatus: "Refreshing Feed")
         }
+        
+        
+        // THIS IS SPECIFICALLY ONLY WHEN USER IS IN MAIN FEED WITH NEW UNLOADED POSTS AND REFRESHES
+        if self.viewFilter.filterSort == defaultRecentSort && !self.viewFilter.isFiltering && self.newListenerPostIds.count > 0 {
+            self.refreshPostsForNewUnloadedPost()
+            return
+        }
+        
+        
         self.clearFilter()
         self.fetchPostIds()
         self.hideDropDown()
@@ -1160,6 +1284,36 @@ extension LegitHomeView {
         self.fetchTypeInd = HomeFetchOptions[0]
         self.fetchUser = nil
         self.fetchList = nil
+        self.clearSort()
+    }
+    
+    func clearSort(){
+        self.viewFilter.filterSort = defaultRecentSort
+        self.bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+    }
+    
+    
+    // THIS IS TO MANUALLY ADD NEW UNLOADED POST ON TOP SO PPL DON'T GET CONFUSED
+    func refreshPostsForNewUnloadedPost() {
+        SVProgressHUD.show(withStatus: "Fetching New Posts")
+        print("refreshPostsForNewUnloadedPost ~ \(self.newListenerPostIds.count) Unloaded Posts")
+        self.collectionView.refreshControl?.endRefreshing()
+
+        for id in self.newListenerPostIds {
+            let tempID = PostId.init(id: id, creatorUID: newListenerPostIdsUsers[id], sort: nil)
+            fetchedPostIds.append(tempID)
+        }
+                
+        Database.fetchAllPosts(postIds: self.newListenerPostIds) { newFetchedPosts in
+            var tempPosts = newFetchedPosts.sorted(by: { (p1, p2) -> Bool in
+                return p1.creationDate.compare(p2.creationDate) == .orderedDescending
+            })
+            self.displayedPosts.insert(contentsOf: tempPosts, at: 0)
+            self.collectionView.reloadData()
+            self.checkUnloadedNewPosts()
+            SVProgressHUD.dismiss()
+            print("refreshPostsForNewUnloadedPost ~ Added To Front of Feed - \(self.newListenerPostIds.count) Posts")
+        }
     }
     
     func refreshPagination(){
@@ -2034,7 +2188,7 @@ extension LegitHomeView {
         if !self.isPresented {
             return
         }
-        print("showFetchProgressDetail | Filtering: \(self.viewFilter.isFiltering)")
+        print("showFetchProgressDetail | Home View | Filtering: \(self.viewFilter.isFiltering)")
         // DEFAULT NOT FILTERING
         if !self.viewFilter.isFiltering {
             var sortString =  "Fetching Posts"
@@ -2384,6 +2538,7 @@ extension LegitHomeView {
                 // Sort Posts
                 Database.sortPosts(inputPosts: filteredPosts, selectedSort: self.viewFilter.filterSort, selectedLocation: self.viewFilter.filterLocation, completion: { (filteredPosts) in
                     self.pageLoadUp = false
+                    self.checkUnloadedNewPosts()
 
                     self.displayedPosts = []
                     if filteredPosts != nil {
