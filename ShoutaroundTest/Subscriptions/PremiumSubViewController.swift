@@ -172,7 +172,7 @@ class PremiumSubViewController: UIViewController {
         // Post Count Label
         var attributedMetric = NSMutableAttributedString(string: "Monthly\nSubscription", attributes: [NSAttributedString.Key.foregroundColor: typeColor, NSAttributedString.Key.font: typeFont])
 
-        var attributedLabel = NSMutableAttributedString(string: "\n$ 0.49 / Month", attributes: [NSAttributedString.Key.foregroundColor: priceColor, NSAttributedString.Key.font: priceFont])
+        var attributedLabel = NSMutableAttributedString(string: "\n$ 0.99 / Month", attributes: [NSAttributedString.Key.foregroundColor: priceColor, NSAttributedString.Key.font: priceFont])
         
         attributedMetric.append(attributedLabel)
         self.monthlySubButton.setAttributedTitle(attributedMetric, for: .normal)
@@ -182,7 +182,7 @@ class PremiumSubViewController: UIViewController {
         // Post Count Label
         attributedMetric = NSMutableAttributedString(string: "Annual\nSubscription", attributes: [NSAttributedString.Key.foregroundColor: selectedPriceColor, NSAttributedString.Key.font: selectedPriceFont])
 
-        attributedLabel = NSMutableAttributedString(string: "\n$ 4.49 / Year", attributes: [NSAttributedString.Key.foregroundColor: selectedPriceColor, NSAttributedString.Key.font: priceFont])
+        attributedLabel = NSMutableAttributedString(string: "\n$ 9.99 / Year", attributes: [NSAttributedString.Key.foregroundColor: selectedPriceColor, NSAttributedString.Key.font: priceFont])
         
         attributedMetric.append(attributedLabel)
         self.AnnualSubButton.layer.borderWidth = 3

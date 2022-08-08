@@ -553,12 +553,12 @@ class SubscriptionViewController: UIViewController, UITableViewDelegate, UITable
         
         let optionsAlert = UIAlertController(title: "Premium Subscription", message: "Subscribe to unlock Premium Featues", preferredStyle: UIAlertController.Style.alert)
         
-        optionsAlert.addAction(UIAlertAction(title: "Annual Sub for $4.49/Year", style: .default, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Annual Sub for $9.99/Year", style: .default, handler: { (action: UIAlertAction!) in
             // Allow Editing
             print("Annual Sub")
         }))
         
-        optionsAlert.addAction(UIAlertAction(title: "Monthly Sub for $0.49/Month", style: .default, handler: { (action: UIAlertAction!) in
+        optionsAlert.addAction(UIAlertAction(title: "Monthly Sub for $0.99/Month", style: .default, handler: { (action: UIAlertAction!) in
             // Allow Editing
             print("Month Sub")
         }))
