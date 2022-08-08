@@ -359,7 +359,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
         } 
-        
+                
         setupNavigationItems()
         setupCollectionView()
         initFetchHomeFeed()
@@ -891,7 +891,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     */
     
     fileprivate func setupNavigationItems() {
-
+        let barAppearance = UINavigationBarAppearance()
+        barAppearance.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.standardAppearance = barAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
+        
         let tempImage = UIImage.init(color: UIColor.backgroundGrayColor())
         navigationController?.navigationBar.setBackgroundImage(tempImage, for: .default)
         navigationController?.navigationBar.backgroundColor = UIColor.backgroundGrayColor()

@@ -763,6 +763,10 @@ class SingleUserProfileViewController: UIViewController {
         navigationController?.navigationBar.layoutIfNeeded()
         navigationController?.isNavigationBarHidden = false
         navigationController?.setNavigationBarHidden(false, animated: false)
+        let barAppearance = UINavigationBarAppearance()
+        barAppearance.backgroundColor = UIColor.white
+        navigationController?.navigationBar.standardAppearance = barAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
         
         let usernameNavHeader = UILabel()
         usernameNavHeader.textAlignment = .left

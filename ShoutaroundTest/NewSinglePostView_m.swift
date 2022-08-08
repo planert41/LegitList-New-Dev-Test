@@ -573,7 +573,6 @@ class NewSinglePostView: UIViewController {
         }
         self.view.backgroundColor = UIColor.backgroundGrayColor()
         
-        
         // Setup Navigation Look
         NotificationCenter.default.addObserver(self, selector: #selector(updateEditedSinglePost(_:)), name: MainTabBarController.editUserPost, object: nil)
 
@@ -1030,6 +1029,11 @@ class NewSinglePostView: UIViewController {
         
         setupHeaderView()
         navigationItem.titleView = headerView
+        
+        let barAppearance = UINavigationBarAppearance()
+        barAppearance.backgroundColor = UIColor.backgroundGrayColor()
+        navigationController?.navigationBar.standardAppearance = barAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
 
     }
     
