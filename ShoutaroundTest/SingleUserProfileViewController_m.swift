@@ -765,6 +765,7 @@ class SingleUserProfileViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: false)
         let barAppearance = UINavigationBarAppearance()
         barAppearance.backgroundColor = UIColor.white
+        barAppearance.shadowColor = .clear
         navigationController?.navigationBar.standardAppearance = barAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
         
@@ -834,8 +835,6 @@ class SingleUserProfileViewController: UIViewController {
 
         // REMOVES THE 1PX BOTTOM LINE IN NAV BAR
         navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.layoutIfNeeded()
-        navigationController?.navigationBar.layoutIfNeeded()
         self.setNeedsStatusBarAppearanceUpdate()
 
         
@@ -1732,26 +1731,30 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         deleteAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
             
             // Remove from Current View
-            let index = self.displayedPosts.firstIndex { (filteredpost) -> Bool in
+            if let index = self.displayedPosts.firstIndex { (filteredpost) -> Bool in
                 filteredpost.id  == post.id
+            }  {
+                self.displayedPosts.remove(at: index)
+                let filteredindexpath = IndexPath(row:index, section: 0)
+                if self.isFiltering {
+                    self.imageCollectionView.deleteItems(at: [filteredindexpath])
+                    self.paginatePostsCount -= 1
+                }
             }
             
-            let filteredindexpath = IndexPath(row:index!, section: 0)
-            self.displayedPosts.remove(at: index!)
             
             // Remove from Fetched View
-            let fetchedIndex = self.fetchedPosts.firstIndex { (filteredpost) -> Bool in
+            if let fetchedIndex = self.fetchedPosts.firstIndex { (filteredpost) -> Bool in
                 filteredpost.id  == post.id
+            } {
+                self.fetchedPosts.remove(at: fetchedIndex)
+                let fetchedindexpath = IndexPath(row:fetchedIndex, section: 0)
+                if !self.isFiltering {
+                    self.imageCollectionView.deleteItems(at: [fetchedindexpath])
+                    self.paginatePostsCount -= 1
+                }
             }
-            
-            let fetchedindexpath = IndexPath(row:fetchedIndex!, section: 0)
-            self.fetchedPosts.remove(at: fetchedIndex!)
-            
-            if self.isFiltering {
-                self.imageCollectionView.deleteItems(at: [filteredindexpath])
-            } else {
-                self.imageCollectionView.deleteItems(at: [fetchedindexpath])
-            }
+
             Database.deletePost(post: post)
         }))
         

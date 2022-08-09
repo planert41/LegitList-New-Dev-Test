@@ -1032,6 +1032,8 @@ class NewSinglePostView: UIViewController {
         
         let barAppearance = UINavigationBarAppearance()
         barAppearance.backgroundColor = UIColor.backgroundGrayColor()
+        barAppearance.shadowColor = .clear
+
         navigationController?.navigationBar.standardAppearance = barAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
 

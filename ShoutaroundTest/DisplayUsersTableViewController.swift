@@ -514,7 +514,12 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     func setupNavigationItems(){
         
     // Header
-
+        
+        let barAppearance = UINavigationBarAppearance()
+        barAppearance.shadowColor = .clear
+        barAppearance.backgroundColor = UIColor.ianLegitColor()
+        navigationController?.navigationBar.standardAppearance = barAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
         
 //        self.navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: UIColor.ianLegitColor(), NSAttributedString.Key.font.rawValue: UIFont(name: "Poppins-Bold", size: 18)])
         var titleString = displayListOfUsers ? "Users" : (displayListsByUser ? "Lists" : "" )
