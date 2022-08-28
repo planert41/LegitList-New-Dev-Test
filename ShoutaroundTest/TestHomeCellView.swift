@@ -436,8 +436,14 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
         self.pageControl.tintColor = UIColor.red
         self.pageControl.pageIndicatorTintColor = UIColor.white
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
+//        self.pageControl.contentHorizontalAlignment = .center
+        self.pageControl.contentMode = .center
+//        self.pageControl.contentHorizontalAlignment = .left
         self.pageControl.isHidden = imageCount <= 1
-        self.pageControl.alpha = 0.6
+        self.pageControl.alpha = 0.7
+//        self.pageControl.backgroundColor = UIColor.yellow
+        self.pageControl.sizeToFit()
+        self.pageControl.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
 
 //        self.pageControlMini.isHidden = imageCount <= 1
         
@@ -638,7 +644,9 @@ class TestHomePhotoCell: UICollectionViewCell, UIGestureRecognizerDelegate, UISc
 //
 //
         addSubview(pageControl)
-        pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
+//        pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
+        pageControl.anchor(top: nil, left: nil, bottom: infoView.topAnchor, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 4, paddingRight: 10, width: 0, height: 10)
+        pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
         pageControl.isHidden = false
         
 

@@ -281,7 +281,7 @@ class LoginController: UIViewController, UITextFieldDelegate, LoginButtonDelegat
             if let error = error {
                 self.alert(title: "Reset Password", message: "Error: \(error.localizedDescription)")
             } else {
-                self.alert(title: "Reset Password", message: "Success! Check \(self.emailTextField.text!) for An Email!")
+                self.alert(title: "Reset Password", message: "Success! Check \(self.emailTextField.text!) for an email! Make sure to check your spam folder as well.")
             }
         }
     }

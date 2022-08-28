@@ -531,6 +531,8 @@ class SingleListViewController: UIViewController {
             isFetchingPost = true
         }
         
+        SVProgressHUD.show(withStatus: "Fetching List")
+        
         // LOAD IN TEMP RANK
         let tempList = self.currentDisplayList
         if let tempRank = self.tempRank{
@@ -605,6 +607,7 @@ class SingleListViewController: UIViewController {
                 print("  ~ FINISH | Filter and Sorting Post | \(finalPosts?.count) Posts | \(self.currentDisplayList?.name) - \(self.currentDisplayList?.id)")
              
                  self.updateNoFilterCounts()
+                SVProgressHUD.dismiss()
                 if self.imageCollectionView.isDescendant(of: self.view) {
                     self.imageCollectionView.reloadData()
                 }
@@ -853,11 +856,12 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if self.isPresented {
-            SVProgressHUD.dismiss()
-        }
         
         if indexPath.section == 1 {
+            
+            if self.isPresented {
+                SVProgressHUD.dismiss()
+            }
             
             if showEmpty /*&& self.isFiltering*/ {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyHeaderId, for: indexPath) as! EmptyCell
@@ -873,22 +877,6 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
                 }
                 
                 if self.postFormatInd == 0 {
-//                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: listCellId, for: indexPath) as! FullPictureCell
-//
-//                    cell.post = displayPost
-//                    cell.enableDelete = true
-//                    cell.noImageScroll = true
-//
-//                    // Can't Be Selected
-//
-//                    if self.viewFilter.filterLocation != nil && cell.post?.locationGPS != nil {
-//                        cell.post?.distance = Double((cell.post?.locationGPS?.distance(from: (self.viewFilter.filterLocation!)))!)
-//                    }
-//                    cell.showDistance = self.viewFilter.filterSort == defaultNearestSort
-//
-//                    cell.delegate = self
-//                    cell.currentImage = 1
-//                    return cell
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: gridCellId, for: indexPath) as! ListGridCell
                     cell.delegate = self
                     cell.post = displayPost
@@ -897,8 +885,6 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
 //                    cell.layer.cornerRadius = 10
 //                    cell.layer.masksToBounds = true
                     return cell
-                    
-                    
                 }
                     
                 else if self.postFormatInd == 1 {

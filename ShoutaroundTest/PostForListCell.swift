@@ -990,7 +990,11 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         self.pageControl.pageIndicatorTintColor = UIColor.white
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
         self.pageControl.isHidden = imageCount <= 1
-        
+        self.pageControl.contentMode = .center
+        self.pageControl.alpha = 0.7
+        self.pageControl.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+
+
 //        self.pageControlMini.isHidden = imageCount <= 1
         
 //        self.pageControlMini.numberOfPages = 1
@@ -1022,6 +1026,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         
         // Photo Image View
         addSubview(photoImageScrollView)
+        photoImageScrollView.frame = CGRect(x: 0, y: 0, width: self.frame.height, height: self.frame.height)
         photoImageScrollView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 1, paddingLeft: 1, paddingBottom: 1, paddingRight: 4, width: 0, height: 0)
         photoImageScrollView.widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         photoImageScrollView.isPagingEnabled = true
@@ -1058,10 +1063,12 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 //        addSubview(pageControlMini)
 //        pageControlMini.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 10, paddingBottom: 10, paddingRight: 10, width: 20, height: 20)
 
-        // IMAGE COUNT
-//        addSubview(pageControl)
-//        pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -20, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
-//        pageControl.isHidden = true
+//         IMAGE COUNT
+        addSubview(pageControl)
+        pageControl.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: nil, paddingTop: 10, paddingLeft: -20, paddingBottom: 4, paddingRight: 10, width: 0, height: 10)
+        pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
+        pageControl.isHidden = true
+        setupPageControl()
         // Add User Profile Image
 
 
@@ -1202,42 +1209,13 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     func setupPicturesScroll() {
         
         guard let _ = post?.imageUrls else {return}
-        if (post?.imageCount)! < 1 {
-            return
-        }
         
         photoImageScrollView.contentSize.width = photoImageScrollView.frame.width * CGFloat((post?.imageCount)!)
         
         for i in 1 ..< (post?.imageCount)! {
             
             let imageView = CustomImageView()
-//            guard let images = post?.images else {return}
-            
-            if let images = post?.images {
-                imageView.image = images[i]
-            } else {
-                imageView.loadImage(urlString: (post?.imageUrls[i])!)
-            }
-            
-//            if let image = post?.images![i] {
-//                imageView.image = image
-//            } else {
-//                imageView.loadImage(urlString: (post?.imageUrls[i])!)
-//            }
-            
-//            if post?.imageUrls[i] == nil && post?.images != nil {
-//                imageView.image = post?.images![i]
-//            } else {
-//                imageView.loadImage(urlString: (post?.imageUrls[i])!)
-////                print("LOAD IMAGE | \(i) | \(post?.imageUrls[i])!)")
-//            }
-            
-//            if let image = post?.images![i] {
-//                imageView.image = image
-//            } else {
-//                imageView.loadImage(urlString: (post?.imageUrls[i])!)
-//            }
-            
+            imageView.loadImage(urlString: (post?.imageUrls[i])!)
             imageView.backgroundColor = .white
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
@@ -1249,6 +1227,36 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
             photoImageScrollView.addSubview(imageView)
             
         }
+        
+//        guard let _ = post?.imageUrls else {return}
+//        if (post?.imageCount)! < 1 {
+//            return
+//        }
+//        
+//        photoImageScrollView.contentSize.width = photoImageScrollView.frame.width * CGFloat((post?.imageCount)!)
+//        
+//        for i in 1 ..< (post?.imageCount)! {
+//            
+//            let imageView = CustomImageView()
+////            guard let images = post?.images else {return}
+//            
+//            if let images = post?.images {
+//                imageView.image = images[i]
+//            } else {
+//                imageView.loadImage(urlString: (post?.imageUrls[i])!)
+//            }
+//            
+//            imageView.backgroundColor = .white
+//            imageView.contentMode = .scaleAspectFill
+//            imageView.clipsToBounds = true
+//            imageView.isUserInteractionEnabled = true
+//            
+//            let xPosition = self.photoImageScrollView.frame.width * CGFloat(i)
+//            imageView.frame = CGRect(x: xPosition, y: 0, width: photoImageScrollView.frame.width, height: photoImageScrollView.frame.height)
+//            
+//            photoImageScrollView.addSubview(imageView)
+//            
+//        }
         //        photoImageScrollView.reloadInputViews()
     }
     

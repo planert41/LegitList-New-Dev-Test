@@ -425,9 +425,11 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         self.pageControl.tintColor = UIColor.red
         self.pageControl.pageIndicatorTintColor = UIColor.white
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
-        
+        self.pageControl.contentMode = .center
         self.pageControl.isHidden = imageCount <= 1
-        
+        self.pageControl.alpha = 0.7
+        self.pageControl.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+
 //        self.pageControlMini.numberOfPages = 1
 //        self.pageControlMini.currentPage = 1
 //        self.pageControlMini.tintColor = UIColor.red
@@ -461,6 +463,10 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         return label
     }()
 
+    let infoView = UIView()
+    let headerInfoHeight: CGFloat = 30 //35
+    var emojiFontSize: CGFloat = 15
+    
     override init(frame: CGRect) {
         super.init(frame:frame)
         self.backgroundColor = UIColor.clear
@@ -500,28 +506,44 @@ class ListGridCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         photoImageScrollView.addGestureRecognizer(longPress)
         
         
+        addSubview(infoView)
+        infoView.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: headerInfoHeight)
+        infoView.backgroundColor = UIColor.white.withAlphaComponent(0.15)
+        
+        
+//        addSubview(ratingEmojiLabel)
+//        ratingEmojiLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: ratingEmojiLabelSize)
+////        ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
+//        ratingEmojiLabel.layer.cornerRadius = ratingEmojiLabelSize / 2
+//        ratingEmojiLabel.sizeToFit()
         
         addSubview(ratingEmojiLabel)
-        ratingEmojiLabel.anchor(top: nil, left: leftAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 5, paddingRight: 5, width: 0, height: ratingEmojiLabelSize)
-//        ratingEmojiLabel.centerYAnchor.constraint(equalTo: starRating.centerYAnchor).isActive = true
-        ratingEmojiLabel.layer.cornerRadius = ratingEmojiLabelSize / 2
-        ratingEmojiLabel.sizeToFit()
+        ratingEmojiLabel.anchor(top: nil, left: infoView.leftAnchor, bottom: nil, right: nil, paddingTop: 8, paddingLeft: 8, paddingBottom: 8, paddingRight: 5, width: 0, height: ratingEmojiLabelSize)
+        ratingEmojiLabel.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
+        ratingEmojiLabel.layer.cornerRadius = 25/2
+        ratingEmojiLabel.layer.masksToBounds = true
+        ratingEmojiLabel.isUserInteractionEnabled = true
+//        ratingEmojiLabel.backgroundColor = UIColor.white.withAlphaComponent(0.8)
+        ratingEmojiLabel.backgroundColor = UIColor.selectedColor().withAlphaComponent(0.8)
 
         ratingEmojiWidth = ratingEmojiLabel.widthAnchor.constraint(equalToConstant: ratingEmojiLabelSize)
         ratingEmojiWidth?.isActive = true
         
         addSubview(emojiLabel)
 //        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 3, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
-
+//        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: 0)
+        emojiLabel.anchor(top: nil, left: ratingEmojiLabel.rightAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 5, paddingRight: 5, width: 0, height: emojiFontSize + 5)
+        emojiLabel.centerYAnchor.constraint(equalTo: infoView.centerYAnchor).isActive = true
         //emojiLabel.backgroundColor = UIColor.ianWhiteColor().withAlphaComponent(0.5)
         emojiLabel.sizeToFit()
         
 
         // IMAGE COUNT
         addSubview(pageControl)
-        pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
-
+//        pageControl.anchor(top: photoImageScrollView.topAnchor, left: photoImageScrollView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 10, paddingRight: 10, width: 0, height: 10)
+        pageControl.anchor(top: nil, left: nil, bottom: infoView.topAnchor, right: nil, paddingTop: 10, paddingLeft: 0, paddingBottom: 4, paddingRight: 10, width: 0, height: 10)
+        pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
+        pageControl.isHidden = false
         
         let headerView = UIView()
         addSubview(headerView)

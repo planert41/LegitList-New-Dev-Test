@@ -50,7 +50,7 @@ class ListSummaryCell: UICollectionViewCell {
 //        label.font = UIFont.boldSystemFont(ofSize: 12)
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = 2
-        label.lineBreakMode = .byWordWrapping
+        label.lineBreakMode = .byClipping
         label.textAlignment = NSTextAlignment.center
         //        label.numberOfLines = 0
         return label
@@ -116,12 +116,12 @@ class ListSummaryCell: UICollectionViewCell {
             listNameAtt.append(image1String)
             
         }
-        self.listNameLabel.attributedText = listNameAtt
-        self.listNameLabel.sizeToFit()
+//        self.listNameLabel.attributedText = listNameAtt
         
         self.listNameLabel.text = list.name
         self.listNameLabel.textColor = (list.name == bookmarkListName) ? UIColor.weiBookmarkColor() : UIColor.black
-        
+        self.listNameLabel.sizeToFit()
+
     // LIST DETAILS
         var postCount = list.postIds?.count ?? 0
         var newPostCount = list.newNotificationsCount ?? 0

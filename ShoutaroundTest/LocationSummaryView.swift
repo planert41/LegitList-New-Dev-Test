@@ -28,6 +28,7 @@ protocol LocationSummaryViewDelegate {
     func didTapPost(post: Post?)
     func activateAppleMap(post: Post?)
     func didTapLocation()
+    func alert(title: String, message: String)
 
 }
 
@@ -67,7 +68,7 @@ class LocationSummaryView: UIView {
     
     let mapView = MKMapView()
     let mapPinReuseInd = "MapPin"
-    let regionRadius: CLLocationDistance = 5000
+    let regionRadius: CLLocationDistance = 7500
 
     lazy var trackingButton: MKUserTrackingButton = {
         let button = MKUserTrackingButton()
@@ -98,6 +99,20 @@ class LocationSummaryView: UIView {
         button.tintColor = UIColor.ianLegitColor()
         button.addTarget(self, action: #selector(toggleMapFunction), for: .touchUpInside)
         button.layer.backgroundColor = UIColor.white.withAlphaComponent(0.8).cgColor
+        button.layer.cornerRadius = 10 / 2
+        button.clipsToBounds = true
+        return button
+    }()
+    
+    // Map Button
+    lazy var curLocButton: UIButton = {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        let mapImage = #imageLiteral(resourceName: "gpsmarker").withRenderingMode(.alwaysOriginal)
+        button.setImage(mapImage, for: .normal)
+//        button.tintColor = UIColor.ianLegitColor()
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(activateCurrentLocation), for: .touchUpInside)
+        button.layer.backgroundColor = UIColor.clear.cgColor
         button.layer.cornerRadius = 10 / 2
         button.clipsToBounds = true
         return button
@@ -428,13 +443,14 @@ class LocationSummaryView: UIView {
 //        locationButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
 //        locationButton.backgroundColor = UIColor.clear
 
-        addSubview(mapButton)
-        mapButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
+//        addSubview(mapButton)
+//        mapButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
 //        mapButton.layer.cornerRadius = 30 / 2
 //        mapButton.clipsToBounds = true
 //        mapButton.backgroundColor = UIColor.white
 
-
+        addSubview(curLocButton)
+        curLocButton.anchor(top: nil, left: nil, bottom: mapView.bottomAnchor, right: mapView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 15, width: 30, height: 30)
         
     // OTHER PHOTOS
         
@@ -733,6 +749,16 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
         
     }
     
+    func checkEmptyCell() {
+        if self.isFilteringFriends {
+            isEmptyCell = self.friendPosts.count == 0
+            self.averageRating(posts: self.friendPosts)
+        } else {
+            isEmptyCell = self.otherPosts.count == 0
+            self.averageRating(posts: self.otherPosts)
+        }
+    }
+    
     func separatePosts(){
         self.friendPosts = self.allPosts.filter({ (post) -> Bool in
             return CurrentUser.followingUids.contains(post.creatorUID!) || (post.creatorUID == Auth.auth().currentUser?.uid)
@@ -742,13 +768,7 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
         })
         self.updateScopeBarCount()
         
-        if self.isFilteringFriends {
-            isEmptyCell = self.friendPosts.count == 0
-            self.averageRating(posts: self.friendPosts)
-        } else {
-            isEmptyCell = self.otherPosts.count == 0
-            self.averageRating(posts: self.otherPosts)
-        }
+        self.checkEmptyCell()
         
 //        Database.countEmojis(posts: self.allPosts) { (emoji_counts) in
 //            self.allPostEmojiCounts = emoji_counts
@@ -788,7 +808,7 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isEmptyCell {
-            print("Location Other Post | \(isEmptyCell) Empty| 1")
+            print("Location Other Post | \(isEmptyCell) Empty")
             return 1
         }
         else if self.isFilteringFriends
@@ -909,6 +929,7 @@ extension LocationSummaryView: UICollectionViewDelegate, UICollectionViewDataSou
     
     @objc func selectFriendSort(sender: UISegmentedControl) {
         self.isFilteringFriends = (sender.selectedSegmentIndex == 0)
+        self.checkEmptyCell()
         self.updateScopeBarCount()
         self.photoCollectionView.reloadData()
         self.photoCollectionView.layoutIfNeeded()
@@ -955,22 +976,40 @@ extension LocationSummaryView: MKMapViewDelegate, GMSMapViewDelegate {
         //        mapView?.region = coordinateRegion
         print("centerMapOnLocation | \(location.coordinate) | Radius \(displayRadius)")
         mapView.setRegion(coordinateRegion, animated: true)
+                
+        let annotations = mapView.annotations.filter({ !($0 is MKUserLocation) })
+        print("PRE COUNT ", self.mapView.annotations.count)
+
+        mapView.removeAnnotations(annotations)
         
-        if self.mapView.annotations.count == 0 {
-            let annotation = MKPointAnnotation()
-            let centerCoordinate = CLLocationCoordinate2D(latitude: (location.coordinate.latitude), longitude:(location.coordinate.longitude))
-            annotation.coordinate = centerCoordinate
-            annotation.title = self.selectedName
-            mapView.addAnnotation(annotation)
-            print("LocationSummaryView | Add Map Pin | \(self.selectedName)")
-        } else {
-            for annotation in self.mapView.annotations {
-                if annotation.title == self.selectedName {
-                    self.mapView.selectAnnotation(annotation, animated: true)
-                    print("LocationSummaryView | Select Map Pin | \(self.selectedName)")
-                }
-            }
+        print("COUNT ", self.mapView.annotations.count)
+        
+        let annotation = MKPointAnnotation()
+        let centerCoordinate = CLLocationCoordinate2D(latitude: (location.coordinate.latitude), longitude:(location.coordinate.longitude))
+        annotation.coordinate = centerCoordinate
+        annotation.title = self.selectedName
+        mapView.addAnnotation(annotation)
+        print("LocationSummaryView | Add Map Pin | \(self.selectedName)")
+        if annotation.title == self.selectedName {
+            self.mapView.selectAnnotation(annotation, animated: true)
+            print("LocationSummaryView | Select Map Pin | \(self.selectedName)")
         }
+        
+//        if self.mapView.annotations.count == 0 {
+//            let annotation = MKPointAnnotation()
+//            let centerCoordinate = CLLocationCoordinate2D(latitude: (location.coordinate.latitude), longitude:(location.coordinate.longitude))
+//            annotation.coordinate = centerCoordinate
+//            annotation.title = self.selectedName
+//            mapView.addAnnotation(annotation)
+//            print("LocationSummaryView | Add Map Pin | \(self.selectedName)")
+//        } else {
+//            for annotation in self.mapView.annotations {
+//                if annotation.title == self.selectedName {
+//                    self.mapView.selectAnnotation(annotation, animated: true)
+//                    print("LocationSummaryView | Select Map Pin | \(self.selectedName)")
+//                }
+//            }
+//        }
 
     }
 
@@ -998,6 +1037,55 @@ extension LocationSummaryView: MKMapViewDelegate, GMSMapViewDelegate {
     func activateMap() {
         SharedFunctions.openGoogleMaps(lat: selectedLat, long: selectedLong)
     }
+    
+    @objc func activateCurrentLocation() {
+        if let cur = CurrentUser.currentLocation {
+            let distanceInMeters = selectedLocation!.distance(from: cur) // result is in meters
+            let center = cur.coordinate.middleLocationWith(location: (selectedLocation?.coordinate)!)
+                        
+            var radius = max(regionRadius, distanceInMeters) + 1000
+            
+            let coordinateRegion = MKCoordinateRegion.init(center: center, latitudinalMeters: radius, longitudinalMeters: radius)
+            //        mapView?.region = coordinateRegion
+            print("activateCurrentLocation | centerMapOnLocation | \(center) | Radius \(radius)")
+            mapView.setRegion(coordinateRegion, animated: true)
+            
+//            self.centerMapOnLocation(location: CLLocation(latitude: center.latitude, longitude: center.longitude), radius: distanceInMeters)
+        } else {
+            self.delegate?.alert(title: "No Location", message: "Missing current user location for map ")
+        }
+    }
+    
+    
+//    func geographicMidpoint(betweenCoordinates coordinates: [CLLocationCoordinate2D]) -> CLLocationCoordinate2D {
+//
+//        guard coordinates.count > 1 else {
+//            return coordinates.first ?? // return the only coordinate
+//                CLLocationCoordinate2D(latitude: 0, longitude: 0) // return null island if no coordinates were given
+//        }
+//
+//        var x = Double(0)
+//        var y = Double(0)
+//        var z = Double(0)
+//
+//        for coordinate in coordinates {
+//            let lat = coordinate.latitude.toRadians()
+//            let lon = coordinate.longitude.toRadians()
+//            x += cos(lat) * cos(lon)
+//            y += cos(lat) * sin(lon)
+//            z += sin(lat)
+//        }
+//
+//        x /= Double(coordinates.count)
+//        y /= Double(coordinates.count)
+//        z /= Double(coordinates.count)
+//
+//        let lon = atan2(y, x)
+//        let hyp = sqrt(x * x + y * y)
+//        let lat = atan2(z, hyp)
+//
+//        return CLLocationCoordinate2D(latitude: lat.toDegrees(), longitude: lon.toDegrees())
+//    }
     
     // MAP
     func setupMap(){

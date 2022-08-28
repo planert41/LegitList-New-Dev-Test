@@ -728,6 +728,7 @@ class UserAndListCell: UITableViewCell, EmojiButtonArrayDelegate {
         
         if self.user?.isBlocked ?? false {
             if let user = self.user {
+                print("Unblock User \(user.username)")
                 self.delegate?.extBlockUser(user: user)
             }
             return

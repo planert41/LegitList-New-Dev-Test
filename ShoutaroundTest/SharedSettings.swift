@@ -209,8 +209,8 @@ let indSub2_ID = "creator_sub_2"
 let indSub5_ID = "creator_sub_5"
 let indSub10_ID = "creator_sub_10"
 
-let premiumPostLimit = 50
-let premiumListLimit = 5
+let premiumPostLimit = 100
+let premiumListLimit = 10
 
 
 // Home Search Bar Sort

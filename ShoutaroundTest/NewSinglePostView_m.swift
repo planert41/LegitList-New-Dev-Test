@@ -316,6 +316,9 @@ class NewSinglePostView: UIViewController {
         self.pageControl.pageIndicatorTintColor = UIColor.white
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
         self.pageControl.isHidden = self.pageControl.numberOfPages == 1
+        self.pageControl.contentMode = .center
+//        self.pageControl.contentHorizontalAlignment = .center
+//        self.pageControl.backgroundColor = UIColor.yellow
 //        self.pageControl.backgroundColor = UIColor.rgb(red: 68, green: 68, blue: 68)
     }
     
@@ -668,8 +671,9 @@ class NewSinglePostView: UIViewController {
         scrollview.addSubview(pageControlView)
         pageControlView.anchor(top: nil, left: view.leftAnchor, bottom: photoImageScrollView.bottomAnchor, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 0, height: 15)
         scrollview.addSubview(pageControl)
-        pageControl.anchor(top: nil, left: nil, bottom: pageControlView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 10)
-        pageControl.centerXAnchor.constraint(equalTo: pageControlView.centerXAnchor).isActive = true
+        pageControl.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 10, paddingRight: 0, width: 100, height: 10)
+        pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
+        pageControl.sizeToFit()
         setupPageControl()
 
     
@@ -895,6 +899,8 @@ class NewSinglePostView: UIViewController {
         self.scrollview.bringSubviewToFront(photoImageScrollView)
         self.scrollview.bringSubviewToFront(photoImageView)
         self.scrollview.bringSubviewToFront(emojiDetailLabel)
+        self.scrollview.bringSubviewToFront(pageControl)
+
 
         
     }
