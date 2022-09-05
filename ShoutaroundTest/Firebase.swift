@@ -9263,7 +9263,7 @@ extension Database{
                 
                 var followingCount = user["followingCount"] as? Int ?? 0
                 var followedValue: Int? = following[followedUid]
-                var username = " The User"
+                var username = " User"
                 
                 if let tempUser = userCache[followedUid] {
                     username = tempUser.username
@@ -9411,8 +9411,8 @@ extension Database{
                 
                 var followingCount = user["followingCount"] as? Int ?? 0
                 var followedValue: Int? = following[userUid]
-                var username = " The User"
-                
+                var username = " User"
+                                
                 if let tempUser = userCache[userUid] {
                     username = tempUser.username
                 }
@@ -9439,7 +9439,8 @@ extension Database{
                     Database.createNotificationEventForUser(postId: nil, listId: nil, targetUid: userUid, action: Social.follow, value: 0, locName: nil, listName: nil, commentText: nil)
 
                 }
-                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
+                let userDataDict:[String: AnyObject] = ["uid": uid as AnyObject, "following": followedValue as AnyObject]
+                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil, userInfo: userDataDict)
                 
                 // Update User Object
                 self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: "followingCount", final: followingCount)

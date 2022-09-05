@@ -990,7 +990,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         self.pageControl.pageIndicatorTintColor = UIColor.white
         self.pageControl.currentPageIndicatorTintColor = UIColor.ianLegitColor()
         self.pageControl.isHidden = imageCount <= 1
-        self.pageControl.contentMode = .center
+//        self.pageControl.contentMode = .center
         self.pageControl.alpha = 0.7
         self.pageControl.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
 
@@ -1065,7 +1065,7 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 
 //         IMAGE COUNT
         addSubview(pageControl)
-        pageControl.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: nil, paddingTop: 10, paddingLeft: -20, paddingBottom: 4, paddingRight: 10, width: 0, height: 10)
+        pageControl.anchor(top: nil, left: nil, bottom: photoImageScrollView.bottomAnchor, right: nil, paddingTop: 10, paddingLeft: -30, paddingBottom: 4, paddingRight: 10, width: 0, height: 10)
         pageControl.centerXAnchor.constraint(equalTo: photoImageScrollView.centerXAnchor).isActive = true
         pageControl.isHidden = true
         setupPageControl()

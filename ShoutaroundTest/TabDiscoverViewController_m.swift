@@ -192,7 +192,8 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         NotificationCenter.default.addObserver(self, selector: #selector(didCreateNewList), name:TabListViewController.refreshListNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshItems), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(refreshItems), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.newUserFollow(_:)), name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
 
         
         setupNavigationItems()
@@ -792,6 +793,72 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
             (((p1.cityName ?? "").hasPrefix(searchText.lowercased())) ? 0 : 1) < (((p2.cityName ?? "").hasPrefix(searchText.lowercased())) ? 0 : 1)
         }
         self.sortItems()
+    }
+    
+    @objc func newUserFollow(_ notification: NSNotification) {
+        let uid = (notification.userInfo?["uid"] ?? "")! as! String
+        let following = ((notification.userInfo?["following"] ?? 0)! as? Int) ?? 0
+        print("NEW USER FOLLOW | \(uid) : \(following)")
+        self.refreshUserFollowing()
+        self.tableView.reloadData()
+                
+//        if let index = allUsers.firstIndex(where: { (user) -> Bool in
+//            user.uid == uid
+//        }){
+//            var temp = allUsers[index] as User
+//            temp.isFollowing = following == 1
+//            allUsers[index] = temp
+//            print("newUserFollow", index, temp.username, temp.isFollowing, allUsers[index].isFollowing)
+//            if searchType == DiscoverUser && !self.isFiltering {
+//                let indexPath = IndexPath(row: index, section: 0)
+//                if index < self.tableView.visibleCells.count {
+//                    self.tableView.reloadRows(at: [indexPath], with: .none)
+//                }
+//            }
+//        }
+//        
+//        if let index = filteredUsers.firstIndex(where: { (user) -> Bool in
+//            user.uid == uid
+//        }){
+//            var temp = filteredUsers[index] as User
+//            temp.isFollowing = following == 1
+//            filteredUsers[index] = temp
+//            print("newUserFollow", index, temp.username, temp.isFollowing, filteredUsers[index].isFollowing)
+//            if searchType == DiscoverUser && self.isFiltering {
+//                let indexPath = IndexPath(row: index, section: 0)
+//                if index < self.tableView.visibleCells.count {
+//                    self.tableView.reloadRows(at: [indexPath], with: .none)
+//                }
+//            }
+//        }
+    }
+    
+    func refreshUserFollowing() {
+        for (index, user) in self.allUsers.enumerated() {
+            var x = user
+            let uid = x.uid
+            var curFollowing = x.isFollowing
+            var newFollowing = CurrentUser.followingUids.contains(uid)
+            
+            if curFollowing != newFollowing {
+                x.isFollowing = newFollowing
+                self.allUsers[index] = x
+                print("refreshUserFollowing allUser", uid, curFollowing, newFollowing, x.isFollowing)
+            }
+        }
+        
+        for (index, user) in self.filteredUsers.enumerated() {
+            var x = user
+            let uid = x.uid
+            var curFollowing = x.isFollowing
+            var newFollowing = CurrentUser.followingUids.contains(uid)
+            
+            if curFollowing != newFollowing {
+                x.isFollowing = newFollowing
+                self.filteredUsers[index] = x
+                print("refreshUserFollowing filterUser", uid, curFollowing, newFollowing, x.isFollowing)
+            }
+        }
     }
     
     @objc func refreshItems(){
