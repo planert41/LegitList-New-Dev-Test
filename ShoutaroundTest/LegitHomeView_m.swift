@@ -803,7 +803,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 //        }
         if self.dropDownView.alpha == 1 {
             self.hideDropDown()
-        } else {
+        } else if self.isPresented {
             self.viewFilter.filterSort = self.viewFilter.defaultSort
             self.handleRefresh()
         }
