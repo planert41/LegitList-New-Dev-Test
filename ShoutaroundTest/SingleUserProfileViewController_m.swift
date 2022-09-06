@@ -1612,33 +1612,30 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     }
     
     func tapProfileImage(image: UIImage?) {
-        guard let image = image else {return}
-        let selectedImages = [image]
-        self.extShowImage(inputImages: selectedImages)
-
-//        var images = [SKPhoto]()
-//
-//        guard let selectedImages = image else {return}
-//        let photo = SKPhoto.photoWithImage(selectedImages)// add some UIImage
-//        images.append(photo)
-//
-//        // 2. create PhotoBrowser Instance, and present from your viewController.
-//        SKPhotoBrowserOptions.displayCounterLabel = true
-//        SKPhotoBrowserOptions.displayBackAndForwardButton = true
-//        SKPhotoBrowserOptions.displayAction = true
-//        SKPhotoBrowserOptions.actionButtonTitles = ["Edit Photo"]
-//        SKPhotoBrowserOptions.swapCloseAndDeleteButtons = false
-//        //        SKPhotoBrowserOptions.enableSingleTapDismiss  = true
-//        SKPhotoBrowserOptions.bounceAnimation = true
-//        SKPhotoBrowserOptions.displayDeleteButton = true
-//
-//        browser = SKPhotoBrowser(photos: images)
-//        browser.delegate = self
-//        //        browser.updateCloseButton(#imageLiteral(resourceName: "checkmark_teal").withRenderingMode(.alwaysOriginal), size: CGSize(width: 50, height: 50))
-//
-//        browser.initializePageIndex(0)
-//        present(browser, animated: true, completion: {})
+        let newImageView = UIImageView(image: image)
+        newImageView.frame = UIScreen.main.bounds
+        newImageView.backgroundColor = .black
+        newImageView.contentMode = .scaleAspectFit
+        newImageView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
+        newImageView.addGestureRecognizer(tap)
+        self.view.addSubview(newImageView)
+        self.navigationController?.isNavigationBarHidden = true
+        self.tabBarController?.tabBar.isHidden = true
     }
+
+    @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        self.navigationController?.isNavigationBarHidden = false
+        self.tabBarController?.tabBar.isHidden = false
+        sender.view?.removeFromSuperview()
+    }
+    
+    
+//    func tapProfileImage(image: UIImage?) {
+//        guard let image = image else {return}
+//        let selectedImages = [image]
+//        self.extShowImage(inputImages: selectedImages)
+//    }
     
     func didTapPicture(post: Post) {
         print("Function: \(#function), line: \(#line)")
