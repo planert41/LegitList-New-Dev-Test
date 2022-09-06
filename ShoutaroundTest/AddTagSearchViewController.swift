@@ -173,11 +173,12 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
         //        tableView.contentInset = UIEdgeInsets(top: 20, left: 40, bottom: 0, right: 40)
         
         tableView.allowsMultipleSelection = true
+        tableView.delegate = self
         // Google Locations are only loaded when Locations are selected
 
-        tableView.separatorStyle = .none
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 160
+        tableView.separatorStyle = .singleLine
+//        tableView.rowHeight = 50
+        tableView.estimatedRowHeight = 100
         //        tableView.estimatedRowHeight = 200
         initTags()
         
@@ -382,24 +383,27 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        // Emojis
+//    func numberOfSections(in tableView: UITableView) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        // ALL
         if self.selectedScope == 0 {
             return isFiltering ? filteredTag.count : allTag.count
         }
         
+        // MEAL
         else if self.selectedScope == 1 {
             return isFiltering ? filteredTag.count : mealEmojis.count
         }
             
-            // Users
+        // CUISINE
         else if self.selectedScope == 2 {
             return isFiltering ? filteredTag.count : cuisineEmojis.count
         }
             
-            // Locations
+        // DIET
         else if self.selectedScope == 3 {
-            return isFiltering ? filteredTag.count + 1 : dietEmojis.count
+            return isFiltering ? filteredTag.count : dietEmojis.count
         }
 
             // Google Locations - Data source changes to Google AutoComplete
@@ -410,21 +414,22 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
     
     
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return 1
-        
-    }
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//
+//        return 1
+//
+//    }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView()
-        headerView.backgroundColor = UIColor.clear
-        return headerView
-    }
     
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 5
-    }
+//    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+//        let headerView = UIView()
+//        headerView.backgroundColor = UIColor.clear
+//        return headerView
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+//        return 5
+//    }
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -432,13 +437,13 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
         // Emojis
         var displayEmoji: EmojiBasic?
         if self.selectedScope == 0 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : allTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : allTag[indexPath.item]
         } else if self.selectedScope == 1 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : mealTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : mealTag[indexPath.item]
         } else if self.selectedScope == 2 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : cuisineTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : cuisineTag[indexPath.item]
         } else if self.selectedScope == 3 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : dietTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : dietTag[indexPath.item]
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: EmojiCellId, for: indexPath) as! SearchResultsCell
@@ -485,18 +490,21 @@ class AddTagSearchController : UIViewController, UITableViewDelegate, UITableVie
 
     }
 
-    
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 50
+//    }
+
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var displayEmoji: EmojiBasic?
         if self.selectedScope == 0 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : allTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : allTag[indexPath.item]
         } else if self.selectedScope == 1 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : mealTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : mealTag[indexPath.item]
         } else if self.selectedScope == 2 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : cuisineTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : cuisineTag[indexPath.item]
         } else if self.selectedScope == 3 {
-            displayEmoji = isFiltering ? filteredTag[indexPath.section] : dietTag[indexPath.section]
+            displayEmoji = isFiltering ? filteredTag[indexPath.item] : dietTag[indexPath.item]
         }
         
         guard let name = displayEmoji?.name else {return}

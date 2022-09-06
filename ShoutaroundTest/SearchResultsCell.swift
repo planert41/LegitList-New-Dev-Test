@@ -48,6 +48,7 @@ class SearchResultsCell: UITableViewCell {
             tempOutput.append(x.capitalizingFirstLetter())
         }
         self.emojiTextLabel.text = tempOutput.joined(separator: " ").cutoff(length: 40)
+        self.emojiTextLabel.sizeToFit()
     }
     
     var showDefaultCounts = false
@@ -215,7 +216,7 @@ class SearchResultsCell: UITableViewCell {
         
         
         emojiTextLabel.anchor(top: tempView.topAnchor, left: emojiLabel.rightAnchor, bottom: tempView.bottomAnchor, right: postCountLabel.leftAnchor, paddingTop: 0, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        
+        emojiTextLabel.sizeToFit()
         
         hideEmojiLabel = emojiTextLabel.leftAnchor.constraint(equalTo: tempView.leftAnchor, constant: 30)
         hideEmojiLabel?.isActive = false
