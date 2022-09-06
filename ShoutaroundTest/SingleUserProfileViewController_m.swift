@@ -1445,6 +1445,10 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         optionsAlert.addAction(UIAlertAction(title: "Message User", style: .default, handler: { (action: UIAlertAction!) in
             self.messageUser()
         }))
+        
+        optionsAlert.addAction(UIAlertAction(title: "Share Legit App Link", style: .default, handler: { (action: UIAlertAction!) in
+            self.shareLegitAppLink()
+        }))
      
 
         optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
@@ -1496,6 +1500,10 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
         optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
             self.contactUs()
         }))
+       
+       optionsAlert.addAction(UIAlertAction(title: "Share Legit App Link", style: .default, handler: { (action: UIAlertAction!) in
+           self.shareLegitAppLink()
+       }))
 
 
        optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
@@ -1508,6 +1516,24 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
        }
 
    }
+    
+    func shareLegitAppLink() {
+        
+        // text to share
+        let text = "Download the Legit App here: https://apps.apple.com/us/app/legitapp/id1305513218"
+        
+        // set up activity view controller
+        let textToShare = [ text ]
+        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view // so that iPads won't crash
+        
+        // exclude some activity types from the list (optional)
+        activityViewController.excludedActivityTypes = [ UIActivity.ActivityType.airDrop, UIActivity.ActivityType.postToFacebook ]
+        
+        // present the view controller
+        self.present(activityViewController, animated: true, completion: nil)
+    
+    }
     
     func userDocs(){
 
