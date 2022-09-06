@@ -228,7 +228,7 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     }
     
     func setupImageCountLabel(){
-        imageCount = (self.post?.imageCount)!
+        imageCount = (self.post?.imageCount) ?? 1
         
         if imageCount == 1 {
             photoCountLabel.isHidden = true
@@ -1050,8 +1050,8 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     func expandTextView(){
         guard let post = self.post else {return}
         captionViewHeightConstraint?.isActive = false
-        captionViewHeightConstraint?.constant = (post.caption == "") ? 0 : 25
-        captionTextView.textContainer.maximumNumberOfLines = 3
+        captionViewHeightConstraint?.constant = (post.caption == "") ? 0 : 30
+        captionTextView.textContainer.maximumNumberOfLines = 4
         
         // Set Up Caption
         
@@ -1455,7 +1455,7 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 
         addSubview(captionTextView)
         captionTextView.anchor(top: postDetailView.bottomAnchor, left: leftAnchor, bottom: nil, right: rightAnchor, paddingTop: 10, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
-        captionTextView.heightAnchor.constraint(lessThanOrEqualToConstant: 60).isActive = true
+        captionTextView.heightAnchor.constraint(lessThanOrEqualToConstant: 80).isActive = true
         captionTextView.isUserInteractionEnabled = true
         captionTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleComment)))
 //        captionTextView.backgroundColor = UIColor.mainBlue()

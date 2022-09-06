@@ -148,7 +148,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         window = UIWindow()
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
-        
+        window?.overrideUserInterfaceStyle = .light
+
 //        Database.sendPushNotification(token: "3523424234", title: "test", body: "test")
         
 //        let mainViewController = MainViewController()

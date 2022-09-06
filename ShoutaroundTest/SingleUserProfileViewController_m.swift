@@ -454,6 +454,10 @@ class SingleUserProfileViewController: UIViewController {
         setupNavigationItems()
         toggleNewPostButton()
         
+        if self.isFetchingPosts {
+            SVProgressHUD.show(withStatus: "Fetching Posts")
+        }
+        
         // KEYBOARD TAPS TO EXIT INPUT
         self.keyboardTap = UITapGestureRecognizer(target: self, action: #selector(self.dismissKeyboard (_:)))
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -2346,13 +2350,39 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
                 return CGSize(width: view.frame.width - 30, height: view.frame.width)
             }
             else if self.postFormatInd == 1 {
+//                var height: CGFloat = 35 //headerview = username userprofileimageview
+//                height += view.frame.width  // Picture
+//                height += 160 + 20
+//                height += 30
+//                height += 30 // Emoji Array + Star Rating
+//                //            height += 25    // Date Bar
+//                return CGSize(width: view.frame.width - 16, height: height)
+                var displayPost = (isFiltering) ? displayedPosts[indexPath.item] : fetchedPosts[indexPath.item]
+
                 var height: CGFloat = 35 //headerview = username userprofileimageview
                 height += view.frame.width  // Picture
-                height += 160
-                height += 30
-                height += 30 // Emoji Array + Star Rating
+                height += 160 + 20
+                height += 20  // List
+//                height += 60  // List
+
+                height += (displayPost.likeCount > 0 || displayPost.comments.count > 0) ? 20 : 0 // Emoji Array + Star Rating
+                height += !(displayPost.urlLink?.isEmptyOrWhitespace() ?? true) ? 15 : 0 // Emoji Array + Star Rating
                 //            height += 25    // Date Bar
-                return CGSize(width: view.frame.width - 16, height: height)
+//                return CGSize(width: view.frame.width - 16, height: height)
+                
+                let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: height)
+                let dummyCell = FullPictureCell(frame: frame)
+                dummyCell.post = displayPost
+                dummyCell.enableDelete = true
+                dummyCell.layoutIfNeeded()
+                
+                let targetSize = CGSize(width: view.frame.width, height: height)
+                let estimatedSize = dummyCell.systemLayoutSizeFitting(targetSize)
+                
+                let tempheight = max(300 + 20, estimatedSize.height)
+                
+                return CGSize(width: view.frame.width - 30, height: tempheight)
+                
             } else if self.postFormatInd == 0 {
                 // GRID VIEW
 //                let width = (view.frame.width - 2 - 30) / 2

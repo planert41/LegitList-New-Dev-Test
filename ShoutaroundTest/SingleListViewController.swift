@@ -248,6 +248,9 @@ class SingleListViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.setupNavigationItems()
+        if self.isFetchingPost {
+            SVProgressHUD.show(withStatus: "Fetching Posts")
+        }
     }
     
     // MARK: - VIEWDIDLOAD
@@ -859,9 +862,9 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
         
         if indexPath.section == 1 {
             
-            if self.isPresented {
-                SVProgressHUD.dismiss()
-            }
+//            if self.isPresented {
+//                SVProgressHUD.dismiss()
+//            }
             
             if showEmpty /*&& self.isFiltering*/ {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyHeaderId, for: indexPath) as! EmptyCell

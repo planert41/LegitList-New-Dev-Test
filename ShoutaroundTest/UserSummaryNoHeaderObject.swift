@@ -175,8 +175,9 @@ class UserSummaryCollectionViewController: UIViewController, UICollectionViewDel
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        print("UserSummaryCollectionViewController | \(followingUsers.count) Load Users")
-        return self.isFiltering ? filteredUsers.count : followingUsers.count
+        var curCount = self.isFiltering ? filteredUsers.count : followingUsers.count
+        print("UserSummaryCollectionViewController | \(curCount) Load Users : Filtering \(self.isFiltering)")
+        return curCount
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

@@ -474,24 +474,40 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
     func setupNavigationItems(){
         // Setup Navigation
 //        print("SharePhotoList | Setup Navigation Items")
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.isNavigationBarHidden = false
-        self.navigationController?.navigationBar.barTintColor = UIColor.ianLegitColor()
-        self.navigationController?.navigationBar.tintColor = UIColor.ianLegitColor()
-        navigationController?.navigationBar.backgroundColor = UIColor.ianLegitColor()
-        navigationController?.navigationBar.layer.shadowColor = UIColor.ianLegitColor().cgColor
-        self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.layoutIfNeeded()
+        navigationController?.navigationBar.isTranslucent = false
+
+//        let tempImage = UIImage.init(color: UIColor.ianLegitColor())
+//        navigationController?.navigationBar.setBackgroundImage(tempImage, for: .default)
+//        navigationController?.navigationBar.barTintColor = UIColor.ianLegitColor()
+//        navigationController?.navigationBar.tintColor = UIColor.ianLegitColor()
+//        navigationController?.navigationBar.backgroundColor = UIColor.ianLegitColor()
+//        navigationController?.navigationBar.layer.shadowColor = UIColor.ianLegitColor().cgColor
+//        navigationController?.navigationBar.shadowImage = UIImage()
+        
+//        let barAppearance = UINavigationBarAppearance()
+//        barAppearance.backgroundColor = UIColor.ianLegitColor()
+//        barAppearance.shadowColor = .clear
+//
+//        navigationController?.navigationBar.standardAppearance = barAppearance
+//        navigationController?.navigationBar.scrollEdgeAppearance = barAppearance
+        
+        
+//        navigationController?.navigationBar.layoutIfNeeded()
 
 //        let navTextColor = self.viewListMode ? UIColor.white : UIColor.ianLegitColor()
-        let navTextColor = UIColor.white
+        let navHeader = UILabel()
+        navHeader.textAlignment = .center
+        var navHeaderTitle = NSAttributedString()
+        let navTextColor = UIColor.ianBlackColor()
+        var navTitle = "Tag List"
+        let navTextSize = 16.0 as CGFloat
+        let navButtonSize = 14.0 as CGFloat
 
-        navigationController?.view.backgroundColor = UIColor.ianLegitColor()
-        navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.font.rawValue: UIFont(name: "Poppins-Bold", size: 18), NSAttributedString.Key.foregroundColor.rawValue: navTextColor])
+//        navigationController?.navigationBar.titleTextAttributes = convertToOptionalNSAttributedStringKeyDictionary([NSAttributedString.Key.font.rawValue: UIFont(name: "Poppins-Bold", size: navTextSize), NSAttributedString.Key.foregroundColor.rawValue: navTextColor])
         navigationItem.title = "Tag List"
-
+        
         self.addListButton.isHidden = (viewListMode && self.uploadUser?.uid != CurrentUser.uid)
         
         // Nav Back Buttons
@@ -500,7 +516,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         navBackButton.setTitleColor(navTextColor, for: .normal)
         navBackButton.tintColor = navTextColor
         navBackButton.backgroundColor = UIColor.clear
-        let navShareTitle = NSAttributedString(string: " BACK ", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12)])
+        let navShareTitle = NSAttributedString(string: " BACK ", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: navButtonSize)])
         navBackButton.setAttributedTitle(navShareTitle, for: .normal)
         
         let barButton2 = UIBarButtonItem.init(customView: navBackButton)
@@ -515,11 +531,12 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
         if self.viewListMode {
             self.navigationItem.rightBarButtonItem = nil
             navigationItem.title = "View Lists"
+            navTitle = "View Lists"
+            
             let navUserButton = navDefaultButton
             navUserButton.addTarget(self, action: #selector(handleBack), for: .touchUpInside)
-            
             let usernameTitle = NSMutableAttributedString()
-            usernameTitle.append(NSAttributedString(string:"\(self.uploadUser?.username ?? "")", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 15)]))
+            usernameTitle.append(NSAttributedString(string:"\(self.uploadUser?.username ?? "")", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: navButtonSize)]))
             navUserButton.backgroundColor = UIColor.clear
             navUserButton.setAttributedTitle(usernameTitle, for: .normal)
 //            navUserButton.setTitle("\(self.uploadUser?.username ?? "")", for: .normal)
@@ -535,7 +552,7 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             // Nav Edit Button
             let navEditButton = navDefaultButton
             navEditButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
-            let navEditTitle = NSAttributedString(string: " Edit Post ", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12)])
+            let navEditTitle = NSAttributedString(string: " Edit Post ", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: navButtonSize)])
             navEditButton.setAttributedTitle(navEditTitle, for: .normal)
             
 //            navEditButton.setTitle("Edit Post", for: .normal)
@@ -556,22 +573,28 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             var previousListCount = self.preExistingList?.count ?? 0
             var listChange = newSelectedListCount - previousListCount
             
-            if listChange > 0 {
-                displayString += "Tag \(listChange) New Lists"
-            } else if listChange < 0 {
-                displayString += "Untag \(-listChange) Lists"
-            } else {
-                displayString += "Tag List"
+            navTitle = "Tag List"
+            if listChange != 0 {
+                navTitle = (listChange > 0) ? "Tag \(listChange) New Lists" : "Untag \(-listChange) Lists"
             }
-
-            navigationItem.title = displayString
+//
+            
+//            if listChange > 0 {
+//                displayString += "Tag \(listChange) New Lists"
+//            } else if listChange < 0 {
+//                displayString += "Untag \(-listChange) Lists"
+//            } else {
+//                displayString += "Tag List"
+//            }
+//
+//            navigationItem.title = displayString
 
             // Nav Tag Button
             let navTagButton = navDefaultButton
             navTagButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
             navTagButton.setTitle("Next", for: .normal)
 
-            let navNextTitle = NSAttributedString(string: "Next", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: 12)])
+            let navNextTitle = NSAttributedString(string: "Next", attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: navButtonSize)])
             navTagButton.setAttributedTitle(navNextTitle, for: .normal)
 
 
@@ -588,20 +611,12 @@ class SharePhotoListController: UIViewController, UICollectionViewDelegate, UICo
             navShareButton.setTitle("Share Post", for: .normal)
             let barButton2 = UIBarButtonItem.init(customView: navShareButton)
             self.navigationItem.rightBarButtonItem = barButton2
-            
-            
-            
-//            let navBarButton = UIButton()
-//            let displayAttributed = NSAttributedString(string: "Share", attributes: convertToOptionalNSAttributedStringKeyDictionary([convertFromNSAttributedStringKey(NSAttributedString.Key.font): UIFont.boldSystemFont(ofSize: 15), convertFromNSAttributedStringKey(NSAttributedString.Key.foregroundColor): UIColor.selectedColor()]))
-////            navBarButton.layer.cornerRadius = 15
-////            navBarButton.layer.masksToBounds = true
-////            navBarButton.backgroundColor = UIColor.customRedColor()
-//            navBarButton.setAttributedTitle(displayAttributed, for: .normal)
-//            navBarButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
-//            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarButton)
-            
-//            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Share", style: .plain, target: self, action: #selector(handleShareNewPost))
+
         }
+        
+        navHeaderTitle = NSAttributedString(string:navTitle, attributes: [NSAttributedString.Key.foregroundColor: navTextColor, NSAttributedString.Key.font: UIFont(name: "Poppins-Bold", size: navTextSize)])
+        navHeader.attributedText = navHeaderTitle
+        self.navigationItem.titleView = navHeader
     }
     
     

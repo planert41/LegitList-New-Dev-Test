@@ -1101,7 +1101,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 
                 var height: CGFloat = 35 //headerview = username userprofileimageview
                 height += view.frame.width  // Picture
-                height += 160
+                height += 160 + 20
                 height += 20  // List
 //                height += 60  // List
 
@@ -1119,7 +1119,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
                 let targetSize = CGSize(width: view.frame.width, height: height)
                 let estimatedSize = dummyCell.systemLayoutSizeFitting(targetSize)
                 
-                let tempheight = max(300, estimatedSize.height)
+                let tempheight = max(300 + 20, estimatedSize.height)
                 
                 return CGSize(width: view.frame.width - 30, height: tempheight)
                 
