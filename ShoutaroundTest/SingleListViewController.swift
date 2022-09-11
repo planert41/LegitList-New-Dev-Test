@@ -862,9 +862,9 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
         
         if indexPath.section == 1 {
             
-//            if self.isPresented {
-//                SVProgressHUD.dismiss()
-//            }
+            if self.isPresented && indexPath.row == 1 {
+                SVProgressHUD.dismiss()
+            }
             
             if showEmpty /*&& self.isFiltering*/ {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyHeaderId, for: indexPath) as! EmptyCell

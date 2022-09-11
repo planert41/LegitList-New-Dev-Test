@@ -61,6 +61,7 @@ class SingleUserProfileViewController: UIViewController {
     var navInboxButton: UIButton = TemplateObjects.NavInboxButton()
     let addPhotoButton = UIButton()
     var navSubscriptionButton: UIButton = TemplateObjects.NavSubscriptionButton()
+    let zoomBackButton = navBackButtonTemplate.init(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
 
     
     let navInboxLabel: UILabel = {
@@ -508,6 +509,9 @@ class SingleUserProfileViewController: UIViewController {
     
     var bottomSortBar = BottomSortBar()
 
+    var isZooming = false
+    var zoomImageView = UIImageView()
+    var originalImageCenter:CGPoint?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -1273,7 +1277,7 @@ extension SingleUserProfileViewController {
     }
 }
 
-extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, TestGridPhotoCellDelegate, FullPictureCellDelegate, SharePhotoListControllerDelegate, SingleUserProfileHeaderDelegate, SignUpControllerDelegate, SKPhotoBrowserDelegate, UserSearchBarDelegate, PostSortFormatBarDelegate, BottomSortBarDelegate {
+extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchViewControllerDelegate, TestGridPhotoCellDelegate, FullPictureCellDelegate, SharePhotoListControllerDelegate, SingleUserProfileHeaderDelegate, SignUpControllerDelegate, SKPhotoBrowserDelegate, UserSearchBarDelegate, PostSortFormatBarDelegate, BottomSortBarDelegate, UIGestureRecognizerDelegate {
 
     func displayAllLists() {
         self.extShowUserLists(inputUser: self.displayUser)
@@ -1612,22 +1616,121 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
     }
     
     func tapProfileImage(image: UIImage?) {
-        let newImageView = UIImageView(image: image)
-        newImageView.frame = UIScreen.main.bounds
-        newImageView.backgroundColor = .black
-        newImageView.contentMode = .scaleAspectFit
-        newImageView.isUserInteractionEnabled = true
+        zoomImageView = UIImageView(image: image)
+        zoomImageView.frame = UIScreen.main.bounds
+        zoomImageView.backgroundColor = .black
+        zoomImageView.contentMode = .scaleAspectFit
+        zoomImageView.isUserInteractionEnabled = true
+        
+//        let backButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+//        let icon = #imageLiteral(resourceName: "back_icon").withRenderingMode(.alwaysTemplate)
+//        backButton.setImage(icon, for: .normal)
+//        backButton.layer.backgroundColor = UIColor.clear.cgColor
+//        backButton.layer.borderColor = UIColor.ianLegitColor().cgColor
+//        backButton.layer.borderWidth = 0
+//        backButton.layer.cornerRadius = 2
+//        backButton.clipsToBounds = true
+//        backButton.contentHorizontalAlignment = .center
+//        backButton.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+//        backButton.tintColor = UIColor.ianBlackColor()
+//        backButton.layer.applySketchShadow(color: UIColor.rgb(red: 0, green: 0, blue: 0), alpha: 0.1, x: 0, y: 0, blur: 10, spread: 0)
+//        zoomBackButton.addTarget(self, action: #selector(dismissZoom), for: .touchUpInside)
+        
+        let pinch = UIPinchGestureRecognizer(target: self, action: #selector(self.pinch(sender:)))
+        pinch.delegate = self
+        zoomImageView.addGestureRecognizer(pinch)
+        
+        
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(self.pan(sender:)))
+        pan.delegate = self
+        zoomImageView.addGestureRecognizer(pan)
+        
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissFullscreenImage))
-        newImageView.addGestureRecognizer(tap)
-        self.view.addSubview(newImageView)
+        zoomImageView.addGestureRecognizer(tap)
+        self.view.addSubview(zoomImageView)
+        
+//        self.zoomImageView.addSubview(zoomBackButton)
+//        zoomBackButton.anchor(top: zoomImageView.topAnchor, left: zoomImageView.leftAnchor, bottom: nil, right: nil, paddingTop: 10, paddingLeft: 10, paddingBottom: 0, paddingRight: 0, width: 100, height: 40)
+//        zoomBackButton.sizeToFit()
+        
         self.navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = true
     }
 
     @objc func dismissFullscreenImage(_ sender: UITapGestureRecognizer) {
+        self.dismissZoom()
+    }
+    
+    @objc func dismissZoom() {
         self.navigationController?.isNavigationBarHidden = false
         self.tabBarController?.tabBar.isHidden = false
-        sender.view?.removeFromSuperview()
+        zoomImageView.removeFromSuperview()
+        zoomBackButton.removeFromSuperview()
+    }
+    
+    @objc func pinch(sender:UIPinchGestureRecognizer) {
+        
+        if sender.state == .began {
+            let currentScale = self.zoomImageView.frame.size.height / self.zoomImageView.bounds.size.height
+            let newScale = currentScale*sender.scale
+            self.view.bringSubviewToFront(self.zoomImageView)
+            
+            
+            if newScale > 1 {
+                self.isZooming = true
+            }
+            
+        } else if sender.state == .changed {
+            guard let view = sender.view else {return}
+            let pinchCenter = CGPoint(x: sender.location(in: view).x - view.bounds.midX,
+                                      y: sender.location(in: view).y - view.bounds.midY)
+            let transform = view.transform.translatedBy(x: pinchCenter.x, y: pinchCenter.y)
+                .scaledBy(x: sender.scale, y: sender.scale)
+                .translatedBy(x: -pinchCenter.x, y: -pinchCenter.y)
+            
+            let currentScale = self.zoomImageView.frame.size.height / self.zoomImageView.bounds.size.height
+            var newScale = currentScale*sender.scale
+            
+            if newScale < 1 {
+                newScale = 1
+                let transform = CGAffineTransform(scaleX: newScale, y: newScale)
+                self.zoomImageView.transform = transform
+                sender.scale = 1
+            }else {
+                view.transform = transform
+                sender.scale = 1
+            }
+            
+        } else if sender.state == .ended || sender.state == .failed || sender.state == .cancelled {
+            print("End Scaling")
+            UIView.animate(withDuration: 0.3, animations: {
+                self.zoomImageView.transform = CGAffineTransform.identity
+                if let center = self.originalImageCenter {
+                    self.zoomImageView.center = center
+                }
+            }, completion: { _ in
+                self.isZooming = false
+            })
+        }
+    }
+    
+    
+    @objc func pan(sender: UIPanGestureRecognizer) {
+        if self.isZooming && sender.state == .began {
+            self.originalImageCenter = sender.view?.center
+            self.view.bringSubviewToFront(self.zoomImageView)
+        } else if self.isZooming && sender.state == .changed {
+            let translation = sender.translation(in: self.view)
+            if let view = sender.view {
+                view.center = CGPoint(x:view.center.x + translation.x,
+                                      y:view.center.y + translation.y)
+            }
+            sender.setTranslation(CGPoint.zero, in: self.zoomImageView.superview)
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
     
     

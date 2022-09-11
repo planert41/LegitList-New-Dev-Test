@@ -1718,7 +1718,7 @@ extension NewTabMapViewController : MKMapViewDelegate {
         for post in self.fetchedPosts {
             if post.locationGPS != nil && post.id != nil {
                 var temp = MapPin(post: post)
-                temp.alwaysShow = (self.filteredUser != nil || self.filteredList != nil)
+                temp.alwaysShow = self.mapFilter.isFiltering || self.filteredUser != nil || self.filteredList != nil
                 self.mapPins.append(temp)
             }
         }
