@@ -1307,6 +1307,10 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                     print(" New User Follow | Wei Zou Now Following \(username)")})
                 Database.sendPushNotification(uid: weizouID, title: "\(username) - Following You - New User", body: "New User", action: followAction)
 
+                Database.handleManualFollowing(followerUid: maynardID, followedUid: userID, hideAlert: true, completion: {
+                    print(" New User Follow | Maynard Now Following \(username)")})
+                Database.sendPushNotification(uid: maynardID, title: "\(username) - Following You - New User", body: "New User", action: followAction)
+                
 //                Database.handleFollowing(followerUid: legitID, followingUid: userID, hideAlert: true, completion: {
 //                    print(" New User Follow | Wei Zou Now Following \(username)")})
 
