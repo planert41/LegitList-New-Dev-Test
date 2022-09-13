@@ -75,6 +75,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         didSet{
             self.sortItems()
             setupSortButton()
+            self.refreshSort()
         }
     }
     
@@ -249,9 +250,10 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
     @objc func selectItemSort(sender: UISegmentedControl) {
         let selectedSort = ItemSortOptions[sender.selectedSegmentIndex]
         print("DiscoverItemHeader | \(selectedSort) | selectItemSort")
-
-        self.refreshSort(sender: sender)
         self.selectedSort = selectedSort
+        self.refreshSort()
+//        self.refreshSort(sender: sender)
+//        self.selectedSort = selectedSort
     }
     
     @objc func refreshSort(sender: UISegmentedControl) {
@@ -263,6 +265,19 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
             var displayFilter = (isSelected) ? "Sort \(sortOptions)" : sortOptions
             sender.setTitle(displayFilter, forSegmentAt: index)
             sender.setWidth((isSelected) ? 90 : 60, forSegmentAt: index)
+        }
+    }
+    
+    @objc func refreshSort() {
+        for (index, sortOptions) in ItemSortOptions.enumerated()
+        {
+            var isSelected = (sortOptions == self.selectedSort)
+            if isSelected && self.sortSegmentControl.selectedSegmentIndex != index {
+                self.sortSegmentControl.selectedSegmentIndex = index
+            }
+            var displayFilter = (isSelected) ? "Sort \(sortOptions)" : sortOptions
+            self.sortSegmentControl.setTitle(displayFilter, forSegmentAt: index)
+            self.sortSegmentControl.setWidth((isSelected) ? 90 : 60, forSegmentAt: index)
         }
     }
     

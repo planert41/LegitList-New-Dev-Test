@@ -136,6 +136,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         NotificationCenter.default.addObserver(self, selector: #selector(refreshAppIconBadge), name: UserEventViewController.refreshNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshAppIconBadge), name: InboxController.newMsgNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshAppIconBadge), name: MainTabBarController.NewNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(discoverNearbyUsers), name: MainTabBarController.showNearbyUsers, object: nil)
 
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
 
@@ -389,6 +390,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
             }
         }
     }
+    
+    @objc func discoverNearbyUsers() {
+        if let tab = self.window!.rootViewController as! MainTabBarController? {
+            if let nav = tab.viewControllers?[2] as? UINavigationController  {
+                do {
+    //                let mapView = nav.viewControllers.first as! MainViewController
+//                    print(nav.viewC   ontrollers)
+                    let discoverView = nav.viewControllers.first as! TabSearchViewController
+                    discoverView.searchType = DiscoverUser
+                    discoverView.selectedSort = sortNearest
+                    tab.selectedIndex = 2
+                    tab.selectedTabBarIndex = 2
+
+
+                } catch let error {
+                    print(error.localizedDescription)
+                }
+            } else {
+                self.showAlert(title: "Error", message: "Can't Open Discover Nearby Users")
+            }
+
+        }
+    }
+
     
     
     @objc func toggleMapView(){

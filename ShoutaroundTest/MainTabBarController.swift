@@ -53,6 +53,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
     static let deleteList = NSNotification.Name(rawValue: "deleteList")
     static let deleteUserPost = NSNotification.Name(rawValue: "deleteUserPost")
     static let editUserPost = NSNotification.Name(rawValue: "editUserPost")
+    static let showNearbyUsers = NSNotification.Name(rawValue: "showNearbyUsers")
 
     
     var imagePicker = UIImagePickerController()

@@ -89,6 +89,17 @@ class NewUserOnboardViewFollowing: UIViewController {
     
     @objc func handleNext(){
         self.dismiss(animated: true) {
+//            NotificationCenter.default.post(name: MainTabBarController.showNearbyUsers, object: nil)
+        }//        let listView = UserWelcome2View()
+//        let listView = NewUserOnboardView4()
+//        self.navigationController?.pushViewController(listView, animated: true)
+        //        self.navigationController?.present(listView, animated: true, completion: nil)
+    }
+    
+    @objc func discoverNearbyUsers(){
+        self.dismiss(animated: true) {
+            NotificationCenter.default.post(name: MainTabBarController.showNearbyUsers, object: nil)
+
         }//        let listView = UserWelcome2View()
 //        let listView = NewUserOnboardView4()
 //        self.navigationController?.pushViewController(listView, animated: true)
@@ -136,7 +147,7 @@ class NewUserOnboardViewFollowing: UIViewController {
     
     let infoText =
     """
-    To start off, we recommend new Legit users follow the Legit team for content based in Chicago, Denver and Kuala Lumpur.
+    To start off, we recommend new Legit users follow the Legit team for content based in Chicago, Austin, Denver and Kuala Lumpur.
     """
 
 //    No more endlessly scrolling through your photos to find a specific food picture
@@ -161,6 +172,24 @@ class NewUserOnboardViewFollowing: UIViewController {
         button.titleLabel?.textAlignment = NSTextAlignment.center
         
         button.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+        return button
+    } ()
+    
+    let discoverUserButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.textColor = UIColor.white
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 20)
+        button.setTitle("Discover Users Nearby", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor.ianLegitColor()
+        button.layer.borderWidth = 0
+        button.layer.borderColor = UIColor.ianLegitColor().cgColor
+        button.layer.masksToBounds  = true
+        button.clipsToBounds = true
+        button.layer.cornerRadius = 10
+        button.titleLabel?.textAlignment = NSTextAlignment.center
+        
+        button.addTarget(self, action: #selector(discoverNearbyUsers), for: .touchUpInside)
         return button
     } ()
 
@@ -324,16 +353,23 @@ class NewUserOnboardViewFollowing: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleNext))
         self.view.addGestureRecognizer(tapGesture)
         
-        view.addSubview(nextButton)
-        nextButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 50 * marginScale, paddingRight: 50 * marginScale, width: 200, height: 50 * marginScale)
-        nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        nextButton.sizeToFit()
+//        view.addSubview(nextButton)
+//        nextButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 50 * marginScale, paddingRight: 50 * marginScale, width: 250, height: 50 * marginScale)
+//        nextButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        nextButton.sizeToFit()
         
-        view.addSubview(backButton)
-        backButton.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        backButton.centerYAnchor.constraint(equalTo: nextButton.centerYAnchor).isActive = true
-        backButton.sizeToFit()
-        backButton.isHidden = true
+        view.addSubview(discoverUserButton)
+//        discoverUserButton.anchor(top: nil, left: nil, bottom: nextButton.topAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 10, paddingRight: 50 * marginScale, width: 250, height: 50 * marginScale)
+        discoverUserButton.anchor(top: nil, left: nil, bottom: view.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 50 * marginScale, paddingBottom: 50 * marginScale, paddingRight: 50 * marginScale, width: 250, height: 50 * marginScale)
+        discoverUserButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        discoverUserButton.sizeToFit()
+        
+        
+//        view.addSubview(backButton)
+//        backButton.anchor(top: nil, left: view.leftAnchor, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 30 * marginScale, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+//        backButton.centerYAnchor.constraint(equalTo: nextButton.centerYAnchor).isActive = true
+//        backButton.sizeToFit()
+//        backButton.isHidden = true
 
         
         view.addSubview(headerLabel)
@@ -354,7 +390,7 @@ class NewUserOnboardViewFollowing: UIViewController {
 //        setupSearchBar()
         
         view.addSubview(tableView)
-        tableView.anchor(top: (infoTextView).bottomAnchor, left: view.leftAnchor, bottom: nextButton.topAnchor, right: view.rightAnchor, paddingTop: 15 * marginScale, paddingLeft: sideMargin, paddingBottom: 20 * marginScale, paddingRight: sideMargin, width: 0, height: 0)
+        tableView.anchor(top: (infoTextView).bottomAnchor, left: view.leftAnchor, bottom: discoverUserButton.topAnchor, right: view.rightAnchor, paddingTop: 15 * marginScale, paddingLeft: sideMargin, paddingBottom: 20 * marginScale, paddingRight: sideMargin, width: 0, height: 0)
         setupTableView()
         
         setupSegmentControl()
