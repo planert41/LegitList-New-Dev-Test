@@ -119,6 +119,7 @@ class UploadEmojiCell: UICollectionViewCell {
     
         override func prepareForReuse() {
             self.turnOffSelection = false
+            self.isSelected = false
         }
     
     required init?(coder aDecoder: NSCoder) {

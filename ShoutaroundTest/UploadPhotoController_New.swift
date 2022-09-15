@@ -164,8 +164,8 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
             }
             
             // Rating
+            self.starRatingSelectFunction(rating: editPost?.rating ?? 0)
             self.selectPostStarRating = editPost?.rating ?? 0
-            
             // Legit
             //            self.isLegit = editPost?.isLegit ?? false
             
@@ -179,6 +179,11 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
             self.captionEmojiCollectionView.reloadData()
             
             self.ratingEmojiTag = editPost?.ratingEmoji ?? ""
+            
+            if selectPostStarRating >= 4 || self.ratingEmojiTag.count > 0 {
+                self.showRatingEmojiContainer()
+            }
+
             
             let uploadTime = Date().timeIntervalSince1970
             
@@ -563,7 +568,7 @@ class UploadPhotoController: UIViewController, UICollectionViewDelegateFlowLayou
     
     func starRatingSelectFunction(rating: Double) {
         print("Selected Rating: \(rating)")
-        if rating >= 4 {
+        if rating >= 4 || self.ratingEmojiTag.count > 0 {
             starRating.settings.filledImage = #imageLiteral(resourceName: "ian_fullstar").withRenderingMode(.alwaysTemplate)
             starRating.tintColor = UIColor.red
             if ratingEmojiContainer.isHidden {
@@ -1653,9 +1658,12 @@ Rating Emojis help you describe your experience beyond just star ratings
         view.addSubview(ratingEmojiContainer)
         ratingEmojiContainer.anchor(top: starRatingContainerView.bottomAnchor, left: view.leftAnchor, bottom: nil, right: view.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         hideRatingEmojiContainer = ratingEmojiContainer.heightAnchor.constraint(equalToConstant: 0)
-        self.hideRatingEmoji()
-
-
+        
+        if selectPostStarRating >= 4 || self.ratingEmojiTag.count > 0 {
+            self.showRatingEmojiContainer()
+        } else {
+            self.hideRatingEmoji()
+        }
         
 // RATING HEADER LABEL
         ratingEmojiContainer.addSubview(ratingHeaderLabel)
@@ -3306,8 +3314,11 @@ Rating Emojis help you describe your experience beyond just star ratings
         
         self.emojiTagSelection = tempEmojis
         self.suggestedEmojiCollectionView.reloadData()
-        self.extraRatingEmojiCollectionView.reloadData()
-        self.extraRatingEmojiCollectionView.sizeToFit()
+        
+//        AWZ
+        
+//        self.extraRatingEmojiCollectionView.reloadData()
+//        self.extraRatingEmojiCollectionView.sizeToFit()
     }
     
     
@@ -3715,7 +3726,7 @@ Rating Emojis help you describe your experience beyond just star ratings
             return self.emojiTagSelection.count}
             
         else if collectionView == extraRatingEmojiCollectionView {
-            print("Extra Rating | \(extraRatingEmojis.count)")
+//            print("Extra Rating | \(extraRatingEmojis.count)")
             return extraRatingEmojis.count
         }
         
