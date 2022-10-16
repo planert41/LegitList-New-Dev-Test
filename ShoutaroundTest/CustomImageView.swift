@@ -91,6 +91,11 @@ class CustomImageView: UIImageView {
 //        backgroundImage.isHidden = false
         self.backgroundColor = UIColor.lightGray
         self.backgroundImage.isHidden = true
+        
+        if urlString == defaultProfileImageUrl {
+            self.image = #imageLiteral(resourceName: "defaultUser")
+            return
+        }
 
         
         self.kf.setImage(with: url, options: [.transition(.fade(0.2))]) { result in

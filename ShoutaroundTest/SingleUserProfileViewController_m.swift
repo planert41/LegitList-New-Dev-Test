@@ -2550,6 +2550,8 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
                 }
             }
             
+//            self.isFiltering ? self.displayedPosts.count : self.fetchedPosts.count
+            
             header.user = self.displayUser
             header.displayPostCount = displayedPosts.count
             header.viewFilter = self.viewFilter

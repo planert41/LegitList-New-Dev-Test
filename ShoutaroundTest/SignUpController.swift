@@ -26,7 +26,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     var FBCredentials: AuthCredential?
     var delegate: SignUpControllerDelegate?
     var newUserAutoFollow: Bool = true
-    var allowDefaultPhoto: Bool = false
+    var allowDefaultPhoto: Bool = false // People are going around it anyway
     var testUserSignUp: Bool = false
     
     var editUserInd: Bool = false {
@@ -140,7 +140,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     let plusPhotoButton: UIButton = {
         
         let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal), for: .normal)
+        var defaultImg =  #imageLiteral(resourceName: "defaultUser").alpha(0.8).withRenderingMode(.alwaysOriginal)
+        button.setImage(defaultImg, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(handlePlusPhoto), for: .touchUpInside)
         button.backgroundColor = UIColor.white
@@ -927,6 +928,27 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
     
     
     
+
+    func showDefaultProfileImageWarning() {
+        let SignUpAlert = UIAlertController(title: "Default Profile Picture", message:
+                                            """
+                                            Do you want to proceed withour uploading a profile picture?
+                                            """, preferredStyle: .alert)
+        
+
+        SignUpAlert.addAction(UIAlertAction(title: "Upload photo", style: .destructive, handler: { (action: UIAlertAction!) in
+            self.handlePlusPhoto()
+        }))
+        
+        SignUpAlert.addAction(UIAlertAction(title: "Continue", style: .default, handler: { (action: UIAlertAction!) in
+            // Allow Editing
+            self.allowDefaultPhoto = true
+            self.handleSignUp()
+        }))
+        
+        present(SignUpAlert, animated: true)
+    }
+    
     
     @objc func handleSignUp() {
 
@@ -951,10 +973,8 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 self.alert(title: "Error", message: "Please include a city")
                 self.signUpButton.isEnabled = true
             return}
-        
-        if !allowDefaultPhoto && plusPhotoButton.currentImage == #imageLiteral(resourceName: "plus_photo").withRenderingMode(.alwaysOriginal) {
-            self.alert(title: "Error", message: "Please Upload Profile Picture")
-            self.signUpButton.isEnabled = true
+        if !allowDefaultPhoto && (plusPhotoButton.currentImage == #imageLiteral(resourceName: "defaultUser").withRenderingMode(.alwaysOriginal) || !updateImage) {
+            self.showDefaultProfileImageWarning()
             return
         }
 
