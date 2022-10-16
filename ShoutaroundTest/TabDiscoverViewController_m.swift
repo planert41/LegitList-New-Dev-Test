@@ -302,29 +302,32 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         Database.fetchALLLists { (allLists) in
             self.allLists = allLists
             self.filteredLists = allLists
-            print("Fetched \(self.allLists.count) Lists | Fetch All Items - TabSearchViewController")
+            print("Fetched \(self.allLists.count) Lists | fetchALLLists - TabSearchViewController")
         }
         
         Database.fetchALLUsers { (users) in
             self.allUsers = users
             self.filteredUsers = users
-            print("Fetched \(self.allUsers.count) Users | Fetch All Items - TabSearchViewController")
+            print("Fetched \(self.allUsers.count) Users | fetchALLUsers - TabSearchViewController")
         }
         
         Database.fetchAllLocations { (locations) in
             self.allPlaces = locations
             self.filteredPlaces = locations
+            print("Fetched \(self.allPlaces.count) Locations | fetchAllLocations - TabSearchViewController")
         }
         
         Database.fetchAllCities { (cities) in
             self.allCity = cities
             self.filteredCity = cities
+            print("Fetched \(self.allCity.count) Cities | fetchAllCities - TabSearchViewController")
         }
         
     }
     
     
     func fetchAllItems() {
+        print("FETCHING ALL ITEMS - TabSearchViewController")
         if searchType == DiscoverList {
             if self.allLists.count == 0 {
                 SVProgressHUD.show(withStatus: "Fetching Lists")
@@ -342,7 +345,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
         
         else if searchType == DiscoverUser {
             if allUsersFetched.count == 0  {
-                SVProgressHUD.show(withStatus: "Fetching Users")
+                SVProgressHUD.show(withStatus: "Fetching All Users")
                 Database.fetchALLUsers { (users) in
                     self.allUsers = users
                     self.filteredUsers = users

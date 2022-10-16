@@ -1336,8 +1336,9 @@ extension UIViewController {
         self.present(navController, animated: true, completion: nil)
     }
     
-    @objc func extShowOnboarding() {
-        print("showOnboarding")
+    @objc func extShowNewUserOnboarding() {
+        print("showOnboarding | \(newUserOnboarding)")
+        if !newUserOnboarding {return}
         let welcomeView = NewUserOnboardView()
         let testNav = UINavigationController(rootViewController: welcomeView)
         self.present(testNav, animated: true, completion: nil)
@@ -1354,7 +1355,8 @@ extension UIViewController {
     }
     
     func extShowNewUserFollowing() {
-        print("extShowNewUserFollowing")
+        print("extShowNewUserFollowing | \(newUserRecommend)")
+        if !newUserRecommend {return}
         let followingController = NewUserOnboardViewFollowing()
         let navController = UINavigationController(rootViewController: followingController)
         self.present(navController, animated: true, completion: nil)

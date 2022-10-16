@@ -159,7 +159,7 @@ class UserProfileController: UICollectionViewController, UICollectionViewDelegat
         self.navigationController?.isNavigationBarHidden = false
         if newUserOnboarding {
             print("*** NEW USER *** SHOW ONBOARDING")
-            self.extShowOnboarding()
+            self.extShowNewUserOnboarding()
 //            showOnboarding()
 //            newUser = false
         }

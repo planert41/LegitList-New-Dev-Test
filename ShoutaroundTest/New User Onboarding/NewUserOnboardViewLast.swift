@@ -64,7 +64,7 @@ class NewUserOnboardViewLast: UIViewController {
     
     @objc func handleNext(){
         self.dismiss(animated: true) {
-            NotificationCenter.default.post(name: AppDelegate.DismissOnboardNotificationName, object: nil)
+            NotificationCenter.default.post(name: AppDelegate.DismissNewUserOnboardNotificationName, object: nil)
         }
         
 //        if newUser {

@@ -191,7 +191,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoView.addSubview(findOutMoreButton)
         findOutMoreButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 30, paddingRight: 50, width: 0, height: 0)
         findOutMoreButton.sizeToFit()
-        findOutMoreButton.addTarget(self, action: #selector(extShowOnboarding), for: .touchUpInside)
+        findOutMoreButton.addTarget(self, action: #selector(extShowNewUserOnboarding), for: .touchUpInside)
 //        findOutMoreButton.isHidden = true
         
         infoView.addSubview(appleLogInButton)
@@ -214,7 +214,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoTextView.text = infoText
         infoTextView.font = UIFont(font: .avenirNextRegular, size: 17)
         infoTextView.isUserInteractionEnabled = true
-        infoTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(extShowOnboarding)))
+        infoTextView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(extShowNewUserOnboarding)))
 //        infoTextView.font = UIFont(name: "Poppins-SemiBold", size: 18)
         
         infoTextView.textColor = UIColor.darkGray
@@ -229,7 +229,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         LegitImageView.anchor(top: nil, left: nil, bottom: infoTextView.topAnchor, right: nil, paddingTop: 30, paddingLeft: 25, paddingBottom: 15, paddingRight: 25, width: 0, height: 45)
         LegitImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         LegitImageView.isUserInteractionEnabled = true
-        LegitImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(extShowOnboarding)))
+        LegitImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(extShowNewUserOnboarding)))
 
         
         view.addSubview(pageControl)

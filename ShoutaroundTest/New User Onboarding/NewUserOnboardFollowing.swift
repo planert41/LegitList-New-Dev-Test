@@ -18,12 +18,12 @@ import SVProgressHUD
 
 class NewUserOnboardViewFollowing: UIViewController {
 
-    var teamUIDs = [UID_wei, UID_mayn, UID_zm, UID_magnus, UID_ernie]
+    var teamUIDs = [UID_wei, UID_mayn, UID_zm, weirenID, UID_magnus, UID_ernie]
     var teamUsers: [User] = []
 
     
     func fetchUserInfo() {
-        SVProgressHUD.show(withStatus: "Fetching Users")
+        SVProgressHUD.show(withStatus: "Fetching Legit Users")
 
         self.teamUsers = []
         let myGroup = DispatchGroup()
@@ -42,7 +42,12 @@ class NewUserOnboardViewFollowing: UIViewController {
             print("Legit Team - Fetched \(self.teamUsers.count) Users")
             SVProgressHUD.dismiss()
             self.allUsers = self.teamUsers.sorted(by: { u1, u2 in
-                return u1.posts_created > u2.posts_created
+                let pos1 = self.teamUIDs.firstIndex(of: u1.uid) ?? 0
+                let pos2 = self.teamUIDs.firstIndex(of: u2.uid) ?? 0
+
+                return pos1 < pos2
+
+//                return u1.posts_created > u2.posts_created
             })
             self.filteredUsers = self.teamUsers
             self.tableView.reloadData()
@@ -89,8 +94,11 @@ class NewUserOnboardViewFollowing: UIViewController {
     
     @objc func handleNext(){
         self.dismiss(animated: true) {
-//            NotificationCenter.default.post(name: MainTabBarController.showNearbyUsers, object: nil)
-        }//        let listView = UserWelcome2View()
+            NotificationCenter.default.post(name: AppDelegate.DismissNewUserFollowingNotificationName, object: nil)
+        }
+        
+        
+        //        let listView = UserWelcome2View()
 //        let listView = NewUserOnboardView4()
 //        self.navigationController?.pushViewController(listView, animated: true)
         //        self.navigationController?.present(listView, animated: true, completion: nil)
@@ -116,6 +124,7 @@ class NewUserOnboardViewFollowing: UIViewController {
 
 
     override func viewDidDisappear(_ animated: Bool) {
+        NotificationCenter.default.post(name: AppDelegate.DismissNewUserFollowingNotificationName, object: nil)
     }
     
     
@@ -296,7 +305,7 @@ class NewUserOnboardViewFollowing: UIViewController {
         label.textAlignment = .center
         label.backgroundColor = UIColor.clear
 //        label.font = UIFont(font: .avenirBlack, size: 30)
-        label.font = UIFont(name: "Poppins-Bold", size: 30)
+        label.font = UIFont(name: "Poppins-Bold", size: 50)
         label.text = "Welcome!"
         label.textColor = UIColor.ianLegitColor()
         label.numberOfLines = 0
@@ -565,7 +574,7 @@ extension NewUserOnboardViewFollowing: UITableViewDelegate, UITableViewDataSourc
     
     func fetchAllItems() {
         if allUsersFetched.count == 0  {
-            SVProgressHUD.show(withStatus: "Fetching Users")
+            SVProgressHUD.show(withStatus: "Fetching All Users")
             Database.fetchALLUsers { (users) in
                 self.allUsers = users
                 self.filteredUsers = users

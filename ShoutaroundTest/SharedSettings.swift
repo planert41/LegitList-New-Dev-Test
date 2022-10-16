@@ -57,6 +57,7 @@ let weizouID = "2G76XbYQS8Z7bojJRrImqpuJ7pz2"
 let meimeiID = "nWc6VAl9fUdIx0Yf05yQFdwGd5y2"
 let maynardID = "srHzEjoRYKcKGqAgiyG4E660amQ2"
 let magnusID = "B6div2WhzSObg7XGJRFkKBFEQiC3"
+let weirenID = "bWRsX8940oQ0oBhSBVog4rACoFF2"
 let legitID = "EbSrCmEl9ROpi6YZkTdO5aWlKKI2"
 let appleweizouid = "eCzgQHqKkPNy1MS1JcFdQBpE9dW2"
 // Upload Defaults

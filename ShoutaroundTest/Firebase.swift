@@ -865,6 +865,7 @@ extension Database{
     }
     
     static func fetchALLUsers(includeSelf: Bool = false, completion: @escaping ([User]) -> ()) {
+        let start = DispatchTime.now()   // <<<<<<<<<<   end time
         
         var tempUsers: [User] = []
         let myGroup = DispatchGroup()
@@ -905,7 +906,14 @@ extension Database{
                     return u1.username.compare(u2.username) == .orderedAscending
                 })
                 allUsersFetched = tempUsers
-                print("   ~ Database | Fetch All Users | \(tempUsers.count) Users | \(allUsersFetched.count) allUsersFetched-MEMORY")
+                
+                
+                let end = DispatchTime.now()   // <<<<<<<<<<   end time
+                let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+                let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+
+                print("   ~ Database | Fetch All Users | \(tempUsers.count) Users | \(allUsersFetched.count) allUsersFetched-MEMORY | Time: \(timeInterval) seconds")
+                
                 completion(tempUsers)
             }
         })   { (err) in print ("Failed to fetch users for search", err) }

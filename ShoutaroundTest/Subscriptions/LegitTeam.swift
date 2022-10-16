@@ -36,7 +36,7 @@ class LegitTeamView : UITableViewController {
 
     
     func fetchUserInfo() {
-        SVProgressHUD.show(withStatus: "Fetching Users")
+        SVProgressHUD.show(withStatus: "Fetching Legit Users")
 
         self.teamUsers = []
         let myGroup = DispatchGroup()

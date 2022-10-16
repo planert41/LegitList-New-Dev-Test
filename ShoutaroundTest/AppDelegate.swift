@@ -64,7 +64,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let LocationDeniedNotificationName = NSNotification.Name(rawValue: "Location Denied")
     static let NotificationAccessRequest = NSNotification.Name(rawValue: "Request Notifications")
     static let UserFollowUpdatedNotificationName = NSNotification.Name(rawValue: "HomeUserFollowUpdate")
-    static let DismissOnboardNotificationName = NSNotification.Name(rawValue: "DismissOnboardNotificationName")
+    static let DismissNewUserOnboardNotificationName = NSNotification.Name(rawValue: "DismissOnboardNotificationName")
+    static let DismissNewUserFollowingNotificationName = NSNotification.Name(rawValue: "DismissNewUserFollowingNotificationName")
 
     
 //    let LocationAuthview = LocationRequestViewController()

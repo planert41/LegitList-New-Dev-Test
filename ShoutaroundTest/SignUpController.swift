@@ -25,7 +25,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
 
     var FBCredentials: AuthCredential?
     var delegate: SignUpControllerDelegate?
-    var newUserAutoFollow: Bool = false
+    var newUserAutoFollow: Bool = true
     var allowDefaultPhoto: Bool = false
     var testUserSignUp: Bool = false
     
@@ -1295,7 +1295,7 @@ class SignUpController: UIViewController, UIImagePickerControllerDelegate, UINav
                 
                 // Auto Follow Users
                 if self.newUserAutoFollow {
-                    let newFollowUids = [weizouID, meimeiID, maynardID, magnusID, UID_ernie]
+                    let newFollowUids = [weizouID, meimeiID, maynardID, weirenID]
 
                     Database.handleFollowingMultipleUids(userUids: newFollowUids, hideAlert: true, forceFollow: true) {
                         print("SUCCESS New User Followed Starting Users")

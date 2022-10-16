@@ -452,6 +452,14 @@ class SingleUserProfileViewController: UIViewController {
         if #available(iOS 13.0, *) {
              navigationController?.navigationBar.setNeedsLayout()
         }
+        
+        if newUserOnboarding {
+            print("*** NEW USER *** SHOW ONBOARDING")
+            self.extShowNewUserOnboarding()
+//            showOnboarding()
+//            newUser = false
+        }
+        
         setupNavigationItems()
         toggleNewPostButton()
         
@@ -1044,12 +1052,11 @@ extension SingleUserProfileViewController {
         
         let start = DispatchTime.now() // <<<<<<<<<< Start time
         Database.fetchAllPostWithUID(creatoruid: uid) { (posts) in
-            print("Fetched Posts | \(posts.count) | SingleUserProfileViewController")
+//            print("Fetched Posts | \(posts.count) | SingleUserProfileViewController")
             let end = DispatchTime.now()   // <<<<<<<<<<   end time
             let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
             let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
-
-            print("Fetch Single User Post Time: \(timeInterval) seconds")
+            print("Fetched Posts | \(posts.count) | SingleUserProfileViewController | Time: \(timeInterval) seconds")
             if uid == Auth.auth().currentUser?.uid {
                 self.countMostUsedEmojis(posts: posts.filter({ (post) -> Bool in
                     post.creatorUID == uid

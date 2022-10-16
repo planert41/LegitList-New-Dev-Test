@@ -195,6 +195,15 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         if self.isFetchingPosts {
             SVProgressHUD.show(withStatus: "Fetching Posts")
         }
+        
+//        if newUserOnboarding {
+//            self.extShowNewUserOnboarding()
+//        } else
+        
+        if newUserRecommend {
+            self.extShowNewUserFollowing()
+        }
+        
 //        self.initSearchSelections()
     }
     
@@ -352,14 +361,18 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     let buttonSemiAlpha: CGFloat = 0.8
     
+    var homeStart = DispatchTime.now()   // <<<<<<<<<<   end time
+    var homeLoadTime = 0   // <<<<<<<<<<   end time
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
         self.view.backgroundColor = UIColor.backgroundGrayColor()
         if #available(iOS 13.0, *) {
             overrideUserInterfaceStyle = .light
-        } 
-                
+        }
+        homeStart = DispatchTime.now()
         setupNavigationItems()
         setupCollectionView()
         initFetchHomeFeed()
@@ -378,9 +391,11 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         NotificationCenter.default.addObserver(self, selector: #selector(self.postDeleted(_:)), name: MainTabBarController.deleteUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationDenied), name: AppDelegate.LocationDeniedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(onboardDismissed), name: AppDelegate.DismissOnboardNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(onboardDismissed), name: AppDelegate.DismissNewUserOnboardNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.checkNewPostIds(_:)), name: MainTabBarController.newFollowedUserPost, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(newUserRecommendDismissed), name: AppDelegate.DismissNewUserFollowingNotificationName, object: nil)
 
+        
 
 //        NotificationCenter.default.addObserver(self, selector: #selector(adjustForKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
 //
@@ -582,15 +597,28 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         })
         }
         
-        if (self.isPresented || inStack) && !self.isFetchingPosts{
-            
-            if newUserRecommend {
-                self.extShowNewUserFollowing()
-                newUserRecommend = false
-            }
-            
+        if (self.isPresented || inStack) {
+            self.extShowNewUserFollowing()
         }
     }
+    
+    @objc func newUserRecommendDismissed() {
+        print("MainTabBar New User Recommend Dimissed")
+        var inStack = false
+
+        if let viewControllers = self.navigationController?.viewControllers
+        {
+            inStack = viewControllers.contains(where: {return $0 is LegitHomeView
+        })
+        }
+        
+        if (self.isPresented || inStack) && self.isFetchingPosts{
+            
+            SVProgressHUD.show(withStatus: "Loading Posts")            
+        }
+    }
+    
+    
     
     func updateDetailLabel() {
         var postCount = self.displayedPosts.count
@@ -969,7 +997,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         // #warning Incomplete implementation, return the number of items
         if collectionView == self.collectionView
         {
-            if self.displayedPosts.count == 0 && newUserRecommend {
+            if newUserRecommend {
                 self.extShowNewUserFollowing()
                 print("SHOW extShowNewUserFollowing")
                 newUserRecommend = false
@@ -1020,6 +1048,14 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             }
             
             var displayPost = displayedPosts[indexPath.item]
+            if indexPath.item == 0 && displayPost != nil && homeLoadTime == 0 {
+                let homeEnd = DispatchTime.now()   // <<<<<<<<<<   end time
+                let homeLoadTime = homeEnd.uptimeNanoseconds - homeStart.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+                let timeInterval = Double(homeLoadTime) / 1_000_000_000 // Technically could overflow for long running tests
+
+                print("HOMEPAGE LOAD Time: \(timeInterval) seconds")
+            }
+            
             var inStack = false
             if let viewControllers = self.navigationController?.viewControllers
             {

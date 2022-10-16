@@ -361,7 +361,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         NotificationCenter.default.addObserver(self, selector: #selector(goToHome), name: MainTabBarController.GoToHome, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentMultImagePicker), name: MainTabBarController.OpenAddNewPhoto, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(presentLogin), name: MainTabBarController.showLoginScreen, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(extShowOnboarding), name: MainTabBarController.showOnboarding, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(extShowNewUserOnboarding), name: MainTabBarController.showOnboarding, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestLocation), name: AppDelegate.RequestLocationNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestNotification), name: AppDelegate.NotificationAccessRequest, object: nil)
         
@@ -441,7 +441,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 
     // NEW USER - NEW CURRENT USER ALREADY LOADED IN SIGN UP
         else if newUserOnboarding  {
-            self.extShowOnboarding()
+            self.extShowNewUserOnboarding()
             successLogin()
         }
         
