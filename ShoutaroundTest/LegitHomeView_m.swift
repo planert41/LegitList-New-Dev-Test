@@ -193,7 +193,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     override func viewWillAppear(_ animated: Bool) {
         self.setupNavigationItems()
         if self.isFetchingPosts {
-            SVProgressHUD.show(withStatus: "Fetching Posts")
+            self.showFetchProgressDetail()
+//            SVProgressHUD.show(withStatus: "Fetching Posts")
         }
         
 //        if newUserOnboarding {
@@ -209,7 +210,8 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     override func viewDidAppear(_ animated: Bool) {
         if self.isFetchingPosts {
-            SVProgressHUD.show(withStatus: "Fetching Posts")
+            self.showFetchProgressDetail()
+//            SVProgressHUD.show(withStatus: "Fetching Posts")
         }
     }
     
@@ -2237,6 +2239,7 @@ extension LegitHomeView {
     
     func showFetchProgressDetail(){
         if !self.isPresented {
+            print(self.isViewLoaded, self.view.window)
             return
         }
         print("showFetchProgressDetail | Home View | Filtering: \(self.viewFilter.isFiltering)")
@@ -2353,8 +2356,12 @@ extension LegitHomeView {
         }
         
         let start = DispatchTime.now() // <<<<<<<<<< Start time
+
+        
+        self.isFetchingPosts = true
         Database.fetchAllHomeFeedPostIds(uid: uid, first100: true) { (postIds) in
             self.fetchedPostIds = postIds
+            self.isFetchingPosts = false
             let end = DispatchTime.now()   // <<<<<<<<<<   end time
             let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
             let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests

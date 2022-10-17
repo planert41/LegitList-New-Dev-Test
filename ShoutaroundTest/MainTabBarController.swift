@@ -556,7 +556,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //        let searchNavController = templateNavController(unselectedImage: #imageLiteral(resourceName: "globe_empty").withRenderingMode(.alwaysOriginal), selectedImage: #imageLiteral(resourceName: "globe_filled").withRenderingMode(.alwaysOriginal), title: "Explore", rootViewController: ExploreController(collectionViewLayout: HomeSortFilterHeaderFlowLayout()))
         
         let discoverController = TabSearchViewController()
-        discoverController.fetchAllItems()
+//        discoverController.fetchAllItems()
         let discoverIcon = #imageLiteral(resourceName: "discover").withRenderingMode(.alwaysTemplate)
 
         let discoverNavController = templateNavController(unselectedImage: discoverIcon, selectedImage: discoverIcon, title: "Discover", rootViewController: discoverController)
