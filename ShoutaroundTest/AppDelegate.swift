@@ -66,6 +66,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
     static let UserFollowUpdatedNotificationName = NSNotification.Name(rawValue: "HomeUserFollowUpdate")
     static let DismissNewUserOnboardNotificationName = NSNotification.Name(rawValue: "DismissOnboardNotificationName")
     static let DismissNewUserFollowingNotificationName = NSNotification.Name(rawValue: "DismissNewUserFollowingNotificationName")
+    static let NewCurrentUserSocialUpdate = NSNotification.Name(rawValue: "NewUserSocialUpdate")
 
     
 //    let LocationAuthview = LocationRequestViewController()

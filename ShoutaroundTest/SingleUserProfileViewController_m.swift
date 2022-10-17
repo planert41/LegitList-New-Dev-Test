@@ -658,6 +658,8 @@ class SingleUserProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(locationUpdated), name: AppDelegate.LocationUpdatedNotificationName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.newUserPost(_:)), name: MainTabBarController.newUserPost, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshNotifications), name: UserEventViewController.refreshNotificationName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(fetchUser), name: AppDelegate.NewCurrentUserSocialUpdate, object: nil)
+
 //        self.view.layoutIfNeeded()
 
         print("  END |  NewListCollectionView | ViewdidLoad")
@@ -668,6 +670,7 @@ class SingleUserProfileViewController: UIViewController {
         let postId = (notification.userInfo?["updatedPostId"] ?? "")! as! String
         self.displayedPosts.removeAll(where: {$0.id == postId})
         self.fetchedPosts.removeAll(where: {$0.id == postId})
+        self.displayUser?.posts_created -= 1
         self.imageCollectionView.reloadData()
     }
     
@@ -1016,7 +1019,7 @@ class SingleUserProfileViewController: UIViewController {
 }
 
 extension SingleUserProfileViewController {
-    func fetchUser(){
+    @objc func fetchUser(){
         guard let uid = displayUserId else {
             print("User Profile: Fetch Posts Error, No UID")
             return
@@ -2405,8 +2408,8 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
                 if indexPath.item == self.paginatePostsCount - 1 && !isFinishedPaging{
                     paginatePosts()
                 }
-                
-                if fetchedPosts.count == 0 {
+                                
+                if fetchedPosts.count == 0 || (isFiltering ? (displayedPosts[safe: indexPath.item] == nil) : (fetchedPosts[safe: indexPath.item] == nil)) {
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: fullPostCellId, for: indexPath) as! FullPictureCell
                     return cell
                 }

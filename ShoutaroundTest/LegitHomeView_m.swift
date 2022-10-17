@@ -614,7 +614,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
         
         if (self.isPresented || inStack) && self.isFetchingPosts{
             
-            SVProgressHUD.show(withStatus: "Loading Posts")            
+            SVProgressHUD.show(withStatus: "Loading Posts")
         }
     }
     
@@ -1043,11 +1043,19 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
             }
             
             else if indexPath.item == self.paginatePostsCount - 1 && !isFinishedPaging{
-                print("CollectionView Paginate")
+                print("CollectionView Paginate | \(self.paginatePostsCount) : \(indexPath.item) | \(isFinishedPaging)")
                 paginatePosts()
             }
             
+            let fullCell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeFullCellId, for: indexPath) as! FullPictureCell
+            let gridCell = collectionView.dequeueReusableCell(withReuseIdentifier: TestCellId, for: indexPath) as! TestHomePhotoCell
+
+            if displayedPosts[safe: indexPath.item] == nil {
+                return !isGridView ? fullCell : gridCell
+            }
+            
             var displayPost = displayedPosts[indexPath.item]
+
             if indexPath.item == 0 && displayPost != nil && homeLoadTime == 0 {
                 let homeEnd = DispatchTime.now()   // <<<<<<<<<<   end time
                 let homeLoadTime = homeEnd.uptimeNanoseconds - homeStart.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
@@ -1055,6 +1063,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
 
                 print("HOMEPAGE LOAD Time: \(timeInterval) seconds")
             }
+            
             
             var inStack = false
             if let viewControllers = self.navigationController?.viewControllers

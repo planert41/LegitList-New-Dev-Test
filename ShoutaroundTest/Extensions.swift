@@ -2352,6 +2352,12 @@ extension CLLocationCoordinate2D {
   }
 }
 
+extension Collection where Indices.Iterator.Element == Index {
+   public subscript(safe index: Index) -> Iterator.Element? {
+     return (startIndex <= index && index < endIndex) ? self[index] : nil
+   }
+}
+
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertToUIApplicationOpenExternalURLOptionsKeyDictionary(_ input: [String: Any]) -> [UIApplication.OpenExternalURLOptionsKey: Any] {
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (UIApplication.OpenExternalURLOptionsKey(rawValue: key), value)})

@@ -1756,6 +1756,12 @@ extension Database{
     static func savePostToDatabase(uploadImages: [UIImage]?, uploadDictionary:[String:Any]?,uploadLocation: CLLocation?, lists:[List]?, completion:@escaping () ->()){
         
         guard let uid = Auth.auth().currentUser?.uid else {return}
+        let creatorUID = uploadDictionary?["creatorUID"] as? String ?? ""
+        
+        if creatorUID != uid {
+            print("ERROR savePostToDatabase - CREATOR NOT AUTH USER \(uid) \(creatorUID)")
+        }
+
         guard let uploadImages = uploadImages else {
             print("Save Post: ERROR, No Image")
             return
@@ -1808,6 +1814,10 @@ extension Database{
                     let ps = Array(CurrentUser.posts.values.map{ $0 }) as [Post]
 
                     Database.refreshCurrentUserMostUsed(posts:  ps) {
+                    }
+                    
+                    if creatorUID == CurrentUser.uid {
+                        Database.checkUserSocialStats(user: CurrentUser.user!, socialField: "posts_created", socialCount: CurrentUser.postIds.count)
                     }
                 }
                 
@@ -1952,7 +1962,7 @@ extension Database{
                 return}
 
             print("Save Post Dictionary: SUCCESS")
-            Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "posts_created", change: 1)
+//            Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "posts_created", change: 1)
             completion(postId)
 //            // Put new post in cache
 //            self.uploadnewPostCache(uid: uid,postid: ref.key, dictionary: uploadValues)
@@ -9565,16 +9575,22 @@ extension Database{
         guard let creatorUid = creatorUid else {
             return
         }
+        if change == 0 {
+            print("No Change", "spotChangeSocialCountForUser", creatorUid, socialField, change)
+            return
+        }
         let creatorRef = Database.database().reference().child("users").child(creatorUid).child("social")
         creatorRef.observeSingleEvent(of: .value, with: {(snapshot) in
-            
-            guard let socialDictionary = snapshot.value as? [String: Int] else {return}
             var curCount: Int = 0
-            if let _ = socialDictionary[socialField]{
-                curCount = socialDictionary[socialField]!
+            var newCount: Int = 0
+
+            if let socialDictionary = snapshot.value as? [String: Int] {
+                if let _ = socialDictionary[socialField]{
+                    curCount = socialDictionary[socialField]!
+                }
             }
-            let newCount = curCount + change!
             
+            newCount = curCount + (change ?? 0)
             self.spotUpdateSocialCountForUserFinal(creatorUid: creatorUid, socialField: socialField, final: newCount)
 
             
@@ -9584,6 +9600,8 @@ extension Database{
     }
     
     static func spotUpdateSocialCountForUserFinal(creatorUid: String!, socialField: String!, final: Int?){
+        
+        // THIS FUNCTION IS CALLED FOR ALL SOCIAL CHECKS AND UPDATES. WE READ IN WHATS CURRENTLY IN THE DATABASE BUT THEN SET IT BASED ON THIS FORMULA IF CHANGED
         
         // Had issues with spot updating by change as it might get called several times and adding the change multiple times
         // Setting it to a new final number probably an easier way to go
@@ -9619,7 +9637,13 @@ extension Database{
             }
             print("   ~ Firebase | spotUpdateSocialCountForUserFinal | User Cache Updated | \(creatorUid!) | \(socialField!) | \(final)")
             userCache[creatorUid] = tempUser
+            if creatorUid == CurrentUser.user?.uid {
+                CurrentUser.user = tempUser
+            }
+            NotificationCenter.default.post(name: AppDelegate.NewCurrentUserSocialUpdate, object: nil)
         }
+        
+        
         
     }
     
