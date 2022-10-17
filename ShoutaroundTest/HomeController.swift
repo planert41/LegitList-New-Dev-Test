@@ -757,7 +757,7 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
                 self.followingPostIdFetched = true
                 NotificationCenter.default.post(name: HomeController.finishFetchingFollowingPostIdsNotificationName, object: nil)
                 if !(Auth.auth().currentUser?.isAnonymous)!{
-                    Database.checkUserSocialStats(user: CurrentUser.user!, socialField: "followingCount", socialCount: CurrentUser.followingUids.count)
+                    Database.checkUserSocialStats(user: CurrentUser.user!, socialField: .followingCount, socialCount: CurrentUser.followingUids.count)
                 }
             }
         }

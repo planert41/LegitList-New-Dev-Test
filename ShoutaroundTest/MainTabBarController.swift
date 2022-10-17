@@ -837,7 +837,8 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         let firebaseAlert = UIAlertController(title: "Firebase Update", message: "Do you want to update Firebase Data?", preferredStyle: UIAlertController.Style.alert)
         
         firebaseAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
-            self.changeRatingEmoji()
+            self.checkUserPosts()
+//            self.changeRatingEmoji()
 //            self.revertBlockedPost()
 //            self.addLocationTest()
 //            self.avgGPSTest()
@@ -931,6 +932,16 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
 //                    let nodeToRemove = nodeToRemove.child(snapshot.key)
 //                    nodeToRemove.removeValue();
 //            }
+    }
+    
+    func checkUserPosts() {
+        Database.fetchALLUsers { users in
+            for user in users {
+                Database.fetchAllPostWithUID(creatoruid: user.uid, filterBlocked: false) { posts in
+                    Database.checkUserSocialStats(user: user, socialField: .posts_created, socialCount: posts.count)
+                }
+            }
+        }
     }
     
     func changeRatingEmoji() {
@@ -1293,7 +1304,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
                         }
                         
                         if followCount > 0 {
-                            Database.spotUpdateSocialCountForUserFinal(creatorUid: key, socialField: "followerCount", final: followCount)
+                            Database.spotUpdateSocialCountForUserFinal(creatorUid: key, socialField: .followerCount, final: followCount)
                         }
                     })
                 }

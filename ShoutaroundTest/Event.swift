@@ -24,6 +24,15 @@ enum Social: String {
     case report
 }
 
+enum UserStats: String {
+    case posts_created = "posts_created"
+    case followingCount = "followingCount"
+    case followerCount = "followerCount"
+    case lists_created = "lists_created"
+    case votes_received = "votes_received"
+    case lists_received = "lists_received"
+}
+
 enum Object {
     case list
     case post

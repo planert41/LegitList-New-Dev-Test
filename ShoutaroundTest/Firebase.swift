@@ -315,7 +315,7 @@ extension Database{
                     if uid == Auth.auth().currentUser?.uid {
                         CurrentUser.listIds = tempList
                         CurrentUser.lists = fetchedLists
-                        Database.checkUserSocialStats(user: CurrentUser.user!, socialField: "lists_created", socialCount: fetchedLists.count)
+                        Database.checkUserSocialStats(user: CurrentUser.user!, socialField: .lists_created, socialCount: fetchedLists.count)
                     }
                     
                     print(" 4 | FETCH_CURRENT_USER |Fetch User Lists | \(uid) fetched \(fetchedLists.count) lists")
@@ -1817,7 +1817,7 @@ extension Database{
                     }
                     
                     if creatorUID == CurrentUser.uid {
-                        Database.checkUserSocialStats(user: CurrentUser.user!, socialField: "posts_created", socialCount: CurrentUser.postIds.count)
+                        Database.checkUserSocialStats(user: CurrentUser.user!, socialField: .posts_created, socialCount: CurrentUser.postIds.count)
                     }
                 }
                 
@@ -3034,10 +3034,10 @@ extension Database{
     }
     
     
-    static func fetchAllPostWithUID(creatoruid: String, completion: @escaping ([Post]) -> ()) {
+    static func fetchAllPostWithUID(creatoruid: String, filterBlocked: Bool = true, completion: @escaping ([Post]) -> ()) {
 
         Database.fetchAllPostIDWithCreatorUID(creatoruid: creatoruid) { (postIds) in
-            Database.fetchAllPosts(fetchedPostIds: postIds) { (posts) in
+            Database.fetchAllPosts(fetchedPostIds: postIds, filterBlocked: filterBlocked) { (posts) in
                 print("fetchAllPostWithUID | Success \(posts.count) Posts | uid: \(creatoruid)")
                 if creatoruid == Auth.auth().currentUser?.uid {
                     countEmojis(posts: posts) { counts in
@@ -3596,7 +3596,7 @@ extension Database{
     
     
     
-    static func fetchAllPosts(fetchedPostIds: [PostId], completion: @escaping ([Post])-> ()){
+    static func fetchAllPosts(fetchedPostIds: [PostId], filterBlocked: Bool = true, completion: @escaping ([Post])-> ()){
         
         let thisGroup = DispatchGroup()
         var fetchedPostsTemp: [Post] = []
@@ -3605,7 +3605,7 @@ extension Database{
 //        print("Fetch All Posts Count ", fetchedPostIds.count)
         
         for postId in fetchedPostIds {
-            if CurrentUser.blockedPosts[postId.id] != nil {
+            if filterBlocked && CurrentUser.blockedPosts[postId.id] != nil {
                 print("Blocked Post \(postId.id)")
                 continue
             }
@@ -3617,7 +3617,7 @@ extension Database{
                 
                 if let tempPost = post {
                     // Fetch flagged posts for user still
-                    if !tempPost.reportedFlag || tempPost.creatorUID == Auth.auth().currentUser?.uid {
+                    if !tempPost.reportedFlag || tempPost.creatorUID == Auth.auth().currentUser?.uid || !filterBlocked {
                         fetchedPostsTemp.append(tempPost)
                     }
                 } else {
@@ -5450,7 +5450,7 @@ extension Database{
         
         // Remove from cache
         postCache.removeValue(forKey: post.id!)
-        Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "posts_created", change: -1)
+        Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: .posts_created, change: -1)
         
         // Bookmarked post is deleted when user fetches for post but it isn't there
 //        Database.database().reference().child("bookmarks").child(post.creatorUID!).child(post.id!).removeValue()
@@ -5973,7 +5973,7 @@ extension Database{
                     
                     print("Create User List ID with User: SUCCESS: \(listId):\(listName), User: \(uid)")
                     userListRef.keepSynced(true)
-                    Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: 1)
+                    Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: .lists_created, change: 1)
                 }
                 
                 let newListId:[String: String] = ["newListID": listId]
@@ -6018,7 +6018,7 @@ extension Database{
         Database.database().reference().child("userlists").child(uid).child(listId).removeValue()
         print("Delete List Oject: Success: \(uploadList.name), User: \(uid)")
         
-        Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: "lists_created", change: -1)
+        Database.spotChangeSocialCountForUser(creatorUid: uid, socialField: .lists_created, change: -1)
 
         let deleteListId:[String: String] = ["deleteListId": listId]
 
@@ -6204,7 +6204,7 @@ extension Database{
                 
                 spotUpdateSocialCountForPost(postId: postId, socialField: "listCount", change: 1)
                 if postCreatorUid != "" {
-                    spotChangeSocialCountForUser(creatorUid: postCreatorUid, socialField: "lists_received", change: 1)
+                    spotChangeSocialCountForUser(creatorUid: postCreatorUid, socialField: .lists_received, change: 1)
                 }
                 
                 listRefreshRecord[listId] == 0
@@ -6323,7 +6323,7 @@ extension Database{
                 
                 spotUpdateSocialCountForPost(postId: postId, socialField: "listCount", change: -1)
                 if postCreatorUid != "" {
-                    spotChangeSocialCountForUser(creatorUid: postCreatorUid, socialField: "lists_received", change: -1)
+                    spotChangeSocialCountForUser(creatorUid: postCreatorUid, socialField: .lists_received, change: -1)
                 }
                 listRefreshRecord[listId] == 0
 
@@ -8767,7 +8767,7 @@ extension Database{
                 self.createNotificationEventForUser(postId: postId, listId: nil, targetUid: creatorUid, action: Social.like, value: vote, locName: post.locationName, listName: nil, commentText: nil)
 
                 self.createUserLike(postId: postId, like: vote, userId: uid)
-                spotChangeSocialCountForUser(creatorUid: creatorUid, socialField: "votes_received", change: voteChange)
+                spotChangeSocialCountForUser(creatorUid: creatorUid, socialField: .votes_received, change: voteChange)
                 spotUpdateSocialCountForPost(postId: postId, socialField: "vote_count", change: voteChange)
                 // Completion after updating Likes
                 completion()
@@ -9327,7 +9327,7 @@ extension Database{
                 
                 
                 // Update User Object
-                self.spotUpdateSocialCountForUserFinal(creatorUid: followerUid, socialField: "followingCount", final: followingCount)
+                self.spotUpdateSocialCountForUserFinal(creatorUid: followerUid, socialField: .followingCount, final: followingCount)
 //                NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil)
 
                 // Update Follower
@@ -9461,7 +9461,7 @@ extension Database{
                 NotificationCenter.default.post(name: AppDelegate.UserFollowUpdatedNotificationName, object: nil, userInfo: userDataDict)
                 
                 // Update User Object
-                self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: "followingCount", final: followingCount)
+                self.spotUpdateSocialCountForUserFinal(creatorUid: uid, socialField: .followingCount, final: followingCount)
 
                 // Update Follower
                 handleFollower(followerUid: Auth.auth().currentUser?.uid, followedUid: userUid, followedValue: followedValue){
@@ -9524,7 +9524,7 @@ extension Database{
 
                 }
                 // Update User Object
-                self.spotUpdateSocialCountForUserFinal(creatorUid: followedUid, socialField: "followerCount", final: followerCount)
+                self.spotUpdateSocialCountForUserFinal(creatorUid: followedUid, socialField: .followerCount, final: followerCount)
 
                completion()
             }
@@ -9570,7 +9570,7 @@ extension Database{
     }
     
     
-    static func spotChangeSocialCountForUser(creatorUid: String?, socialField: String!, change: Int?){
+    static func spotChangeSocialCountForUser(creatorUid: String?, socialField: UserStats!, change: Int?){
         // Grabbing original number and sending a final number because transactions fire multiple times, so changes would be sent multiple times
         guard let creatorUid = creatorUid else {
             return
@@ -9585,8 +9585,8 @@ extension Database{
             var newCount: Int = 0
 
             if let socialDictionary = snapshot.value as? [String: Int] {
-                if let _ = socialDictionary[socialField]{
-                    curCount = socialDictionary[socialField]!
+                if let _ = socialDictionary[socialField.rawValue]{
+                    curCount = socialDictionary[socialField.rawValue]!
                 }
             }
             
@@ -9599,7 +9599,7 @@ extension Database{
         
     }
     
-    static func spotUpdateSocialCountForUserFinal(creatorUid: String!, socialField: String!, final: Int?){
+    static func spotUpdateSocialCountForUserFinal(creatorUid: String!, socialField: UserStats!, final: Int?){
         
         // THIS FUNCTION IS CALLED FOR ALL SOCIAL CHECKS AND UPDATES. WE READ IN WHATS CURRENTLY IN THE DATABASE BUT THEN SET IT BASED ON THIS FORMULA IF CHANGED
         
@@ -9613,7 +9613,7 @@ extension Database{
 //        print("spotUpdateSocialCountForUser | Setting \(creatorUid) \(socialField) TO \(final)")
 
         
-        let values = [socialField: final] as! [String:Any]
+        let values = [socialField.rawValue: final] as! [String:Any]
         
         Database.database().reference().child("users").child(creatorUid).child("social").updateChildValues(values, withCompletionBlock: { (err, ref) in
             if let err = err {
@@ -9626,13 +9626,13 @@ extension Database{
         if let user = userCache[creatorUid] {
             var tempUser = user
             guard let final = final else {return}
-            if socialField == "followingCount" {
+            if socialField == .followingCount {
                 tempUser.followingCount = final
-            } else if socialField == "followerCount" {
+            } else if socialField == .followerCount {
                 tempUser.followersCount = final
-            } else if socialField == "posts_created" {
+            } else if socialField == .posts_created {
                 tempUser.posts_created = final
-            } else if socialField == "lists_created" {
+            } else if socialField == .lists_created {
                 tempUser.lists_created = final
             }
             print("   ~ Firebase | spotUpdateSocialCountForUserFinal | User Cache Updated | \(creatorUid!) | \(socialField!) | \(final)")
@@ -9719,36 +9719,36 @@ extension Database{
         }
     }
     
-    static func checkUserSocialStats(user: User, socialField: String, socialCount: Int){
+    static func checkUserSocialStats(user: User, socialField: UserStats, socialCount: Int){
         print("checkUserSocialStats | \(user.uid) | \(socialField)")
         
-        if socialField == "posts_created"{
+        if socialField == .posts_created{
             if user.posts_created != socialCount {
-                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: "posts_created", final: socialCount)
+                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: socialField, final: socialCount)
             }
         }
             
-        else if socialField == "followingCount"{
+        else if socialField == .followingCount{
             if user.followingCount != socialCount {
-                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: "followingCount", final: socialCount)
+                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: socialField, final: socialCount)
             }
         }
             
-        else if socialField == "followersCount"{
+        else if socialField == .followerCount{
             if user.followersCount != socialCount {
-                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: "followersCount", final: socialCount)
+                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: socialField, final: socialCount)
             }
         }
             
-        else if socialField == "lists_created"{
+        else if socialField == .lists_created{
             if user.lists_created != socialCount {
-                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: "lists_created", final: socialCount)
+                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: socialField, final: socialCount)
             }
         }
             
-        else if socialField == "votes_received"{
+        else if socialField == .votes_received{
             if user.votes_received != socialCount {
-                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: "votes_received", final: socialCount)
+                Database.spotUpdateSocialCountForUserFinal(creatorUid: user.uid, socialField: socialField, final: socialCount)
             }
         }
     }

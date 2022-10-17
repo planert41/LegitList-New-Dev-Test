@@ -279,12 +279,12 @@ class PostSocialDisplayTableViewController : UITableViewController, UISearchResu
                 // Check User Social Stats
                 if self.inputUser?.followersCount != followerUserId.count {
                     print("PostSocialDisplayTVC | User Social Check | Need To update Follower Count for \(self.inputUser?.uid) | Old \(self.inputUser?.followersCount) | New \(followerUserId.count)")
-                    Database.spotUpdateSocialCountForUserFinal(creatorUid: self.inputUser?.uid, socialField: "followerCount", final: followerUserId.count)
+                    Database.spotUpdateSocialCountForUserFinal(creatorUid: self.inputUser?.uid, socialField: .followerCount, final: followerUserId.count)
                 }
                 
                 if self.inputUser?.followingCount != followingUserId.count {
                     print("PostSocialDisplayTVC | User Social Check | Need To update Following Count for \(self.inputUser?.uid) | Old \(self.inputUser?.followingCount) | New \(followingUserId.count)")
-                    Database.spotUpdateSocialCountForUserFinal(creatorUid: self.inputUser?.uid, socialField: "followingCount", final: followingUserId.count)
+                    Database.spotUpdateSocialCountForUserFinal(creatorUid: self.inputUser?.uid, socialField: .followingCount, final: followingUserId.count)
                 }
                 
             }
