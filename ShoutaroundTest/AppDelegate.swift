@@ -40,6 +40,7 @@ var appDelegateMapViewInd: Bool = false
 var newUserOnboarding: Bool = false
 var newUserRecommend: Bool = false
 var newUserTest: Bool = false
+var showVersionUpdate: Bool = false
 
 var allUsersFetched: [User] = []
 
@@ -199,6 +200,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate{
         
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
+        
+        AppUpdater.shared.showUpdate(withConfirmation: true)
+
         
         setupRevenueCat()
         return true

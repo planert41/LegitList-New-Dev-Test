@@ -10,6 +10,9 @@ import Foundation
 import UIKit
 import CoreLocation
 
+
+var appVersion: String = ""
+
 var premiumActivated = true
 
 // Location Google Location ID to Name

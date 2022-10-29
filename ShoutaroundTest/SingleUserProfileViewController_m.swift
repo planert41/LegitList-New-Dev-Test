@@ -1483,7 +1483,7 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
            return
        }
        
-       let optionsAlert = UIAlertController(title: "User Options", message: "", preferredStyle: UIAlertController.Style.alert)
+       let optionsAlert = UIAlertController(title: "User Options : Version \(appVersion)", message: "", preferredStyle: UIAlertController.Style.alert)
        
 //       optionsAlert.addAction(UIAlertAction(title: "Change Profile Picture", style: .default, handler: { (action: UIAlertAction!) in
 //           // Allow Editing
@@ -1502,25 +1502,32 @@ extension SingleUserProfileViewController: BottomEmojiBarDelegate, LegitSearchVi
        optionsAlert.addAction(UIAlertAction(title: "Delete Account", style: .default, handler: { (action: UIAlertAction!) in
            self.didDeleteUser()
        }))
+
        
-       optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .default, handler: { (action: UIAlertAction!) in
-           self.didSignOut()
+       optionsAlert.addAction(UIAlertAction(title: "Legit Tutorial", style: .default, handler: { (action: UIAlertAction!) in
+           self.extShowLegitTutorial()
        }))
        
        optionsAlert.addAction(UIAlertAction(title: "User Agreements", style: .default, handler: { (action: UIAlertAction!) in
            self.userDocs()
        }))
+
+       
+       optionsAlert.addAction(UIAlertAction(title: "Share Legit App Link", style: .default, handler: { (action: UIAlertAction!) in
+           self.shareLegitAppLink()
+       }))
+       
        
         optionsAlert.addAction(UIAlertAction(title: "Contact Us", style: .default, handler: { (action: UIAlertAction!) in
             self.contactUs()
         }))
        
-       optionsAlert.addAction(UIAlertAction(title: "Share Legit App Link", style: .default, handler: { (action: UIAlertAction!) in
-           self.shareLegitAppLink()
+       
+       optionsAlert.addAction(UIAlertAction(title: "Sign Out", style: .destructive, handler: { (action: UIAlertAction!) in
+           self.didSignOut()
        }))
 
-
-       optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: { (action: UIAlertAction!) in
+       optionsAlert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (action: UIAlertAction!) in
            print("Handle Cancel Logic here")
        }))
        
@@ -2400,7 +2407,10 @@ extension SingleUserProfileViewController: UICollectionViewDelegate, UICollectio
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
                 cell.isFiltering = self.isFiltering
                 cell.pageLoadUp = self.pageLoadUp
+                cell.currentUser = (displayUser?.uid == Auth.auth().currentUser?.uid)
+                cell.homeFeed = false
                 cell.delegate = self
+//                cell.backgroundColor = UIColor.yellow
                 return cell
             }
             else

@@ -191,7 +191,7 @@ class OpenAppViewController: UIViewController, UIScrollViewDelegate {
         infoView.addSubview(findOutMoreButton)
         findOutMoreButton.anchor(top: nil, left: infoView.leftAnchor, bottom: infoView.bottomAnchor, right: infoView.rightAnchor, paddingTop: 0, paddingLeft: 50, paddingBottom: 30, paddingRight: 50, width: 0, height: 0)
         findOutMoreButton.sizeToFit()
-        findOutMoreButton.addTarget(self, action: #selector(extShowNewUserOnboarding), for: .touchUpInside)
+        findOutMoreButton.addTarget(self, action: #selector(extShowLegitTutorial), for: .touchUpInside)
 //        findOutMoreButton.isHidden = true
         
         infoView.addSubview(appleLogInButton)

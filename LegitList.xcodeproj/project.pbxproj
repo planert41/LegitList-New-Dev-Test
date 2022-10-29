@@ -333,6 +333,11 @@
 		A5FB25D5232FBB4000E1BE13 /* LegitNavHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FB25D4232FBB4000E1BE13 /* LegitNavHeader.swift */; };
 		A5FE41DB2276040800607088 /* EmojiFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FE41DA2276040800607088 /* EmojiFilterCell.swift */; };
 		A5FE41DD22767BF000607088 /* FilterEmojiLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5FE41DC22767BF000607088 /* FilterEmojiLayout.swift */; };
+		B63E465C28FF086C000A60C9 /* Onboard0.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E465B28FF086C000A60C9 /* Onboard0.swift */; };
+		B63E465E2901DE36000A60C9 /* LegitTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E465D2901DE36000A60C9 /* LegitTutorial.swift */; };
+		B63E46612904BD39000A60C9 /* ListTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E465F2904BD39000A60C9 /* ListTutorial.swift */; };
+		B63E46622904BD39000A60C9 /* ListTutorial.xib in Resources */ = {isa = PBXBuildFile; fileRef = B63E46602904BD39000A60C9 /* ListTutorial.xib */; };
+		B63E466429073D53000A60C9 /* ListTutorialStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B63E466329073D53000A60C9 /* ListTutorialStoryboard.storyboard */; };
 		B674E408270A17F000AF4346 /* ProfileHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */; };
 		B6968D48278A4C4B007AD520 /* OpenAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */; };
 		B6A0C54D2737883B000BFB7B /* BottomSortBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */; };
@@ -710,6 +715,11 @@
 		A5FB25D4232FBB4000E1BE13 /* LegitNavHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegitNavHeader.swift; sourceTree = "<group>"; };
 		A5FE41DA2276040800607088 /* EmojiFilterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiFilterCell.swift; sourceTree = "<group>"; };
 		A5FE41DC22767BF000607088 /* FilterEmojiLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterEmojiLayout.swift; sourceTree = "<group>"; };
+		B63E465B28FF086C000A60C9 /* Onboard0.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboard0.swift; sourceTree = "<group>"; };
+		B63E465D2901DE36000A60C9 /* LegitTutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegitTutorial.swift; sourceTree = "<group>"; };
+		B63E465F2904BD39000A60C9 /* ListTutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTutorial.swift; sourceTree = "<group>"; };
+		B63E46602904BD39000A60C9 /* ListTutorial.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListTutorial.xib; sourceTree = "<group>"; };
+		B63E466329073D53000A60C9 /* ListTutorialStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ListTutorialStoryboard.storyboard; sourceTree = "<group>"; };
 		B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderLayout.swift; sourceTree = "<group>"; };
 		B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAppViewController.swift; sourceTree = "<group>"; };
 		B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSortBar.swift; sourceTree = "<group>"; };
@@ -1071,6 +1081,7 @@
 		A562E5141F5354980095C7C1 /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				B63E465A28FF0847000A60C9 /* Old User Onboarding V2 */,
 				A521B08F24E343F900A100A3 /* Old User Onboarding */,
 				B6A3661027B563B2009B8754 /* New User Onboarding */,
 				B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */,
@@ -1431,6 +1442,14 @@
 			path = NotificationService;
 			sourceTree = "<group>";
 		};
+		B63E465A28FF0847000A60C9 /* Old User Onboarding V2 */ = {
+			isa = PBXGroup;
+			children = (
+				B63E465B28FF086C000A60C9 /* Onboard0.swift */,
+			);
+			path = "Old User Onboarding V2";
+			sourceTree = "<group>";
+		};
 		B6A3661027B563B2009B8754 /* New User Onboarding */ = {
 			isa = PBXGroup;
 			children = (
@@ -1442,6 +1461,10 @@
 				A5F670DC24E8850800858720 /* NewUserOnboardView5Map.swift */,
 				B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */,
 				B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */,
+				B63E465D2901DE36000A60C9 /* LegitTutorial.swift */,
+				B63E465F2904BD39000A60C9 /* ListTutorial.swift */,
+				B63E46602904BD39000A60C9 /* ListTutorial.xib */,
+				B63E466329073D53000A60C9 /* ListTutorialStoryboard.storyboard */,
 			);
 			path = "New User Onboarding";
 			sourceTree = "<group>";
@@ -1560,6 +1583,7 @@
 				A55D6441227E1DDB00AC39EC /* Poppins-Bold.ttf in Resources */,
 				A55D6442227E1DDB00AC39EC /* Poppins-Black.ttf in Resources */,
 				A55D6443227E1DDB00AC39EC /* Poppins-Thin.ttf in Resources */,
+				B63E46622904BD39000A60C9 /* ListTutorial.xib in Resources */,
 				A55D6444227E1DDB00AC39EC /* Poppins-SemiBold.ttf in Resources */,
 				A55D6445227E1DDB00AC39EC /* Poppins-Italic.ttf in Resources */,
 				A55D6446227E1DDB00AC39EC /* Poppins-MediumItalic.ttf in Resources */,
@@ -1571,6 +1595,7 @@
 				A54E1D781F4E736B00C2AA77 /* LaunchScreen.storyboard in Resources */,
 				A5DCE5032018F038001DBD3E /* TitilliumWeb-Bold.ttf in Resources */,
 				A5DCE50C2018F038001DBD3E /* TitilliumWeb-SemiBoldItalic.ttf in Resources */,
+				B63E466429073D53000A60C9 /* ListTutorialStoryboard.storyboard in Resources */,
 				A51C13C51F51136B00CEB740 /* GoogleService-Info.plist in Resources */,
 				A5DCE5022018F038001DBD3E /* TitilliumWeb-Black.ttf in Resources */,
 				A5FAA1C6211E871300E42CA8 /* DropDownTableViewCell.xib in Resources */,
@@ -1700,6 +1725,7 @@
 				A51C134422E1FD97003A7FC1 /* NewListViewController.swift in Sources */,
 				A57A674F1F5FA8CC0063D400 /* UploadLocationCell.swift in Sources */,
 				A5AF933C2023948200D7B910 /* ListViewHeader.swift in Sources */,
+				B63E465C28FF086C000A60C9 /* Onboard0.swift in Sources */,
 				A54E172B23CB8DE500D4E9E3 /* TagPhotoToListView.swift in Sources */,
 				A57DB04A22601AAC0063AE4E /* Event.swift in Sources */,
 				A503833423B957E00061752C /* BottomEmojiBar.swift in Sources */,
@@ -1767,6 +1793,7 @@
 				A570645822E69E4900C3E686 /* ListOptionsTableViewController.swift in Sources */,
 				A5F34660262E7897009B2128 /* MainTabLIstCell.swift in Sources */,
 				A598CFC92561D8D8005A7035 /* ListViewControllerNew_m.swift in Sources */,
+				B63E46612904BD39000A60C9 /* ListTutorial.swift in Sources */,
 				A552EA5F1F997973005A0977 /* Message.swift in Sources */,
 				A5A2E5D92005CB9000D7E8F5 /* TabListViewController.swift in Sources */,
 				B6E9202127B8647400A6B303 /* NewUserOnboardFollowing.swift in Sources */,
@@ -1829,6 +1856,7 @@
 				A5CD76C921C0CF3B0049062E /* FullPictureCell.swift in Sources */,
 				A563CCB222BA63B5008479AE /* AddTagSearchViewController.swift in Sources */,
 				A55D6448227E230F00AC39EC /* FontBlaster.swift in Sources */,
+				B63E465E2901DE36000A60C9 /* LegitTutorial.swift in Sources */,
 				A57FB04A235DE93C00FD3AFB /* LegitFeedTypeSearchCell.swift in Sources */,
 				A5177ACE263DF65400BE2445 /* SubscriptionViewControllerSample.swift in Sources */,
 				A55D830A20CEA15E008931DA /* AutoTagEmojiCell.swift in Sources */,

@@ -413,6 +413,8 @@ class NewLocationController: UICollectionViewController, UICollectionViewDelegat
         if (self.isFiltering ? self.filteredPosts.count : self.displayedPosts.count) == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! EmptyCell
             cell.delegate = self
+            cell.currentUser = false
+            cell.homeFeed = false
             return cell
         } else if self.postFormatInd == 0 {
             let tempPost = (self.isFiltering ? self.filteredPosts[indexPath.item] : self.displayedPosts[indexPath.item])

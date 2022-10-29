@@ -28,6 +28,18 @@ class EmptyCell: UICollectionViewCell {
         }
     }
     
+    var currentUser: Bool = true {
+        didSet {
+            self.refreshLabels()
+        }
+    }
+    
+    var homeFeed: Bool = true {
+        didSet {
+            self.refreshLabels()
+        }
+    }
+    
     var isFiltering: Bool = false {
         didSet {
             self.refreshLabels()
@@ -40,7 +52,8 @@ class EmptyCell: UICollectionViewCell {
             self.imageSubLabel.text = ""
         } else {
             self.imageLabel.text = isFiltering ? "No Results Found" : "No Posts Yet"
-            self.imageSubLabel.text = isFiltering ? "Tap To Refresh Search" : (newUserOnboarding ? "Add A Photo Or Follow A Friend" : "")
+            self.imageSubLabel.text = isFiltering ? "Tap To Refresh Search" : (homeFeed ? "Add A Photo Or Follow A Friend" : (currentUser ? "Add A Photo" : ""))
+
         }
 
         self.imageIcon.isHidden = !isFiltering
@@ -108,6 +121,7 @@ class EmptyCell: UICollectionViewCell {
         addSubview(cellView)
         cellView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, right: rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
         cellView.backgroundColor = UIColor.backgroundGrayColor()
+//        cellView.backgroundColor = UIColor.yellow
 
         cellView.addSubview(imageIcon)
         imageIcon.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)

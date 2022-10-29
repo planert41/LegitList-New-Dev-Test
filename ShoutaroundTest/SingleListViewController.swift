@@ -870,6 +870,8 @@ extension SingleListViewController: UICollectionViewDelegate, UICollectionViewDa
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyHeaderId, for: indexPath) as! EmptyCell
                 cell.delegate = self
                 cell.isFiltering = self.isFiltering
+                cell.homeFeed = false
+                cell.currentUser = (currentDisplayList?.creatorUID == Auth.auth().currentUser?.uid)
                 cell.imageSubLabel.text = ""
                 return cell
             } else {

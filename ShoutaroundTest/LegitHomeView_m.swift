@@ -1040,6 +1040,7 @@ class LegitHomeView: UICollectionViewController, UICollectionViewDelegateFlowLay
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EmptyCellId, for: indexPath) as! EmptyCell
                 cell.isFiltering = self.viewFilter.isFiltering
                 cell.pageLoadUp = self.pageLoadUp
+                cell.homeFeed = true
                 cell.delegate = self
                 return cell
             }

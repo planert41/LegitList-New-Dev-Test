@@ -46,6 +46,7 @@ protocol SingleUserProfileHeaderDelegate {
     func openInbox()
     func messageUser()
     func extBlockUser(user:User)
+    func extCreateNewPhoto()
 
 }
 
@@ -74,6 +75,15 @@ class SingleUserProfileHeader: UICollectionViewCell {
         refreshListView()
         self.addNewListButton.isHidden = !(user?.uid == Auth.auth().currentUser?.uid)
         self.emojiSummary.displayUser = user
+        
+//        var defaultTitle = "Your Most Popular Emoji Tags. But No Emojis in Your Posts Yet."
+        var defaultTitle = "Start Posting To Track Your Most Popular Emoji Tags!"
+
+        if user?.uid != Auth.auth().currentUser?.uid {
+            defaultTitle = "No Emoji Tags Yet"
+        }
+        noEmojiSummaryButton.setTitle(defaultTitle, for: .normal)
+        noEmojiSummaryButton.sizeToFit()
     }
 
 
@@ -443,10 +453,36 @@ class SingleUserProfileHeader: UICollectionViewCell {
     let emojiSummary = EmojiSummaryCV()
     var userEmojiCounts:[String: Int] = [:] {
         didSet {
+            if userEmojiCounts.count == 0 {
+                self.noEmojiSummaryButton.isHidden = false
+                self.bringSubviewToFront(self.noEmojiSummaryButton)
+            } else {
+                self.noEmojiSummaryButton.isHidden = true
+                self.bringSubviewToFront(self.emojiSummary)
+            }
             self.emojiSummary.displayedEmojisCounts = self.userEmojiCounts
         }
     }
     
+    let noEmojiSummaryButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("", for: .normal)
+        button.titleLabel?.font = UIFont.italicSystemFont(ofSize: 12)
+        button.setTitleColor(UIColor.darkGray, for: .normal)
+//        button.imageView?.contentMode = .scaleAspectFit
+//        button.addTarget(self, action: #selector(initAddList), for: .touchUpInside)
+        button.addTarget(self, action: #selector(noEmojiSummaryButtonTapped), for: .touchUpInside)
+//        button.semanticContentAttribute = .forceLeftToRight
+        button.titleLabel?.textAlignment = .left
+        button.contentEdgeInsets = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5)
+//        button.backgroundColor  = .yellow
+        return button
+    }()
+    
+    @objc func noEmojiSummaryButtonTapped() {
+        print(noEmojiSummaryButtonTapped)
+        self.delegate?.extCreateNewPhoto()
+    }
     
     var displayPostCount: Int = 0 {
         didSet {
@@ -507,6 +543,12 @@ class SingleUserProfileHeader: UICollectionViewCell {
         emojiSummary.showBadges = true
 //        emojiSummary.showCity = true
         emojiSummary.delegate = self
+        
+        addSubview(noEmojiSummaryButton)
+        noEmojiSummaryButton.anchor(top: emojiView.topAnchor, left: emojiView.leftAnchor, bottom: emojiView.bottomAnchor, right: nil, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 0)
+        noEmojiSummaryButton.rightAnchor.constraint(lessThanOrEqualTo: emojiView.rightAnchor).isActive = true
+        noEmojiSummaryButton.isHidden = true
+
         
         
     // USER PROFILE INFO
