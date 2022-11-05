@@ -113,7 +113,6 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
     var commentUids: [String] = []
     
     func didTapCancel(comment: Comment) {
-        print("Delete Comment from \(comment.user.username) | \(comment.text)")
         if let removeIndex = self.comments.firstIndex(where: { (comments) -> Bool in
             comments.commentId == comment.commentId
         }){
@@ -133,6 +132,10 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
             self.delegate?.refreshComments(comments: tempComments)
             
             self.deleteComment(comment: comment)
+            
+            var newCommentCount = self.comments.filter({$0.commentId != "postCaption"}).count
+            Database.updateSocialCountsForPost(postId: self.post?.id, socialVariable: "commentCount", newCount: newCommentCount)
+            print("Successfully Delete Comment: Total \(newCommentCount) Comments | \(comment.text)")
         }
     
     }
@@ -471,7 +474,12 @@ class CommentsController: UICollectionViewController, UICollectionViewDelegateFl
                 }
             }
             
-            print("Successfully saved comment:", self.commentTextField.text ?? "")
+
+            var newCommentCount = self.comments.filter({$0.commentId != "postCaption"}).count
+            
+            Database.updateSocialCountsForPost(postId: postId, socialVariable: "commentCount", newCount: newCommentCount)
+            
+            print("Successfully saved comment: \(newCommentCount) Comments | \(self.commentTextField.text ?? "")")
             
             // Alert other users who commented
             
