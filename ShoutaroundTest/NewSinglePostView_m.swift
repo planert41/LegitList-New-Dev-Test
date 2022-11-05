@@ -1380,6 +1380,13 @@ class NewSinglePostView: UIViewController {
         
     // COMMENTS
         self.comments = self.post?.comments ?? []
+        Database.checkPostForComments(post: post, completion: { (checkPost) in
+            print("SINGLE VIEW CHECK COMMENT | \(checkPost.comments.count) | \(self.post?.comments)")
+            if checkPost.comments.count != self.post?.comments.count {
+                self.post?.comments = checkPost.comments
+                self.refreshComments()
+            }
+        })
         refreshComments()
 
         
