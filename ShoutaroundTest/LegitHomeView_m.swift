@@ -1918,20 +1918,12 @@ extension LegitHomeView: FullPictureCellDelegate, TestGridPhotoCellDelegate, Sha
     
     func displayPostSocialUsers(post: Post, following: Bool) {
         print("Display Vote Users| Following: ",following)
-        let postSocialController = PostSocialDisplayTableViewController()
-        postSocialController.displayUser = true
-        postSocialController.displayUserFollowing = following
-        postSocialController.inputPost = post
-        navigationController?.pushViewController(postSocialController, animated: true)
+        self.extShowUsersForPost(post: post, following: following)
     }
     
     func displayPostSocialLists(post: Post, following: Bool) {
         print("Display Lists| Following: ",following)
-        let postSocialController = PostSocialDisplayTableViewController()
-        postSocialController.displayList = true
-        postSocialController.displayUserFollowing = (post.followingList.count > 0)
-        postSocialController.inputPost = post
-        navigationController?.pushViewController(postSocialController, animated: true)
+        self.extShowListsForPost(post: post, following: following)
     }
     
     func didTapListCancel(post: Post) {

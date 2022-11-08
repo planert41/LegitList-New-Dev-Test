@@ -112,6 +112,8 @@ extension Database{
     static func loadCurrentUser(inputUser: User?, completion:@escaping () ->()){
         
         print(" 0 | FETCH_CURRENT_USER |START")
+        let start = DispatchTime.now() // <<<<<<<<<< Start time
+
         
         // uid using userID if exist, if not, uses current user, if not uses blank
         
@@ -160,7 +162,8 @@ extension Database{
         
     // NEED TO FETCH USER FIRST
         fetchedUser.notify(queue: .main) {
-            
+            let loadedUser = DispatchGroup()
+
     // 3. FIND FOLLOWING USERS UIDS
             
 //            Database.fetchFollowingUserUids(uid: uid) { (fetchedFollowingUsers) in
@@ -168,10 +171,11 @@ extension Database{
 //                print(" 3 | FETCH_CURRENT_USER |Fetch User Following | \(CurrentUser.user?.username) | \(CurrentUser.followingUids.count) Following Users")
 //            }
             
+            loadedUser.enter()
             Database.fetchFollowingUsers(uid: uid) { (followingUsers) in
                 CurrentUser.followingUsers = followingUsers
                 print(" 3 | FETCH_CURRENT_USER |Loaded Users Following | \(CurrentUser.user?.username) | \(CurrentUser.followingUids.count) Following Users")
-                
+                loadedUser.leave()
 //                if CurrentUser.followingUids.count > 0 {
 //                    self.setupUserFollowingListener(uids: CurrentUser.followingUids)
 //                    print(" 3 | FETCH_CURRENT_USER | Setup Listeners for \(CurrentUser.followingUids.count) Following Users")
@@ -179,41 +183,70 @@ extension Database{
 
             }
             
+            loadedUser.enter()
             Database.fetchFollowerUserUids(uid: uid) { (fetchedFollowerUsers) in
                 CurrentUser.followerUids = fetchedFollowerUsers
                 print(" 3 | FETCH_CURRENT_USER |Fetch User Followers | \(CurrentUser.user?.username) | \(CurrentUser.followerUids.count) Followers")
+                loadedUser.leave()
+
             }
             
             
     //4. FETCH LISTS
+            loadedUser.enter()
             Database.updateCurrentUserList(uid: uid, completion: {
                 NotificationCenter.default.post(name: MainTabBarController.CurrentUserListLoaded, object: nil)
+                loadedUser.leave()
             })
             
-            // 6. FETCH NOTIFICATIONS
-            Database.fetchEventForUID(uid: uid) { (events) in
-                
-                CurrentUser.events = events
-//                CurrentUser.unreadEventCount = CurrentUser.events.filter({ (event) -> Bool in
-//                    return !event.read && event.creatorUid != Auth.auth().currentUser?.uid && event.value == 1
-//                }).count
-                
-                // REFRESHES TAB NOTIFICATION COUNT
-//                NotificationCenter.default.post(name: MainTabBarController.NewNotificationName, object: nil)
-                
-                self.setupEventListeners()
-                self.setupInboxListeners()
-                print(" 6 | FETCH_CURRENT_USER  | User Notifications and Listeners | TOTAL NOTIFICATIONS: \(CurrentUser.events.count)| UNREAD: \(CurrentUser.unreadEventCount)")
-                completion()
+    //5. FETCH USER LIKES
+            loadedUser.enter()
+
+            Database.fetchUserLikedPostIds(uid: uid) { likedIdArray in
+                CurrentUser.likedPostIds = likedIdArray
+                print(" 6 | FETCH_CURRENT_USER |Fetch Liked Post Ids | \(CurrentUser.user?.username) | \(CurrentUser.likedPostIds.count) Liked Posts")
+                loadedUser.leave()
 
             }
             
+    // 6. FETCH NOTIFICATIONS
+            loadedUser.enter()
+
+        Database.fetchEventForUID(uid: uid) { (events) in
+            
+            CurrentUser.events = events
+//                CurrentUser.unreadEventCount = CurrentUser.events.filter({ (event) -> Bool in
+//                    return !event.read && event.creatorUid != Auth.auth().currentUser?.uid && event.value == 1
+//                }).count
+            
+            // REFRESHES TAB NOTIFICATION COUNT
+//                NotificationCenter.default.post(name: MainTabBarController.NewNotificationName, object: nil)
+            
+            self.setupEventListeners()
+            self.setupInboxListeners()
+            loadedUser.leave()
+            print(" 6 | FETCH_CURRENT_USER  | User Notifications and Listeners | TOTAL NOTIFICATIONS: \(CurrentUser.events.count)| UNREAD: \(CurrentUser.unreadEventCount)")
+
+        }
+            
+
     //5. FETCH INBOX
+            loadedUser.enter()
             Database.fetchMessageThreadsForUID(userUID: uid) { (messageThreads) in
                 CurrentUser.inboxThreads = messageThreads
+                loadedUser.leave()
             }
             
             LocationSingleton.sharedInstance.determineCurrentLocation()
+            
+            loadedUser.notify(queue: .main) {
+                let end = DispatchTime.now()   // <<<<<<<<<<   end time
+                let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+                let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+                print("FINISH Load Current User - Time: \(timeInterval) seconds")
+
+                completion()
+            }
             
         }
             
@@ -293,6 +326,25 @@ extension Database{
         })
     }
     
+    
+    
+    static func fetchUserLikedPostIds(uid: String?, completion:@escaping ([String: Double]) ->()){
+        guard let uid = uid else {return}
+        
+        Database.database().reference().child("userlikes").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            
+            let temp = snapshot.value as? [String: Double] ?? [:]
+            completion(temp)
+            print("updateCurrentUserLikedPostIds \(uid) \(temp.count)")
+
+            
+        }) { (error) in
+            print("Error updateCurrentUserLikedPostIds ", error)
+        }
+        
+        
+    }
+    
     static func updateCurrentUserList(uid: String?, completion:@escaping () ->()){
         // 4. FIND USER LISTS AFTER USER IS LOADED
         
@@ -315,6 +367,7 @@ extension Database{
                     if uid == Auth.auth().currentUser?.uid {
                         CurrentUser.listIds = tempList
                         CurrentUser.lists = fetchedLists
+                        CurrentUser.updateCurrentUserListPostIds()
                         Database.checkUserSocialStats(user: CurrentUser.user!, socialField: .lists_created, socialCount: fetchedLists.count)
                     }
                     
@@ -2776,12 +2829,7 @@ extension Database{
                 var post = Post(user: user!, dictionary: dictionary)
                 post.id = postId
                 post.creatorUID = user?.uid
-                
-                Database.checkPostForSocial(post: post, completion: { (post) in
-                    Database.checkPostIntegrity(post: post, completion: { (post) in
-                        completion(post)
-                    })
-                })
+                completion(post)
                 
         }) { (err) in print("Failed to fetchposts:", err) }
         }
@@ -3123,13 +3171,11 @@ extension Database{
                     var postId = PostId.init(id: key, creatorUID: nil, sort: nil)
                     post.id = key
 
-                    Database.checkPostForSocial(post: post, completion: { (post) in
-                        fetchedPostIds.append(postId)
-                        fetchedPosts.append(post)
-                        fetchedPosts.sort(by: { (p1, p2) -> Bool in
-                            return p1.creationDate.compare(p2.creationDate) == .orderedDescending })
-                        myGroup.leave()
-                    })
+                    fetchedPostIds.append(postId)
+                    fetchedPosts.append(post)
+                    fetchedPosts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending })
+                    myGroup.leave()
                 }
             })
             myGroup.notify(queue: .main) {
@@ -3162,13 +3208,11 @@ extension Database{
                     var postId = PostId.init(id: key, creatorUID: nil, sort: nil)
                     post.id = key
                     
-                    Database.checkPostForSocial(post: post, completion: { (post) in
-                        fetchedPostIds.append(postId)
-                        fetchedPosts.append(post)
-                        fetchedPosts.sort(by: { (p1, p2) -> Bool in
-                            return p1.creationDate.compare(p2.creationDate) == .orderedDescending })
-                        myGroup.leave()
-                    })
+                    fetchedPostIds.append(postId)
+                    fetchedPosts.append(post)
+                    fetchedPosts.sort(by: { (p1, p2) -> Bool in
+                        return p1.creationDate.compare(p2.creationDate) == .orderedDescending })
+                    myGroup.leave()
                 }
             })
             myGroup.notify(queue: .main) {
@@ -3180,6 +3224,70 @@ extension Database{
     }
     
     
+    static func checkPostWithCurrentUser(post: Post, completion: @escaping (Post) -> ()) {
+
+        guard let postId = post.id else {
+            completion(post)
+            return
+        }
+        var tempPost = post
+
+        
+        var selectedListIds = [:] as [String:String]
+        if let temp = CurrentUser.listedPostIds[postId] {
+            for listId in temp {
+                if let selectedList = CurrentUser.lists.filter({ (list) -> Bool in
+                    list.id == listId
+                }).first {
+            // - SELECTED AND CREATOR LIST IDS ARE [LISTID: LISTNAME]
+
+                    selectedListIds[listId] = selectedList.name
+                }
+            }
+        }
+        
+    // CHECK TAGGED LISTS - WILL NEED TO UPDATE FOLLOWING LISTS AND ALL LISTS WHEN FETCHING
+        
+        tempPost.selectedListId = selectedListIds
+        if post.creatorUID == Auth.auth().currentUser?.uid {
+            tempPost.creatorListId = tempPost.selectedListId
+        }
+        
+        if tempPost.selectedListId!.count > 0 {
+            tempPost.hasPinned = true
+//            print("HAS PINNED - \(postId) | \(tempPost.hasPinned)")
+        } else {
+            tempPost.hasPinned = false
+        }
+        
+    // CHECK MESSAGE
+        
+        if CurrentUser.inboxThreads.count > 0 {
+            for threads in CurrentUser.inboxThreads {
+                if threads.postId == postId {
+                    tempPost.hasMessaged = true
+                    break
+                }
+            }
+        }
+        
+    // CHECK LIKES
+        tempPost.hasLiked = (CurrentUser.likedPostIds[postId] ?? 0) > 0
+        if (tempPost.likeCount - (tempPost.hasLiked ? 1 : 0)) > 0 {
+            Database.checkPostForVotes(post: tempPost) { tempPost in
+                completion(tempPost)
+            }
+        } else {
+            completion(tempPost)
+        }
+//        completion(tempPost)
+
+        
+//        if (tempPost.selectedListId?.count ?? 0) > 0 {
+//            print("PINNED \(postId) \(tempPost.hasPinned) \(tempPost.selectedListId?.count)")
+//        }
+    }
+        
     static func fetchPostWithPostID( postId: String, force:Bool? = false, completion: @escaping (Post?, Error?) -> ()) {
         
 //        guard let uid = Auth.auth().currentUser?.uid else {return}
@@ -3293,18 +3401,28 @@ extension Database{
                         }
                     }
                     
-                    checkPostForSocial(post: post, completion: { (post) in
-                        checkPostIntegrity(post: post, completion: { (post) in
-                            postCache[postId] = post
+                    if post.creatorUID == CurrentUser.uid {
+                        CurrentUser.posts[postId] = post
+                    }
+                    
+                    Database.checkPostWithCurrentUser(post: post) { checkedPost in
+                        completion(checkedPost, nil)
+                    }
 
-                            
-                            //                print(post)
-                            if post.creatorUID == CurrentUser.uid {
-                                CurrentUser.posts[postId] = post
-                            }
-                            completion(post, nil)
-                        })
-                    })
+//                    Database.checkPostWithCurrentUser(post: post) { checkedPost in
+//                        Database.checkPostForLists(post: checkedPost) { checkedPost in
+//                            Database.checkPostForVotes(post: checkedPost) { checkedPost in
+//                                Database.checkPostForComments(post: checkedPost) { checkedPost in
+//                                    Database.checkPostForMessages(post: checkedPost) { checkedPost in
+//                                        Database.checkPostIntegrity(post: checkedPost) { checkedPost in
+//                                            completion(checkedPost, nil)
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+                                  
                 })
             }
         }) {(err) in
@@ -3312,6 +3430,30 @@ extension Database{
             completion(nil, err)
         }
     }
+    
+//    Database.checkPostForVotes(post: tempPost) { (post) in
+//        Database.checkPostForLists(post: post, completion: { (post) in
+//            Database.checkPostForMessages(post: post, completion: { (post) in
+//                Database.checkPostForComments(post: post, completion: { (post) in
+//                    Database.checkPostIntegrity(post: post, completion: { (post) in
+//                        if let postId = post.id {
+//                            postCache[postId] = post
+//                            if post.updateFromChecks {
+//                                let postDict:[String: String] = ["updatedPostId": postId]
+//                                NotificationCenter.default.post(name: MainTabBarController.editUserPost, object: nil, userInfo: postDict)
+//                            }
+//                        }
+//
+//                        let end = DispatchTime.now()   // <<<<<<<<<<   end time
+//                        let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+//                        let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+//                        print("checkpostForSocial: \(timeInterval) seconds | \(post.id)")
+//                        completion(post)
+//                    })
+//                })
+//            })
+//        })
+//    }
     
 //    static func fetchAllReportedPostID(completion: @escaping ([String]?) -> ()) {
 //
@@ -3848,7 +3990,9 @@ extension Database{
             
             if tempPost.likeCount != voteCount {
                 // Calculated Bookmark Count Different from Database
+                print("checkPostForVotes - FIX - \(tempPost.likeCount) to \(voteCount) | \(tempPost.id)")
                 tempPost.likeCount = voteCount
+                tempPost.updateFromChecks = true
                 updateSocialCountsForPost(postId: tempPost.id, socialVariable: "voteCount", newCount: voteCount)
             }
             
@@ -3947,13 +4091,15 @@ extension Database{
 //                print("-Kx2DlBNkfNMVWPuFH1c | \(comments.count) Comments | \(comments)")
 //            }
             
-            let newCount = max(tempPost.commentCount, comments.count)
-            
+//            let newCount = max(tempPost.commentCount, comments.count)
+            let newCount = comments.count
+
         // WE CHANGE THE CHECK FORMULA TO USE MAX BECAUSE IT KLEPT SWITCHING FROM 4 TO 3 BACK TO 4 DUE TO COMMENT SEQUENCES
             
-            if tempPost.commentCount != newCount && newCount > 0 {
-                print("Updating Comment Count | \(tempPost.id) | \(tempPost.commentCount) to \(newCount)")
+            if tempPost.commentCount != newCount {
+                print("checkPostForComments - FIX - \(tempPost.commentCount) to \(newCount) | \(post.id)")
                 tempPost.commentCount = newCount
+                tempPost.updateFromChecks = true
                 updateSocialCountsForPost(postId: tempPost.id, socialVariable: "commentCount", newCount: newCount)
             }
             
@@ -4092,14 +4238,18 @@ extension Database{
             
             // CHECK NUMBER OF LISTS IN POST_LISTS
             if lists.count != listCount {
+                print("checkPostForLists - FIX - \(listCount) to \(lists.count) | \(post.id)")
                 listCount = lists.count
+                tempPost.updateFromChecks = true
                 updateSocialCountsForPost_Lists(postId: tempPost.id, socialVariable: "listCount", newCount: lists.count)
             }
             
             
             // UPDATE LIST COUNT SAVE IN POST
             if tempPost.listCount != listCount {
+                print("checkPostForLists - FIX POST - \(tempPost.listCount) to \(listCount) | \(post.id)")
                 tempPost.listCount = listCount
+                tempPost.updateFromChecks = true
                 updateSocialCountsForPost(postId: tempPost.id, socialVariable: "listCount", newCount: listCount)
             }
             
@@ -4275,7 +4425,9 @@ extension Database{
             
             if tempPost.messageCount != messageCount {
                 // Calculated Bookmark Count Different from Database
+                print("checkPostForMessages - FIX - \(tempPost.messageCount) to \(messageCount) | \(tempPost.id)")
                 tempPost.messageCount = messageCount
+                tempPost.updateFromChecks = true
                 updateSocialCountsForPost(postId: tempPost.id, socialVariable: "messageCount", newCount: messageCount)
             }
             
@@ -4344,14 +4496,30 @@ extension Database{
             return
         }
         
-        Database.checkPostForVotes(post: post) { (post) in
+        var tempPost = post
+        tempPost.updateFromChecks = false
+        
+        let start = DispatchTime.now() // <<<<<<<<<< Start time
+        
+        Database.checkPostForVotes(post: tempPost) { (post) in
             Database.checkPostForLists(post: post, completion: { (post) in
                 Database.checkPostForMessages(post: post, completion: { (post) in
                     Database.checkPostForComments(post: post, completion: { (post) in
-                        if let postId = post.id {
-                            postCache[postId] = post
-                        }
-                        completion(post)
+                        Database.checkPostIntegrity(post: post, completion: { (post) in
+                            if let postId = post.id {
+                                postCache[postId] = post
+                                if post.updateFromChecks {
+                                    let postDict:[String: String] = ["updatedPostId": postId]
+                                    NotificationCenter.default.post(name: MainTabBarController.editUserPost, object: nil, userInfo: postDict)
+                                }
+                            }
+        
+                            let end = DispatchTime.now()   // <<<<<<<<<<   end time
+                            let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
+                            let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
+                            print("checkpostForSocial: \(timeInterval) seconds | \(post.id)")
+                            completion(post)
+                        })
                     })
                 })
             })
@@ -4381,8 +4549,10 @@ extension Database{
         if post.locationSummaryID == "" &&  post.locationAdress.removingWhitespaces() != ""{
                 Database.reverseGPSGoogle(GPSLocation: post.locationGPS, completion: { (appleLoc) in
                     if let _ = appleLoc?.locationSummaryID {
+                        print("checkLocationSummaryID - FIX - \(tempPost.locationSummaryID) to \(appleLoc?.locationSummaryID) | \(post.id)")
                         tempPost.locationSummaryID = appleLoc?.locationSummaryID
                         temp_dic["locationSummaryID"] = appleLoc?.locationSummaryID
+                        tempPost.updateFromChecks = true
                         Database.updatePostwithPostID(postId: tempPost.id, newDictionaryValues: temp_dic)
                     }
                 })
@@ -7791,6 +7961,10 @@ extension Database{
             let tempList = List.init(id: list.id, dictionary: dic)
             // UPDATE LIST CACHE
             listCache[listId] = tempList
+            if let i = CurrentUser.lists.firstIndex(where: {$0.id == listId}) {
+                CurrentUser.lists[i] = tempList
+                CurrentUser.updateCurrentUserListPostIds()
+            }
             ref.keepSynced(true)
 
             print("   ~ Database |  updateListWithPost_ADD | Success | \(tempList.name) - \(tempList.id) | \(tempList.listImageUrls.count) Small Images | \(tempList.postIds?.count) Posts")
@@ -7915,6 +8089,12 @@ extension Database{
             let tempList = List.init(id: list.id, dictionary: dic)
             // UPDATE LIST CACHE
             listCache[listId] = tempList
+            
+            if let i = CurrentUser.lists.firstIndex(where: {$0.id == listId}) {
+                CurrentUser.lists[i] = tempList
+                CurrentUser.updateCurrentUserListPostIds()
+            }
+            
             ref.keepSynced(true)
             
             print("   ~ Database |  updateListWithPostDelete | Success | \(tempList.name) - \(tempList.id) | \(tempList.listImageUrls.count) Small Images | \(tempList.postIds?.count) Posts")
@@ -8768,7 +8948,7 @@ extension Database{
 
                 self.createUserLike(postId: postId, like: vote, userId: uid)
                 spotChangeSocialCountForUser(creatorUid: creatorUid, socialField: .votes_received, change: voteChange)
-                spotUpdateSocialCountForPost(postId: postId, socialField: "vote_count", change: voteChange)
+                spotUpdateSocialCountForPost(postId: postId, socialField: "voteCount", change: voteChange)
                 // Completion after updating Likes
                 completion()
             }
@@ -8779,20 +8959,49 @@ extension Database{
         guard let postId = postId else {return}
         guard let like = like else {return}
         guard let userId = userId else {return}
-        
-        var data = [:] as [String:Int]
-        data[postId] = like
+
+        var data = [:] as [String:Any]
+        var temp = (like == 0) ? 0.0 : Date().timeIntervalSince1970
+        data[postId] = temp
         let ref = Database.database().reference().child("userlikes").child(userId)
         ref.updateChildValues(data) { (error, ref) in
             if let error = error {
                 print(error)
             } else {
                 print("createUserLike | Success | \(userId) : \(postId) : \(like)")
+                CurrentUser.likedPostIds[postId] = temp
             }
         }
     }
     
-    static func handleLike(postId: String!, creatorUid: String!, completion: @escaping () -> Void){
+    static func handleLike(post: Post?, completion: @escaping (Post) -> Void){
+        guard let post = post else {return}
+        guard let uid = Auth.auth().currentUser?.uid else {return}
+        var tempPost = post
+        if (tempPost.hasLiked) {
+            // Unselect Upvote
+            tempPost.hasLiked = false
+            tempPost.likeCount -= 1
+            tempPost.allVote.removeAll(where: {$0 == uid})
+            Database.handleVote(post: tempPost, creatorUid: post.creatorUID, vote: 0) {}
+            
+        } else {
+            // Upvote
+            tempPost.hasLiked = true
+            tempPost.likeCount += 1
+            tempPost.allVote.append(uid)
+            Database.handleVote(post: tempPost, creatorUid: post.creatorUID, vote: 1) {}
+    
+        }
+        print("handleLike \(tempPost.id) | User Liked: \(tempPost.hasLiked) | \(tempPost.likeCount) Likes")
+        if let postId = post.id {
+            postCache[postId] = tempPost
+        }
+        completion(tempPost)
+    }
+    
+    
+    static func handleLikeOLD(postId: String!, creatorUid: String!, completion: @escaping () -> Void){
         
         let ref = Database.database().reference().child("likes").child(postId)
         guard let uid = Auth.auth().currentUser?.uid else {return}

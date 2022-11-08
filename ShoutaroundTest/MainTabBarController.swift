@@ -722,7 +722,7 @@ class MainTabBarController: UITabBarController, UITabBarControllerDelegate, UIIm
         // LIST NOTIFICATIONS
         items[4].badgeValue = total > 0 ? String(total) : nil
         
-        print("MainTabBar | updateUnreadNotifications | New: \(total) | Events: \(CurrentUser.unreadEventCount) | Inbox \(CurrentUser.unreadMessageCount)")
+        print("MainTabBar | updateUnreadMessage | New: \(total) | Events: \(CurrentUser.unreadEventCount) | Inbox \(CurrentUser.unreadMessageCount)")
 
         
         // USER NOTIFICATIONS

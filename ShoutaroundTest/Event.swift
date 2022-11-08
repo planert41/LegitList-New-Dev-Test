@@ -24,6 +24,11 @@ enum Social: String {
     case report
 }
 
+enum userListDisplay: String {
+    case userFollowers
+    case userLiked
+}
+
 enum UserStats: String {
     case posts_created = "posts_created"
     case followingCount = "followingCount"

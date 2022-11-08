@@ -43,7 +43,7 @@ class NewSinglePostView: UIViewController {
             } else {
                 creatorName = post?.creatorUID ?? ""
             }
-            print(" ~~~ NewSinglePostView | LOAD POST | ID: \((post?.id)!) | LOC: \((post?.locationName)!) | USER: \(creatorName) | Lists \(post?.allList.count)")
+            print(" ~~~ NewSinglePostView | LOAD POST | ID: \((post?.id)!) | LOC: \((post?.locationName)!) | USER: \(creatorName) | Lists \(post?.listCount) \(post?.likeCount) \(post?.commentCount)")
 
             guard let imageUrls = post?.imageUrls else {
                 print("Read Post, No Image URLs Error")
@@ -64,8 +64,22 @@ class NewSinglePostView: UIViewController {
             setupImageCountLabel()
             updateLinkLabel()
             self.view.layoutIfNeeded()
-            print("***\(post?.id) POST | New Single Picture Controller ")
-            print("ScrollView Size | Content \(self.scrollview.contentSize) | Intrinsic \(scrollview.intrinsicContentSize)")
+            print("***\(post?.id) POST | New Single Picture Controller \(post?.listCount) \(post?.likeCount) \(post?.commentCount)")
+//            print("ScrollView Size | Content \(self.scrollview.contentSize) | Intrinsic \(scrollview.intrinsicContentSize)")
+            
+            if let post = post {
+                Database.checkPostForSocial(post: post) { checkedPost in
+                    if checkedPost.updateFromChecks {
+                        var tempPost = checkedPost
+                        tempPost.updateFromChecks = false
+                        print("!!! SinglePostView Dif - \(post.id)")
+                        self.post = tempPost
+                        if let postId = post.id {
+                            postCache[postId] = tempPost
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -310,7 +324,7 @@ class NewSinglePostView: UIViewController {
 
     var pageControl : UIPageControl = UIPageControl()
     func setupPageControl(){
-        self.pageControl.numberOfPages = (self.post?.imageCount)!
+        self.pageControl.numberOfPages = (self.post?.imageCount) ?? 0
         self.pageControl.currentPage = 0
         self.pageControl.tintColor = UIColor.red
         self.pageControl.pageIndicatorTintColor = UIColor.white
@@ -397,11 +411,11 @@ class NewSinglePostView: UIViewController {
         })
         
         // UPDATE COMMENT COUNT
-        if self.post?.commentCount != self.comments.count {
-            self.post?.commentCount = self.comments.count
-            guard let post = self.post else {return}
-            postCache[post.id!] = post
-        }
+//        if self.post?.commentCount != self.comments.count {
+//            self.post?.commentCount = self.comments.count
+//            guard let post = self.post else {return}
+//            postCache[post.id!] = post
+//        }
 //        self.commentCount.text = self.comments.count != 0 ? String(self.comments.count) + "  COMMENT" : " COMMENT"
 //        self.commentCount.sizeToFit()
     
@@ -1183,7 +1197,7 @@ class NewSinglePostView: UIViewController {
     
     func setupRatingLegitIcon(){
         
-        if (self.post?.rating)! != 0 {
+        if ((self.post?.rating) ?? 0) != 0 {
             self.starRating.rating = (self.post?.rating)!
             starRating.tintColor = starRating.rating >= 4 ? UIColor.ianLegitColor() : UIColor.selectedColor()
             self.starRating.isHidden = false
@@ -1442,7 +1456,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
     
 
     func refreshPost(post: Post) {
-        print("   -refreshPost | NewSinglePostView | Lists \(post.allList.count) | \(post.id)")
+        print("   -refreshPost | NewSinglePostView | Lists \(post.listCount) | \(post.id)")
         self.post = post
         postCache.removeValue(forKey: post.id!)
         postCache[post.id!] = post
@@ -1885,6 +1899,50 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
 //        self.refreshCommentStackView()
     }
     
+    func animateLikePopUp(){
+        if (self.post?.hasLiked)! {
+//            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+            AudioServicesPlaySystemSound(1520)
+            var origin: CGPoint = self.photoImageScrollView.center;
+            self.popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
+//            popView = UIImageView(image: #imageLiteral(resourceName: "like_filled").resizeImageWith(newSize: CGSize(width: 100, height: 100)).withRenderingMode(.alwaysOriginal))
+            self.popView = UIImageView(image: #imageLiteral(resourceName: "drool").withRenderingMode(.alwaysOriginal))
+
+
+            self.popView.contentMode = .scaleToFill
+            self.popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
+            self.popView.frame.origin.x = origin.x
+            self.popView.frame.origin.y = origin.y * 0.5
+            
+            self.photoImageView.addSubview(self.popView)
+            self.popView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
+            self.popView.centerXAnchor.constraint(equalTo: self.photoImageScrollView.centerXAnchor).isActive = true
+            self.popView.centerYAnchor.constraint(equalTo: self.photoImageScrollView.centerYAnchor, constant: 0).isActive = true
+            self.popView.isHidden = false
+
+//            popView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
+            UIView.animate(withDuration: 1,
+                           delay: 0,
+                           usingSpringWithDamping: 0.2,
+                           initialSpringVelocity: 6.0,
+                           options: .allowUserInteraction,
+                           animations: { [weak self] in
+                            self?.popView.transform = .identity
+            }) { (done) in
+                self.popView.removeFromSuperview()
+                self.popView.alpha = 0
+                self.popView.isHidden = true
+            }
+            
+            let when = DispatchTime.now() + 2
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                self.popView.removeFromSuperview()
+                self.popView.alpha = 0
+                self.popView.isHidden = true
+            }
+        }
+    }
+    
     @objc func handleLike() {
         //      delegate?.didLike(for: self)
         
@@ -1893,32 +1951,22 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
         guard let uid = Auth.auth().currentUser?.uid else {return}
         
         // Animates before database function is complete
-        
-        if (self.post?.hasLiked)! {
-            // Unselect Upvote
-            self.post?.hasLiked = false
-            self.post?.likeCount -= 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 0) {}
-        } else {
-            // Upvote
-            self.post?.hasLiked = true
-            self.post?.likeCount += 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 1) {}
-        }
-        
-        
-        if self.post?.hasLiked != bottomActionBar.post?.hasLiked {
-            print("handleLike | Bottom Action Bar Like \(bottomActionBar.post?.hasLiked) Not Matching Post \(self.post?.hasLiked)")
-            self.bottomActionBar.post = self.post
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            if self.post?.hasLiked != self.bottomActionBar.post?.hasLiked {
+                print("handleLike | Bottom Action Bar Like \(self.bottomActionBar.post?.hasLiked) Not Matching Post \(self.post?.hasLiked)")
+                self.bottomActionBar.post = self.post
+            }
+            self.animateLikePopUp()
+
+            self.delegate?.refreshPost(post: self.post!)
         }
 
-        self.delegate?.refreshPost(post: self.post!)
-        
         // POP OUT LIKE VIEW ON PHOTO IMAGE
         
-        if (self.post?.hasLiked)! {
+//        if (self.post?.hasLiked)! {
 //            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-            AudioServicesPlaySystemSound(1520)
+//            AudioServicesPlaySystemSound(1520)
 //            var origin: CGPoint = self.photoImageScrollView.center;
 //            popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
 ////            popView = UIImageView(image: #imageLiteral(resourceName: "like_filled").resizeImageWith(newSize: CGSize(width: 100, height: 100)).withRenderingMode(.alwaysOriginal))
@@ -1956,7 +2004,7 @@ extension NewSinglePostView: UIScrollViewDelegate, UIGestureRecognizerDelegate, 
 //                self.popView.alpha = 0
 //                self.popView.isHidden = true
 //            }
-        }
+//        }
     }
     
     func handleTagList() {

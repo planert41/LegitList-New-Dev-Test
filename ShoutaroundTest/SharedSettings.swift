@@ -318,6 +318,10 @@ let ListSearchDefault:String = ListSearchOptions[0]
 var UserSearchOptions:[String] = ["Friends","Others"]
 let UserSearchDefault:String = UserSearchOptions[0]
 
+// User Search Options
+var LikedUserSearchOptions:[String] = ["Following","Others"]
+let LikedUserSearchDefault:String = LikedUserSearchOptions[0]
+
 // Friend Sort Options
 var FollowingSortOptions:[String] = ["Following", "Follower"]
 

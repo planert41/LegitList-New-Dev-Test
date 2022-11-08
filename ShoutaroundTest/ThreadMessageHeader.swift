@@ -275,20 +275,13 @@ class ThreadMessageHeader: UICollectionViewCell {
                        completion: nil)
         
         
-        Database.handleLike(postId: postId, creatorUid: creatorId){
-        }
+
         
         // Animates before database function is complete
-        
-        if (self.post?.hasLiked)! {
-            self.post?.likeCount -= 1
-        } else {
-            self.post?.likeCount += 1
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            self.delegate?.refreshPost(post: self.post!)
         }
-        self.post?.hasLiked = !(self.post?.hasLiked)!
-        
-        self.delegate?.refreshPost(post: self.post!)
-
     }
     
     // Bookmark

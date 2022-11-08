@@ -120,12 +120,14 @@ struct Post: Hashable, Equatable  {
             self.updateListCount()
         }
     }
+    
+    var updateFromChecks: Bool = false
 
     
     // LIST ID : LIST NAME
     var selectedListId: [String:String]? = [:] {
         didSet {
-            if (self.selectedListId?.count)! > 0 {
+            if ((self.selectedListId?.count) ?? 0) > 0 {
                 self.hasPinned = true
                 if let bookmarkListID = CurrentUser.bookmarkListId {
                     if self.selectedListId![CurrentUser.bookmarkListId!] != nil {

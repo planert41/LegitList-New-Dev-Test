@@ -2265,90 +2265,73 @@ Rating Emojis help you describe your experience beyond just star ratings
         
         // Animates before database function is complete
         
-        if (self.post?.hasLiked)! {
-            // Unselect Upvote
-            self.post?.hasLiked = false
-            self.post?.likeCount -= 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 0) {}
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            self.setupAttributedSocialCount()
+            self.delegate?.refreshPost(post: self.post!)
             
-        } else {
-            // Upvote
-            self.post?.hasLiked = true
-            self.post?.likeCount += 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 1) {}
-            
-        }
-        self.setupAttributedSocialCount()
-        // SAVE UPDATE TO CACHE
+            var likeImage = (self.post?.hasLiked)! ? #imageLiteral(resourceName: "like_filled") : #imageLiteral(resourceName: "like_unfilled")
+            self.likeButton.setImage(likeImage.withRenderingMode(.alwaysOriginal), for: .normal)
+            self.likeButtonLabel.textColor = (self.post?.hasLiked)! ? UIColor.ianLegitColor() : UIColor.darkGray
+            self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
         
-//        if let tempPost = self.post {
-//            print("Cache | \(tempPost.hasLiked)")
-//            postCache[tempPost.id!] = tempPost
-//        }
-//
-        self.delegate?.refreshPost(post: self.post!)
-        
-//        self.likeButton.setImage(#imageLiteral(resourceName: "like_filled").alpha((post?.hasLiked)! ? 1 : 0.5).withRenderingMode(.alwaysOriginal), for: .normal)
-        var likeImage = (self.post?.hasLiked)! ? #imageLiteral(resourceName: "like_filled") : #imageLiteral(resourceName: "like_unfilled")
-        self.likeButton.setImage(likeImage.withRenderingMode(.alwaysOriginal), for: .normal)
-        self.likeButtonLabel.textColor = (self.post?.hasLiked)! ? UIColor.ianLegitColor() : UIColor.darkGray
-        self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-    
-        self.view.layoutIfNeeded()
-        UIView.animate(withDuration: 1.0,
-                       delay: 0,
-                       usingSpringWithDamping: 0.2,
-                       initialSpringVelocity: 6.0,
-                       options: .allowUserInteraction,
-                       animations: { [weak self] in
-                        self?.likeButton.transform = .identity
-                        self?.likeButton.layoutIfNeeded()
-                        
-            },
-                       completion: nil)
-        
-        
-        if (self.post?.hasLiked)! {
-//            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
-            AudioServicesPlaySystemSound(1520)
-            var origin: CGPoint = self.photoImageScrollView.center;
-            popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
-//            popView = UIImageView(image: #imageLiteral(resourceName: "like_filled").resizeImageWith(newSize: CGSize(width: 100, height: 100)).withRenderingMode(.alwaysOriginal))
-            popView = UIImageView(image: #imageLiteral(resourceName: "like_filled_vector").withRenderingMode(.alwaysOriginal))
-
-
-            popView.contentMode = .scaleToFill
-            popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
-            popView.frame.origin.x = origin.x
-            popView.frame.origin.y = origin.y * 0.5
-            
-            photoImageView.addSubview(popView)
-            popView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
-            popView.centerXAnchor.constraint(equalTo: self.photoImageScrollView.centerXAnchor).isActive = true
-            popView.centerYAnchor.constraint(equalTo: self.photoImageScrollView.centerYAnchor, constant: 0).isActive = true
-            self.popView.isHidden = false
-
-//            popView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
-            UIView.animate(withDuration: 1,
+            self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 1.0,
                            delay: 0,
                            usingSpringWithDamping: 0.2,
                            initialSpringVelocity: 6.0,
                            options: .allowUserInteraction,
                            animations: { [weak self] in
-                            self?.popView.transform = .identity
-            }) { (done) in
-                self.popView.removeFromSuperview()
-                self.popView.alpha = 0
-                self.popView.isHidden = true
-            }
+                            self?.likeButton.transform = .identity
+                            self?.likeButton.layoutIfNeeded()
+                            
+                },
+                           completion: nil)
             
-            let when = DispatchTime.now() + 2
-            DispatchQueue.main.asyncAfter(deadline: when) {
-                self.popView.removeFromSuperview()
-                self.popView.alpha = 0
-                self.popView.isHidden = true
+            
+            if (self.post?.hasLiked)! {
+    //            AudioServicesPlayAlertSound(SystemSoundID(kSystemSoundID_Vibrate))
+                AudioServicesPlaySystemSound(1520)
+                var origin: CGPoint = self.photoImageScrollView.center;
+                self.popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
+    //            popView = UIImageView(image: #imageLiteral(resourceName: "like_filled").resizeImageWith(newSize: CGSize(width: 100, height: 100)).withRenderingMode(.alwaysOriginal))
+                self.popView = UIImageView(image: #imageLiteral(resourceName: "like_filled_vector").withRenderingMode(.alwaysOriginal))
+
+
+                self.popView.contentMode = .scaleToFill
+                self.popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
+                self.popView.frame.origin.x = origin.x
+                self.popView.frame.origin.y = origin.y * 0.5
+                
+                self.photoImageView.addSubview(self.popView)
+                self.popView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
+                self.popView.centerXAnchor.constraint(equalTo: self.photoImageScrollView.centerXAnchor).isActive = true
+                self.popView.centerYAnchor.constraint(equalTo: self.photoImageScrollView.centerYAnchor, constant: 0).isActive = true
+                self.popView.isHidden = false
+
+    //            popView.anchor(top: nil, left: nil, bottom: nil, right: nil, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 100, height: 100)
+                UIView.animate(withDuration: 1,
+                               delay: 0,
+                               usingSpringWithDamping: 0.2,
+                               initialSpringVelocity: 6.0,
+                               options: .allowUserInteraction,
+                               animations: { [weak self] in
+                                self?.popView.transform = .identity
+                }) { (done) in
+                    self.popView.removeFromSuperview()
+                    self.popView.alpha = 0
+                    self.popView.isHidden = true
+                }
+                
+                let when = DispatchTime.now() + 2
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.popView.removeFromSuperview()
+                    self.popView.alpha = 0
+                    self.popView.isHidden = true
+                }
             }
         }
+        
     }
     
     

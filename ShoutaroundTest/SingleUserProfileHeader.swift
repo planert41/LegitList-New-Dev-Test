@@ -229,8 +229,8 @@ class SingleUserProfileHeader: UICollectionViewCell {
         label.layer.masksToBounds = true
         label.font = UIFont(name: "Poppins-Bold", size: 10)
         label.textColor = .white
-        label.backgroundColor = UIColor.ianLegitColor()
-        label.text = "80"
+        label.backgroundColor = UIColor.clear
+//        label.text = "80"
         label.isUserInteractionEnabled = true
         label.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleMessageOrInbox)))
         return label
@@ -1353,6 +1353,7 @@ extension SingleUserProfileHeader {
             if CurrentUser.unreadMessageCount > 0 {
                 inboxCountLabel.text = String(CurrentUser.unreadMessageCount)
                 inboxCountLabel.tintColor = UIColor.ianLegitColor()
+                inboxCountLabel.backgroundColor = UIColor.ianLegitColor()
                 inboxCountLabel.isHidden = false
             } else {
                 inboxCountLabel.isHidden = true

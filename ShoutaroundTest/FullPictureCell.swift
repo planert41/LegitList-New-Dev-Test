@@ -331,8 +331,8 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         likeButton.setImage(likeImage, for: .normal)
         
         var likeCount = post.likeCount ?? 0
-//        var likeText = "  " + ((likeCount == 0) ? "Legit" : "\(likeCount) Legit")
-        var likeText = "  " + "Legit"
+        var likeText = "  " + ((likeCount == 0) ? "Legit" : "\(likeCount) Legit")
+//        var likeText = "  " + "Legit"
 
         var likeFont = (post.hasLiked) ? UIFont.boldSystemFont(ofSize: 16) : UIFont.systemFont(ofSize: 16)
         var likeColor = post.hasLiked ? UIColor.ianLegitColor() : UIColor.ianBlackColor()
@@ -358,7 +358,9 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
 //        commentButton.setTitle(commentText, for: .normal)
         
     // Update Bookmark
-        let bookmarkCount = self.post?.selectedListId?.count ?? 0
+//        let bookmarkCount = self.post?.selectedListId?.count ?? 0
+        let bookmarkCount = self.post?.listCount ?? 0
+
         bookmarkButton.setImage(#imageLiteral(resourceName: "lists").withRenderingMode(.alwaysTemplate), for: .normal)
         bookmarkButton.tintColor = post.hasPinned ? UIColor.ianLegitColor() : UIColor.ianBlackColor()
         var bookmarkText = "  " + ((bookmarkCount == 0) ? "List" : "\(bookmarkCount) Lists")
@@ -454,6 +456,7 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
     
 //        print(attDisplay)
         likeCountLabel.attributedText = hideSocialCount ? NSMutableAttributedString() : attDisplay
+        likeCountLabel.isHidden = (!curUserLiked && followingCount == 0)
         likeCountLabel.sizeToFit()
 
 //        likeCountLabelHeight?.constant = hideSocialCount ? 0 : 30
@@ -1948,63 +1951,54 @@ class FullPictureCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         guard let creatorId = self.post?.creatorUID else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
         
-        if (self.post?.hasLiked)! {
-            // Unselect Upvote
-            self.post?.hasLiked = false
-            self.post?.likeCount -= 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 0) {}
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            self.refreshSocialCount()
+            self.delegate?.refreshPost(post: self.post!)
             
-        } else {
-            // Upvote
-            self.post?.hasLiked = true
-            self.post?.likeCount += 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 1) {}
-    
-        }
-        self.refreshSocialCount()
-        self.delegate?.refreshPost(post: self.post!)
-        
-        self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+            self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
 
-        self.layoutIfNeeded()
-        self.delegate?.didTapLike(post:(self.post!))
+            self.layoutIfNeeded()
+            self.delegate?.didTapLike(post:(self.post!))
 
-        UIView.animate(withDuration: 1.0,
-                       delay: 0,
-                       usingSpringWithDamping: 0.2,
-                       initialSpringVelocity: 6.0,
-                       options: .allowUserInteraction,
-                       animations: { [weak self] in
-                        self?.likeButton.transform = .identity
-                        self?.likeButton.layoutIfNeeded()
-            },
-                       completion: nil)
-        
-        
-        // Center Pop Up
-        if (self.post?.hasLiked)! {
-            var origin: CGPoint = self.photoImageScrollView.center;
-            let newImageSize = CGSize(width: 100, height: 100)
-            popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
-            popView = UIImageView(image: #imageLiteral(resourceName: "drool").resizeImageWith(newSize: newImageSize).withRenderingMode(.alwaysOriginal))
-            popView.contentMode = .scaleToFill
-            popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
-            popView.frame.origin.x = origin.x
-            popView.frame.origin.y = origin.y * 0.5
-            
-            photoImageView.addSubview(popView)
-            
-            UIView.animate(withDuration: 2,
+            UIView.animate(withDuration: 1.0,
                            delay: 0,
                            usingSpringWithDamping: 0.2,
                            initialSpringVelocity: 6.0,
                            options: .allowUserInteraction,
                            animations: { [weak self] in
-                            self?.popView.transform = .identity
-            }) { (done) in
-                self.popView.alpha = 0
+                            self?.likeButton.transform = .identity
+                            self?.likeButton.layoutIfNeeded()
+                },
+                           completion: nil)
+            
+            
+            // Center Pop Up
+            if (self.post?.hasLiked)! {
+                var origin: CGPoint = self.photoImageScrollView.center;
+                let newImageSize = CGSize(width: 100, height: 100)
+                self.popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
+                self.popView = UIImageView(image: #imageLiteral(resourceName: "drool").resizeImageWith(newSize: newImageSize).withRenderingMode(.alwaysOriginal))
+                self.popView.contentMode = .scaleToFill
+                self.popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
+                self.popView.frame.origin.x = origin.x
+                self.popView.frame.origin.y = origin.y * 0.5
+                
+                self.photoImageView.addSubview(self.popView)
+                
+                UIView.animate(withDuration: 2,
+                               delay: 0,
+                               usingSpringWithDamping: 0.2,
+                               initialSpringVelocity: 6.0,
+                               options: .allowUserInteraction,
+                               animations: { [weak self] in
+                                self?.popView.transform = .identity
+                }) { (done) in
+                    self.popView.alpha = 0
+                }
             }
         }
+
     }
     
     let temp_red = UIColor.init(hexColor: "e60023")

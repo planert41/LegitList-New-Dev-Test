@@ -1515,7 +1515,7 @@ extension LegitMapViewController : UICollectionViewDelegate, UICollectionViewDat
         else if collectionView == postCollectionView
         {
             var displayPost = fetchedPosts[indexPath.item]
-            self.didTapPost(post: displayPost)
+            self.didTapPicture(post: displayPost)
             self.isPostFullView = !self.isPostFullView
             print("TAP POST")
         }
@@ -1523,15 +1523,7 @@ extension LegitMapViewController : UICollectionViewDelegate, UICollectionViewDat
         
 //        self.delegate?.didTapAddTag(addTag: emoji)
     }
-    
-    func didTapPost(post: Post?) {
-        guard let post = post else {return}
-        
-        let pictureController = NewSinglePostView()
-        pictureController.post = post
-        let picView = UINavigationController(rootViewController: pictureController)
-        navigationController?.pushViewController(pictureController, animated: true)
-    }
+
     
     func filterCaptionPost(searchText: String) {
         print("filterCaptionPost | ", searchText)
@@ -1890,7 +1882,7 @@ extension LegitMapViewController : NewListPhotoCellDelegate, MessageControllerDe
     }
     
     func didTapPicture(post: Post) {
-        self.didTapPost(post: post)
+        self.extTapPicture(post: post)
 //        let pictureController = SinglePostView()
 //        pictureController.post = post
 //        navigationController?.pushViewController(pictureController, animated: true)

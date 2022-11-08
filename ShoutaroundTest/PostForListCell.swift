@@ -595,39 +595,23 @@ class PostForListCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScro
         guard let postId = self.post?.id else {return}
         guard let uid = Auth.auth().currentUser?.uid else {return}
         
-        
-        if (self.post?.hasLiked)! {
-            // Unselect Upvote
-            self.post?.hasLiked = false
-            self.post?.likeCount -= 1
-            Database.handleVote(post: post, creatorUid: uid, vote: 0) {}
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            self.delegate?.refreshPost(post: self.post!)
+            self.likeButton.setImage(#imageLiteral(resourceName: "drool").withRenderingMode(.alwaysOriginal).alpha((self.post?.hasLiked)! ? 1 : 0.5), for: .normal)
             
-        } else {
-            // Upvote
-            self.post?.hasLiked = true
-            self.post?.likeCount += 1
-            Database.handleVote(post: post, creatorUid: uid, vote: 1) {}
+            self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
             
-        }
-        
-        
-//        self.likeButton.setImage(((post?.hasLiked)! ? legit_img.withRenderingMode(.alwaysOriginal) : legit_img), for: .normal)
-        
-        self.delegate?.refreshPost(post: self.post!)
-        self.likeButton.setImage(#imageLiteral(resourceName: "drool").withRenderingMode(.alwaysOriginal).alpha((post?.hasLiked)! ? 1 : 0.5), for: .normal)
-        
-        self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-        
-        UIView.animate(withDuration: 1.0,
-                       delay: 0,
-                       usingSpringWithDamping: 0.2,
-                       initialSpringVelocity: 6.0,
-                       options: .allowUserInteraction,
-                       animations: { [weak self] in
-                        self?.likeButton.transform = .identity
-            },
-                       completion: nil)
-        
+            UIView.animate(withDuration: 1.0,
+                           delay: 0,
+                           usingSpringWithDamping: 0.2,
+                           initialSpringVelocity: 6.0,
+                           options: .allowUserInteraction,
+                           animations: { [weak self] in
+                            self?.likeButton.transform = .identity
+                },
+                           completion: nil)
+        }        
         
     }
     

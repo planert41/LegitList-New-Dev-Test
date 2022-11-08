@@ -338,6 +338,8 @@
 		B63E46612904BD39000A60C9 /* ListTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E465F2904BD39000A60C9 /* ListTutorial.swift */; };
 		B63E46622904BD39000A60C9 /* ListTutorial.xib in Resources */ = {isa = PBXBuildFile; fileRef = B63E46602904BD39000A60C9 /* ListTutorial.xib */; };
 		B63E466429073D53000A60C9 /* ListTutorialStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B63E466329073D53000A60C9 /* ListTutorialStoryboard.storyboard */; };
+		B63E4667290DE40B000A60C9 /* ListTutorialPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63E4665290DE40B000A60C9 /* ListTutorialPageViewController.swift */; };
+		B63E4668290DE40B000A60C9 /* ListTutorialPageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B63E4666290DE40B000A60C9 /* ListTutorialPageViewController.xib */; };
 		B674E408270A17F000AF4346 /* ProfileHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */; };
 		B6968D48278A4C4B007AD520 /* OpenAppViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */; };
 		B6A0C54D2737883B000BFB7B /* BottomSortBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */; };
@@ -720,6 +722,8 @@
 		B63E465F2904BD39000A60C9 /* ListTutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTutorial.swift; sourceTree = "<group>"; };
 		B63E46602904BD39000A60C9 /* ListTutorial.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListTutorial.xib; sourceTree = "<group>"; };
 		B63E466329073D53000A60C9 /* ListTutorialStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ListTutorialStoryboard.storyboard; sourceTree = "<group>"; };
+		B63E4665290DE40B000A60C9 /* ListTutorialPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTutorialPageViewController.swift; sourceTree = "<group>"; };
+		B63E4666290DE40B000A60C9 /* ListTutorialPageViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ListTutorialPageViewController.xib; sourceTree = "<group>"; };
 		B674E407270A17F000AF4346 /* ProfileHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderLayout.swift; sourceTree = "<group>"; };
 		B6968D47278A4C4B007AD520 /* OpenAppViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAppViewController.swift; sourceTree = "<group>"; };
 		B6A0C54C2737883B000BFB7B /* BottomSortBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSortBar.swift; sourceTree = "<group>"; };
@@ -1462,6 +1466,8 @@
 				B6E9201E27B8513300A6B303 /* NewUserOnboardViewLast.swift */,
 				B6E9202027B8647400A6B303 /* NewUserOnboardFollowing.swift */,
 				B63E465D2901DE36000A60C9 /* LegitTutorial.swift */,
+				B63E4665290DE40B000A60C9 /* ListTutorialPageViewController.swift */,
+				B63E4666290DE40B000A60C9 /* ListTutorialPageViewController.xib */,
 				B63E465F2904BD39000A60C9 /* ListTutorial.swift */,
 				B63E46602904BD39000A60C9 /* ListTutorial.xib */,
 				B63E466329073D53000A60C9 /* ListTutorialStoryboard.storyboard */,
@@ -1605,6 +1611,7 @@
 				A5DCE5082018F038001DBD3E /* TitilliumWeb-Light.ttf in Resources */,
 				A564188C20367BB8002AE860 /* CustomCameraCell.xib in Resources */,
 				A5DCE50B2018F038001DBD3E /* TitilliumWeb-SemiBold.ttf in Resources */,
+				B63E4668290DE40B000A60C9 /* ListTutorialPageViewController.xib in Resources */,
 				A5DCE5072018F038001DBD3E /* TitilliumWeb-Italic.ttf in Resources */,
 				A5DCE5062018F038001DBD3E /* TitilliumWeb-ExtraLightItalic.ttf in Resources */,
 			);
@@ -1793,6 +1800,7 @@
 				A570645822E69E4900C3E686 /* ListOptionsTableViewController.swift in Sources */,
 				A5F34660262E7897009B2128 /* MainTabLIstCell.swift in Sources */,
 				A598CFC92561D8D8005A7035 /* ListViewControllerNew_m.swift in Sources */,
+				B63E4667290DE40B000A60C9 /* ListTutorialPageViewController.swift in Sources */,
 				B63E46612904BD39000A60C9 /* ListTutorial.swift in Sources */,
 				A552EA5F1F997973005A0977 /* Message.swift in Sources */,
 				A5A2E5D92005CB9000D7E8F5 /* TabListViewController.swift in Sources */,

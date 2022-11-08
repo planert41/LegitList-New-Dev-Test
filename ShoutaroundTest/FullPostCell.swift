@@ -1842,21 +1842,11 @@ class FullPostCell: UICollectionViewCell, UIGestureRecognizerDelegate, UIScrollV
         
         
         // Animates before database function is complete
-        
-        if (self.post?.hasLiked)! {
-            // Unselect Upvote
-            self.post?.hasLiked = false
-            self.post?.likeCount -= 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 0) {}
-
-        } else if (self.post?.hasLiked)! {
-            // Upvote
-            self.post?.hasLiked = true
-            self.post?.likeCount += 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 1) {}
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            self.setupAttributedSocialCount()
+            self.delegate?.refreshPost(post: self.post!)
         }
-        self.setupAttributedSocialCount()
-        self.delegate?.refreshPost(post: self.post!)
     }
     
     // Bookmark

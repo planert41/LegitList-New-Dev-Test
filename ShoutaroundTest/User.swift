@@ -292,15 +292,41 @@ struct CurrentUser {
     static var listIds: [String] = []
     static var lists: [List] = [] {
         didSet {
-            for list in lists {
-                if list.name == legitListName {
-                    self.legitListId = list.id
-                } else if list.name == bookmarkListName {
-                    self.bookmarkListId = list.id
+            updateCurrentUserListPostIds()
+        }
+    }
+    
+    static func updateCurrentUserListPostIds() {
+        listedPostIds.removeAll()
+        for list in lists {
+            if list.name == legitListName {
+                self.legitListId = list.id
+            } else if list.name == bookmarkListName {
+                self.bookmarkListId = list.id
+            }
+            
+            
+            
+            for (key, value) in (list.postIds ?? [:]) {
+                let listPostId = key
+                if let listId = list.id {
+                    if let _ = listedPostIds[listPostId] {
+                        var temp = listedPostIds[listPostId]
+                        if !(temp?.contains(listId) ?? false) {
+                                temp?.append(listId)
+                                listedPostIds[listPostId] = temp
+                            }
+                    } else {
+                        listedPostIds[listPostId] = [(listId)]
+                    }
                 }
             }
         }
+        print("updateCurrentUserListPostIds | \(listedPostIds.count)")
     }
+    
+    // PostID - [ListID]
+    static var listedPostIds: [String: [String]] = [:]
     
     static var followedLists: [List] = []
     static var followedListIds: [String] = []
@@ -350,6 +376,8 @@ struct CurrentUser {
             self.refreshInbox()
         }
     }
+    
+    static var likedPostIds:[String: Double] = [:]
 
     // Inbox
     static var inboxThreads: [MessageThread] = [] {
@@ -578,6 +606,8 @@ struct CurrentUser {
             self.lists[listIndex].postIds?.remove(at: postIndex)
             print("removePostFromList | CURRENT USER| SUCCESS, Removed Post: \(postId) to List: \(listId)")
         }
+        
+        
         
     }
     

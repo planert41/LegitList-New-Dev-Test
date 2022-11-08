@@ -2099,20 +2099,11 @@ extension NewTabMapViewController : UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         var displayPost = fetchedPosts[indexPath.item]
-//        self.didTapPost(post: displayPost)
         self.isPostFullView = !self.isPostFullView
         print("TAP POST")
 
     }
-    
-    func didTapPost(post: Post?) {
-        guard let post = post else {return}
-        
-        let pictureController = NewSinglePostView()
-        pictureController.post = post
-        let picView = UINavigationController(rootViewController: pictureController)
-        navigationController?.pushViewController(pictureController, animated: true)
-    }
+
     
     func filterCaptionPost(searchText: String) {
         print("filterCaptionPost | ", searchText)
@@ -2695,7 +2686,8 @@ extension NewTabMapViewController : NewListPhotoCellDelegate, MessageControllerD
     }
     
     func didTapPicture(post: Post) {
-        self.didTapPost(post: post)
+        self.extTapPicture(post: post)
+//        self.didTapPost(post: post)
 //        let pictureController = SinglePostView()
 //        pictureController.post = post
 //        navigationController?.pushViewController(pictureController, animated: true)

@@ -1967,67 +1967,58 @@ class PictureController: UIViewController, UICollectionViewDelegate, UICollectio
         
         // Animates before database function is complete
         
-        if (self.post?.hasLiked)! {
-            // Unselect Upvote
-            self.post?.hasLiked = false
-            self.post?.likeCount -= 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 0) {}
+        Database.handleLike(post: self.post) { post in
+            self.post = post
+            self.setupAttributedSocialCount()
+            self.delegate?.refreshPost(post: self.post!)
             
-        } else {
-            // Upvote
-            self.post?.hasLiked = true
-            self.post?.likeCount += 1
-            Database.handleVote(post: post, creatorUid: creatorId, vote: 1) {}
+            self.likeButton.setImage(#imageLiteral(resourceName: "drool").alpha((self.post?.hasLiked)! ? 1 : 0.5).withRenderingMode(.alwaysOriginal), for: .normal)
+            self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
             
-        }
-        self.setupAttributedSocialCount()
-        self.delegate?.refreshPost(post: self.post!)
-        
-        self.likeButton.setImage(#imageLiteral(resourceName: "drool").alpha((post?.hasLiked)! ? 1 : 0.5).withRenderingMode(.alwaysOriginal), for: .normal)
-        self.likeButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
-        
-        self.view.layoutIfNeeded()
-        UIView.animate(withDuration: 1.0,
-                       delay: 0,
-                       usingSpringWithDamping: 0.2,
-                       initialSpringVelocity: 6.0,
-                       options: .allowUserInteraction,
-                       animations: { [weak self] in
-                        self?.likeButton.transform = .identity
-                        self?.likeButton.layoutIfNeeded()
-                        
-            },
-                       completion: nil)
-        
-        
-        if (self.post?.hasLiked)! {
-            var origin: CGPoint = self.photoImageScrollView.center;
-            popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
-            popView = UIImageView(image: #imageLiteral(resourceName: "drool").resizeImageWith(newSize: CGSize(width: 100, height: 100)).withRenderingMode(.alwaysOriginal))
-            popView.contentMode = .scaleToFill
-            popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
-            popView.frame.origin.x = origin.x
-            popView.frame.origin.y = origin.y * 0.5
-            
-            photoImageView.addSubview(popView)
-            
-            UIView.animate(withDuration: 1,
+            self.view.layoutIfNeeded()
+            UIView.animate(withDuration: 1.0,
                            delay: 0,
                            usingSpringWithDamping: 0.2,
                            initialSpringVelocity: 6.0,
                            options: .allowUserInteraction,
                            animations: { [weak self] in
-                            self?.popView.transform = .identity
-            }) { (done) in
-                self.popView.removeFromSuperview()
-                self.popView.alpha = 0
-            }
+                            self?.likeButton.transform = .identity
+                            self?.likeButton.layoutIfNeeded()
+                            
+                },
+                           completion: nil)
             
-            let when = DispatchTime.now() + 2
-            DispatchQueue.main.asyncAfter(deadline: when) {
-                self.popView.alpha = 0
+            
+            if (self.post?.hasLiked)! {
+                var origin: CGPoint = self.photoImageScrollView.center;
+                self.popView = UIView(frame: CGRect(x: origin.x, y: origin.y, width: 100, height: 100))
+                self.popView = UIImageView(image: #imageLiteral(resourceName: "drool").resizeImageWith(newSize: CGSize(width: 100, height: 100)).withRenderingMode(.alwaysOriginal))
+                self.popView.contentMode = .scaleToFill
+                self.popView.transform = CGAffineTransform(scaleX: 0.25, y: 0.25)
+                self.popView.frame.origin.x = origin.x
+                self.popView.frame.origin.y = origin.y * 0.5
+                
+                self.photoImageView.addSubview(self.popView)
+                
+                UIView.animate(withDuration: 1,
+                               delay: 0,
+                               usingSpringWithDamping: 0.2,
+                               initialSpringVelocity: 6.0,
+                               options: .allowUserInteraction,
+                               animations: { [weak self] in
+                                self?.popView.transform = .identity
+                }) { (done) in
+                    self.popView.removeFromSuperview()
+                    self.popView.alpha = 0
+                }
+                
+                let when = DispatchTime.now() + 2
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.popView.alpha = 0
+                }
             }
         }
+
     }
 
     

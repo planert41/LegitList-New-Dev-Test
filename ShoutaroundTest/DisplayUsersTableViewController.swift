@@ -30,9 +30,11 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     let UserCellId = "UserCellId"
     let ListCellId = "ListCellId"
     
+    var displayType: userListDisplay? = nil
     
     var inputPost: Post? {
         didSet {
+            self.displayType = .userLiked
             self.fetchAllLikeUsersForPost()
             setupNavigationItems()
             setScopeBarOptions()
@@ -41,13 +43,14 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     
     var inputUser: User? {
         didSet {
+            self.displayType = .userFollowers
             fetchUserInfo()
-            updateSearchView()
         }
     }
     
     var specificUids:[String] = [] {
         didSet {
+            self.displayType = .userLiked
             fetchSpecificUsers()
         }
     }
@@ -91,30 +94,43 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
             self.followerUids = CurrentUser.followerUids
             self.followingListIds = CurrentUser.followedListIds
             self.createdListsIds = CurrentUser.listIds
+            self.updateViewForUserFollowing()
+
         } else {
+            let fetchUids = DispatchGroup()
+            
+            fetchUids.enter()
             Database.fetchFollowingUserUids(uid: uid) { (following) in
                 self.followingUids = following
+                fetchUids.leave()
             }
             
+            fetchUids.enter()
             Database.fetchFollowerUserUids(uid: uid) { (follower) in
                 self.followerUids = follower
+                fetchUids.leave()
             }
             
+            fetchUids.enter()
             Database.fetchFollowedListIDs(userUid: uid) { (listIds) in
                 self.followingListIds = listIds.compactMap({$0.listId})
+                fetchUids.leave()
             }
             
             self.createdListsIds = inputUser?.listIds ?? []
+            fetchUids.notify(queue: .main) {
+                self.updateViewForUserFollowing()
+            }
         }
     }
     
     
-    func updateSearchView() {
+    func updateViewForUserFollowing() {
         setupNavigationItems()
         setScopeBarOptions()
 //        self.fetchAllListsForUser()
         if displayListOfUsers {
-            self.fetchAllUsers()
+            self.fetchAllUsersFollowing()
         } else if displayListsByUser {
             self.fetchListsByUser()
         }
@@ -124,10 +140,20 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     func setScopeBarOptions() {
         if displayListOfUsers
         {
-            self.scopeBarOptions = FriendSortOptions
-            let followingText = "🙋‍♂️ " + FriendSortOptions[0] +  " \(self.followingUsers.count)"
-            let otherUserText = "👥 " + FriendSortOptions[1] +  " \(self.otherUsers.count)"
-            self.searchBar.scopeButtonTitles = [followingText, otherUserText]
+            if self.displayType == .userFollowers {
+                self.scopeBarOptions = FriendSortOptions
+                let followingText = "🙋‍♂️ " + FriendSortOptions[0] +  " \(self.followingUsers.count)"
+                let otherUserText = "👥 " + FriendSortOptions[1] +  " \(self.followerUsers.count)"
+                self.searchBar.scopeButtonTitles = [followingText, otherUserText]
+            }
+            
+            else if self.displayType == .userLiked {
+                self.scopeBarOptions = LikedUserSearchOptions
+                let followingText = "🙋‍♂️ " + LikedUserSearchOptions[0] +  " \(self.followingUsers.count)"
+                let otherUserText = "👥 " + LikedUserSearchOptions[1] +  " \(self.otherUsers.count)"
+                self.searchBar.scopeButtonTitles = [followingText, otherUserText]
+            }
+
         }
         else if displayListsByUser
         {
@@ -161,8 +187,9 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     // MARK: - USER AND LIST OBJECTS
 
     
-    var otherUsers = [User]()
+    var followerUsers = [User]()
     var followingUsers = [User]()
+    var otherUsers = [User]()
     var filteredUsers = [User]()
     var allUsers = [User]()
 
@@ -217,21 +244,23 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     }
     
     func fetchSpecificUsers() {
-        self.otherUsers.removeAll()
+        self.followerUsers.removeAll()
         self.followingUsers.removeAll()
+        self.otherUsers.removeAll()
         let myGroup = DispatchGroup()
 
         for vote in (self.specificUids) {
             myGroup.enter()
             Database.fetchUserWithUID(uid: vote) { (user) in
                 self.followingUsers.append(user!)
+                self.followerUsers.append(user!)
                 self.otherUsers.append(user!)
                 myGroup.leave()
             }
         }
         myGroup.notify(queue: .main) {
-            print("Following \(self.followingUsers.count) | Fetched \(self.otherUsers.count) Users ")
-            self.searchBar.scopeButtonTitles = ["Following (\(self.followingUsers.count))", "Other (\(self.otherUsers.count))"]
+            print("Following \(self.followingUsers.count) | Fetched \(self.followerUsers.count) Users | Fetched \(self.otherUsers.count) Other Users ")
+            self.searchBar.scopeButtonTitles = ["Following (\(self.followingUsers.count))", "Other (\(self.followerUsers.count))"]
             self.searchBar.showsScopeBar = false
 //            self.otherUsers = self.otherUsers.sorted(by: { (u1, u2) -> Bool in
 //                u1.followersCount > u2.followersCount
@@ -257,8 +286,9 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     
     
     func fetchAllLikeUsersForPost(){
-        self.otherUsers.removeAll()
+        self.followerUsers.removeAll()
         self.followingUsers.removeAll()
+        self.otherUsers.removeAll()
         let myGroup = DispatchGroup()
 
         for vote in (self.inputPost?.allVote)! {
@@ -298,22 +328,33 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     }
     
     
-    func fetchAllUsers(){
+    func fetchAllUsersFollowing(){
+        // ONLY USED FOR
         guard let inputUser = inputUser else {return}
         let uid = inputUser.uid
         
-        self.otherUsers.removeAll()
+        self.followerUsers.removeAll()
         self.followingUsers.removeAll()
+        self.otherUsers.removeAll()
         self.allUsers.removeAll()
         self.filteredUsers.removeAll()
+        
+        let myGroup = DispatchGroup()
+        
+        let unique = Array(Set(self.followerUids + self.followingUids))
 
-        Database.fetchALLUsers(includeSelf: true) { (fetchedUsers) in
-            
-            self.allUsers = fetchedUsers
-//            self.allUsers = self.allUsers.sorted(by: { (u1, u2) -> Bool in
-//                u1.posts_created > u2.posts_created
-//            })
-                
+        for vote in unique {
+            myGroup.enter()
+            Database.fetchUserWithUID(uid: vote) { (user) in
+                if let user = user {
+                    self.allUsers.append(user)
+                }
+                myGroup.leave()
+            }
+        }
+        
+        myGroup.notify(queue: .main) {
+            // SORT
             self.allUsers = self.allUsers.sorted(by: { (p1, p2) -> Bool in
                 if p1.posts_created != p2.posts_created {
                     return p1.lists_created > p2.lists_created
@@ -323,71 +364,44 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
                     return (p1.profileImageUrl == "" ? 0 : 1) >= (p2.profileImageUrl == "" ? 0 : 1)
                 }
             })
-                
-
-        // MOVE SELF TO FIRST
-            if let index = self.allUsers.firstIndex(where: { (user) -> Bool in
-                return user.uid == inputUser.uid
-            }) {
-                let temp = self.allUsers.remove(at: index)
-                self.allUsers.insert(temp, at: 0)
-            }
             
-        // MOVE SELECTED USER TO FIRST
-            if let selectedUser = self.selectedUser {
+            // MOVE SELF TO FIRST
                 if let index = self.allUsers.firstIndex(where: { (user) -> Bool in
-                    return user.uid == selectedUser.uid
+                    return user.uid == inputUser.uid
                 }) {
                     let temp = self.allUsers.remove(at: index)
-                    self.followingUsers.insert(temp, at: 0)
-                }
-            }
-            
-            for user in self.allUsers {
-                if self.followingUids.contains(user.uid)  {
-                    self.followingUsers.append(user)
+                    self.allUsers.insert(temp, at: 0)
                 }
                 
-                if self.followerUids.contains(user.uid)  {
-                    self.otherUsers.append(user)
+            // MOVE SELECTED USER TO FIRST
+                if let selectedUser = self.selectedUser {
+                    if let index = self.allUsers.firstIndex(where: { (user) -> Bool in
+                        return user.uid == selectedUser.uid
+                    }) {
+                        let temp = self.allUsers.remove(at: index)
+                        self.followingUsers.insert(temp, at: 0)
+                    }
                 }
-            }
-            
-            print("\(self.followingUids.count) Following UID | \(self.followerUids.count) Follower UID")
-
-            
-            
-            // SORT
-            self.followingUsers.sort { (p1, p2) -> Bool in
-//                if p1.posts_created == p2.posts_created {
-//                    return p1.lists_created > p2.lists_created
-//                } else {
-//                    return p1.posts_created > p2.posts_created
-//                }
-                if p1.posts_created != p2.posts_created {
-                    return p1.lists_created > p2.lists_created
-                } else if p1.lists_created != p2.lists_created {
-                    return p1.lists_created > p2.lists_created
-                } else {
-                    return (p1.profileImageUrl == "" ? 0 : 1) >= (p2.profileImageUrl == "" ? 0 : 1)
+                
+                for user in self.allUsers {
+                    if self.followingUids.contains(user.uid)  {
+                        self.followingUsers.append(user)
+                    }
+                    
+                    if self.followerUids.contains(user.uid)  {
+                        self.followerUsers.append(user)
+                    }
+                    
+                    if !self.followingUids.contains(user.uid) && !self.followerUids.contains(user.uid) {
+                        self.otherUsers.append(user)
+                    }
                 }
-            }
+                
+                print("\(self.followingUids.count) Following UID | \(self.followerUids.count) Follower UID | \(self.otherUsers.count) Other UID")
             
-            self.otherUsers.sort { (p1, p2) -> Bool in
-                if p1.posts_created != p2.posts_created {
-                    return p1.lists_created > p2.lists_created
-                } else if p1.lists_created != p2.lists_created {
-                    return p1.lists_created > p2.lists_created
-                } else {
-                    return (p1.profileImageUrl == "" ? 0 : 1) >= (p2.profileImageUrl == "" ? 0 : 1)
-                }
-            }
-
-            
-            
-            print("   Fetched \(self.allUsers.count) Users")
             self.setScopeBarOptions()
             self.tableView.reloadData()
+            
         }
     }
 
@@ -645,7 +659,7 @@ class DisplayOnlyUsersSearchView : UITableViewController, UISearchResultsUpdatin
     
     func filterContentForSearchText(_ searchText: String) {
         // Filter for Emojis and Users
-        filteredUsers = (self.selectedScope == 0 ? self.followingUsers : self.followingUsers).filter { (user) -> Bool in
+        filteredUsers = (self.selectedScope == 0 ? self.followingUsers : (self.displayType == .userFollowers ? self.followerUsers : self.otherUsers)).filter { (user) -> Bool in
             return user.username.lowercased().contains(searchText.lowercased())
         }
         
@@ -752,7 +766,7 @@ extension DisplayOnlyUsersSearchView {
 
         if displayListOfUsers
         {
-            return isFiltering ? filteredUsers.count : (self.selectedScope == 0 ? followingUsers.count : otherUsers.count)
+            return isFiltering ? filteredUsers.count : (self.selectedScope == 0 ? followingUsers.count : (self.displayType == .userFollowers ? followerUsers.count : otherUsers.count))
         }
         else if displayListsByUser
         {
@@ -773,7 +787,7 @@ extension DisplayOnlyUsersSearchView {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: UserCellId, for: indexPath) as! UserAndListCell
         if displayListOfUsers {
-            var user = self.isFiltering ? filteredUsers[indexPath.row] : (self.selectedScope == 0 ? followingUsers[indexPath.row] : otherUsers[indexPath.row])
+            var user = self.isFiltering ? filteredUsers[indexPath.row] : (self.selectedScope == 0 ? followingUsers[indexPath.row] : (self.displayType == .userFollowers ? followerUsers[indexPath.row] : otherUsers[indexPath.row]))
             cell.user = user
         } else if displayListsByUser {
             var list = self.isFiltering ? filteredList[indexPath.row] : (self.selectedScope == 0 ? createdLists[indexPath.row] : followingLists[indexPath.row])
@@ -786,7 +800,7 @@ extension DisplayOnlyUsersSearchView {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
                 
         if displayListOfUsers {
-            var user = self.isFiltering ? filteredUsers[indexPath.row] : (self.selectedScope == 0 ? followingUsers[indexPath.row] : otherUsers[indexPath.row])
+            var user = self.isFiltering ? filteredUsers[indexPath.row] : (self.selectedScope == 0 ? followingUsers[indexPath.row] : (self.displayType == .userFollowers ? followerUsers[indexPath.row] : otherUsers[indexPath.row]))
             self.userSelected(user: user)
         } else if displayListsByUser {
             var list = self.isFiltering ? filteredList[indexPath.row] : (self.selectedScope == 0 ? createdLists[indexPath.row] : followingLists[indexPath.row])

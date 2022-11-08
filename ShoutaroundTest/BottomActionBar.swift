@@ -23,7 +23,7 @@ class BottomActionBar: UIView {
     var post: Post? {
         didSet {
             self.updateLikeCount = post?.likeCount ?? 0
-            self.updateListCount = post?.allList.count ?? 0
+            self.updateListCount = post?.listCount ?? 0
             self.updateCommentCount = post?.commentCount ?? 0
             updateButtons()
         }
@@ -139,7 +139,7 @@ class BottomActionBar: UIView {
         
         likeContainer.addSubview(likeButtonLabel)
         likeButtonLabel.anchor(top: likeContainer.topAnchor, left: likeButton.rightAnchor, bottom: likeContainer.bottomAnchor, right: likeContainer.rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
-        likeButtonLabel.centerYAnchor.constraint(equalTo: likeButton.centerYAnchor).isActive = true
+        likeButtonLabel.centerYAnchor.constraint(equalTo: likeContainer.centerYAnchor).isActive = true
         likeButtonLabel.sizeToFit()
         likeButtonLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleLike)))
         
