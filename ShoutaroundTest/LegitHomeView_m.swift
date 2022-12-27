@@ -1318,19 +1318,24 @@ extension LegitHomeView {
     
     func refreshPostsForSearch(){
         print("LegitHomeView Refresh Posts For Search, SEARCH PostIds by \(self.viewFilter.filterSort)")
-        self.toggleNavMapButton()
-        self.fetchPostIds()
-//        self.scrollToHeader()
-        self.collectionView.refreshControl?.endRefreshing()
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            self.toggleNavMapButton()
+            self.fetchPostIds()
+    //        self.scrollToHeader()
+            self.collectionView.refreshControl?.endRefreshing()
+        }
     }
     
     func refreshPostsForSort(){
         print("Refresh Posts, SORT PostIds by \(self.viewFilter.filterSort) | Filtering: \(self.viewFilter.isFiltering)")
-        // Does not repull post ids, just resorts displayed posts
-        self.fetchSortFilterPosts()
-        self.scrollToHeader()
-//        self.paginatePosts()
-        self.collectionView.refreshControl?.endRefreshing()
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            // Does not repull post ids, just resorts displayed posts
+            self.fetchSortFilterPosts()
+            self.scrollToHeader()
+    //        self.paginatePosts()
+            self.collectionView.refreshControl?.endRefreshing()
+        }
+
     }
     
     func clearFilter(){
@@ -1511,11 +1516,13 @@ extension LegitHomeView: LegitHomeHeaderDelegate, LegitNavHeaderDelegate, Bottom
     
     @objc func locationDenied() {
         if self.isPresented {
-            self.missingLocAlert()
+            SVProgressHUD.dismiss()
             self.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
             self.viewFilter.filterSort = sortNew
-            self.selectSort(sender: self.sortSegmentControl)
-            print("LegitHomeView Location Denied Function")
+            self.refreshSortSegment(sender: self.sortSegmentControl)
+            self.bottomSortBar.selectSort(sort: sortNew)
+            self.missingLocAlert()
+            print("LegitHomeView Location Denied Function | \(self.sortSegmentControl.selectedSegmentIndex)")
         }
     }
     
@@ -2839,11 +2846,15 @@ extension LegitHomeView: UITableViewDelegate, UITableViewDataSource, LegitSearch
     
     @objc func selectSort(sender: UISegmentedControl) {
         print("SelectSort: \(HeaderSortOptions[sender.selectedSegmentIndex])")
-        self.selectedSearchType = sender.selectedSegmentIndex
-        self.searchTableView.reloadData()
-        
+        self.refreshSortSegment(sender: sender)
         let sort = HeaderSortOptions[sender.selectedSegmentIndex]
         self.headerSortSelected(sort: sort)
+//        self.searchTypeSegment.changeUnderlinePosition()
+    }
+    
+    func refreshSortSegment(sender: UISegmentedControl) {
+        self.selectedSearchType = sender.selectedSegmentIndex
+        self.searchTableView.reloadData()
         
         for (index, sortOptions) in HeaderSortOptions.enumerated()
         {
@@ -2852,8 +2863,7 @@ extension LegitHomeView: UITableViewDelegate, UITableViewDataSource, LegitSearch
             sender.setTitle(displayFilter, forSegmentAt: index)
             sender.setWidth((isSelected) ? (segmentWidth_selected * scalar) : (segmentWidth_unselected * scalar), forSegmentAt: index)
         }
-        
-//        self.searchTypeSegment.changeUnderlinePosition()
+
     }
  
     

@@ -720,7 +720,12 @@ class SingleUserProfileViewController: UIViewController {
     @objc func selectSort(sender: UISegmentedControl) {
         let sort = HeaderSortOptions[sender.selectedSegmentIndex]
         self.headerSortSelected(sort: sort)
-
+        self.refreshSortSegment(sender: sender)
+        
+//        self.searchTypeSegment.changeUnderlinePosition()
+    }
+    
+    func refreshSortSegment(sender: UISegmentedControl) {
         for (index, sortOptions) in HeaderSortOptions.enumerated()
         {
             var isSelected = (index == sender.selectedSegmentIndex)
@@ -728,8 +733,6 @@ class SingleUserProfileViewController: UIViewController {
             sender.setTitle(displayFilter, forSegmentAt: index)
             sender.setWidth((isSelected) ? (segmentWidth_selected * scalar) : (segmentWidth_unselected * scalar), forSegmentAt: index)
         }
-        
-//        self.searchTypeSegment.changeUnderlinePosition()
     }
     
     func setupAddPhotoButton() {
@@ -1264,21 +1267,26 @@ extension SingleUserProfileViewController {
     
     @objc func locationDenied() {
         if self.isPresented {
-            self.missingLocAlert()
+            SVProgressHUD.dismiss()
             self.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
             self.viewFilter.filterSort = sortNew
-            self.selectSort(sender: self.sortSegmentControl)
-            print("SingleUserProfile Location Denied Function")
+            self.bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+            self.updateBottomSearchBar()
+            self.missingLocAlert()
+//            self.refreshSortSegment(sender: self.sortSegmentControl)
+            print("SingleUserProfile Location Denied Function | \(self.sortSegmentControl.selectedSegmentIndex)")
         }
     }
     
     
     
     func refreshPostsForFilter() {
-        self.refreshPagination()
-        self.fetchPostsForUser()
-//        self.imageCollectionView.reloadSections(IndexSet(integer: 1))
-        self.scrolltoFirst = true
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            self.refreshPagination()
+            self.fetchPostsForUser()
+    //        self.imageCollectionView.reloadSections(IndexSet(integer: 1))
+            self.scrolltoFirst = true
+        }
     }
     
     func updateBottomSearchBar(){

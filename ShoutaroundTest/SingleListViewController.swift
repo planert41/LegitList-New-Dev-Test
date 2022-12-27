@@ -649,20 +649,24 @@ class SingleListViewController: UIViewController {
     
     @objc func locationDenied() {
         if self.isPresented {
-            self.missingLocAlert()
+            SVProgressHUD.dismiss()
             self.postSortFormatBar.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
             self.viewFilter.filterSort = sortNew
-            self.headerSortSelected(sort: sortNew)
+            bottomSortBar.selectSort(sort: self.viewFilter.filterSort ?? HeaderSortDefault)
+            self.missingLocAlert()
+//            self.headerSortSelected(sort: sortNew)
             print("SingleListViewController Location Denied Function")
         }
     }
     
     
     @objc func refreshPostsForFilter(){
-        self.clearAllPost()
-        self.fetchPostsForList()
-        self.refreshBottomEmojiBar()
-        self.imageCollectionView.refreshControl?.endRefreshing()
+        Database.checkLocationForSort(filter: self.viewFilter) {
+            self.clearAllPost()
+            self.fetchPostsForList()
+            self.refreshBottomEmojiBar()
+            self.imageCollectionView.refreshControl?.endRefreshing()
+        }
     }
     
     func refreshList(){

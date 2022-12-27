@@ -715,9 +715,10 @@ class ListViewControllerNew: UIViewController, UITableViewDelegate, UITableViewD
     
     @objc func locationDenied() {
         if self.isPresented {
-            self.missingLocAlert()
-            self.sortSegmentControl.selectedSegmentIndex = ItemSortOptions.index(of: sortNew) ?? 0
+            SVProgressHUD.dismiss()
+            self.sortSegmentControl.selectedSegmentIndex = 0
             self.selectItemSort(sender: self.sortSegmentControl)
+            self.missingLocAlert()
             print("ListViewControllerNew Location Denied Function")
         }
     }

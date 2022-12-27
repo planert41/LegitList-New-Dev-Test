@@ -7,11 +7,11 @@ target ‘ShoutaroundTest’ do
 
   # Pods for InstagramFirebase
 
-pod 'Firebase/Auth’
-pod 'Firebase/Database’
-pod 'Firebase/Storage’
-pod ‘Firebase/Messaging’
-pod ‘FirebaseAnalytics’
+pod 'FirebaseAuth’
+pod 'FirebaseDatabase’
+pod 'FirebaseStorage’
+pod ‘FirebaseMessaging’
+pod 'Firebase/Analytics', '8.1.0'
 pod 'Firebase'
 pod 'GooglePlaces'
 pod 'GoogleMaps'
@@ -44,7 +44,7 @@ post_install do |installer|
    installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64 i386"
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
    end
    end
  end

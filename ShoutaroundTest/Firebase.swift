@@ -237,7 +237,7 @@ extension Database{
                 loadedUser.leave()
             }
             
-            LocationSingleton.sharedInstance.determineCurrentLocation()
+//            LocationSingleton.sharedInstance.determineCurrentLocation()
             
             loadedUser.notify(queue: .main) {
                 let end = DispatchTime.now()   // <<<<<<<<<<   end time

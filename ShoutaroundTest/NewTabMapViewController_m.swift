@@ -1165,6 +1165,7 @@ class NewTabMapViewController: UIViewController {
     
     @objc func locationDenied() {
         if self.isPresented {
+            SVProgressHUD.dismiss()
             self.missingLocAlert()
             self.mapFilter.filterSort = sortNew
             self.filterSortFetchedPosts()

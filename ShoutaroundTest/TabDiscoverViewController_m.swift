@@ -291,6 +291,7 @@ class TabSearchViewController: UIViewController, UITableViewDelegate, UITableVie
     
     @objc func locationDenied() {
         if self.isPresented {
+            SVProgressHUD.dismiss()
             self.missingLocAlert()
             self.sortSegmentControl.selectedSegmentIndex = HeaderSortOptions.index(of: sortNew) ?? 0
             self.selectedSort = sortNew

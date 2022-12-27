@@ -87,19 +87,22 @@ class LocationSingleton: NSObject,CLLocationManagerDelegate {
             print("Location Manager: Update Location: ERROR, No Location Manager")
             return
         }
-        CurrentUser.currentLocation = nil
-        let locationAuthApproved = (locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse)
-        
-        print("Location Manager | FINDING LOCATION || \(locationManager.authorizationStatus)")
-        
-        if CLLocationManager.locationServicesEnabled() && locationAuthApproved {
-            locationManager.startUpdatingLocation()
-//            SVProgressHUD.show(withStatus: "Finding Your Location")
-        } else {
-            self.displayLocationAuth()
-//            print("Requesting User Location")
-//            locationManager.requestWhenInUseAuthorization()
+        DispatchQueue.global().async {
+            CurrentUser.currentLocation = nil
+            let locationAuthApproved = (locationManager.authorizationStatus == .authorizedAlways || locationManager.authorizationStatus == .authorizedWhenInUse)
+            
+            print("Location Manager | FINDING LOCATION || \(locationManager.authorizationStatus)")
+                if CLLocationManager.locationServicesEnabled() && locationAuthApproved {
+                    locationManager.startUpdatingLocation()
+                    //            SVProgressHUD.show(withStatus: "Finding Your Location")
+                } else {
+                    self.displayLocationAuth()
+                    //            print("Requesting User Location")
+                    //            locationManager.requestWhenInUseAuthorization()
+                }
         }
+        
+
 //
 
 //
